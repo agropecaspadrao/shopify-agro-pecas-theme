@@ -67,25 +67,25 @@
         "type": "text",
         "id": "store_cnpj",
         "label": "CNPJ",
-        "default": "00.000.000/0001-00"
+        "default": "66.316.831/0001-85"
       },
       {
         "type": "text",
         "id": "store_address",
         "label": "Endereço",
-        "default": "Curitiba – PR"
+        "default": "R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310"
       },
       {
         "type": "text",
         "id": "store_phone",
         "label": "Telefone",
-        "default": "(41) 99721-7541"
+        "default": "(41) 9833-3338"
       },
       {
         "type": "text",
         "id": "store_email",
         "label": "E-mail",
-        "default": "contato@appagropecas.com.br"
+        "default": "comercial@app.com.br"
       }
     ]
   },

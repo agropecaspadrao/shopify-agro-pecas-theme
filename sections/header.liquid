@@ -18,7 +18,11 @@
                height="auto"
                loading="eager">
         {%- else -%}
-          <span class="header-logo__text">{{ shop.name }}</span>
+          <img src="{{ 'logo-branca.png' | asset_url }}"
+               alt="{{ shop.name }}"
+               width="{{ section.settings.logo_width | default: 160 }}"
+               height="auto"
+               loading="eager">
         {%- endif -%}
       </a>
 

@@ -51,13 +51,13 @@
 
 <body class="template-{{ template | replace: '.', '-' }}">
 
-  {%- sections 'header-group' -%}
+  {%- section 'header' -%}
 
   <main id="MainContent" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {%- sections 'footer-group' -%}
+  {%- section 'footer' -%}
 
   {{ 'theme.js' | asset_url | script_tag }}
   {{ 'whatsapp.js' | asset_url | script_tag }}

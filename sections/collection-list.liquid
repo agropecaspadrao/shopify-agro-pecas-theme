@@ -14,7 +14,11 @@
       {%- for block in section.blocks -%}
         {%- if block.type == 'collection_card' -%}
           {%- assign col = collections[block.settings.collection] -%}
-          <a href="{{ col.url | default: block.settings.custom_url | default: '#' }}" class="collection-card" {{ block.shopify_attributes }}>
+          {%- assign card_url = block.settings.custom_url -%}
+          {%- if col != blank and col.handle != blank -%}
+            {%- assign card_url = col.url -%}
+          {%- endif -%}
+          <a href="{{ card_url | default: '#' }}" class="collection-card" {{ block.shopify_attributes }}>
             <div class="collection-card__img">
               {%- if block.settings.image != blank -%}
                 <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">

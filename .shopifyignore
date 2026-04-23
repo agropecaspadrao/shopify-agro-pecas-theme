@@ -2,4 +2,5 @@ SETUP.md
 products_import.csv
 *.toml
 *.yml
+.env
 .git/

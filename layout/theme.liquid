@@ -25,9 +25,7 @@
 
   {{ content_for_header }}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  {{ 'fonts.css' | asset_url | stylesheet_tag }}
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
   {{ 'base.css' | asset_url | stylesheet_tag }}
@@ -59,8 +57,8 @@
 
   {%- section 'footer' -%}
 
-  {{ 'theme.js' | asset_url | script_tag }}
-  {{ 'whatsapp.js' | asset_url | script_tag }}
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script src="{{ 'whatsapp.js' | asset_url }}" defer></script>
 
 </body>
 </html>

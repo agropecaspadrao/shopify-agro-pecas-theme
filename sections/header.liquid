@@ -83,10 +83,10 @@
               </li>
             {%- endfor -%}
           {%- else -%}
-            <li><a href="/collections/bombas-hidraulicas">Bombas Hidráulicas</a></li>
-            <li><a href="/collections/sensores-agricolas">Sensores Agrícolas</a></li>
-            <li><a href="/pages/cotacao">Solicitar Cotação</a></li>
-            <li><a href="/pages/sobre">Sobre Nós</a></li>
+            <li><a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a></li>
+            <li><a href="{{ routes.collections_url }}/sensores-agricolas">Sensores Agrícolas</a></li>
+            <li><a href="{{ routes.root_url }}pages/cotacao">Solicitar Cotação</a></li>
+            <li><a href="{{ routes.root_url }}pages/sobre">Sobre Nós</a></li>
           {%- endif -%}
         </ul>
       </div>
@@ -111,10 +111,10 @@
           <a href="{{ link.url }}">{{ link.title }}</a>
         {%- endfor -%}
       {%- else -%}
-        <a href="/collections/bombas-hidraulicas">Bombas Hidráulicas</a>
-        <a href="/collections/sensores-agricolas">Sensores Agrícolas</a>
-        <a href="/pages/cotacao">Solicitar Cotação</a>
-        <a href="/pages/sobre">Sobre Nós</a>
+        <a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a>
+        <a href="{{ routes.collections_url }}/sensores-agricolas">Sensores Agrícolas</a>
+        <a href="{{ routes.root_url }}pages/cotacao">Solicitar Cotação</a>
+        <a href="{{ routes.root_url }}pages/sobre">Sobre Nós</a>
       {%- endif -%}
     </nav>
     <div class="mobile-menu__footer">

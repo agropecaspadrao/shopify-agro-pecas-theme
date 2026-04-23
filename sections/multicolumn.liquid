@@ -1,0 +1,78 @@
+<section class="multicolumn section-padding {% if section.settings.bg_dark %}section--dark{% endif %}">
+  <div class="page-width">
+    <div class="section-header section-header--center">
+      {%- if section.settings.title != blank -%}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+    </div>
+    <div class="multicolumn__grid multicolumn__grid--{{ section.blocks.size | at_most: 4 }}">
+      {%- for block in section.blocks -%}
+        <div class="multicolumn__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <div class="multicolumn__icon">{{ block.settings.icon }}</div>
+          {%- endif -%}
+          <h3 class="multicolumn__title">{{ block.settings.title }}</h3>
+          {%- if block.settings.text != blank -%}
+            <p class="multicolumn__text">{{ block.settings.text }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Multicoluna",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Por que escolher a APP Agro Peças?"
+    },
+    {
+      "type": "checkbox",
+      "id": "bg_dark",
+      "label": "Fundo escuro",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Coluna",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Ícone (emoji)",
+          "default": "🏆"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Qualidade Certificada"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Descrição"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicoluna",
+      "blocks": [
+        { "type": "column", "settings": { "icon": "🏆", "title": "ISO 9001 / 14001 / 18001", "text": "Todas as peças LIVENZA são fabricadas sob rigorosas certificações internacionais de qualidade e gestão ambiental." } },
+        { "type": "column", "settings": { "icon": "🚜", "title": "Maior Compatibilidade", "text": "Cobrimos John Deere, New Holland, Massey Ferguson, Valtra e Valmet com referências OEM cruzadas." } },
+        { "type": "column", "settings": { "icon": "🚚", "title": "Entrega Nacional", "text": "Estoque disponível em Curitiba–PR com envio para todo o Brasil via transportadora parceira." } },
+        { "type": "column", "settings": { "icon": "📞", "title": "Suporte Técnico", "text": "Equipe especializada para identificar a peça correta pelo modelo, SKU ou número OEM do fabricante." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

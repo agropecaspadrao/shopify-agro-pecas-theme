@@ -1,0 +1,19 @@
+<link rel="canonical" href="{{ canonical_url }}">
+
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:type" content="{% if template == 'product' %}product{% else %}website{% endif %}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_description | default: shop.description | strip_html | escape }}">
+
+{%- if template == 'product' and product.featured_image -%}
+  <meta property="og:image" content="{{ product.featured_image | image_url: width: 1200 }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="1200">
+{%- elsif settings.og_default_image != blank -%}
+  <meta property="og:image" content="{{ settings.og_default_image | image_url: width: 1200 }}">
+{%- endif -%}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page_title }}">
+<meta name="twitter:description" content="{{ page_description | default: shop.description | strip_html | escape }}">

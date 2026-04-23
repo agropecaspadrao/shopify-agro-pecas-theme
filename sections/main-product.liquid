@@ -1,0 +1,266 @@
+{%- assign wa_number = settings.whatsapp_number -%}
+{%- assign wa_msg = 'Olá! Estava navegando no catálogo da ' | append: shop.name | append: ' e tenho interesse na peça *' | append: product.title | append: '* (SKU: ' | append: product.metafields.agro.sku_livenza.value | default: product.variants.first.sku | append: '). Poderiam me passar disponibilidade e condições de pagamento?' -%}
+
+<div class="pdp-page">
+  <div class="page-width">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Navegação estrutural">
+      <ol>
+        <li><a href="{{ routes.root_url }}">Início</a></li>
+        {%- if collection -%}
+          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+        {%- elsif product.collections.first -%}
+          <li><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></li>
+        {%- endif -%}
+        <li aria-current="page">{{ product.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="pdp-layout">
+      <!-- Gallery -->
+      <div class="pdp-gallery">
+        <div class="pdp-gallery__main" id="GalleryMain">
+          {%- assign first_image = product.featured_image -%}
+          <img
+            src="{{ first_image | image_url: width: 800 }}"
+            alt="{{ first_image.alt | default: product.title }}"
+            id="GalleryMainImg"
+            width="800"
+            height="800"
+            loading="eager"
+          >
+        </div>
+        {%- if product.images.size > 1 -%}
+          <div class="pdp-gallery__thumbs" id="GalleryThumbs">
+            {%- for image in product.images -%}
+              <button class="pdp-gallery__thumb {% if forloop.first %}is-active{% endif %}"
+                data-src="{{ image | image_url: width: 800 }}"
+                data-alt="{{ image.alt | default: product.title }}"
+                aria-label="Ver imagem {{ forloop.index }}"
+              >
+                <img src="{{ image | image_url: width: 120 }}" alt="{{ image.alt | default: product.title }}" width="120" height="120" loading="lazy">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Product Info -->
+      <div class="pdp-info">
+
+        <!-- Category badge -->
+        {%- if product.type != blank -%}
+          <span class="pdp-category-badge">{{ product.type }}</span>
+        {%- endif -%}
+
+        <h1 class="pdp-title">{{ product.title }}</h1>
+
+        <!-- Codes -->
+        <div class="pdp-codes">
+          {%- assign sku_livenza = product.metafields.agro.sku_livenza.value -%}
+          {%- assign part_number = product.metafields.agro.part_number.value -%}
+          {%- if sku_livenza != blank -%}
+            <div class="pdp-code">
+              <span class="pdp-code__label">SKU Livenza</span>
+              <code class="pdp-code__value">{{ sku_livenza }}</code>
+            </div>
+          {%- elsif product.variants.first.sku != blank -%}
+            <div class="pdp-code">
+              <span class="pdp-code__label">SKU</span>
+              <code class="pdp-code__value">{{ product.variants.first.sku }}</code>
+            </div>
+          {%- endif -%}
+          {%- if part_number != blank -%}
+            <div class="pdp-code">
+              <span class="pdp-code__label">Referência OEM</span>
+              <code class="pdp-code__value">{{ part_number }}</code>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <!-- Stock badge -->
+        {%- render 'stock-badge', product: product -%}
+
+        <!-- Quick specs -->
+        {%- assign specs_raw = product.metafields.agro.specs.value -%}
+        {%- if specs_raw != blank -%}
+          <div class="pdp-quick-specs">
+            <h3 class="pdp-quick-specs__title">Especificações Principais</h3>
+            <div class="spec-table spec-table--compact">
+              {%- assign specs = specs_raw | split: '|' -%}
+              {%- for spec in specs limit: 4 -%}
+                {%- assign parts = spec | split: ':' -%}
+                {%- if parts.size >= 2 -%}
+                  <div class="spec-row">
+                    <span class="spec-label">{{ parts[0] | strip }}</span>
+                    <span class="spec-value">{{ parts[1] | strip }}</span>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- CTAs -->
+        <div class="pdp-ctas">
+          <a href="https://wa.me/{{ wa_number }}?text={{ wa_msg | url_encode }}"
+             class="btn btn--whatsapp btn--lg btn--full"
+             target="_blank"
+             rel="noopener">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Consultar Disponibilidade
+          </a>
+          <a href="/pages/cotacao?product={{ product.title | url_encode }}&sku={{ sku_livenza | default: product.variants.first.sku | url_encode }}"
+             class="btn btn--outline btn--lg btn--full">
+            Solicitar Cotação Formal
+          </a>
+        </div>
+
+        <!-- Trust micro -->
+        <div class="pdp-trust">
+          <span>✓ Certificação ISO 9001</span>
+          <span>✓ Frete p/ todo Brasil</span>
+          <span>✓ Suporte técnico</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="pdp-tabs">
+      <div class="tab-nav" role="tablist">
+        <button class="tab-btn is-active" role="tab" aria-selected="true" data-tab="descricao">Descrição</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="especificacoes">Especificações</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="compatibilidade">Compatibilidade</button>
+        {%- assign app_raw = product.metafields.agro.application.value -%}
+        {%- if app_raw != blank -%}
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="aplicacao">Aplicação</button>
+        {%- endif -%}
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="documentos">Documentos</button>
+      </div>
+
+      <!-- Descrição -->
+      <div class="tab-panel is-active" id="tab-descricao" role="tabpanel">
+        <div class="pdp-description">
+          {{ product.description }}
+        </div>
+      </div>
+
+      <!-- Especificações -->
+      <div class="tab-panel" id="tab-especificacoes" role="tabpanel" hidden>
+        {%- if specs_raw != blank -%}
+          <div class="spec-table">
+            {%- assign specs_all = specs_raw | split: '|' -%}
+            {%- for spec in specs_all -%}
+              {%- assign parts = spec | split: ':' -%}
+              {%- if parts.size >= 2 -%}
+                <div class="spec-row">
+                  <span class="spec-label">{{ parts[0] | strip }}</span>
+                  <span class="spec-value">{{ parts[1] | strip }}</span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <p>Especificações detalhadas disponíveis sob consulta. <a href="https://wa.me/{{ wa_number }}" target="_blank" rel="noopener">Fale conosco</a>.</p>
+        {%- endif -%}
+      </div>
+
+      <!-- Compatibilidade -->
+      <div class="tab-panel" id="tab-compatibilidade" role="tabpanel" hidden>
+        {%- assign compat_raw = product.metafields.agro.compatibility.value -%}
+        {%- if compat_raw != blank -%}
+          <div class="compat-grid">
+            {%- assign compat_list = compat_raw | split: '|' -%}
+            {%- for item in compat_list -%}
+              <div class="compat-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ item | strip }}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          {%- for tag in product.tags -%}
+            {%- if tag contains 'compat:' -%}
+              <span class="compat-item">{{ tag | remove: 'compat:' }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          <p class="mt-2">Lista completa de compatibilidade disponível sob consulta.</p>
+        {%- endif -%}
+      </div>
+
+      <!-- Aplicação -->
+      {%- if app_raw != blank -%}
+        <div class="tab-panel" id="tab-aplicacao" role="tabpanel" hidden>
+          <ul class="application-list">
+            {%- assign app_list = app_raw | split: '|' -%}
+            {%- for item in app_list -%}
+              <li>{{ item | strip }}</li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <!-- Documentos -->
+      <div class="tab-panel" id="tab-documentos" role="tabpanel" hidden>
+        <div class="documents-section">
+          <p class="documents-intro">Fichas técnicas e certificações disponíveis mediante solicitação.</p>
+          <a href="https://wa.me/{{ wa_number }}?text={{ 'Olá! Gostaria de solicitar a ficha técnica da peça ' | append: product.title | append: ' (SKU: ' | append: sku_livenza | default: product.variants.first.sku | append: ').' | url_encode }}"
+             class="btn btn--outline"
+             target="_blank" rel="noopener">
+            Solicitar Documentação Técnica
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related products -->
+    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      <div class="pdp-related">
+        <div class="section-header">
+          <h2 class="section-title">Produtos Relacionados</h2>
+        </div>
+        <div class="product-grid product-grid--4">
+          {%- for rec_product in recommendations.products limit: 4 -%}
+            {%- render 'product-card', product: rec_product -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+</div>
+
+<script>
+  // Gallery switcher
+  document.querySelectorAll('.pdp-gallery__thumb').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.getElementById('GalleryMainImg').src = this.dataset.src;
+      document.getElementById('GalleryMainImg').alt = this.dataset.alt;
+      document.querySelectorAll('.pdp-gallery__thumb').forEach(function(b) { b.classList.remove('is-active'); });
+      this.classList.add('is-active');
+    });
+  });
+
+  // Tab switcher
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('is-active'); b.setAttribute('aria-selected', 'false'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('is-active'); p.hidden = true; });
+      this.classList.add('is-active');
+      this.setAttribute('aria-selected', 'true');
+      var panel = document.getElementById('tab-' + tabId);
+      if (panel) { panel.classList.add('is-active'); panel.hidden = false; }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Produto Principal",
+  "settings": []
+}
+{% endschema %}

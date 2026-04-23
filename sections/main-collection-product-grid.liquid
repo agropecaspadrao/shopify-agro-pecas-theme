@@ -1,0 +1,188 @@
+<div class="plp-page">
+  <div class="page-width">
+
+    <!-- Collection header -->
+    <div class="collection-header">
+      {%- if collection.image -%}
+        <div class="collection-header__img">
+          <img src="{{ collection.image | image_url: width: 1400 }}" alt="{{ collection.title }}" width="1400" height="300" loading="eager">
+          <div class="collection-header__overlay"></div>
+        </div>
+      {%- endif -%}
+      <div class="collection-header__body">
+        <h1 class="collection-header__title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <p class="collection-header__desc">{{ collection.description | strip_html }}</p>
+        {%- endif -%}
+        <span class="collection-header__count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'produto', 'produtos' }}</span>
+      </div>
+    </div>
+
+    <div class="plp-layout">
+
+      <!-- Sidebar -->
+      <aside class="plp-sidebar" id="PlpSidebar">
+        <div class="plp-sidebar__inner">
+
+          <!-- Sort -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Ordenar</h3>
+            <select class="filter-select" id="SortSelect" onchange="window.location = this.value">
+              {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+              <option value="{{ collection.url }}?sort_by=manual" {% if sort_by == 'manual' %}selected{% endif %}>Em Destaque</option>
+              <option value="{{ collection.url }}?sort_by=title-ascending" {% if sort_by == 'title-ascending' %}selected{% endif %}>Nome A–Z</option>
+              <option value="{{ collection.url }}?sort_by=title-descending" {% if sort_by == 'title-descending' %}selected{% endif %}>Nome Z–A</option>
+              <option value="{{ collection.url }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
+            </select>
+          </div>
+
+          <!-- Filter by type -->
+          {%- unless collection.all_types == empty -%}
+            <div class="filter-group">
+              <h3 class="filter-group__title">Categoria</h3>
+              <ul class="filter-list">
+                <li><a href="{{ collection.url }}" class="filter-link {% unless current_tags %}is-active{% endunless %}">Todos</a></li>
+                {%- for type in collection.all_types -%}
+                  {%- if type != blank -%}
+                    <li>
+                      <a href="{{ collection.url }}/{{ type | handle }}" class="filter-link {% if current_tags contains type %}is-active{% endif %}">
+                        {{ type }}
+                      </a>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endunless -%}
+
+          <!-- Filter by availability -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Disponibilidade</h3>
+            <ul class="filter-list">
+              <li><a href="{{ collection.url }}" class="filter-link {% unless current_tags contains 'disponivel' or current_tags contains 'baixo-estoque' %}is-active{% endunless %}">Todos</a></li>
+              <li>
+                <a href="{{ collection.url }}/disponivel" class="filter-link {% if current_tags contains 'disponivel' %}is-active{% endif %}">
+                  <span class="stock-dot stock-dot--available"></span> Em Estoque
+                </a>
+              </li>
+              <li>
+                <a href="{{ collection.url }}/baixo-estoque" class="filter-link {% if current_tags contains 'baixo-estoque' %}is-active{% endif %}">
+                  <span class="stock-dot stock-dot--low"></span> Últimas Unidades
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Brands (tags) -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Marca do Trator</h3>
+            <ul class="filter-list">
+              {%- assign brands = 'john-deere,new-holland,massey-ferguson,valtra,valmet' | split: ',' -%}
+              {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra,Valmet' | split: ',' -%}
+              {%- for brand in brands -%}
+                <li>
+                  <a href="{{ collection.url }}/{{ brand }}" class="filter-link {% if current_tags contains brand %}is-active{% endif %}">
+                    {{ brand_labels[forloop.index0] }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Product grid -->
+      <div class="plp-content">
+
+        <!-- Mobile filter toggle -->
+        <div class="plp-toolbar">
+          <button class="btn-filter-toggle" id="FilterToggle" aria-expanded="false" aria-controls="PlpSidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="8" y1="12" x2="20" y2="12"/>
+              <line x1="12" y1="18" x2="20" y2="18"/>
+            </svg>
+            Filtros
+          </button>
+          <span class="plp-count">{{ collection.products_count }} {{ collection.products_count | pluralize: 'produto', 'produtos' }}</span>
+        </div>
+
+        {%- paginate collection.products by section.settings.products_per_page -%}
+          {%- if collection.products.size > 0 -%}
+            <div class="product-grid product-grid--{{ section.settings.columns_desktop }}">
+              {%- for product in collection.products -%}
+                {%- render 'product-card', product: product -%}
+              {%- endfor -%}
+            </div>
+
+            <!-- Pagination -->
+            {%- if paginate.pages > 1 -%}
+              <nav class="pagination" aria-label="Paginação">
+                {%- if paginate.previous -%}
+                  <a href="{{ paginate.previous.url }}" class="pagination__btn">← Anterior</a>
+                {%- endif -%}
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}
+                    <a href="{{ part.url }}" class="pagination__btn">{{ part.title }}</a>
+                  {%- else -%}
+                    <span class="pagination__current">{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if paginate.next -%}
+                  <a href="{{ paginate.next.url }}" class="pagination__btn">Próxima →</a>
+                {%- endif -%}
+              </nav>
+            {%- endif -%}
+          {%- else -%}
+            <div class="empty-state">
+              <p>Nenhum produto encontrado nesta coleção.</p>
+              <a href="{{ routes.root_url }}" class="btn btn--primary">Voltar ao Início</a>
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var filterToggle = document.getElementById('FilterToggle');
+  var sidebar = document.getElementById('PlpSidebar');
+  if (filterToggle && sidebar) {
+    filterToggle.addEventListener('click', function() {
+      var expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !expanded);
+      sidebar.classList.toggle('is-open');
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Grade de Produtos",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 12,
+      "label": "Produtos por página"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Colunas (desktop)",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "3"
+    }
+  ]
+}
+{% endschema %}

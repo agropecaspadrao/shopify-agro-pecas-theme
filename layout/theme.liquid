@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>
+    {%- if template == 'index' -%}
+      {{ shop.name }} — Bombas Hidráulicas e Sensores Agrícolas
+    {%- elsif template == 'product' -%}
+      {{ product.title }} | {{ shop.name }}
+    {%- elsif template == 'collection' -%}
+      {{ collection.title }} | {{ shop.name }}
+    {%- elsif template == 'search' -%}
+      Busca: {{ search.terms }} | {{ shop.name }}
+    {%- else -%}
+      {{ page_title }} | {{ shop.name }}
+    {%- endif -%}
+  </title>
+
+  <meta name="description" content="{%- if page_description -%}{{ page_description | escape }}{%- else -%}Distribuidora especializada em bombas hidráulicas e sensores agrícolas com certificação ISO para tratores John Deere, New Holland, Massey Ferguson, Valtra e Valmet.{%- endif -%}">
+
+  {%- render 'meta-tags' -%}
+
+  {{ content_for_header }}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    :root {
+      --color-primary: {{ settings.color_primary }};
+      --color-primary-dark: {{ settings.color_primary_dark }};
+      --color-accent: {{ settings.color_accent }};
+      --color-text: {{ settings.color_text }};
+      --color-bg: {{ settings.color_bg }};
+    }
+  </style>
+
+  <script>
+    window.waNumber = {{ settings.whatsapp_number | json }};
+    window.waGreeting = {{ settings.whatsapp_greeting | json }};
+    window.shopName = {{ shop.name | json }};
+  </script>
+</head>
+
+<body class="template-{{ template | replace: '.', '-' }}">
+
+  {%- sections 'header-group' -%}
+
+  <main id="MainContent" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {%- sections 'footer-group' -%}
+
+  {{ 'theme.js' | asset_url | script_tag }}
+  {{ 'whatsapp.js' | asset_url | script_tag }}
+
+</body>
+</html>

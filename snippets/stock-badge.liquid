@@ -1,0 +1,29 @@
+{%- liquid
+  assign stock_status = product.metafields.agro.stock_status.value
+  if stock_status == blank
+    if product.available
+      assign stock_status = 'available'
+    else
+      assign stock_status = 'unavailable'
+    endif
+  endif
+-%}
+
+{%- case stock_status -%}
+  {%- when 'available' -%}
+    <span class="stock-badge stock-badge--available" aria-label="Em estoque">
+      <span class="stock-badge__dot"></span> Em Estoque
+    </span>
+  {%- when 'low' -%}
+    <span class="stock-badge stock-badge--low" aria-label="Últimas unidades">
+      <span class="stock-badge__dot"></span> Últimas Unidades
+    </span>
+  {%- when 'unavailable' -%}
+    <span class="stock-badge stock-badge--unavailable" aria-label="Indisponível">
+      <span class="stock-badge__dot"></span> Sob Consulta
+    </span>
+  {%- else -%}
+    <span class="stock-badge stock-badge--available">
+      <span class="stock-badge__dot"></span> Em Estoque
+    </span>
+{%- endcase -%}

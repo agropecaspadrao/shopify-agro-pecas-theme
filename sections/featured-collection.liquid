@@ -1,0 +1,110 @@
+{%- if section.settings.collection != blank -%}
+  {%- assign featured = collections[section.settings.collection] -%}
+{%- endif -%}
+
+<section class="featured-collection section-padding">
+  <div class="page-width">
+    <div class="section-header">
+      <div>
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h2 class="section-title">{{ section.settings.title | default: featured.title | default: 'Produtos em Destaque' }}</h2>
+        {%- if section.settings.description != blank -%}
+          <p class="section-desc">{{ section.settings.description }}</p>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.show_view_all and featured != blank -%}
+        <a href="{{ featured.url }}" class="btn btn--outline">Ver todos →</a>
+      {%- endif -%}
+    </div>
+
+    <div class="product-grid product-grid--{{ section.settings.columns_desktop }}">
+      {%- if featured != blank -%}
+        {%- for product in featured.products limit: section.settings.products_to_show -%}
+          {%- render 'product-card', product: product -%}
+        {%- endfor -%}
+      {%- else -%}
+        <p class="empty-state">Configure uma coleção para exibir os produtos.</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="section-cta">
+        <a href="{{ section.settings.cta_url | default: featured.url }}" class="btn btn--primary btn--lg">
+          {{ section.settings.cta_label }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Coleção em Destaque",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto acima do título"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título da Seção",
+      "default": "Produtos em Destaque"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descrição (opcional)"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Coleção"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "label": "Quantidade de Produtos"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Colunas (desktop)",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Mostrar link 'Ver todos'",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Botão CTA — Texto"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Botão CTA — Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Coleção em Destaque"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,103 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "APP Agro Peças Padrão",
+    "theme_version": "1.0.0",
+    "theme_author": "APP Agro Peças",
+    "theme_documentation_url": "",
+    "theme_support_url": ""
+  },
+  {
+    "name": "Cores",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Cor Primária",
+        "default": "#1B5E20"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_dark",
+        "label": "Cor Primária Escura",
+        "default": "#145218"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Cor de Destaque",
+        "default": "#F57F17"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Cor do Texto",
+        "default": "#1c1917"
+      },
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Cor de Fundo",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "WhatsApp",
+    "settings": [
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "Número WhatsApp (com DDI)",
+        "default": "5541997217541",
+        "info": "Somente números, ex: 5541999999999"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_greeting",
+        "label": "Saudação padrão",
+        "default": "Olá! Gostaria de mais informações sobre"
+      }
+    ]
+  },
+  {
+    "name": "Informações da Loja",
+    "settings": [
+      {
+        "type": "text",
+        "id": "store_cnpj",
+        "label": "CNPJ",
+        "default": "00.000.000/0001-00"
+      },
+      {
+        "type": "text",
+        "id": "store_address",
+        "label": "Endereço",
+        "default": "Curitiba – PR"
+      },
+      {
+        "type": "text",
+        "id": "store_phone",
+        "label": "Telefone",
+        "default": "(41) 99721-7541"
+      },
+      {
+        "type": "email",
+        "id": "store_email",
+        "label": "E-mail",
+        "default": "contato@appagropecas.com.br"
+      }
+    ]
+  },
+  {
+    "name": "Rodapé",
+    "settings": [
+      {
+        "type": "text",
+        "id": "footer_tagline",
+        "label": "Slogan do Rodapé",
+        "default": "Peças hidráulicas e sensores agrícolas com certificação ISO para máquinas do campo."
+      }
+    ]
+  }
+]

@@ -1,0 +1,102 @@
+<div class="search-page">
+  <div class="page-width">
+    <div class="search-header">
+      <h1 class="search-header__title">
+        {%- if search.performed -%}
+          Resultados para "{{ search.terms }}"
+        {%- else -%}
+          Buscar Peças
+        {%- endif -%}
+      </h1>
+
+      <form action="{{ routes.search_url }}" method="get" class="search-page__form" role="search">
+        <input type="hidden" name="type" value="product">
+        <div class="search-page__input-wrap">
+          <input
+            type="search"
+            name="q"
+            class="search-page__input"
+            placeholder="Nome, SKU, referência OEM, modelo do trator..."
+            value="{{ search.terms | escape }}"
+            aria-label="Buscar"
+            autofocus
+          >
+          <button type="submit" class="btn btn--primary">Buscar</button>
+        </div>
+      </form>
+    </div>
+
+    {%- if search.performed -%}
+      {%- if search.results_count > 0 -%}
+        <p class="search-count">{{ search.results_count }} {{ search.results_count | pluralize: 'resultado encontrado', 'resultados encontrados' }}</p>
+        <div class="product-grid product-grid--3">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {%- render 'product-card', product: item -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if search.pages_count > 1 -%}
+          {%- paginate search.results by 12 -%}
+            <nav class="pagination" aria-label="Paginação">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="pagination__btn">← Anterior</a>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="pagination__btn">{{ part.title }}</a>
+                {%- else -%}
+                  <span class="pagination__current">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="pagination__btn">Próxima →</a>
+              {%- endif -%}
+            </nav>
+          {%- endpaginate -%}
+        {%- endif -%}
+      {%- else -%}
+        <div class="search-empty">
+          <div class="search-empty__icon">🔍</div>
+          <h2>Nenhum resultado para "{{ search.terms }}"</h2>
+          <p>Tente buscar pelo modelo do trator, número OEM ou parte do nome da peça.</p>
+          <div class="search-empty__tips">
+            <p><strong>Dicas de busca:</strong></p>
+            <ul>
+              <li>Use o número de série do trator: ex. "6620", "T6.120", "4299"</li>
+              <li>Número OEM do fabricante: ex. "RE73947", "FONN600BB"</li>
+              <li>SKU Livenza: ex. "5.1305.0565071"</li>
+              <li>Marca: "john deere", "new holland", "massey"</li>
+            </ul>
+          </div>
+          <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Não encontrei a peça que preciso no site. Estou buscando por: ' | append: search.terms | url_encode }}"
+             class="btn btn--whatsapp btn--lg"
+             target="_blank" rel="noopener">
+            Buscar via WhatsApp
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <!-- No search performed yet -->
+      <div class="search-placeholder">
+        <p>Use a busca acima para encontrar peças pelo modelo do trator, SKU ou referência OEM.</p>
+        <div class="search-categories">
+          <h3>Navegar por Categoria</h3>
+          <div class="search-category-links">
+            <a href="/collections/bombas-hidraulicas" class="search-category-link">Bombas Hidráulicas</a>
+            <a href="/collections/sensores-agricolas" class="search-category-link">Sensores Agrícolas</a>
+            <a href="/collections" class="search-category-link">Ver Todas</a>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Página de Busca",
+  "settings": []
+}
+{% endschema %}

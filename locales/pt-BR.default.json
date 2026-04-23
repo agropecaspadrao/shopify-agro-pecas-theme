@@ -1,0 +1,44 @@
+{
+  "general": {
+    "search": {
+      "search": "Buscar",
+      "placeholder": "Buscar produtos...",
+      "no_results": "Nenhum resultado encontrado.",
+      "results_with_count": {
+        "one": "{{ count }} resultado",
+        "other": "{{ count }} resultados"
+      }
+    },
+    "pagination": {
+      "previous": "← Anterior",
+      "next": "Próximo →"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Consultar",
+      "sold_out": "Sob Consulta",
+      "unavailable": "Indisponível"
+    },
+    "general": {
+      "vendor": "Fabricante",
+      "sku": "SKU",
+      "sale": "Promoção"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Cotação",
+      "empty": "Sua lista de cotação está vazia.",
+      "checkout": "Solicitar Cotação",
+      "subtotal": "Total"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Ir para o conteúdo principal",
+    "close": "Fechar",
+    "open_menu": "Abrir menu",
+    "close_menu": "Fechar menu",
+    "open_search": "Abrir busca"
+  }
+}

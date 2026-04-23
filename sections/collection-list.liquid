@@ -1,0 +1,135 @@
+<section class="collection-list section-padding {% if section.settings.bg_dark %}section--dark{% endif %}">
+  <div class="page-width">
+    <div class="section-header section-header--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      <h2 class="section-title">{{ section.settings.title }}</h2>
+      {%- if section.settings.description != blank -%}
+        <p class="section-desc">{{ section.settings.description }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="collection-cards collection-cards--{{ section.blocks.size }}">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'collection_card' -%}
+          {%- assign col = collections[block.settings.collection] -%}
+          <a href="{{ col.url | default: block.settings.custom_url | default: '#' }}" class="collection-card" {{ block.shopify_attributes }}>
+            <div class="collection-card__img">
+              {%- if block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
+              {%- elsif col != blank and col.image != blank -%}
+                <img src="{{ col.image | image_url: width: 600 }}" alt="{{ col.title }}" width="600" height="400" loading="lazy">
+              {%- else -%}
+                <div class="collection-card__placeholder"></div>
+              {%- endif -%}
+              <div class="collection-card__overlay"></div>
+            </div>
+            <div class="collection-card__body">
+              <h3 class="collection-card__title">{{ block.settings.title | default: col.title }}</h3>
+              {%- if block.settings.description != blank -%}
+                <p class="collection-card__desc">{{ block.settings.description }}</p>
+              {%- elsif col != blank -%}
+                <p class="collection-card__desc">{{ col.description | strip_html | truncate: 100 }}</p>
+              {%- endif -%}
+              <span class="collection-card__cta">{{ block.settings.cta_label | default: 'Ver Produtos' }} →</span>
+            </div>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Lista de Categorias",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto acima do título",
+      "default": "Nosso Catálogo"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Categorias de Produtos"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descrição"
+    },
+    {
+      "type": "checkbox",
+      "id": "bg_dark",
+      "label": "Fundo Escuro",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Categoria",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Coleção"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagem (substitui a da coleção)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título (substitui o da coleção)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Descrição"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "Texto do botão",
+          "default": "Ver Produtos"
+        },
+        {
+          "type": "url",
+          "id": "custom_url",
+          "label": "Link customizado (opcional)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lista de Categorias",
+      "blocks": [
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "Bombas Hidráulicas",
+            "description": "Bombas para John Deere, New Holland, Massey Ferguson, Valtra e Valmet com certificação ISO.",
+            "cta_label": "Ver Bombas"
+          }
+        },
+        {
+          "type": "collection_card",
+          "settings": {
+            "title": "Sensores Agrícolas",
+            "description": "Sensores de fluxo e sementes para plantadeiras de precisão.",
+            "cta_label": "Ver Sensores"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

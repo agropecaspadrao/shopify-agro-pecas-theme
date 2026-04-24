@@ -74,6 +74,7 @@
         <ul class="header-nav__list">
           <li><a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a></li>
           <li><a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a></li>
+          <li><a href="{{ routes.root_url }}collections/all" {% if collection.handle == 'all' %}aria-current="page"{% endif %}>Produtos</a></li>
           <li><a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a></li>
         </ul>
       </div>
@@ -94,6 +95,7 @@
     <nav class="mobile-menu__nav">
       <a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a>
       <a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a>
+      <a href="{{ routes.root_url }}collections/all" {% if collection.handle == 'all' %}aria-current="page"{% endif %}>Produtos</a>
       <a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a>
     </nav>
     <div class="mobile-menu__footer">

@@ -1,0 +1,669 @@
+{% comment %} Página — Todos os Produtos {% endcomment %}
+
+<style>
+  /* ── HERO ── */
+  .ap-hero {
+    background: var(--color-primary, #1a3a1a);
+    position: relative;
+    overflow: hidden;
+    padding: 52px 24px 60px;
+  }
+
+  .ap-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 90% at 5% 50%, rgba(200,168,75,0.09) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 70% at 95% 50%, rgba(44,92,44,0.55) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .ap-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8a84b' stroke-width='0.5' opacity='0.07'%3E%3Cellipse cx='28' cy='7' rx='3' ry='6'/%3E%3Cellipse cx='21' cy='17' rx='2.5' ry='5.5' transform='rotate(-25 21 17)'/%3E%3Cellipse cx='35' cy='17' rx='2.5' ry='5.5' transform='rotate(25 35 17)'/%3E%3Cline x1='28' y1='12' x2='28' y2='50' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 56px 56px;
+    pointer-events: none;
+  }
+
+  .ap-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .ap-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,168,75,0.14);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 100px;
+    padding: 5px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin-bottom: 18px;
+  }
+
+  .ap-hero__title {
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.08;
+    color: #f5eedc;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .ap-hero__title em {
+    font-style: italic;
+    color: #c8a84b;
+    text-transform: none;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05em;
+  }
+
+  .ap-hero__sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(245,238,220,0.6);
+    margin: 0 0 28px;
+    line-height: 1.6;
+  }
+
+  /* search bar inside hero */
+  .ap-hero__search {
+    display: flex;
+    max-width: 520px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
+  }
+
+  .ap-hero__search input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #f5eedc;
+    font-family: var(--font-body, 'Barlow', sans-serif);
+  }
+
+  .ap-hero__search input::placeholder { color: rgba(245,238,220,0.35); }
+
+  .ap-hero__search button {
+    background: #c8a84b;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    color: #1a3a1a;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+  }
+
+  .ap-hero__search button:hover { background: #d9b95a; }
+  .ap-hero__search button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; }
+
+  /* ── STATS BAR ── */
+  .ap-stats {
+    background: #fff;
+    border-bottom: 1px solid #d8e4d8;
+  }
+
+  .ap-stats__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .ap-stats__inner::-webkit-scrollbar { display: none; }
+
+  .ap-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    border-right: 1px solid #d8e4d8;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ap-stat:last-child { border-right: none; }
+
+  .ap-stat__icon {
+    width: 32px;
+    height: 32px;
+    background: #e8f0e8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ap-stat__icon svg { width: 16px; height: 16px; fill: none; stroke: #2c5c2c; stroke-width: 1.8; }
+
+  .ap-stat__val {
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a3a1a;
+    line-height: 1;
+  }
+
+  .ap-stat__label {
+    font-size: 11px;
+    color: #5a6b5a;
+    margin-top: 2px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .ap-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 36px 24px 64px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── SIDEBAR ── */
+  .ap-sidebar {
+    position: sticky;
+    top: 16px;
+    background: #fff;
+    border: 1px solid #d8e4d8;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .ap-sidebar__header {
+    background: #1a3a1a;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ap-sidebar__header svg { width: 15px; height: 15px; fill: none; stroke: #c8a84b; stroke-width: 2; }
+
+  .ap-sidebar__header span {
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f5eedc;
+  }
+
+  .ap-filter-group {
+    padding: 16px 18px;
+    border-bottom: 1px solid #d8e4d8;
+  }
+
+  .ap-filter-group:last-child { border-bottom: none; }
+
+  .ap-filter-group__title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #5a6b5a;
+    margin: 0 0 10px;
+  }
+
+  .ap-filter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ap-filter-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    color: #3a4a3a;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .ap-filter-link:hover { background: #e8f0e8; color: #1a3a1a; }
+
+  .ap-filter-link.is-active {
+    background: #1a3a1a;
+    color: #f5eedc;
+    font-weight: 600;
+  }
+
+  .ap-filter-link .count {
+    font-size: 11px;
+    opacity: 0.55;
+    font-weight: 400;
+  }
+
+  .ap-filter-link.is-active .count { opacity: 0.6; }
+
+  .ap-sort-select {
+    width: 100%;
+    font-family: var(--font-body, 'Barlow', sans-serif);
+    font-size: 13px;
+    color: #1c2b1c;
+    background: #faf8f4;
+    border: 1px solid #d8e4d8;
+    border-radius: 7px;
+    padding: 9px 12px;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6b5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    transition: border-color 0.2s;
+  }
+
+  .ap-sort-select:focus { border-color: #2c5c2c; }
+
+  /* stock dot */
+  .ap-stock-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    display: inline-block; margin-right: 6px;
+  }
+  .ap-stock-dot--in  { background: #22c55e; }
+  .ap-stock-dot--low { background: #f59e0b; }
+
+  /* ── CONTENT ── */
+  .ap-content {}
+
+  .ap-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .ap-toolbar__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ap-count {
+    font-size: 13px;
+    color: #5a6b5a;
+  }
+
+  .ap-count strong { color: #1a3a1a; }
+
+  .ap-active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ap-active-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e8f0e8;
+    color: #1a3a1a;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    text-decoration: none;
+    border: 1px solid #c8dcc8;
+  }
+
+  .ap-active-filter svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+  .ap-btn-filter-toggle {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    background: #1a3a1a;
+    color: #f5eedc;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .ap-btn-filter-toggle svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+  /* product grid usa classes existentes do tema */
+  .ap-empty {
+    text-align: center;
+    padding: 64px 24px;
+    color: #5a6b5a;
+  }
+
+  .ap-empty svg { width: 48px; height: 48px; fill: none; stroke: #c8dcc8; stroke-width: 1.2; margin-bottom: 16px; }
+  .ap-empty h3 { font-size: 18px; color: #1a3a1a; margin: 0 0 8px; }
+  .ap-empty p  { font-size: 14px; margin: 0 0 20px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .ap-body { grid-template-columns: 1fr; padding: 24px 16px 48px; }
+
+    .ap-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 280px;
+      z-index: 200;
+      border-radius: 0;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .ap-sidebar.is-open { transform: translateX(0); box-shadow: 0 0 0 100vw rgba(0,0,0,0.4); }
+
+    .ap-btn-filter-toggle { display: flex; }
+  }
+</style>
+
+{%- comment -%}── HERO ──{%- endcomment -%}
+<div class="ap-hero">
+  <div class="ap-hero__inner">
+    <div class="ap-hero__eyebrow">Catálogo completo</div>
+    <h1 class="ap-hero__title">Todos os <em>Produtos</em></h1>
+    <p class="ap-hero__sub">
+      Bombas hidráulicas e sensores agrícolas originais LIVENZA.<br>
+      Compatíveis com John Deere, New Holland, Massey Ferguson, Valtra e Valmet.
+    </p>
+    <form class="ap-hero__search" action="{{ routes.search_url }}" method="get">
+      <input type="hidden" name="type" value="product">
+      <input type="search" name="q" placeholder="Buscar por modelo, SKU ou OEM..." autocomplete="off">
+      <button type="submit" aria-label="Buscar">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+{%- comment -%}── STATS BAR ──{%- endcomment -%}
+{%- assign all_products = collections.all -%}
+<div class="ap-stats">
+  <div class="ap-stats__inner">
+    <div class="ap-stat">
+      <div class="ap-stat__icon">
+        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      </div>
+      <div>
+        <div class="ap-stat__val">{{ all_products.products_count }}</div>
+        <div class="ap-stat__label">produtos disponíveis</div>
+      </div>
+    </div>
+    <div class="ap-stat">
+      <div class="ap-stat__icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <div class="ap-stat__val">ISO</div>
+        <div class="ap-stat__label">9001 · 14001 · 18001</div>
+      </div>
+    </div>
+    <div class="ap-stat">
+      <div class="ap-stat__icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div>
+        <div class="ap-stat__val">24h</div>
+        <div class="ap-stat__label">despacho em estoque</div>
+      </div>
+    </div>
+    <div class="ap-stat">
+      <div class="ap-stat__icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+      <div>
+        <div class="ap-stat__val">Cotação</div>
+        <div class="ap-stat__label">sem compromisso</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%}── BODY ──{%- endcomment -%}
+<div class="ap-body">
+
+  {%- comment -%}── SIDEBAR ──{%- endcomment -%}
+  <aside class="ap-sidebar" id="ApSidebar">
+    <div class="ap-sidebar__header">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/></svg>
+      <span>Filtros</span>
+    </div>
+
+    {%- comment -%} Ordenar {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Ordenar por</p>
+      {%- assign sort_by = collection.sort_by | default: 'manual' -%}
+      <select class="ap-sort-select" onchange="window.location = this.value">
+        <option value="{{ routes.all_products_collection_url }}?sort_by=manual"             {% if sort_by == 'manual'             %}selected{% endif %}>Em Destaque</option>
+        <option value="{{ routes.all_products_collection_url }}?sort_by=title-ascending"    {% if sort_by == 'title-ascending'    %}selected{% endif %}>Nome A–Z</option>
+        <option value="{{ routes.all_products_collection_url }}?sort_by=title-descending"   {% if sort_by == 'title-descending'   %}selected{% endif %}>Nome Z–A</option>
+        <option value="{{ routes.all_products_collection_url }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
+      </select>
+    </div>
+
+    {%- comment -%} Categorias / coleções {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Categoria</p>
+      <ul class="ap-filter-list">
+        <li>
+          <a href="{{ routes.all_products_collection_url }}"
+             class="ap-filter-link {% unless current_tags %}is-active{% endunless %}">
+            Todas as categorias
+            <span class="count">{{ all_products.products_count }}</span>
+          </a>
+        </li>
+        {%- for col in collections -%}
+          {%- unless col.handle == 'frontpage' or col.handle == 'all' -%}
+            <li>
+              <a href="{{ col.url }}" class="ap-filter-link">
+                {{ col.title }}
+                <span class="count">{{ col.products_count }}</span>
+              </a>
+            </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    {%- comment -%} Disponibilidade {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Disponibilidade</p>
+      <ul class="ap-filter-list">
+        <li>
+          <a href="{{ routes.all_products_collection_url }}"
+             class="ap-filter-link {% unless current_tags contains 'disponivel' or current_tags contains 'baixo-estoque' %}is-active{% endunless %}">
+            Todos
+          </a>
+        </li>
+        <li>
+          <a href="{{ routes.all_products_collection_url }}/disponivel"
+             class="ap-filter-link {% if current_tags contains 'disponivel' %}is-active{% endif %}">
+            <span class="ap-stock-dot ap-stock-dot--in"></span>Em Estoque
+          </a>
+        </li>
+        <li>
+          <a href="{{ routes.all_products_collection_url }}/baixo-estoque"
+             class="ap-filter-link {% if current_tags contains 'baixo-estoque' %}is-active{% endif %}">
+            <span class="ap-stock-dot ap-stock-dot--low"></span>Últimas Unidades
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {%- comment -%} Compatibilidade {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Marca do Trator</p>
+      {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,valmet' | split: ',' -%}
+      {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra,Valmet'  | split: ',' -%}
+      <ul class="ap-filter-list">
+        {%- for brand in brands -%}
+          <li>
+            <a href="{{ routes.all_products_collection_url }}/{{ brand }}"
+               class="ap-filter-link {% if current_tags contains brand %}is-active{% endif %}">
+              {{ brand_labels[forloop.index0] }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    {%- comment -%} Limpar filtros {%- endcomment -%}
+    {%- if current_tags -%}
+      <div class="ap-filter-group">
+        <a href="{{ routes.all_products_collection_url }}" class="ap-filter-link" style="color:#b91c1c;">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Limpar filtros
+        </a>
+      </div>
+    {%- endif -%}
+  </aside>
+
+  {%- comment -%}── CONTENT ──{%- endcomment -%}
+  <div class="ap-content">
+
+    <div class="ap-toolbar">
+      <div class="ap-toolbar__left">
+        <button class="ap-btn-filter-toggle" id="ApFilterToggle" aria-expanded="false" aria-controls="ApSidebar">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/></svg>
+          Filtros
+        </button>
+        <span class="ap-count">
+          <strong>{{ all_products.products_count }}</strong> produtos encontrados
+        </span>
+      </div>
+      {%- if current_tags -%}
+        <div class="ap-active-filters">
+          {%- for tag in current_tags -%}
+            <a href="{{ routes.all_products_collection_url }}" class="ap-active-filter">
+              {{ tag }}
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- paginate all_products.products by section.settings.products_per_page -%}
+      {%- if all_products.products.size > 0 -%}
+        <div class="product-grid product-grid--{{ section.settings.columns_desktop }}">
+          {%- for product in all_products.products -%}
+            {%- render 'product-card', product: product -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="Paginação" style="margin-top:40px;">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="pagination__btn">← Anterior</a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" class="pagination__btn">{{ part.title }}</a>
+              {%- else -%}
+                <span class="pagination__current">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="pagination__btn">Próxima →</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+
+      {%- else -%}
+        <div class="ap-empty">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente remover os filtros ou buscar por outro termo.</p>
+          <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">Ver todos os produtos</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var toggle = document.getElementById('ApFilterToggle');
+    var sidebar = document.getElementById('ApSidebar');
+    if (!toggle || !sidebar) return;
+
+    toggle.addEventListener('click', function () {
+      var open = sidebar.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+
+    // fechar ao clicar no overlay (shadow)
+    sidebar.addEventListener('click', function (e) {
+      if (e.target === sidebar) {
+        sidebar.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', false);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Todos os Produtos",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "label": "Produtos por página"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Colunas (desktop)",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "3"
+    }
+  ]
+}
+{% endschema %}

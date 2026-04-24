@@ -533,6 +533,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   flex-direction: column;
   flex: 1;
   gap: 8px;
+  text-align: left;
 }
 .product-card__type {
   font-family: var(--font-display);

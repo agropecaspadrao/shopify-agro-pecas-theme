@@ -1,9 +1,96 @@
 <style>
-  /* reutiliza .auth-* do main-login */
+  /* reutiliza .auth-* do main-login, adiciona estilos para campos extras */
+  .auth-box--wide { max-width: 640px; }
+
+  .auth-section-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 24px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .auth-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .auth-row-3 {
+    display: grid;
+    grid-template-columns: 120px 1fr 80px;
+    gap: 14px;
+  }
+
+  @media (max-width: 540px) {
+    .auth-row-2, .auth-row-3 { grid-template-columns: 1fr; }
+  }
+
+  .auth-field select {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6b5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    transition: border-color 0.2s;
+  }
+
+  .auth-field select:focus { border-color: var(--color-primary); }
+
+  .auth-lgpd {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(200,168,75,0.07);
+    border: 1px solid rgba(200,168,75,0.25);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-top: 8px;
+  }
+
+  .auth-lgpd input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .auth-lgpd__text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  .auth-lgpd__text a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .auth-hint {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+  }
 </style>
 
 <div class="auth-page">
-  <div class="auth-box">
+  <div class="auth-box auth-box--wide">
     <span class="auth-box__eyebrow">Nova conta</span>
     <h1 class="auth-box__title">Criar <em>cadastro</em></h1>
 
@@ -16,29 +103,185 @@
     {%- endif -%}
 
     {%- form 'create_customer' -%}
-      <div class="auth-field">
-        <label for="FirstName">Nome</label>
-        <input type="text" name="customer[first_name]" id="FirstName" autocomplete="given-name" placeholder="Seu nome" required>
+
+      <p class="auth-section-title">Dados Pessoais</p>
+
+      <div class="auth-row-2">
+        <div class="auth-field">
+          <label for="FirstName">Nome <span style="color:var(--color-accent)">*</span></label>
+          <input type="text" name="customer[first_name]" id="FirstName" autocomplete="given-name" placeholder="Seu nome" required value="{{ form.first_name }}">
+        </div>
+        <div class="auth-field">
+          <label for="LastName">Sobrenome <span style="color:var(--color-accent)">*</span></label>
+          <input type="text" name="customer[last_name]" id="LastName" autocomplete="family-name" placeholder="Seu sobrenome" required value="{{ form.last_name }}">
+        </div>
       </div>
-      <div class="auth-field">
-        <label for="LastName">Sobrenome</label>
-        <input type="text" name="customer[last_name]" id="LastName" autocomplete="family-name" placeholder="Seu sobrenome">
+
+      <div class="auth-row-2">
+        <div class="auth-field">
+          <label for="RegisterCpf">CPF</label>
+          <input type="text" name="customer[note][cpf]" id="RegisterCpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off">
+          <p class="auth-hint">Necessário para emissão de nota fiscal.</p>
+        </div>
+        <div class="auth-field">
+          <label for="RegisterPhone">Telefone / WhatsApp</label>
+          <input type="tel" name="customer[phone]" id="RegisterPhone" autocomplete="tel" placeholder="(41) 9 0000-0000">
+        </div>
       </div>
+
       <div class="auth-field">
-        <label for="RegisterEmail">E-mail</label>
-        <input type="email" name="customer[email]" id="RegisterEmail" autocomplete="email" placeholder="seu@email.com.br" required>
+        <label for="RegisterCompany">Empresa / Razão Social</label>
+        <input type="text" name="customer[note][empresa]" id="RegisterCompany" placeholder="Nome da empresa ou propriedade rural (opcional)">
       </div>
+
       <div class="auth-field">
-        <label for="RegisterPassword">Senha</label>
-        <input type="password" name="customer[password]" id="RegisterPassword" autocomplete="new-password" placeholder="Mínimo 8 caracteres" minlength="8" required>
+        <label for="RegisterEmail">E-mail <span style="color:var(--color-accent)">*</span></label>
+        <input type="email" name="customer[email]" id="RegisterEmail" autocomplete="email" placeholder="seu@email.com.br" required value="{{ form.email }}">
       </div>
-      <button type="submit" class="auth-submit" style="margin-top:8px;">Criar conta</button>
+
+      <div class="auth-row-2">
+        <div class="auth-field">
+          <label for="RegisterPassword">Senha <span style="color:var(--color-accent)">*</span></label>
+          <input type="password" name="customer[password]" id="RegisterPassword" autocomplete="new-password" placeholder="Mínimo 8 caracteres" minlength="8" required>
+        </div>
+        <div class="auth-field">
+          <label for="RegisterPasswordConfirm">Confirmar Senha <span style="color:var(--color-accent)">*</span></label>
+          <input type="password" id="RegisterPasswordConfirm" autocomplete="new-password" placeholder="Repita a senha" minlength="8" required>
+        </div>
+      </div>
+
+      <p class="auth-section-title">Endereço de Entrega</p>
+
+      <div class="auth-row-2">
+        <div class="auth-field">
+          <label for="RegisterCep">CEP <span style="color:var(--color-accent)">*</span></label>
+          <input type="text" name="customer[note][cep]" id="RegisterCep" placeholder="00000-000" maxlength="9" required>
+        </div>
+        <div class="auth-field">
+          <label for="RegisterEstado">Estado <span style="color:var(--color-accent)">*</span></label>
+          <select name="customer[note][estado]" id="RegisterEstado" required>
+            <option value="">Selecione</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label for="RegisterCidade">Cidade <span style="color:var(--color-accent)">*</span></label>
+        <input type="text" name="customer[note][cidade]" id="RegisterCidade" placeholder="Sua cidade" required>
+      </div>
+
+      <div class="auth-row-3">
+        <div class="auth-field">
+          <label for="RegisterNumero">Número</label>
+          <input type="text" name="customer[note][numero]" id="RegisterNumero" placeholder="123">
+        </div>
+        <div class="auth-field">
+          <label for="RegisterRua">Rua / Avenida <span style="color:var(--color-accent)">*</span></label>
+          <input type="text" name="customer[note][rua]" id="RegisterRua" placeholder="Nome da rua ou estrada" required>
+        </div>
+        <div class="auth-field">
+          <label for="RegisterComplemento">Compl.</label>
+          <input type="text" name="customer[note][complemento]" id="RegisterComplemento" placeholder="Ap., Sala...">
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label for="RegisterBairro">Bairro / Localidade</label>
+        <input type="text" name="customer[note][bairro]" id="RegisterBairro" placeholder="Bairro ou região">
+      </div>
+
+      <p class="auth-section-title">Privacidade (LGPD)</p>
+
+      <div class="auth-lgpd">
+        <input type="checkbox" name="customer[note][lgpd_optin]" id="LgpdOptin" value="sim" required>
+        <label for="LgpdOptin" class="auth-lgpd__text">
+          <strong>Concordo com o tratamento dos meus dados pessoais</strong> conforme a
+          <a href="/policies/privacy-policy" target="_blank">Política de Privacidade</a> da Agro Peças Padrão.
+          Meus dados serão utilizados exclusivamente para fins comerciais, atendimento e emissão de documentos fiscais,
+          em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.
+          Posso solicitar a exclusão dos meus dados a qualquer momento pelo e-mail
+          <a href="mailto:comercial@agropecaspadrao.com">comercial@agropecaspadrao.com</a>.
+        </label>
+      </div>
+
+      <div class="auth-lgpd" style="margin-top:10px; background:rgba(26,58,26,0.04); border-color:rgba(26,58,26,0.15);">
+        <input type="checkbox" name="customer[accepts_marketing]" id="MarketingOptin" value="1">
+        <label for="MarketingOptin" class="auth-lgpd__text">
+          Desejo receber ofertas, novidades e informações sobre produtos da Agro Peças Padrão por e-mail.
+          <em>(opcional)</em>
+        </label>
+      </div>
+
+      <button type="submit" class="auth-submit" style="margin-top:20px;" id="RegisterBtn">Criar conta</button>
     {%- endform -%}
 
     <div class="auth-divider">já tem conta?</div>
     <a href="{{ routes.account_login_url }}" class="auth-link-btn">Entrar</a>
   </div>
 </div>
+
+<script>
+(function () {
+  var cpfInput = document.getElementById('RegisterCpf');
+  if (cpfInput) {
+    cpfInput.addEventListener('input', function () {
+      var v = this.value.replace(/\D/g, '').slice(0, 11);
+      v = v.replace(/(\d{3})(\d)/, '$1.$2');
+      v = v.replace(/(\d{3})(\d)/, '$1.$2');
+      v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      this.value = v;
+    });
+  }
+
+  var cepInput = document.getElementById('RegisterCep');
+  if (cepInput) {
+    cepInput.addEventListener('blur', function () {
+      var cep = this.value.replace(/\D/g, '');
+      if (cep.length !== 8) return;
+      fetch('https://viacep.com.br/ws/' + cep + '/json/')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.erro) return;
+          var rua = document.getElementById('RegisterRua');
+          var bairro = document.getElementById('RegisterBairro');
+          var cidade = document.getElementById('RegisterCidade');
+          var estado = document.getElementById('RegisterEstado');
+          if (rua && !rua.value) rua.value = d.logradouro || '';
+          if (bairro && !bairro.value) bairro.value = d.bairro || '';
+          if (cidade && !cidade.value) cidade.value = d.localidade || '';
+          if (estado) estado.value = d.uf || '';
+        })
+        .catch(function () {});
+    });
+
+    cepInput.addEventListener('input', function () {
+      var v = this.value.replace(/\D/g, '').slice(0, 8);
+      if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+      this.value = v;
+    });
+  }
+
+  var form = document.querySelector('[action="{{ routes.account_url }}"]');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      var pwd = document.getElementById('RegisterPassword');
+      var conf = document.getElementById('RegisterPasswordConfirm');
+      if (pwd && conf && pwd.value !== conf.value) {
+        e.preventDefault();
+        alert('As senhas não coincidem. Verifique e tente novamente.');
+        conf.focus();
+      }
+    });
+  }
+})();
+</script>
 
 {% schema %}
 {

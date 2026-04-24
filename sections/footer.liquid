@@ -14,7 +14,7 @@
     gap: 40px;
   }
   @media (min-width: 900px) {
-    .footer-grid { grid-template-columns: 1.6fr 1fr 1.4fr 1.2fr; gap: 48px; align-items: start; }
+    .footer-grid { grid-template-columns: 1.6fr 1fr 1.4fr; gap: 48px; align-items: start; }
   }
 
   /* ── COLUNA MARCA ── */
@@ -151,42 +151,6 @@
   .pay-icon--pix { color: #32bcad; border-color: rgba(50,188,173,.3); background: rgba(50,188,173,.08); }
   .pay-icon--paypal { color: #009cde; border-color: rgba(0,156,222,.3); background: rgba(0,156,222,.08); }
 
-  /* ── COLUNA LOGO GRANDE ── */
-  .footer-logo-col {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  @media (min-width: 900px) { .footer-logo-col { align-items: flex-end; } }
-  .footer-logo-big img {
-    width: auto;
-    max-width: 220px;
-    max-height: 120px;
-    filter: brightness(0) invert(1);
-    opacity: 0.9;
-  }
-  .footer-logo-big__text {
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 32px;
-    line-height: 1.05;
-    color: #fff;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    text-align: right;
-    max-width: 220px;
-  }
-  .footer-logo-big__text span { color: #F57F17; display: block; }
-  .footer-logo-big__sub {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,.4);
-    margin-top: 8px;
-    text-align: right;
-  }
-
   /* ── RODAPÉ INFERIOR ── */
   .footer-bottom {
     border-top: 1px solid rgba(255,255,255,.1);
@@ -224,11 +188,7 @@
       <!-- 1. MARCA + WA + SOCIAL -->
       <div class="footer-brand">
         <div class="footer-logo">
-          {%- if section.settings.logo != blank -%}
-            <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" width="160" loading="lazy">
-          {%- else -%}
-            <span class="footer-logo__text">{{ shop.name }}</span>
-          {%- endif -%}
+          <img src="{{ 'logo-branca.png' | asset_url }}" alt="{{ shop.name }}" width="160" height="auto" loading="lazy">
         </div>
 
         <p class="footer-tagline">Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado.</p>
@@ -358,20 +318,6 @@
         </div>
       </div>
 
-      <!-- 4. LOGO GRANDE -->
-      <div class="footer-logo-col">
-        <div class="footer-logo-big">
-          {%- if section.settings.logo != blank -%}
-            <img src="{{ section.settings.logo | image_url: width: 440 }}" alt="{{ shop.name }}" loading="lazy">
-          {%- else -%}
-            <div class="footer-logo-big__text">
-              Agro<span>Peças</span>
-            </div>
-            <p class="footer-logo-big__sub">Padrão</p>
-          {%- endif -%}
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -396,11 +342,6 @@
 {
   "name": "Rodapé",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo no Rodapé"
-    },
     {
       "type": "header",
       "content": "Redes Sociais"

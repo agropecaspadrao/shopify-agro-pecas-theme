@@ -1,47 +1,72 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "image-banner": {
       "type": "image-banner",
-      "settings": {
-        "eyebrow": "Distribuidor Oficial LIVENZA • Certificação ISO 9001",
-        "title": "Bombas Hidráulicas e Sensores para o Campo",
-        "subtitle": "Peças originais para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
-        "overlay_opacity": 55,
-        "cta_primary_label": "Ver Catálogo Completo",
-        "cta_primary_url": "/collections/all",
-        "cta_wa_label": "Pedir Cotação"
-      },
       "blocks": {
         "trust1": {
           "type": "trust_item",
-          "settings": { "icon": "🏆", "text": "ISO 9001 / 14001 / 18001" }
+          "settings": {
+            "icon": "🏆",
+            "text": "ISO 9001 / 14001 / 18001"
+          }
         },
         "trust2": {
           "type": "trust_item",
-          "settings": { "icon": "🚚", "text": "Entrega p/ todo Brasil" }
+          "settings": {
+            "icon": "🚚",
+            "text": "Entrega p/ todo Brasil"
+          }
         },
         "trust3": {
           "type": "trust_item",
-          "settings": { "icon": "📦", "text": "Estoque Disponível" }
+          "settings": {
+            "icon": "📦",
+            "text": "Estoque Disponível"
+          }
         },
         "trust4": {
           "type": "trust_item",
-          "settings": { "icon": "🔧", "text": "Suporte Técnico" }
+          "settings": {
+            "icon": "🔧",
+            "text": "Suporte Técnico"
+          }
         }
       },
-      "block_order": ["trust1", "trust2", "trust3", "trust4"]
+      "block_order": [
+        "trust1",
+        "trust2",
+        "trust3",
+        "trust4"
+      ],
+      "settings": {
+        "overlay_opacity": 55,
+        "full_height": false,
+        "eyebrow": "Distribuidor Oficial LIVENZA • Certificação ISO 9001",
+        "title": "Bombas Hidráulicas e Sensores para o Campo",
+        "subtitle": "Peças originais para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
+        "cta_primary_label": "Ver Catálogo Completo",
+        "cta_primary_url": "/collections/all",
+        "cta_wa_label": "Pedir Cotação"
+      }
     },
     "collection-list": {
       "type": "collection-list",
-      "settings": {
-        "eyebrow": "Nosso Catálogo",
-        "title": "Categorias de Produtos",
-        "description": "Especialistas em bombas hidráulicas e sensores agrícolas de precisão."
-      },
       "blocks": {
         "cat-bombas": {
           "type": "collection_card",
           "settings": {
+            "collection": "",
+            "asset_image": "",
+            "image": "shopify://shop_images/Livenza_5.0220.0548836-CT_REV._0_p1_7cafb8f5-57ba-40d5-9e52-4520e86f9bc1.png",
             "title": "Bombas Hidráulicas",
             "description": "Bombas para John Deere, New Holland, Massey Ferguson, Valtra e Valmet com certificação ISO.",
             "cta_label": "Ver Bombas",
@@ -51,6 +76,9 @@
         "cat-sensores": {
           "type": "collection_card",
           "settings": {
+            "collection": "",
+            "asset_image": "",
+            "image": "shopify://shop_images/image_3cd5b90f-08ed-47a9-a518-67d519fb5e2a.png",
             "title": "Sensores Agrícolas",
             "description": "Sensores de fluxo e sementes para plantadeiras de precisão.",
             "cta_label": "Ver Sensores",
@@ -58,30 +86,28 @@
           }
         }
       },
-      "block_order": ["cat-bombas", "cat-sensores"]
+      "block_order": [
+        "cat-bombas",
+        "cat-sensores"
+      ],
+      "settings": {
+        "eyebrow": "Nosso Catálogo",
+        "title": "Categorias de Produtos",
+        "description": "Especialistas em bombas hidráulicas e sensores agrícolas de precisão.",
+        "bg_dark": false
+      }
     },
     "featured-collection": {
       "type": "featured-collection",
-      "settings": {
-        "eyebrow": "Mais Vendidos",
-        "title": "Produtos em Destaque",
-        "description": "Bombas hidráulicas com maior saída para os modelos mais populares do campo brasileiro.",
-        "products_to_show": 6,
-        "columns_desktop": "3",
-        "show_view_all": true,
-        "cta_label": "Ver Catálogo Completo",
-        "cta_url": "/collections/all"
-      }
+      "settings": {}
     },
     "multicolumn": {
       "type": "multicolumn",
-      "settings": {
-        "title": "Por que escolher a APP Agro Peças Padrão?"
-      },
       "blocks": {
         "col1": {
           "type": "column",
           "settings": {
+            "svg_icon": "",
             "icon": "🏆",
             "title": "ISO 9001 / 14001 / 18001",
             "text": "Todas as peças LIVENZA são fabricadas sob rigorosas certificações internacionais de qualidade e gestão ambiental."
@@ -90,6 +116,7 @@
         "col2": {
           "type": "column",
           "settings": {
+            "svg_icon": "",
             "icon": "🚜",
             "title": "Maior Compatibilidade",
             "text": "Cobrimos John Deere, New Holland, Massey Ferguson, Valtra e Valmet com referências OEM cruzadas."
@@ -98,6 +125,7 @@
         "col3": {
           "type": "column",
           "settings": {
+            "svg_icon": "",
             "icon": "🚚",
             "title": "Entrega Nacional",
             "text": "Estoque disponível em Curitiba–PR com envio para todo o Brasil via transportadora parceira."
@@ -106,14 +134,29 @@
         "col4": {
           "type": "column",
           "settings": {
+            "svg_icon": "",
             "icon": "📞",
             "title": "Suporte Técnico",
             "text": "Equipe especializada para identificar a peça correta pelo modelo, SKU ou número OEM do fabricante."
           }
         }
       },
-      "block_order": ["col1", "col2", "col3", "col4"]
+      "block_order": [
+        "col1",
+        "col2",
+        "col3",
+        "col4"
+      ],
+      "settings": {
+        "title": "Por que escolher a APP Agro Peças Padrão?",
+        "bg_dark": false
+      }
     }
   },
-  "order": ["image-banner", "collection-list", "featured-collection", "multicolumn"]
+  "order": [
+    "image-banner",
+    "collection-list",
+    "featured-collection",
+    "multicolumn"
+  ]
 }

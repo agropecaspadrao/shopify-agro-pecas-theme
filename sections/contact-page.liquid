@@ -809,23 +809,6 @@
         </div>
       </div>
 
-      {%- comment -%} Endereço {%- endcomment -%}
-      {%- if settings.store_address != blank -%}
-      <div class="cp-info-card">
-        <div class="cp-info-card__header">
-          <div class="cp-info-card__icon">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <div>
-            <p class="cp-info-card__title">Endereço</p>
-            {%- if settings.store_cnpj != blank -%}
-            <p class="cp-info-card__subtitle">CNPJ {{ settings.store_cnpj }}</p>
-            {%- endif -%}
-          </div>
-        </div>
-        <p class="cp-info-card__value">{{ settings.store_address }}</p>
-      </div>
-      {%- endif -%}
 
     </aside>
 

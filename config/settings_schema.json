@@ -56,7 +56,7 @@
         "type": "text",
         "id": "whatsapp_greeting",
         "label": "Saudação padrão",
-        "default": "Olá! Gostaria de mais informações sobre"
+        "default": "Olá! Gostaria de mais informações sobre as peças que encontrei no Site."
       }
     ]
   },
@@ -79,13 +79,13 @@
         "type": "text",
         "id": "store_phone",
         "label": "Telefone",
-        "default": "(41) 9833-3338"
+        "default": "+55 41 99833-3338"
       },
       {
         "type": "text",
         "id": "store_email",
         "label": "E-mail",
-        "default": "comercial@app.com.br"
+        "default": "comercial@agropecaspadrao.com.br"
       }
     ]
   },

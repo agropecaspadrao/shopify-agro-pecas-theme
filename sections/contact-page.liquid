@@ -1,640 +1,1021 @@
 {% comment %} Página de Contato — AgroShop {% endcomment %}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap');
+  /* ── RESET LOCAL ── */
+  .cp-wrap *, .cp-wrap *::before, .cp-wrap *::after { box-sizing: border-box; }
 
-  .contact-hero {
-    position: relative;
-    background: #0e2210;
-    overflow: hidden;
-    padding: 72px 0 0;
+  /* ── TOKENS ── */
+  .cp-wrap {
+    --green:      #1a3a1a;
+    --green-mid:  #2c5c2c;
+    --green-light:#e8f0e8;
+    --gold:       #c8a84b;
+    --gold-light: #f5eedc;
+    --cream:      #faf8f4;
+    --text:       #1c2b1c;
+    --text-muted: #5a6b5a;
+    --border:     #d8e4d8;
+    --white:      #ffffff;
+    --radius:     12px;
+    --shadow-sm:  0 1px 3px rgba(26,58,26,0.08), 0 1px 2px rgba(26,58,26,0.06);
+    --shadow-md:  0 4px 16px rgba(26,58,26,0.10), 0 2px 6px rgba(26,58,26,0.06);
+    --shadow-lg:  0 20px 48px rgba(26,58,26,0.12), 0 8px 20px rgba(26,58,26,0.08);
+    font-family: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--cream);
+    color: var(--text);
   }
 
-  .contact-hero__grain {
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
-    background-size: 200px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* decorative wheat stalks */
-  .contact-hero__deco {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 420px;
-    height: 100%;
-    opacity: 0.06;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 400'%3E%3Cg fill='%23c8a84b'%3E%3Cellipse cx='100' cy='50' rx='6' ry='18'/%3E%3Cellipse cx='80' cy='80' rx='5' ry='15' transform='rotate(-20 80 80)'/%3E%3Cellipse cx='120' cy='80' rx='5' ry='15' transform='rotate(20 120 80)'/%3E%3Cellipse cx='65' cy='110' rx='4' ry='13' transform='rotate(-35 65 110)'/%3E%3Cellipse cx='135' cy='110' rx='4' ry='13' transform='rotate(35 135 110)'/%3E%3Cellipse cx='55' cy='135' rx='4' ry='12' transform='rotate(-45 55 135)'/%3E%3Cellipse cx='145' cy='135' rx='4' ry='12' transform='rotate(45 145 135)'/%3E%3Crect x='97' y='60' width='6' height='340' rx='3'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat-y;
-    background-size: 200px;
-    pointer-events: none;
-  }
-
-  .contact-hero__inner {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    min-height: 580px;
-  }
-
-  /* ── LEFT PANEL ── */
-  .contact-left {
-    padding: 60px 48px 80px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border-right: 1px solid rgba(200,168,75,0.2);
-  }
-
-  .contact-eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .contact-eyebrow__line {
-    width: 40px;
-    height: 2px;
-    background: #c8a84b;
-  }
-
-  .contact-eyebrow__text {
-    font-family: 'Barlow', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #c8a84b;
-  }
-
-  .contact-heading {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 5vw, 58px);
-    font-weight: 900;
-    line-height: 1.05;
-    color: #f5eedc;
-    margin: 0 0 28px;
-  }
-
-  .contact-heading em {
-    font-style: italic;
-    color: #c8a84b;
-  }
-
-  .contact-tagline {
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.7;
-    color: rgba(245,238,220,0.65);
-    margin: 0 0 48px;
-    max-width: 340px;
-  }
-
-  /* info cards */
-  .contact-info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .contact-info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .contact-info-item__icon {
-    flex-shrink: 0;
-    width: 42px;
-    height: 42px;
-    border: 1px solid rgba(200,168,75,0.35);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(200,168,75,0.07);
-  }
-
-  .contact-info-item__icon svg {
-    width: 20px;
-    height: 20px;
-    color: #c8a84b;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.6;
-  }
-
-  .contact-info-item__label {
-    font-family: 'Barlow', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(200,168,75,0.7);
-    margin: 0 0 4px;
-  }
-
-  .contact-info-item__value {
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(245,238,220,0.85);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  .contact-info-item__value a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .contact-info-item__value a:hover { color: #c8a84b; }
-
-  /* ── RIGHT PANEL (form) ── */
-  .contact-right {
-    padding: 60px 0 80px 52px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .contact-form-title {
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #c8a84b;
-    margin: 0 0 28px;
-  }
-
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
-
-  .form-group label {
-    font-family: 'Barlow', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(245,238,220,0.5);
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #f5eedc;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(200,168,75,0.2);
-    border-radius: 8px;
-    padding: 12px 16px;
-    outline: none;
-    transition: border-color 0.2s, background 0.2s;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .form-group input::placeholder,
-  .form-group textarea::placeholder {
-    color: rgba(245,238,220,0.2);
-  }
-
-  .form-group select option {
-    background: #0e2210;
-    color: #f5eedc;
-  }
-
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus {
-    border-color: rgba(200,168,75,0.6);
-    background: rgba(200,168,75,0.05);
-  }
-
-  .form-group textarea {
-    resize: vertical;
-    min-height: 110px;
-  }
-
-  .btn-contact-submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: #c8a84b;
-    color: #0e2210;
-    font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 8px;
-    padding: 16px 32px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    margin-top: 6px;
+  /* ── HERO BANNER ── */
+  .cp-hero {
+    background: var(--green);
     position: relative;
     overflow: hidden;
+    padding: 64px 24px 72px;
+    text-align: center;
   }
 
-  .btn-contact-submit::after {
+  .cp-hero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    background:
+      radial-gradient(ellipse 60% 80% at 20% 50%, rgba(200,168,75,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 80% 50%, rgba(44,92,44,0.6) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  .btn-contact-submit:hover {
-    background: #d9b95a;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(200,168,75,0.35);
+  /* subtle wheat pattern overlay */
+  .cp-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8a84b' stroke-width='0.5' opacity='0.08'%3E%3Cellipse cx='30' cy='8' rx='3' ry='7'/%3E%3Cellipse cx='22' cy='18' rx='2.5' ry='6' transform='rotate(-25 22 18)'/%3E%3Cellipse cx='38' cy='18' rx='2.5' ry='6' transform='rotate(25 38 18)'/%3E%3Cline x1='30' y1='14' x2='30' y2='52' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 60px 60px;
+    pointer-events: none;
   }
 
-  .btn-contact-submit:active { transform: translateY(0); }
-
-  .btn-contact-submit svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.2;
-    flex-shrink: 0;
+  .cp-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
-  /* ── SUCCESS STATE ── */
-  .contact-success {
-    display: none;
-    flex-direction: column;
+  .cp-hero__eyebrow {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 48px 32px;
-    gap: 20px;
-  }
-
-  .contact-success.is-visible { display: flex; }
-  .contact-form.is-hidden { display: none; }
-
-  .contact-success__icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: rgba(200,168,75,0.12);
-    border: 1px solid rgba(200,168,75,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: successPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-
-  .contact-success__icon svg {
-    width: 36px;
-    height: 36px;
-    stroke: #c8a84b;
-    fill: none;
-    stroke-width: 2;
-  }
-
-  @keyframes successPop {
-    from { transform: scale(0.5); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
-  }
-
-  .contact-success__title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+    gap: 8px;
+    background: rgba(200,168,75,0.15);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 11px;
     font-weight: 700;
-    color: #f5eedc;
-    margin: 0;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
   }
 
-  .contact-success__msg {
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
+  .cp-hero__eyebrow span { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); display: inline-block; }
+
+  .cp-hero__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.08;
+    color: var(--gold-light);
+    margin: 0 0 16px;
+  }
+
+  .cp-hero__title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cp-hero__sub {
+    font-size: 15px;
     font-weight: 300;
-    line-height: 1.7;
+    line-height: 1.65;
     color: rgba(245,238,220,0.6);
     margin: 0;
-    max-width: 300px;
   }
 
-  .contact-success__back {
-    font-family: 'Barlow', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #c8a84b;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(200,168,75,0.3);
-    padding-bottom: 2px;
-    transition: border-color 0.2s;
+  /* ── TRUST BAR ── */
+  .cp-trust {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
   }
 
-  .contact-success__back:hover { border-color: #c8a84b; }
-
-  /* ── BOTTOM STRIP ── */
-  .contact-strip {
-    background: rgba(200,168,75,0.08);
-    border-top: 1px solid rgba(200,168,75,0.15);
-  }
-
-  .contact-strip__inner {
-    max-width: 1200px;
+  .cp-trust__inner {
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 20px 24px;
+    padding: 0 24px;
     display: flex;
-    align-items: center;
-    gap: 32px;
-    flex-wrap: wrap;
+    align-items: stretch;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
-  .contact-strip__badge {
+  .cp-trust__inner::-webkit-scrollbar { display: none; }
+
+  .cp-trust__item {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Barlow', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(245,238,220,0.5);
-    letter-spacing: 0.04em;
+    padding: 16px 28px;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  .contact-strip__badge svg {
-    width: 16px;
-    height: 16px;
-    color: #c8a84b;
+  .cp-trust__item:last-child { border-right: none; }
+
+  .cp-trust__item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--green-mid);
     flex-shrink: 0;
     fill: none;
     stroke: currentColor;
     stroke-width: 1.8;
   }
 
-  .contact-strip__sep {
-    width: 1px;
+  .cp-trust__item-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .cp-trust__item-text strong {
+    color: var(--text);
+    display: block;
+    font-size: 13px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .cp-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 24px 72px;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── INFO COLUMN ── */
+  .cp-info { display: flex; flex-direction: column; gap: 16px; }
+
+  .cp-info-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .cp-info-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .cp-info-card__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .cp-info-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--green-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .cp-info-card__icon svg {
+    width: 20px;
     height: 20px;
-    background: rgba(200,168,75,0.2);
+    color: var(--green-mid);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+  }
+
+  .cp-info-card__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+
+  .cp-info-card__subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 2px 0 0;
+  }
+
+  .cp-info-card__value {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .cp-info-card__value a {
+    color: var(--green-mid);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .cp-info-card__value a:hover { color: var(--green); }
+
+  /* WhatsApp card destacado */
+  .cp-info-card--wa {
+    background: linear-gradient(135deg, #1a3a1a 0%, #2c5c2c 100%);
+    border-color: transparent;
+  }
+
+  .cp-info-card--wa .cp-info-card__icon { background: rgba(255,255,255,0.12); }
+  .cp-info-card--wa .cp-info-card__icon svg { color: #fff; }
+  .cp-info-card--wa .cp-info-card__title { color: rgba(255,255,255,0.95); }
+  .cp-info-card--wa .cp-info-card__subtitle { color: rgba(255,255,255,0.5); }
+  .cp-info-card--wa .cp-info-card__value { color: rgba(255,255,255,0.8); }
+
+  .cp-wa-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    background: #25d366;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .cp-wa-btn:hover { background: #20b858; transform: translateY(-1px); }
+
+  .cp-wa-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  /* horário card */
+  .cp-hours {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 16px;
+    font-size: 13px;
+  }
+
+  .cp-hours__day { color: var(--text-muted); }
+  .cp-hours__time { color: var(--text); font-weight: 500; text-align: right; }
+  .cp-hours__day--today, .cp-hours__time--today { color: var(--green-mid); font-weight: 600; }
+
+  .cp-hours__divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  /* SLA badge */
+  .cp-sla {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    background: rgba(200,168,75,0.1);
+    border: 1px solid rgba(200,168,75,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7a6020;
+  }
+
+  .cp-sla svg { width: 14px; height: 14px; fill: none; stroke: var(--gold); stroke-width: 2; flex-shrink: 0; }
+
+  /* ── FORM COLUMN ── */
+  .cp-form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 40px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .cp-form-card__title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 4px;
+  }
+
+  .cp-form-card__sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0 0 28px;
+  }
+
+  .cp-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 28px;
+  }
+
+  .cp-form { display: flex; flex-direction: column; gap: 18px; }
+
+  .cp-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .cp-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .cp-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cp-field label .req { color: var(--gold); margin-left: 2px; }
+
+  .cp-field input,
+  .cp-field select,
+  .cp-field textarea {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .cp-field input::placeholder,
+  .cp-field textarea::placeholder { color: #aabcaa; }
+
+  .cp-field input:focus,
+  .cp-field select:focus,
+  .cp-field textarea:focus {
+    border-color: var(--green-mid);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(44,92,44,0.1);
+  }
+
+  .cp-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6b5a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .cp-field select option { background: var(--white); color: var(--text); }
+
+  .cp-field textarea { resize: vertical; min-height: 120px; line-height: 1.55; }
+
+  /* campo SKU dica */
+  .cp-field__hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  /* submit */
+  .cp-submit-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .cp-btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--green);
+    color: var(--white);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .cp-btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cp-btn-submit:hover {
+    background: var(--green-mid);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,58,26,0.3);
+  }
+
+  .cp-btn-submit:active { transform: translateY(0); }
+  .cp-btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .cp-btn-submit svg {
+    width: 15px; height: 15px;
+    fill: none; stroke: currentColor; stroke-width: 2.2;
+    flex-shrink: 0;
+  }
+
+  .cp-privacy {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .cp-privacy svg {
+    width: 12px; height: 12px;
+    fill: none; stroke: var(--text-muted); stroke-width: 2;
+    display: inline; vertical-align: middle; margin-right: 3px;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .cp-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 24px;
+    gap: 16px;
+  }
+
+  .cp-success.is-visible { display: flex; }
+  .cp-form-fields.is-hidden { display: none; }
+
+  .cp-success__ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--green-light);
+    border: 2px solid var(--green-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: cpPop 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes cpPop {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .cp-success__ring svg {
+    width: 38px; height: 38px;
+    stroke: var(--green-mid); fill: none; stroke-width: 2.5;
+    animation: cpCheck 0.4s 0.35s ease both;
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+  }
+
+  @keyframes cpCheck { to { stroke-dashoffset: 0; } }
+
+  .cp-success__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .cp-success__msg {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    max-width: 360px;
+    margin: 0;
+  }
+
+  .cp-success__steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+    background: var(--green-light);
+    border-radius: 10px;
+    padding: 16px 20px;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .cp-success__step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .cp-success__step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--green-mid);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .cp-success__links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cp-success__link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-mid);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(44,92,44,0.3);
+    padding-bottom: 1px;
+    transition: border-color 0.2s;
+  }
+
+  .cp-success__link:hover { border-color: var(--green-mid); }
+
+  /* ── FAQ ROW ── */
+  .cp-faq {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 48px 24px;
+  }
+
+  .cp-faq__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .cp-faq__header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .cp-faq__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+
+  .cp-faq__sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .cp-faq__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .cp-faq__item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .cp-faq__item:hover { border-color: var(--green-mid); }
+
+  .cp-faq__q {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .cp-faq__q::before {
+    content: 'P';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--green);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .cp-faq__a {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 28px;
   }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 768px) {
-    .contact-hero__inner {
+  @media (max-width: 860px) {
+    .cp-body {
       grid-template-columns: 1fr;
-      min-height: auto;
+      padding: 36px 20px 56px;
     }
-    .contact-left {
-      padding: 48px 0 36px;
-      border-right: none;
-      border-bottom: 1px solid rgba(200,168,75,0.2);
-    }
-    .contact-right {
-      padding: 36px 0 56px;
-    }
-    .form-row {
-      grid-template-columns: 1fr;
-    }
-    .contact-strip__sep { display: none; }
+    .cp-form-card { padding: 28px 24px; }
+    .cp-form-row { grid-template-columns: 1fr; }
+    .cp-trust__item { padding: 14px 20px; }
+  }
+
+  @media (max-width: 540px) {
+    .cp-hero { padding: 48px 20px 56px; }
+    .cp-submit-row { flex-direction: column; align-items: stretch; }
+    .cp-btn-submit { justify-content: center; }
   }
 </style>
 
-<div class="contact-hero">
-  <div class="contact-hero__grain"></div>
-  <div class="contact-hero__deco"></div>
+<div class="cp-wrap">
 
-  <div class="contact-hero__inner">
-
-    {%- comment -%}── LEFT ──{%- endcomment -%}
-    <div class="contact-left">
-      <div class="contact-eyebrow">
-        <span class="contact-eyebrow__line"></span>
-        <span class="contact-eyebrow__text">Fale com a gente</span>
+  {%- comment -%}── HERO ──{%- endcomment -%}
+  <div class="cp-hero">
+    <div class="cp-hero__inner">
+      <div class="cp-hero__eyebrow">
+        <span></span>Fale com a equipe comercial<span></span>
       </div>
-
-      <h1 class="contact-heading">
-        Seu campo<br>
-        merece as<br>
-        <em>melhores peças.</em>
+      <h1 class="cp-hero__title">
+        Peça certa,<br>
+        no <em>tempo certo.</em>
       </h1>
-
-      <p class="contact-tagline">
-        Nossa equipe comercial está pronta para atender pedidos,
-        cotações e dúvidas técnicas. Resposta em até 1 dia útil.
+      <p class="cp-hero__sub">
+        Atendemos distribuidores, revendas e produtores rurais em todo o Brasil.<br>
+        Cotação, dúvida técnica ou parceria — estamos aqui.
       </p>
+    </div>
+  </div>
 
-      <div class="contact-info-list">
+  {%- comment -%}── TRUST BAR ──{%- endcomment -%}
+  <div class="cp-trust">
+    <div class="cp-trust__inner">
+      <div class="cp-trust__item">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="cp-trust__item-text">
+          <strong>ISO 9001 · 14001 · 18001</strong>
+          Certificação internacional
+        </div>
+      </div>
+      <div class="cp-trust__item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="cp-trust__item-text">
+          <strong>Até 1 dia útil</strong>
+          Retorno garantido
+        </div>
+      </div>
+      <div class="cp-trust__item">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        <div class="cp-trust__item-text">
+          <strong>Frete para todo o Brasil</strong>
+          Entrega rápida e rastreada
+        </div>
+      </div>
+      <div class="cp-trust__item">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <div class="cp-trust__item-text">
+          <strong>+15 anos no agronegócio</strong>
+          Peças originais LIVENZA
+        </div>
+      </div>
+      <div class="cp-trust__item">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <div class="cp-trust__item-text">
+          <strong>Melhor preço</strong>
+          Cotação sem compromisso
+        </div>
+      </div>
+    </div>
+  </div>
 
-        {%- if settings.store_phone != blank -%}
-        <div class="contact-info-item">
-          <div class="contact-info-item__icon">
+  {%- comment -%}── BODY ──{%- endcomment -%}
+  <div class="cp-body">
+
+    {%- comment -%}── INFO COLUMN ──{%- endcomment -%}
+    <aside class="cp-info">
+
+      {%- comment -%} WhatsApp card {%- endcomment -%}
+      {%- if settings.whatsapp_number != blank -%}
+      <div class="cp-info-card cp-info-card--wa">
+        <div class="cp-info-card__header">
+          <div class="cp-info-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div>
+            <p class="cp-info-card__title">WhatsApp Comercial</p>
+            <p class="cp-info-card__subtitle">Atendimento imediato</p>
+          </div>
+        </div>
+        <p class="cp-info-card__value">Prefere falar agora? Clique abaixo e inicie uma conversa direta com nosso time comercial.</p>
+        <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ settings.whatsapp_greeting | url_encode }}" target="_blank" rel="noopener" class="cp-wa-btn">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Abrir WhatsApp
+        </a>
+      </div>
+      {%- endif -%}
+
+      {%- comment -%} Telefone & e-mail {%- endcomment -%}
+      <div class="cp-info-card">
+        <div class="cp-info-card__header">
+          <div class="cp-info-card__icon">
             <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012.41 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
           </div>
           <div>
-            <p class="contact-info-item__label">Telefone</p>
-            <p class="contact-info-item__value">
-              <a href="tel:{{ settings.store_phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}">{{ settings.store_phone }}</a>
-            </p>
+            <p class="cp-info-card__title">Telefone & E-mail</p>
+            <p class="cp-info-card__subtitle">Seg – Sex, 8h às 18h</p>
           </div>
         </div>
+        {%- if settings.store_phone != blank -%}
+        <p class="cp-info-card__value">
+          📞 <a href="tel:{{ settings.store_phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}">{{ settings.store_phone }}</a>
+        </p>
         {%- endif -%}
+        <p class="cp-info-card__value">
+          ✉️ <a href="mailto:comercial@agropecaspadrao.com">comercial@agropecaspadrao.com</a>
+        </p>
+        <div class="cp-sla">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Respondemos em até 1 dia útil
+        </div>
+      </div>
 
-        {%- if settings.whatsapp_number != blank -%}
-        <div class="contact-info-item">
-          <div class="contact-info-item__icon">
-            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      {%- comment -%} Horário de atendimento {%- endcomment -%}
+      <div class="cp-info-card">
+        <div class="cp-info-card__header">
+          <div class="cp-info-card__icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
           <div>
-            <p class="contact-info-item__label">WhatsApp</p>
-            <p class="contact-info-item__value">
-              <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">Iniciar conversa</a>
-            </p>
+            <p class="cp-info-card__title">Horário de Atendimento</p>
+            <p class="cp-info-card__subtitle">Horário de Brasília</p>
           </div>
         </div>
-        {%- endif -%}
-
-        <div class="contact-info-item">
-          <div class="contact-info-item__icon">
-            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div>
-            <p class="contact-info-item__label">E-mail Comercial</p>
-            <p class="contact-info-item__value">
-              <a href="mailto:comercial@agropecaspadrao.com">comercial@agropecaspadrao.com</a>
-            </p>
-          </div>
+        <div class="cp-hours">
+          <span class="cp-hours__day">Segunda – Sexta</span>
+          <span class="cp-hours__time">08h00 – 18h00</span>
+          <div class="cp-hours__divider"></div>
+          <span class="cp-hours__day">Sábado</span>
+          <span class="cp-hours__time">08h00 – 12h00</span>
+          <div class="cp-hours__divider"></div>
+          <span class="cp-hours__day">Domingo</span>
+          <span class="cp-hours__time">Fechado</span>
         </div>
+      </div>
 
-        {%- if settings.store_address != blank -%}
-        <div class="contact-info-item">
-          <div class="contact-info-item__icon">
+      {%- comment -%} Endereço {%- endcomment -%}
+      {%- if settings.store_address != blank -%}
+      <div class="cp-info-card">
+        <div class="cp-info-card__header">
+          <div class="cp-info-card__icon">
             <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
           <div>
-            <p class="contact-info-item__label">Endereço</p>
-            <p class="contact-info-item__value">{{ settings.store_address }}</p>
+            <p class="cp-info-card__title">Endereço</p>
+            {%- if settings.store_cnpj != blank -%}
+            <p class="cp-info-card__subtitle">CNPJ {{ settings.store_cnpj }}</p>
+            {%- endif -%}
           </div>
         </div>
-        {%- endif -%}
-
-        {%- if settings.store_cnpj != blank -%}
-        <div class="contact-info-item">
-          <div class="contact-info-item__icon">
-            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-          </div>
-          <div>
-            <p class="contact-info-item__label">CNPJ</p>
-            <p class="contact-info-item__value">{{ settings.store_cnpj }}</p>
-          </div>
-        </div>
-        {%- endif -%}
-
+        <p class="cp-info-card__value">{{ settings.store_address }}</p>
       </div>
-    </div>
+      {%- endif -%}
 
-    {%- comment -%}── RIGHT (form) ──{%- endcomment -%}
-    <div class="contact-right">
-      <p class="contact-form-title">Envie sua mensagem</p>
+    </aside>
+
+    {%- comment -%}── FORM CARD ──{%- endcomment -%}
+    <div class="cp-form-card">
+      <h2 class="cp-form-card__title">Envie sua mensagem</h2>
+      <p class="cp-form-card__sub">Preencha o formulário e nossa equipe comercial retorna em até 1 dia útil.</p>
+      <div class="cp-divider"></div>
 
       {%- form 'contact', id: 'ContactForm' -%}
         <input type="hidden" name="contact[to]" value="comercial@agropecaspadrao.com">
 
-        <div class="contact-form" id="ContactFormFields">
+        <div class="cp-form" id="ContactFormFields">
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="ContactName">Nome</label>
-              <input type="text" id="ContactName" name="contact[name]" placeholder="Seu nome completo" required
-                     value="{% if form.name %}{{ form.name }}{% endif %}">
+          <div class="cp-form-row">
+            <div class="cp-field">
+              <label for="ContactName">Nome completo <span class="req">*</span></label>
+              <input type="text" id="ContactName" name="contact[name]"
+                     placeholder="João da Silva" required
+                     value="{{ form.name | default: '' }}">
             </div>
-            <div class="form-group">
+            <div class="cp-field">
               <label for="ContactPhone">Telefone / WhatsApp</label>
-              <input type="tel" id="ContactPhone" name="contact[phone]" placeholder="(41) 9 0000-0000"
-                     value="{% if form.phone %}{{ form.phone }}{% endif %}">
+              <input type="tel" id="ContactPhone" name="contact[phone]"
+                     placeholder="(41) 9 0000-0000"
+                     value="{{ form.phone | default: '' }}">
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="ContactEmail">E-mail</label>
-            <input type="email" id="ContactEmail" name="contact[email]" placeholder="seuemail@empresa.com.br" required
-                   value="{% if form.email %}{{ form.email }}{% endif %}">
+          <div class="cp-field">
+            <label for="ContactEmail">E-mail <span class="req">*</span></label>
+            <input type="email" id="ContactEmail" name="contact[email]"
+                   placeholder="voce@empresa.com.br" required
+                   value="{{ form.email | default: '' }}">
           </div>
 
-          <div class="form-group">
-            <label for="ContactSubject">Assunto</label>
-            <select id="ContactSubject" name="contact[subject]">
+          <div class="cp-form-row">
+            <div class="cp-field">
+              <label for="ContactCompany">Empresa / Propriedade</label>
+              <input type="text" id="ContactCompany" name="contact[company]"
+                     placeholder="Nome da empresa ou fazenda"
+                     value="{{ form.company | default: '' }}">
+            </div>
+            <div class="cp-field">
+              <label for="ContactState">Estado</label>
+              <select id="ContactState" name="contact[state]">
+                <option value="">Selecione o estado</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option>SP</option><option>SE</option><option>TO</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cp-field">
+            <label for="ContactSubject">Assunto <span class="req">*</span></label>
+            <select id="ContactSubject" name="contact[subject]" required>
               <option value="">Selecione o motivo do contato</option>
-              <option value="Cotação de peças">🔧 Cotação de peças</option>
-              <option value="Dúvida técnica">⚙️ Dúvida técnica</option>
-              <option value="Prazo e entrega">🚚 Prazo e entrega</option>
-              <option value="Parceria comercial">🤝 Parceria comercial</option>
-              <option value="Outro">📋 Outro</option>
+              <option value="Cotação de peças">Cotação de peças</option>
+              <option value="Dúvida técnica sobre compatibilidade">Dúvida técnica / compatibilidade</option>
+              <option value="Prazo e rastreamento de entrega">Prazo e rastreamento de entrega</option>
+              <option value="Troca ou devolução">Troca ou devolução</option>
+              <option value="Parceria comercial e revenda">Parceria comercial / revenda</option>
+              <option value="Outro">Outro</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="ContactBody">Mensagem</label>
-            <textarea id="ContactBody" name="contact[body]" placeholder="Descreva sua necessidade — modelo do equipamento, referência OEM, quantidade...">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          <div class="cp-field">
+            <label for="ContactSku">Referência / SKU da peça</label>
+            <input type="text" id="ContactSku" name="contact[sku]"
+                   placeholder="Ex: 5.1301.0565008 ou FONN600BB"
+                   value="{{ form.sku | default: '' }}">
+            <p class="cp-field__hint">Encontre o SKU na etiqueta da peça ou na tabela de compatibilidade do fabricante.</p>
           </div>
 
-          <button type="submit" class="btn-contact-submit">
-            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Enviar mensagem
-          </button>
+          <div class="cp-field">
+            <label for="ContactBody">Mensagem <span class="req">*</span></label>
+            <textarea id="ContactBody" name="contact[body]" required
+                      placeholder="Descreva sua necessidade: modelo do equipamento, referência OEM, quantidade desejada, urgência...">{{ form.body | default: '' }}</textarea>
+          </div>
+
+          <div class="cp-submit-row">
+            <button type="submit" class="cp-btn-submit" id="ContactSubmitBtn">
+              <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar mensagem
+            </button>
+            <p class="cp-privacy">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Seus dados são confidenciais e usados apenas para retorno comercial.
+            </p>
+          </div>
 
         </div>
       {%- endform -%}
 
       {%- if form.posted_successfully? -%}
-        <script>document.addEventListener('DOMContentLoaded',function(){ showSuccess(); });</script>
+        <script>document.addEventListener('DOMContentLoaded', showCpSuccess);</script>
       {%- endif -%}
 
-      <div class="contact-success" id="ContactSuccess">
-        <div class="contact-success__icon">
+      <div class="cp-success" id="CpSuccess">
+        <div class="cp-success__ring">
           <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <h2 class="contact-success__title">Mensagem enviada!</h2>
-        <p class="contact-success__msg">
-          Obrigado pelo contato. Nossa equipe comercial analisará sua solicitação
-          e retornará em breve — geralmente em até 1 dia útil.
+        <h2 class="cp-success__title">Mensagem recebida!</h2>
+        <p class="cp-success__msg">
+          Obrigado pelo contato, <strong>{{ form.name | default: 'prezado(a)' }}</strong>!
+          Nossa equipe comercial recebeu sua solicitação e retornará em breve.
         </p>
-        <a href="{{ routes.root_url }}" class="contact-success__back">← Voltar ao catálogo</a>
+        <div class="cp-success__steps">
+          <div class="cp-success__step">
+            <span class="cp-success__step-num">1</span>
+            <span>Sua mensagem chegou para a equipe comercial via e-mail</span>
+          </div>
+          <div class="cp-success__step">
+            <span class="cp-success__step-num">2</span>
+            <span>Analisaremos disponibilidade e compatibilidade da peça</span>
+          </div>
+          <div class="cp-success__step">
+            <span class="cp-success__step-num">3</span>
+            <span>Retornaremos com cotação em até 1 dia útil</span>
+          </div>
+        </div>
+        <div class="cp-success__links">
+          <a href="{{ routes.collections_url }}" class="cp-success__link">Ver catálogo →</a>
+          {%- if settings.whatsapp_number != blank -%}
+          <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener" class="cp-success__link">Falar no WhatsApp →</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {%- comment -%}── FAQ ──{%- endcomment -%}
+  <div class="cp-faq">
+    <div class="cp-faq__inner">
+      <div class="cp-faq__header">
+        <h2 class="cp-faq__title">Perguntas frequentes</h2>
+        <p class="cp-faq__sub">Respostas rápidas antes de entrar em contato</p>
+      </div>
+      <div class="cp-faq__grid">
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">Vocês têm estoque pronto?</p>
+          <p class="cp-faq__a">Sim. A maioria dos itens do catálogo está em estoque no CD em Curitiba – PR, com despacho em até 24h após confirmação do pedido.</p>
+        </div>
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">Qual o prazo de entrega?</p>
+          <p class="cp-faq__a">Capitais: 2 a 4 dias úteis. Interior e regiões remotas: 5 a 8 dias úteis. Enviamos rastreamento por e-mail automaticamente.</p>
+        </div>
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">Como verificar compatibilidade?</p>
+          <p class="cp-faq__a">Informe o modelo e ano do equipamento + referência OEM da peça original. Nossa equipe técnica confirma compatibilidade antes de faturar.</p>
+        </div>
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">Vocês atendem pessoa jurídica (revenda)?</p>
+          <p class="cp-faq__a">Sim. Temos tabela especial para distribuidores e revendas agrícolas. Entre em contato pelo assunto "Parceria comercial / revenda".</p>
+        </div>
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">As peças têm garantia?</p>
+          <p class="cp-faq__a">Todas as peças LIVENZA têm garantia de 12 meses contra defeitos de fabricação, com suporte técnico direto pelo fabricante.</p>
+        </div>
+        <div class="cp-faq__item">
+          <p class="cp-faq__q">Aceitam devolução?</p>
+          <p class="cp-faq__a">Sim, em até 7 dias corridos após o recebimento (Código de Defesa do Consumidor), desde que a peça esteja sem uso e na embalagem original.</p>
+        </div>
       </div>
     </div>
-
   </div>
-</div>
 
-<div class="contact-strip">
-  <div class="contact-strip__inner">
-    <div class="contact-strip__badge">
-      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      Certificação ISO 9001 · 14001 · 18001
-    </div>
-    <div class="contact-strip__sep"></div>
-    <div class="contact-strip__badge">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Resposta em até 1 dia útil
-    </div>
-    <div class="contact-strip__sep"></div>
-    <div class="contact-strip__badge">
-      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      Frete para todo o Brasil
-    </div>
-    <div class="contact-strip__sep"></div>
-    <div class="contact-strip__badge">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      Peças 100% originais LIVENZA
-    </div>
-  </div>
 </div>
 
 <script>
-  function showSuccess() {
-    var form = document.getElementById('ContactFormFields');
-    var success = document.getElementById('ContactSuccess');
-    if (form) form.classList.add('is-hidden');
+  function showCpSuccess() {
+    var fields = document.getElementById('ContactFormFields');
+    var success = document.getElementById('CpSuccess');
+    if (fields) fields.classList.add('is-hidden');
     if (success) success.classList.add('is-visible');
   }
 
-  // intercept submit para feedback imediato (Shopify recarrega a página com form.posted_successfully?)
-  // mantém o comportamento nativo do Shopify Contact Form
-  document.getElementById('ContactForm')?.addEventListener('submit', function() {
-    var btn = this.querySelector('.btn-contact-submit');
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Enviando...';
-    }
+  document.getElementById('ContactForm')?.addEventListener('submit', function () {
+    var btn = document.getElementById('ContactSubmitBtn');
+    if (!btn) return;
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="animation:cpSpin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Enviando...';
   });
 </script>
+
+<style>
+  @keyframes cpSpin { to { transform: rotate(360deg); } }
+</style>
 
 {% schema %}
 {

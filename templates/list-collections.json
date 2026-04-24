@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "main": {
+      "type": "collection-list",
+      "blocks": {
+        "bombas": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "bombas-hidraulicas",
+            "title": "",
+            "custom_url": ""
+          }
+        },
+        "sensores": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "sensores-agricolas",
+            "title": "",
+            "custom_url": ""
+          }
+        },
+        "pecas": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "pecas-plasticas-injetadas",
+            "title": "",
+            "custom_url": ""
+          }
+        }
+      },
+      "block_order": ["bombas", "sensores", "pecas"],
+      "settings": {
+        "eyebrow": "Nossas linhas",
+        "title": "Catálogo de Produtos",
+        "description": "Peças hidráulicas e sensores agrícolas com certificação ISO para John Deere, New Holland, Massey Ferguson, Valtra e Valmet.",
+        "bg_dark": false
+      }
+    }
+  },
+  "order": ["main"]
+}

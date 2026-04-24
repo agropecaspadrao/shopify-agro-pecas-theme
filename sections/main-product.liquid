@@ -80,15 +80,26 @@
         </div>
 
         <!-- Price -->
-        <div class="pdp-price">
-          {%- if product.compare_at_price > product.price -%}
-            <span class="pdp-price__compare">{{ product.compare_at_price | money }}</span>
-          {%- endif -%}
-          <span class="pdp-price__current">{{ product.price | money }}</span>
-          {%- if product.compare_at_price > product.price -%}
-            <span class="pdp-price__badge">-{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round }}%</span>
-          {%- endif -%}
-        </div>
+        {%- assign has_price = false -%}
+        {%- if product.price > 0 -%}{%- assign has_price = true -%}{%- endif -%}
+        {%- assign has_stock = false -%}
+        {%- if product.available and product.variants.first.inventory_quantity > 0 -%}{%- assign has_stock = true -%}{%- endif -%}
+
+        {%- if has_price -%}
+          <div class="pdp-price">
+            {%- if product.compare_at_price > product.price -%}
+              <span class="pdp-price__compare">{{ product.compare_at_price | money }}</span>
+            {%- endif -%}
+            <span class="pdp-price__current">{{ product.price | money }}</span>
+            {%- if product.compare_at_price > product.price -%}
+              <span class="pdp-price__badge">-{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round }}%</span>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="pdp-price pdp-price--consult">
+            <span class="pdp-price__consult">Preço sob consulta</span>
+          </div>
+        {%- endif -%}
 
         <!-- Quick specs -->
         {%- assign specs_raw = product.metafields.agro.specs.value -%}
@@ -111,36 +122,56 @@
         {%- endif -%}
 
         <!-- CTAs -->
-        {%- form 'product', product, id: 'PdpForm' -%}
-          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-          <div class="pdp-qty-row">
-            <label for="PdpQty" class="pdp-qty-label">Quantidade</label>
-            <div class="pdp-qty">
-              <button type="button" class="pdp-qty__btn" data-action="decrease">−</button>
-              <input type="number" id="PdpQty" name="quantity" value="1" min="1" class="pdp-qty__input">
-              <button type="button" class="pdp-qty__btn" data-action="increase">+</button>
+        {%- assign cotacao_url = '/pages/contato?product=' | append: product.title | url_encode | prepend: '/pages/contato?product=' -%}
+        {%- assign cotacao_url = '/pages/contato?product=' | append: product.title | url_encode | append: '&sku=' | append: sku_livenza | default: product.variants.first.sku | url_encode -%}
+
+        {%- if has_price and has_stock -%}
+          {%- comment -%} Produto com preço e estoque: mostra qty + carrinho + WhatsApp + cotação {%- endcomment -%}
+          {%- form 'product', product, id: 'PdpForm' -%}
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+            <div class="pdp-qty-row">
+              <label for="PdpQty" class="pdp-qty-label">Quantidade</label>
+              <div class="pdp-qty">
+                <button type="button" class="pdp-qty__btn" data-action="decrease">−</button>
+                <input type="number" id="PdpQty" name="quantity" value="1" min="1" class="pdp-qty__input">
+                <button type="button" class="pdp-qty__btn" data-action="increase">+</button>
+              </div>
             </div>
+            <div class="pdp-ctas">
+              <button type="submit" name="add" class="btn btn--primary btn--lg btn--full">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+                Adicionar ao Carrinho
+              </button>
+              <a href="https://wa.me/{{ wa_number }}?text={{ wa_msg | url_encode }}" class="btn btn--whatsapp btn--lg btn--full" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Consultar via WhatsApp
+              </a>
+              <a href="/pages/contato?product={{ product.title | url_encode }}&sku={{ sku_livenza | default: product.variants.first.sku | url_encode }}" class="btn btn--outline btn--lg btn--full">
+                Solicitar Cotação Formal
+              </a>
+            </div>
+          {%- endform -%}
+
+        {%- else -%}
+          {%- comment -%} Sem preço ou sem estoque: só cotação e WhatsApp {%- endcomment -%}
+          <div class="pdp-consult-notice">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+            {%- if has_price == false -%}
+              Produto disponível sob cotação. Entre em contato para receber preço e prazo.
+            {%- else -%}
+              Produto disponível sob consulta. Fale conosco para verificar disponibilidade.
+            {%- endif -%}
           </div>
           <div class="pdp-ctas">
-            <button type="submit" name="add" class="btn btn--primary btn--lg btn--full">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
-              Adicionar ao Carrinho
-            </button>
-            <a href="https://wa.me/{{ wa_number }}?text={{ wa_msg | url_encode }}"
-               class="btn btn--whatsapp btn--lg btn--full"
-               target="_blank"
-               rel="noopener">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
+            <a href="https://wa.me/{{ wa_number }}?text={{ wa_msg | url_encode }}" class="btn btn--whatsapp btn--lg btn--full" target="_blank" rel="noopener">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Consultar via WhatsApp
             </a>
-            <a href="/pages/contato?product={{ product.title | url_encode }}&sku={{ sku_livenza | default: product.variants.first.sku | url_encode }}"
-               class="btn btn--outline btn--lg btn--full">
+            <a href="/pages/contato?product={{ product.title | url_encode }}&sku={{ sku_livenza | default: product.variants.first.sku | url_encode }}" class="btn btn--primary btn--lg btn--full">
               Solicitar Cotação Formal
             </a>
           </div>
-        {%- endform -%}
+        {%- endif -%}
 
         <!-- Trust micro -->
         <div class="pdp-trust">

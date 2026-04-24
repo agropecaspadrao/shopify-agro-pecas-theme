@@ -97,7 +97,14 @@
           <li><a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a></li>
           <li><a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a></li>
           <li><a href="{{ routes.root_url }}collections/all" {% if collection.handle == 'all' %}aria-current="page"{% endif %}>Produtos</a></li>
-          <li><a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a></li>
+          <li class="has-dropdown">
+            <a href="{{ routes.root_url }}pages/quem-somos" {% if page.handle == 'quem-somos' %}aria-current="page"{% endif %}>Institucional</a>
+            <ul class="header-nav__dropdown">
+              <li><a href="{{ routes.root_url }}pages/quem-somos">Quem Somos</a></li>
+              <li><a href="{{ routes.root_url }}pages/contato">Cotação Formal</a></li>
+              <li><a href="{{ routes.root_url }}pages/contato">Contato</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
     </nav>
@@ -118,6 +125,8 @@
       <a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a>
       <a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a>
       <a href="{{ routes.root_url }}collections/all" {% if collection.handle == 'all' %}aria-current="page"{% endif %}>Produtos</a>
+      <a href="{{ routes.root_url }}pages/quem-somos" {% if page.handle == 'quem-somos' %}aria-current="page"{% endif %}>Quem Somos</a>
+      <a href="{{ routes.root_url }}pages/contato">Cotação Formal</a>
       <a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a>
     </nav>
     <div class="mobile-menu__footer">

@@ -894,6 +894,27 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   padding: 2px 8px;
   border-radius: var(--radius-sm);
 }
+.pdp-price--consult { align-items: center; }
+.pdp-price__consult {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.pdp-consult-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f9f8f7;
+  border: 1px solid #e7e5e3;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.pdp-consult-notice svg { flex-shrink: 0; margin-top: 1px; color: var(--color-accent); }
 /* Quantity selector */
 .pdp-qty-row {
   display: flex;

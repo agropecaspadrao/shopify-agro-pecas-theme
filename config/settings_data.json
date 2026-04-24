@@ -20,7 +20,29 @@
     "store_address": "R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310",
     "store_phone": "(41) 9833-3338",
     "store_email": "comercial@agropecaspadrao.com.br",
-    "footer_tagline": "Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado."
+    "footer_tagline": "Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado.",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo_width": 160,
+          "menu": "main-menu",
+          "announcement_text": "🚜 Frete para todo o Brasil • Certificação ISO 9001 • Peças 100% originais LIVENZA"
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "logo": "shopify://shop_images/logo-branca.png",
+          "instagram": "",
+          "facebook": "",
+          "youtube": "",
+          "tiktok": "",
+          "linkedin": ""
+        }
+      }
+    },
+    "content_for_index": []
   },
   "presets": {}
 }

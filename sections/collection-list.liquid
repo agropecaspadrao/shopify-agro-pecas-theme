@@ -19,11 +19,17 @@
             {%- assign card_url = col.url -%}
           {%- endif -%}
           <a href="{{ card_url | default: '#' }}" class="collection-card" {{ block.shopify_attributes }}>
+            {%- assign card_img = blank -%}
+            {%- if block.settings.image != blank -%}
+              {%- assign card_img = block.settings.image -%}
+            {%- elsif col != blank and col.image != blank -%}
+              {%- assign card_img = col.image -%}
+            {%- elsif col != blank and col.products.first != blank -%}
+              {%- assign card_img = col.products.first.featured_image -%}
+            {%- endif -%}
             <div class="collection-card__img">
-              {%- if block.settings.image != blank -%}
-                <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
-              {%- elsif col != blank and col.image != blank -%}
-                <img src="{{ col.image | image_url: width: 600 }}" alt="{{ col.title }}" width="600" height="400" loading="lazy">
+              {%- if card_img != blank -%}
+                <img src="{{ card_img | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
               {%- else -%}
                 <div class="collection-card__placeholder"></div>
               {%- endif -%}

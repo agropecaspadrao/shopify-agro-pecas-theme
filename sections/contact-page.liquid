@@ -61,49 +61,45 @@
     margin: 0 auto;
   }
 
+  /* eyebrow — idêntico ao .hero-eyebrow do banner */
   .cp-hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(200,168,75,0.15);
-    border: 1px solid rgba(200,168,75,0.3);
+    display: inline-block;
+    background: var(--color-accent, #c8a84b);
+    color: #fff;
+    padding: 4px 14px;
     border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 11px;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--gold);
     margin-bottom: 20px;
   }
 
-  .cp-hero__eyebrow span { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); display: inline-block; }
-
+  /* título — idêntico ao .hero-title do banner */
   .cp-hero__title {
     font-family: var(--font-display, 'Barlow Condensed', sans-serif);
-    font-size: clamp(30px, 5vw, 48px);
     font-weight: 800;
-    line-height: 1.08;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    color: var(--gold-light);
-    margin: 0 0 16px;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    margin: 0 0 20px;
   }
 
   .cp-hero__title em {
     font-style: italic;
-    color: var(--gold);
-    text-transform: none;
+    color: var(--color-accent, #c8a84b);
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.05em;
   }
 
+  /* subtítulo — idêntico ao .hero-subtitle do banner */
   .cp-hero__sub {
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.65;
-    color: rgba(245,238,220,0.6);
-    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.85);
+    margin: 0 auto;
+    max-width: 560px;
   }
 
   /* ── TRUST BAR ── */
@@ -687,11 +683,9 @@
   {%- comment -%}── HERO ──{%- endcomment -%}
   <div class="cp-hero">
     <div class="cp-hero__inner">
-      <div class="cp-hero__eyebrow">
-        <span></span>Fale com a equipe comercial<span></span>
-      </div>
+      <span class="cp-hero__eyebrow">Fale com a equipe comercial</span>
       <h1 class="cp-hero__title">
-        Fale com a<br><em>nossa equipe</em>
+        Fale com a <em>nossa equipe</em>
       </h1>
       <p class="cp-hero__sub">
         Atendemos distribuidores, revendas e produtores rurais em todo o Brasil.<br>

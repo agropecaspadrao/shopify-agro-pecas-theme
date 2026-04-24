@@ -36,9 +36,15 @@
     :root {
       --color-primary: {{ settings.color_primary }};
       --color-primary-dark: {{ settings.color_primary_dark }};
+      --color-primary-light: {{ settings.color_primary | color_lighten: 15 }};
       --color-accent: {{ settings.color_accent }};
+      --color-accent-dark: {{ settings.color_accent | color_darken: 10 }};
       --color-text: {{ settings.color_text }};
       --color-bg: {{ settings.color_bg }};
+      --color-bg-dark: {{ settings.color_primary }};
+      --color-bg-soft: {{ settings.color_bg | color_darken: 3 }};
+      --color-border: {{ settings.color_primary | color_mix: settings.color_bg, 85 }};
+      --color-text-muted: {{ settings.color_text | color_mix: settings.color_bg, 45 }};
     }
   </style>
 

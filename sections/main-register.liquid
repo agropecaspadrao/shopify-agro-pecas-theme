@@ -1,0 +1,48 @@
+<style>
+  /* reutiliza .auth-* do main-login */
+</style>
+
+<div class="auth-page">
+  <div class="auth-box">
+    <span class="auth-box__eyebrow">Nova conta</span>
+    <h1 class="auth-box__title">Criar <em>cadastro</em></h1>
+
+    {%- if form.errors -%}
+      <ul class="auth-errors">
+        {%- for error in form.errors -%}
+          <li>{{ form.errors.messages[error] }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- form 'create_customer' -%}
+      <div class="auth-field">
+        <label for="FirstName">Nome</label>
+        <input type="text" name="customer[first_name]" id="FirstName" autocomplete="given-name" placeholder="Seu nome" required>
+      </div>
+      <div class="auth-field">
+        <label for="LastName">Sobrenome</label>
+        <input type="text" name="customer[last_name]" id="LastName" autocomplete="family-name" placeholder="Seu sobrenome">
+      </div>
+      <div class="auth-field">
+        <label for="RegisterEmail">E-mail</label>
+        <input type="email" name="customer[email]" id="RegisterEmail" autocomplete="email" placeholder="seu@email.com.br" required>
+      </div>
+      <div class="auth-field">
+        <label for="RegisterPassword">Senha</label>
+        <input type="password" name="customer[password]" id="RegisterPassword" autocomplete="new-password" placeholder="Mínimo 8 caracteres" minlength="8" required>
+      </div>
+      <button type="submit" class="auth-submit" style="margin-top:8px;">Criar conta</button>
+    {%- endform -%}
+
+    <div class="auth-divider">já tem conta?</div>
+    <a href="{{ routes.account_login_url }}" class="auth-link-btn">Entrar</a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cadastro",
+  "settings": []
+}
+{% endschema %}

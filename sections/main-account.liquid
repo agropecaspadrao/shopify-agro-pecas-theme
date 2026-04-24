@@ -1,0 +1,161 @@
+<style>
+  .account-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .account-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .account-header__title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  .account-header__title em {
+    font-style: normal;
+    color: var(--color-accent);
+  }
+
+  .account-logout {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+  }
+
+  .account-section-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+  }
+
+  .account-orders { margin-bottom: 48px; }
+
+  .account-orders table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .account-orders th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--color-bg-soft);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .account-orders td {
+    padding: 12px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    vertical-align: middle;
+  }
+
+  .account-orders tr:hover td { background: var(--color-bg-soft); }
+
+  .order-status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .order-status--fulfilled { background: #dcfce7; color: #166534; }
+  .order-status--unfulfilled { background: #fef3c7; color: #92400e; }
+  .order-status--cancelled { background: #fee2e2; color: #991b1b; }
+
+  .account-empty {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--color-bg-soft);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-muted);
+  }
+
+  .account-empty p { margin-bottom: 20px; font-size: 15px; }
+</style>
+
+<div class="account-page">
+  <div class="account-header">
+    <h1 class="account-header__title">Minha <em>Conta</em></h1>
+    <a href="{{ routes.account_logout_url }}" class="account-logout">Sair →</a>
+  </div>
+
+  <div class="account-orders">
+    <h2 class="account-section-title">Meus Pedidos</h2>
+
+    {%- if customer.orders.size > 0 -%}
+      <table>
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for order in customer.orders -%}
+            <tr>
+              <td><strong>#{{ order.order_number }}</strong></td>
+              <td>{{ order.created_at | date: '%d/%m/%Y' }}</td>
+              <td>
+                <span class="order-status order-status--{{ order.fulfillment_status | default: 'unfulfilled' }}">
+                  {%- case order.fulfillment_status -%}
+                    {%- when 'fulfilled' -%}Entregue
+                    {%- when 'partial' -%}Parcial
+                    {%- when 'restocked' -%}Devolvido
+                    {%- else -%}Em andamento
+                  {%- endcase -%}
+                </span>
+              </td>
+              <td>{{ order.total_price | money }}</td>
+              <td><a href="{{ order.customer_url }}" style="font-size:13px; color:var(--color-primary); font-weight:600;">Ver →</a></td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- else -%}
+      <div class="account-empty">
+        <p>Você ainda não realizou nenhum pedido.</p>
+        <a href="{{ routes.root_url }}collections/all" class="btn btn--primary">Ver Catálogo</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Conta do Cliente",
+  "settings": []
+}
+{% endschema %}

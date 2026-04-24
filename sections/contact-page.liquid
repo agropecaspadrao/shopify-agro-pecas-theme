@@ -27,11 +27,10 @@
 
   /* ── HERO BANNER ── */
   .cp-hero {
-    background: var(--green);
+    background: var(--color-primary, #1a3a1a);
     position: relative;
     overflow: hidden;
-    padding: 64px 24px 72px;
-    text-align: center;
+    padding: 52px 24px 60px;
   }
 
   .cp-hero::before {
@@ -39,66 +38,69 @@
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 60% 80% at 20% 50%, rgba(200,168,75,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 80% 50%, rgba(44,92,44,0.6) 0%, transparent 70%);
+      radial-gradient(ellipse 55% 90% at 5% 50%, rgba(200,168,75,0.09) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 70% at 95% 50%, rgba(44,92,44,0.55) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  /* subtle wheat pattern overlay */
   .cp-hero::after {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8a84b' stroke-width='0.5' opacity='0.08'%3E%3Cellipse cx='30' cy='8' rx='3' ry='7'/%3E%3Cellipse cx='22' cy='18' rx='2.5' ry='6' transform='rotate(-25 22 18)'/%3E%3Cellipse cx='38' cy='18' rx='2.5' ry='6' transform='rotate(25 38 18)'/%3E%3Cline x1='30' y1='14' x2='30' y2='52' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 60px 60px;
+    background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8a84b' stroke-width='0.5' opacity='0.07'%3E%3Cellipse cx='28' cy='7' rx='3' ry='6'/%3E%3Cellipse cx='21' cy='17' rx='2.5' ry='5.5' transform='rotate(-25 21 17)'/%3E%3Cellipse cx='35' cy='17' rx='2.5' ry='5.5' transform='rotate(25 35 17)'/%3E%3Cline x1='28' y1='12' x2='28' y2='50' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 56px 56px;
     pointer-events: none;
   }
 
   .cp-hero__inner {
     position: relative;
     z-index: 1;
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    text-align: center;
   }
 
-  /* eyebrow — idêntico ao .hero-eyebrow do banner */
   .cp-hero__eyebrow {
-    display: inline-block;
-    background: var(--color-accent, #c8a84b);
-    color: #fff;
-    padding: 4px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200,168,75,0.14);
+    border: 1px solid rgba(200,168,75,0.3);
     border-radius: 100px;
-    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
-    font-size: 13px;
+    padding: 5px 16px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    color: #c8a84b;
+    margin-bottom: 18px;
   }
 
-  /* título — idêntico ao .hero-title do banner */
   .cp-hero__title {
     font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: clamp(30px, 5vw, 48px);
     font-weight: 800;
-    font-size: clamp(32px, 5vw, 56px);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    margin: 0 0 20px;
+    line-height: 1.08;
+    color: #f5eedc;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 
   .cp-hero__title em {
     font-style: italic;
-    color: var(--color-accent, #c8a84b);
+    color: #c8a84b;
+    text-transform: none;
     font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05em;
   }
 
-  /* subtítulo — idêntico ao .hero-subtitle do banner */
   .cp-hero__sub {
-    font-size: 18px;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(245,238,220,0.6);
     margin: 0 auto;
+    line-height: 1.6;
     max-width: 560px;
   }
 

@@ -1,0 +1,80 @@
+{% comment %}
+  GA4 — Google Analytics 4
+  Measurement ID: G-R0SEJRX1B0
+
+  Eventos implementados:
+    - Todas as páginas : page_view (automático)
+    - Produto          : view_item
+    - Coleção          : view_item_list
+    - Busca            : search
+    - Carrinho add     : add_to_cart  (via JS no body)
+    - Contato WhatsApp : generate_lead (via whatsapp.js)
+{% endcomment %}
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R0SEJRX1B0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'G-R0SEJRX1B0', {
+    send_page_view: true,
+    {% if template == 'product' %}
+    content_group: 'Produto',
+    {% elsif template == 'collection' %}
+    content_group: 'Coleção',
+    {% elsif template == 'index' %}
+    content_group: 'Home',
+    {% elsif template == 'search' %}
+    content_group: 'Busca',
+    {% elsif template contains 'cart' %}
+    content_group: 'Carrinho',
+    {% else %}
+    content_group: '{{ template | capitalize }}',
+    {% endif %}
+  });
+
+  {% comment %}── view_item (página de produto) ───────────────────────────{% endcomment %}
+  {% if template == 'product' %}
+  gtag('event', 'view_item', {
+    currency: {{ shop.currency | json }},
+    value: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+    items: [{
+      item_id:       {{ product.variants.first.sku | json }},
+      item_name:     {{ product.title | json }},
+      item_brand:    {{ product.vendor | json }},
+      item_category: {{ product.type | json }},
+      price:         {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+      quantity:      1,
+    }],
+  });
+  {% endif %}
+
+  {% comment %}── view_item_list (página de coleção) ─────────────────────{% endcomment %}
+  {% if template == 'collection' %}
+  gtag('event', 'view_item_list', {
+    item_list_id:   {{ collection.handle | json }},
+    item_list_name: {{ collection.title | json }},
+    items: [
+      {% for product in collection.products limit: 20 %}
+      {
+        item_id:       {{ product.variants.first.sku | json }},
+        item_name:     {{ product.title | json }},
+        item_brand:    {{ product.vendor | json }},
+        item_category: {{ product.type | json }},
+        index:         {{ forloop.index }},
+        price:         {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+      },
+      {% endfor %}
+    ],
+  });
+  {% endif %}
+
+  {% comment %}── search (página de busca) ────────────────────────────────{% endcomment %}
+  {% if template == 'search' and search.performed %}
+  gtag('event', 'search', {
+    search_term: {{ search.terms | json }},
+  });
+  {% endif %}
+</script>

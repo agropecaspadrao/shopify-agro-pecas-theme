@@ -1,0 +1,644 @@
+{% comment %} Página de Contato — AgroShop {% endcomment %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow:wght@300;400;500;600&display=swap');
+
+  .contact-hero {
+    position: relative;
+    background: #0e2210;
+    overflow: hidden;
+    padding: 72px 0 0;
+  }
+
+  .contact-hero__grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.07'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* decorative wheat stalks */
+  .contact-hero__deco {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 420px;
+    height: 100%;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 400'%3E%3Cg fill='%23c8a84b'%3E%3Cellipse cx='100' cy='50' rx='6' ry='18'/%3E%3Cellipse cx='80' cy='80' rx='5' ry='15' transform='rotate(-20 80 80)'/%3E%3Cellipse cx='120' cy='80' rx='5' ry='15' transform='rotate(20 120 80)'/%3E%3Cellipse cx='65' cy='110' rx='4' ry='13' transform='rotate(-35 65 110)'/%3E%3Cellipse cx='135' cy='110' rx='4' ry='13' transform='rotate(35 135 110)'/%3E%3Cellipse cx='55' cy='135' rx='4' ry='12' transform='rotate(-45 55 135)'/%3E%3Cellipse cx='145' cy='135' rx='4' ry='12' transform='rotate(45 145 135)'/%3E%3Crect x='97' y='60' width='6' height='340' rx='3'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat-y;
+    background-size: 200px;
+    pointer-events: none;
+  }
+
+  .contact-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 580px;
+  }
+
+  /* ── LEFT PANEL ── */
+  .contact-left {
+    padding: 60px 48px 80px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid rgba(200,168,75,0.2);
+  }
+
+  .contact-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .contact-eyebrow__line {
+    width: 40px;
+    height: 2px;
+    background: #c8a84b;
+  }
+
+  .contact-eyebrow__text {
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #c8a84b;
+  }
+
+  .contact-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: #f5eedc;
+    margin: 0 0 28px;
+  }
+
+  .contact-heading em {
+    font-style: italic;
+    color: #c8a84b;
+  }
+
+  .contact-tagline {
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,238,220,0.65);
+    margin: 0 0 48px;
+    max-width: 340px;
+  }
+
+  /* info cards */
+  .contact-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .contact-info-item__icon {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(200,168,75,0.35);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200,168,75,0.07);
+  }
+
+  .contact-info-item__icon svg {
+    width: 20px;
+    height: 20px;
+    color: #c8a84b;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+  }
+
+  .contact-info-item__label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(200,168,75,0.7);
+    margin: 0 0 4px;
+  }
+
+  .contact-info-item__value {
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(245,238,220,0.85);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .contact-info-item__value a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .contact-info-item__value a:hover { color: #c8a84b; }
+
+  /* ── RIGHT PANEL (form) ── */
+  .contact-right {
+    padding: 60px 0 80px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .contact-form-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #c8a84b;
+    margin: 0 0 28px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .form-group label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245,238,220,0.5);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #f5eedc;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(200,168,75,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: rgba(245,238,220,0.2);
+  }
+
+  .form-group select option {
+    background: #0e2210;
+    color: #f5eedc;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: rgba(200,168,75,0.6);
+    background: rgba(200,168,75,0.05);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+
+  .btn-contact-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #c8a84b;
+    color: #0e2210;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-top: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-contact-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .btn-contact-submit:hover {
+    background: #d9b95a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(200,168,75,0.35);
+  }
+
+  .btn-contact-submit:active { transform: translateY(0); }
+
+  .btn-contact-submit svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    flex-shrink: 0;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .contact-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 32px;
+    gap: 20px;
+  }
+
+  .contact-success.is-visible { display: flex; }
+  .contact-form.is-hidden { display: none; }
+
+  .contact-success__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(200,168,75,0.12);
+    border: 1px solid rgba(200,168,75,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: successPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .contact-success__icon svg {
+    width: 36px;
+    height: 36px;
+    stroke: #c8a84b;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  @keyframes successPop {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .contact-success__title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #f5eedc;
+    margin: 0;
+  }
+
+  .contact-success__msg {
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(245,238,220,0.6);
+    margin: 0;
+    max-width: 300px;
+  }
+
+  .contact-success__back {
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #c8a84b;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(200,168,75,0.3);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .contact-success__back:hover { border-color: #c8a84b; }
+
+  /* ── BOTTOM STRIP ── */
+  .contact-strip {
+    background: rgba(200,168,75,0.08);
+    border-top: 1px solid rgba(200,168,75,0.15);
+  }
+
+  .contact-strip__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .contact-strip__badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(245,238,220,0.5);
+    letter-spacing: 0.04em;
+  }
+
+  .contact-strip__badge svg {
+    width: 16px;
+    height: 16px;
+    color: #c8a84b;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+  }
+
+  .contact-strip__sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(200,168,75,0.2);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .contact-hero__inner {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .contact-left {
+      padding: 48px 0 36px;
+      border-right: none;
+      border-bottom: 1px solid rgba(200,168,75,0.2);
+    }
+    .contact-right {
+      padding: 36px 0 56px;
+    }
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    .contact-strip__sep { display: none; }
+  }
+</style>
+
+<div class="contact-hero">
+  <div class="contact-hero__grain"></div>
+  <div class="contact-hero__deco"></div>
+
+  <div class="contact-hero__inner">
+
+    {%- comment -%}── LEFT ──{%- endcomment -%}
+    <div class="contact-left">
+      <div class="contact-eyebrow">
+        <span class="contact-eyebrow__line"></span>
+        <span class="contact-eyebrow__text">Fale com a gente</span>
+      </div>
+
+      <h1 class="contact-heading">
+        Seu campo<br>
+        merece as<br>
+        <em>melhores peças.</em>
+      </h1>
+
+      <p class="contact-tagline">
+        Nossa equipe comercial está pronta para atender pedidos,
+        cotações e dúvidas técnicas. Resposta em até 1 dia útil.
+      </p>
+
+      <div class="contact-info-list">
+
+        {%- if settings.store_phone != blank -%}
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.5 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012.41 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+          </div>
+          <div>
+            <p class="contact-info-item__label">Telefone</p>
+            <p class="contact-info-item__value">
+              <a href="tel:{{ settings.store_phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}">{{ settings.store_phone }}</a>
+            </p>
+          </div>
+        </div>
+        {%- endif -%}
+
+        {%- if settings.whatsapp_number != blank -%}
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <div>
+            <p class="contact-info-item__label">WhatsApp</p>
+            <p class="contact-info-item__value">
+              <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">Iniciar conversa</a>
+            </p>
+          </div>
+        </div>
+        {%- endif -%}
+
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <p class="contact-info-item__label">E-mail Comercial</p>
+            <p class="contact-info-item__value">
+              <a href="mailto:comercial@agropecaspadrao.com">comercial@agropecaspadrao.com</a>
+            </p>
+          </div>
+        </div>
+
+        {%- if settings.store_address != blank -%}
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <p class="contact-info-item__label">Endereço</p>
+            <p class="contact-info-item__value">{{ settings.store_address }}</p>
+          </div>
+        </div>
+        {%- endif -%}
+
+        {%- if settings.store_cnpj != blank -%}
+        <div class="contact-info-item">
+          <div class="contact-info-item__icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          </div>
+          <div>
+            <p class="contact-info-item__label">CNPJ</p>
+            <p class="contact-info-item__value">{{ settings.store_cnpj }}</p>
+          </div>
+        </div>
+        {%- endif -%}
+
+      </div>
+    </div>
+
+    {%- comment -%}── RIGHT (form) ──{%- endcomment -%}
+    <div class="contact-right">
+      <p class="contact-form-title">Envie sua mensagem</p>
+
+      {%- form 'contact', id: 'ContactForm' -%}
+        <input type="hidden" name="contact[to]" value="comercial@agropecaspadrao.com">
+
+        <div class="contact-form" id="ContactFormFields">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ContactName">Nome</label>
+              <input type="text" id="ContactName" name="contact[name]" placeholder="Seu nome completo" required
+                     value="{% if form.name %}{{ form.name }}{% endif %}">
+            </div>
+            <div class="form-group">
+              <label for="ContactPhone">Telefone / WhatsApp</label>
+              <input type="tel" id="ContactPhone" name="contact[phone]" placeholder="(41) 9 0000-0000"
+                     value="{% if form.phone %}{{ form.phone }}{% endif %}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="ContactEmail">E-mail</label>
+            <input type="email" id="ContactEmail" name="contact[email]" placeholder="seuemail@empresa.com.br" required
+                   value="{% if form.email %}{{ form.email }}{% endif %}">
+          </div>
+
+          <div class="form-group">
+            <label for="ContactSubject">Assunto</label>
+            <select id="ContactSubject" name="contact[subject]">
+              <option value="">Selecione o motivo do contato</option>
+              <option value="Cotação de peças">🔧 Cotação de peças</option>
+              <option value="Dúvida técnica">⚙️ Dúvida técnica</option>
+              <option value="Prazo e entrega">🚚 Prazo e entrega</option>
+              <option value="Parceria comercial">🤝 Parceria comercial</option>
+              <option value="Outro">📋 Outro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ContactBody">Mensagem</label>
+            <textarea id="ContactBody" name="contact[body]" placeholder="Descreva sua necessidade — modelo do equipamento, referência OEM, quantidade...">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          </div>
+
+          <button type="submit" class="btn-contact-submit">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Enviar mensagem
+          </button>
+
+        </div>
+      {%- endform -%}
+
+      {%- if form.posted_successfully? -%}
+        <script>document.addEventListener('DOMContentLoaded',function(){ showSuccess(); });</script>
+      {%- endif -%}
+
+      <div class="contact-success" id="ContactSuccess">
+        <div class="contact-success__icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="contact-success__title">Mensagem enviada!</h2>
+        <p class="contact-success__msg">
+          Obrigado pelo contato. Nossa equipe comercial analisará sua solicitação
+          e retornará em breve — geralmente em até 1 dia útil.
+        </p>
+        <a href="{{ routes.root_url }}" class="contact-success__back">← Voltar ao catálogo</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="contact-strip">
+  <div class="contact-strip__inner">
+    <div class="contact-strip__badge">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Certificação ISO 9001 · 14001 · 18001
+    </div>
+    <div class="contact-strip__sep"></div>
+    <div class="contact-strip__badge">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Resposta em até 1 dia útil
+    </div>
+    <div class="contact-strip__sep"></div>
+    <div class="contact-strip__badge">
+      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Frete para todo o Brasil
+    </div>
+    <div class="contact-strip__sep"></div>
+    <div class="contact-strip__badge">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Peças 100% originais LIVENZA
+    </div>
+  </div>
+</div>
+
+<script>
+  function showSuccess() {
+    var form = document.getElementById('ContactFormFields');
+    var success = document.getElementById('ContactSuccess');
+    if (form) form.classList.add('is-hidden');
+    if (success) success.classList.add('is-visible');
+  }
+
+  // intercept submit para feedback imediato (Shopify recarrega a página com form.posted_successfully?)
+  // mantém o comportamento nativo do Shopify Contact Form
+  document.getElementById('ContactForm')?.addEventListener('submit', function() {
+    var btn = this.querySelector('.btn-contact-submit');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Enviando...';
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Página de Contato",
+  "settings": []
+}
+{% endschema %}

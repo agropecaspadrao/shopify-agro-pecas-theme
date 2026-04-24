@@ -72,19 +72,29 @@
     <nav class="header-nav" aria-label="Navegação principal">
       <div class="page-width">
         <ul class="header-nav__list">
-          <li><a href="{{ routes.root_url }}">Início</a></li>
+          <li><a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a></li>
           {%- if section.settings.menu != blank -%}
             {%- for link in linklists[section.settings.menu].links -%}
-              <li class="{% if link.links.size > 0 %}has-dropdown{% endif %}">
-                <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link.title }}</a>
-                {%- if link.links.size > 0 -%}
-                  <ul class="header-nav__dropdown">
-                    {%- for child in link.links -%}
-                      <li><a href="{{ child.url }}">{{ child.title }}</a></li>
-                    {%- endfor -%}
-                  </ul>
-                {%- endif -%}
-              </li>
+              {%- unless link.url == routes.root_url or link.title == 'Home' or link.title == 'Início' -%}
+                {%- assign link_title = link.title -%}
+                {%- case link.title -%}
+                  {%- when 'Catalog', 'Catálogo', 'Catalogue' -%}{%- assign link_title = 'Catálogo' -%}
+                  {%- when 'Contact', 'Contato', 'Contacts' -%}{%- assign link_title = 'Contato' -%}
+                  {%- when 'About', 'Sobre', 'About Us' -%}{%- assign link_title = 'Sobre Nós' -%}
+                  {%- when 'Collections', 'Coleções' -%}{%- assign link_title = 'Coleções' -%}
+                  {%- when 'Search', 'Busca' -%}{%- assign link_title = 'Busca' -%}
+                {%- endcase -%}
+                <li class="{% if link.links.size > 0 %}has-dropdown{% endif %}">
+                  <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link_title }}</a>
+                  {%- if link.links.size > 0 -%}
+                    <ul class="header-nav__dropdown">
+                      {%- for child in link.links -%}
+                        <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </li>
+              {%- endunless -%}
             {%- endfor -%}
           {%- else -%}
             <li><a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a></li>
@@ -109,10 +119,20 @@
       </button>
     </div>
     <nav class="mobile-menu__nav">
-      <a href="{{ routes.root_url }}">Início</a>
+      <a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a>
       {%- if section.settings.menu != blank -%}
         {%- for link in linklists[section.settings.menu].links -%}
-          <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- unless link.url == routes.root_url or link.title == 'Home' or link.title == 'Início' -%}
+            {%- assign link_title = link.title -%}
+            {%- case link.title -%}
+              {%- when 'Catalog', 'Catálogo', 'Catalogue' -%}{%- assign link_title = 'Catálogo' -%}
+              {%- when 'Contact', 'Contato', 'Contacts' -%}{%- assign link_title = 'Contato' -%}
+              {%- when 'About', 'Sobre', 'About Us' -%}{%- assign link_title = 'Sobre Nós' -%}
+              {%- when 'Collections', 'Coleções' -%}{%- assign link_title = 'Coleções' -%}
+              {%- when 'Search', 'Busca' -%}{%- assign link_title = 'Busca' -%}
+            {%- endcase -%}
+            <a href="{{ link.url }}">{{ link_title }}</a>
+          {%- endunless -%}
         {%- endfor -%}
       {%- else -%}
         <a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a>

@@ -23,6 +23,8 @@
 
   {%- render 'meta-tags' -%}
 
+  {%- render 'ga4' -%}
+
   {{ content_for_header }}
 
   {{ 'fonts.css' | asset_url | stylesheet_tag }}
@@ -59,6 +61,28 @@
 
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
   <script src="{{ 'whatsapp.js' | asset_url }}" defer></script>
+
+  {% comment %}── GA4: add_to_cart via form submit ───────────────────────{% endcomment %}
+  {% if template == 'product' %}
+  <script>
+    document.addEventListener('submit', function (e) {
+      var form = e.target.closest('form[action="/cart/add"]');
+      if (!form) return;
+      gtag('event', 'add_to_cart', {
+        currency: {{ shop.currency | json }},
+        value: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+        items: [{
+          item_id:       {{ product.variants.first.sku | json }},
+          item_name:     {{ product.title | json }},
+          item_brand:    {{ product.vendor | json }},
+          item_category: {{ product.type | json }},
+          price:         {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+          quantity:      parseInt(form.querySelector('[name="quantity"]')?.value || 1),
+        }],
+      });
+    });
+  </script>
+  {% endif %}
 
 </body>
 </html>

@@ -134,8 +134,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.header-logo img { height: 48px; width: auto; }
-.header-search { flex: 1; position: relative; max-width: 480px; }
+.header-logo img { height: 62px; width: auto; }
+.header-search { flex: 1; position: relative; max-width: 480px; margin: 0 auto; }
 .header-search__form {
   display: flex;
   background: rgba(255,255,255,.15);

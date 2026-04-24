@@ -73,35 +73,8 @@
       <div class="page-width">
         <ul class="header-nav__list">
           <li><a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a></li>
-          {%- if section.settings.menu != blank -%}
-            {%- for link in linklists[section.settings.menu].links -%}
-              {%- unless link.url == routes.root_url or link.title == 'Home' or link.title == 'Início' -%}
-                {%- assign link_title = link.title -%}
-                {%- case link.title -%}
-                  {%- when 'Catalog', 'Catálogo', 'Catalogue' -%}{%- assign link_title = 'Catálogo' -%}
-                  {%- when 'Contact', 'Contato', 'Contacts' -%}{%- assign link_title = 'Contato' -%}
-                  {%- when 'About', 'Sobre', 'About Us' -%}{%- assign link_title = 'Sobre Nós' -%}
-                  {%- when 'Collections', 'Coleções' -%}{%- assign link_title = 'Coleções' -%}
-                  {%- when 'Search', 'Busca' -%}{%- assign link_title = 'Busca' -%}
-                {%- endcase -%}
-                <li class="{% if link.links.size > 0 %}has-dropdown{% endif %}">
-                  <a href="{{ link.url }}" {% if link.active %}aria-current="page"{% endif %}>{{ link_title }}</a>
-                  {%- if link.links.size > 0 -%}
-                    <ul class="header-nav__dropdown">
-                      {%- for child in link.links -%}
-                        <li><a href="{{ child.url }}">{{ child.title }}</a></li>
-                      {%- endfor -%}
-                    </ul>
-                  {%- endif -%}
-                </li>
-              {%- endunless -%}
-            {%- endfor -%}
-          {%- else -%}
-            <li><a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a></li>
-            <li><a href="{{ routes.collections_url }}/sensores-agricolas">Sensores Agrícolas</a></li>
-            <li><a href="{{ routes.root_url }}pages/cotacao">Solicitar Cotação</a></li>
-            <li><a href="{{ routes.root_url }}pages/sobre">Sobre Nós</a></li>
-          {%- endif -%}
+          <li><a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a></li>
+          <li><a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a></li>
         </ul>
       </div>
     </nav>
@@ -120,26 +93,8 @@
     </div>
     <nav class="mobile-menu__nav">
       <a href="{{ routes.root_url }}" {% if template == 'index' %}aria-current="page"{% endif %}>Início</a>
-      {%- if section.settings.menu != blank -%}
-        {%- for link in linklists[section.settings.menu].links -%}
-          {%- unless link.url == routes.root_url or link.title == 'Home' or link.title == 'Início' -%}
-            {%- assign link_title = link.title -%}
-            {%- case link.title -%}
-              {%- when 'Catalog', 'Catálogo', 'Catalogue' -%}{%- assign link_title = 'Catálogo' -%}
-              {%- when 'Contact', 'Contato', 'Contacts' -%}{%- assign link_title = 'Contato' -%}
-              {%- when 'About', 'Sobre', 'About Us' -%}{%- assign link_title = 'Sobre Nós' -%}
-              {%- when 'Collections', 'Coleções' -%}{%- assign link_title = 'Coleções' -%}
-              {%- when 'Search', 'Busca' -%}{%- assign link_title = 'Busca' -%}
-            {%- endcase -%}
-            <a href="{{ link.url }}">{{ link_title }}</a>
-          {%- endunless -%}
-        {%- endfor -%}
-      {%- else -%}
-        <a href="{{ routes.collections_url }}/bombas-hidraulicas">Bombas Hidráulicas</a>
-        <a href="{{ routes.collections_url }}/sensores-agricolas">Sensores Agrícolas</a>
-        <a href="{{ routes.root_url }}pages/cotacao">Solicitar Cotação</a>
-        <a href="{{ routes.root_url }}pages/sobre">Sobre Nós</a>
-      {%- endif -%}
+      <a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a>
+      <a href="{{ routes.root_url }}pages/contato" {% if page.handle == 'contato' %}aria-current="page"{% endif %}>Contato</a>
     </nav>
     <div class="mobile-menu__footer">
       <a href="https://wa.me/{{ settings.whatsapp_number }}" class="btn btn--whatsapp btn--full" target="_blank" rel="noopener">

@@ -98,15 +98,15 @@ async function getToken() {
   if (_token) return _token;
   const res = await fetch(`https://${SHOP}.myshopify.com/admin/oauth/access_token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: CLIENT_ID,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type:    'client_credentials',
+      client_id:     CLIENT_ID,
       client_secret: CLIENT_SECRET,
-      grant_type: 'client_credentials',
     }),
   });
   const data = await res.json();
-  if (!data.access_token) throw new Error('Token error: ' + JSON.stringify(data));
+  if (!data.access_token) { console.error('Erro token:', data); process.exit(1); }
   _token = data.access_token;
   return _token;
 }
@@ -172,49 +172,63 @@ async function getDefaultLocation() {
   return data.locations.nodes[0]?.id;
 }
 
-// Atualiza preço de uma variante
-async function updatePrice(variantId, price) {
+// Extrai productId de variantId: "gid://shopify/ProductVariant/123" → "gid://shopify/Product/456"
+// Na API 2025-01 usamos productVariantsBulkUpdate que requer productId
+async function updatePrice(productId, variantId, price) {
   return gql(`
-    mutation($input: ProductVariantInput!) {
-      productVariantUpdate(input: $input) {
-        productVariant { id price }
+    mutation($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+      productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+        productVariants { id price }
         userErrors { field message }
       }
     }
   `, {
-    input: {
-      id: variantId,
-      price: (price / 100).toFixed(2),
-    },
+    productId,
+    variants: [{ id: variantId, price: (price / 100).toFixed(2) }],
   });
 }
 
-// Zera estoque de um inventoryItem num location
+// Zera estoque de um inventoryItem num location (API 2025-01)
 async function zeroInventory(inventoryItemId, locationId) {
   return gql(`
-    mutation($input: InventoryAdjustQuantityInput!) {
-      inventoryAdjustQuantity(input: $input) {
-        inventoryLevel { available }
+    mutation($input: InventorySetQuantitiesInput!) {
+      inventorySetQuantities(input: $input) {
+        inventoryAdjustmentGroup { reason }
         userErrors { field message }
       }
     }
   `, {
     input: {
-      inventoryItemId,
-      locationId,
-      availableDelta: -9999,
+      name: 'available',
+      reason: 'correction',
+      quantities: [{ inventoryItemId, locationId, quantity: 0 }],
     },
   });
 }
 
-// Extrai código reduzido do SKU (últimos 6 dígitos ou parte alfanumérica após ponto)
+// Extrai código reduzido do SKU
+// Padrão "5.XXXX.YYYYYY.Z" ou "5.XXXX.YYYYYY-Z" → pega YYYYYY (sem zeros à esquerda opcionais)
+// Ex: "5.0220.0547201" → "547201", "5.0220.L026997.0" → "L026997"
 function extractReducedCode(sku) {
   if (!sku) return null;
-  // Tenta padrão "5.XXXX.YYYYYY.0" → pega YYYYYY
-  const m = sku.match(/5\.\d{4}\.([A-Z0-9]+)\.\d/i);
+  // Padrão com ponto no final: 5.XXXX.YYYYYY.0
+  let m = sku.match(/5\.\d{4}\.([A-Z0-9]+)(?:\.\d)?$/i);
   if (m) return m[1];
-  // Fallback: retorna o próprio SKU limpo
-  return sku.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+  // Padrão sem ponto final: 5.XXXX.YYYYYY
+  m = sku.match(/5\.\d{4}\.([A-Z0-9]+)/i);
+  if (m) return m[1];
+  // Padrão com traço: 5.XXXX.YYYYYY-Z → pega YYYYYY
+  m = sku.match(/5\.\d{4}\.([A-Z0-9]+)-/i);
+  if (m) return m[1];
+  // Retorna o próprio SKU para sensores e outros
+  return sku.trim().toUpperCase();
+}
+
+// Remove zero à esquerda de código numérico: "0547201" → "547201", "L026997" inalterado
+function normalizeCode(code) {
+  if (!code) return null;
+  if (/^0\d+$/.test(code)) return code.replace(/^0+/, '');
+  return code;
 }
 
 // ── MAIN ──────────────────────────────────────────────────────────────────
@@ -237,13 +251,13 @@ async function main() {
 
   for (const product of products) {
     for (const variant of product.variants.nodes) {
-      const code = extractReducedCode(variant.sku);
+      const code = normalizeCode(extractReducedCode(variant.sku));
       const price = code ? (PRICE_MAP[code] ?? null) : null;
 
       if (price !== null) {
         // Atualiza preço
-        const res = await updatePrice(variant.id, price);
-        const errors = res.productVariantUpdate?.userErrors;
+        const res = await updatePrice(product.id, variant.id, price);
+        const errors = res.productVariantsBulkUpdate?.userErrors;
         if (errors?.length) {
           console.warn(`  ⚠️  ${product.title} — erro preço:`, errors);
         } else {
@@ -255,7 +269,7 @@ async function main() {
         if (variant.inventoryItem?.id && locationId) {
           if (variant.inventoryQuantity > 0) {
             const invRes = await zeroInventory(variant.inventoryItem.id, locationId);
-            const invErr = invRes.inventoryAdjustQuantity?.userErrors;
+            const invErr = invRes.inventorySetQuantities?.userErrors;
             if (!invErr?.length) zeroed++;
           }
         }

@@ -19,17 +19,15 @@
             {%- assign card_url = col.url -%}
           {%- endif -%}
           <a href="{{ card_url | default: '#' }}" class="collection-card" {{ block.shopify_attributes }}>
-            {%- assign card_img = blank -%}
-            {%- if block.settings.image != blank -%}
-              {%- assign card_img = block.settings.image -%}
-            {%- elsif col != blank and col.image != blank -%}
-              {%- assign card_img = col.image -%}
-            {%- elsif col != blank and col.products.first != blank -%}
-              {%- assign card_img = col.products.first.featured_image -%}
-            {%- endif -%}
             <div class="collection-card__img">
-              {%- if card_img != blank -%}
-                <img src="{{ card_img | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
+              {%- if block.settings.asset_image != blank -%}
+                <img src="{{ block.settings.asset_image | asset_url }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
+              {%- elsif block.settings.image != blank -%}
+                <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.title | default: col.title }}" width="600" height="400" loading="lazy">
+              {%- elsif col != blank and col.image != blank -%}
+                <img src="{{ col.image | image_url: width: 600 }}" alt="{{ col.title }}" width="600" height="400" loading="lazy">
+              {%- elsif col != blank and col.products.first != blank -%}
+                <img src="{{ col.products.first.featured_image | image_url: width: 600 }}" alt="{{ col.title }}" width="600" height="400" loading="lazy">
               {%- else -%}
                 <div class="collection-card__placeholder"></div>
               {%- endif -%}
@@ -90,9 +88,39 @@
           "label": "Coleção"
         },
         {
+          "type": "select",
+          "id": "asset_image",
+          "label": "Imagem do tema (assets)",
+          "options": [
+            { "value": "", "label": "Nenhuma" },
+            { "value": "Livenza_5.0220.0547201-CT_REV._0_p1.png", "label": "Bomba 0547201" },
+            { "value": "Livenza_5.0220.0547202-CT_REV._0_p1.png", "label": "Bomba 0547202" },
+            { "value": "Livenza_5.0220.0547205-CT_REV._0_p1.png", "label": "Bomba 0547205" },
+            { "value": "Livenza_5.0220.0547206-CT_REV._0_p1.png", "label": "Bomba 0547206" },
+            { "value": "Livenza_5.0220.0547216-CT_REV._0_p1.png", "label": "Bomba 0547216" },
+            { "value": "Livenza_5.0220.0548836-CT_REV._0_p1.png", "label": "Bomba 0548836" },
+            { "value": "5.0220.0548824-2_p1.png", "label": "Bomba 0548824" },
+            { "value": "Livenza_5.1301.0565001-CT_REV._0_p1.png", "label": "Sensor 0565001" },
+            { "value": "Livenza_5.1301.0565002-CT_REV._0_p1.png", "label": "Sensor 0565002" },
+            { "value": "Livenza_5.1301.0565004-CT_REV._A_p1.png", "label": "Sensor 0565004" },
+            { "value": "5.1301.0565008_p1.png", "label": "Sensor 0565008" },
+            { "value": "5.1301.0565017_p1.png", "label": "Sensor 0565017" },
+            { "value": "5.1301.0565035_p1.png", "label": "Sensor 0565035" },
+            { "value": "Livenza_5.1302.0547820-CT_REV._0_p1.png", "label": "Sensor 0547820" },
+            { "value": "Livenza_5.1302.0547844-CT_REV._A_p1.png", "label": "Sensor 0547844" },
+            { "value": "Livenza_5.1302.0565053-1_p1.png", "label": "Sensor 0565053" },
+            { "value": "5.1305.0565032_p1.png", "label": "Sensor 0565032" },
+            { "value": "5.1305.0565036_p1.png", "label": "Sensor 0565036" },
+            { "value": "5.1305.0565071_p1.png", "label": "Sensor 0565071" },
+            { "value": "sensor_SFLX2.jpg", "label": "Sensor SFLX2" },
+            { "value": "banner-agro.png", "label": "Banner Agro" }
+          ],
+          "default": ""
+        },
+        {
           "type": "image_picker",
           "id": "image",
-          "label": "Imagem (substitui a da coleção)"
+          "label": "Imagem personalizada (upload)"
         },
         {
           "type": "text",
@@ -125,6 +153,7 @@
         {
           "type": "collection_card",
           "settings": {
+            "asset_image": "Livenza_5.0220.0547201-CT_REV._0_p1.png",
             "title": "Bombas Hidráulicas",
             "description": "Bombas para John Deere, New Holland, Massey Ferguson, Valtra e Valmet com certificação ISO.",
             "cta_label": "Ver Bombas"
@@ -133,6 +162,7 @@
         {
           "type": "collection_card",
           "settings": {
+            "asset_image": "sensor_SFLX2.jpg",
             "title": "Sensores Agrícolas",
             "description": "Sensores de fluxo e sementes para plantadeiras de precisão.",
             "cta_label": "Ver Sensores"

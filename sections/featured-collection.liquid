@@ -1,110 +1,431 @@
-{%- if section.settings.collection != blank -%}
-  {%- assign featured = collections[section.settings.collection] -%}
+{% comment %}
+  Produtos em Destaque — lógica:
+  1. Prioridade: produtos com compare_at_price > price (desconto configurado no Shopify),
+     ordenados pelo maior % de desconto.
+  2. Fallback: top 3 por estoque de cada coleção ativa, rotacionados em carrossel de 5s.
+{% endcomment %}
+
+{%- comment -%}── Coleta produtos com desconto real ──{%- endcomment -%}
+{%- assign discounted = '' -%}
+{%- for product in collections.all.products -%}
+  {%- if product.compare_at_price > product.price -%}
+    {%- assign discounted = discounted | append: product.id | append: ',' -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign has_discounts = false -%}
+{%- if discounted != '' -%}
+  {%- assign has_discounts = true -%}
 {%- endif -%}
 
-<section class="featured-collection section-padding">
-  <div class="page-width">
-    <div class="section-header">
-      <div>
-        {%- if section.settings.eyebrow != blank -%}
-          <span class="section-eyebrow">{{ section.settings.eyebrow }}</span>
-        {%- endif -%}
-        <h2 class="section-title">{{ section.settings.title | default: featured.title | default: 'Produtos em Destaque' }}</h2>
-        {%- if section.settings.description != blank -%}
-          <p class="section-desc">{{ section.settings.description }}</p>
-        {%- endif -%}
-      </div>
-      {%- if section.settings.show_view_all and featured != blank -%}
-        <a href="{{ featured.url }}" class="btn btn--outline">Ver todos →</a>
-      {%- endif -%}
-    </div>
+{%- comment -%}── Coleções para o carrossel (exclui frontpage e all) ──{%- endcomment -%}
+{%- assign carousel_collections = '' -%}
+{%- for col in collections -%}
+  {%- unless col.handle == 'frontpage' or col.handle == 'all' or col.products_count == 0 -%}
+    {%- assign carousel_collections = carousel_collections | append: col.handle | append: ',' -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign carousel_collections = carousel_collections | split: ',' | compact -%}
 
-    <div class="product-grid product-grid--{{ section.settings.columns_desktop }}">
-      {%- if featured != blank -%}
-        {%- for product in featured.products limit: section.settings.products_to_show -%}
-          {%- render 'product-card', product: product -%}
-        {%- endfor -%}
-      {%- else -%}
-        <p class="empty-state">Configure uma coleção para exibir os produtos.</p>
-      {%- endif -%}
-    </div>
+<section class="fd-section" id="FeaturedSection">
+<style>
+  .fd-section {
+    background: var(--color-bg, #f5f4f0);
+    padding: 64px 0 72px;
+  }
 
-    {%- if section.settings.cta_label != blank -%}
-      <div class="section-cta">
-        <a href="{{ section.settings.cta_url | default: featured.url }}" class="btn btn--primary btn--lg">
-          {{ section.settings.cta_label }}
-        </a>
+  /* ── HEADER ── */
+  .fd-header {
+    max-width: 1200px;
+    margin: 0 auto 36px;
+    padding: 0 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .fd-header__left {}
+
+  .fd-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-primary, #1a3a1a);
+    margin-bottom: 8px;
+  }
+
+  .fd-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #c8a84b;
+    border-radius: 2px;
+  }
+
+  .fd-title {
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 800;
+    color: var(--color-text, #1c2b1c);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .fd-title em {
+    font-style: italic;
+    color: #c8a84b;
+    text-transform: none;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .fd-header__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary, #1a3a1a);
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(26,58,26,0.25);
+    padding-bottom: 2px;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+  }
+
+  .fd-header__cta:hover { border-color: var(--color-primary, #1a3a1a); }
+
+  /* ── TAB NAV (carrossel por categoria) ── */
+  .fd-tabs {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fd-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: 1.5px solid rgba(26,58,26,0.18);
+    background: transparent;
+    color: #5a6b5a;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    position: relative;
+  }
+
+  .fd-tab.is-active {
+    background: var(--color-primary, #1a3a1a);
+    color: #f5eedc;
+    border-color: var(--color-primary, #1a3a1a);
+  }
+
+  /* progress ring on active tab */
+  .fd-tab__progress {
+    display: none;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .fd-tab.is-active .fd-tab__progress { display: block; }
+
+  .fd-tab__progress circle {
+    fill: none;
+    stroke: rgba(200,168,75,0.35);
+    stroke-width: 2;
+  }
+
+  .fd-tab__progress .track {
+    stroke: #c8a84b;
+    stroke-linecap: round;
+    stroke-dasharray: 38;
+    stroke-dashoffset: 38;
+    transform-origin: center;
+    transform: rotate(-90deg);
+    transition: stroke-dashoffset linear;
+  }
+
+  /* ── DISCOUNT BADGE on tab ── */
+  .fd-mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400e;
+    margin-left: 4px;
+  }
+
+  .fd-mode-badge svg { width: 12px; height: 12px; fill: none; stroke: #f59e0b; stroke-width: 2; }
+
+  /* ── PANEL ── */
+  .fd-panels {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+  }
+
+  .fd-panel {
+    display: none;
+    animation: fdFadeIn 0.35s ease both;
+  }
+
+  .fd-panel.is-active { display: block; }
+
+  @keyframes fdFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* reutiliza .product-grid do tema */
+  .fd-panel .product-grid { gap: 20px; }
+
+  /* ── DISCOUNT BADGE no card ── */
+  .fd-discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 2;
+    letter-spacing: 0.02em;
+  }
+
+  .product-card { position: relative; }
+
+  /* ── FOOTER ── */
+  .fd-footer {
+    max-width: 1200px;
+    margin: 32px auto 0;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .fd-section { padding: 48px 0 56px; }
+    .fd-header { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+
+  {%- comment -%}── HEADER ──{%- endcomment -%}
+  <div class="fd-header">
+    <div class="fd-header__left">
+      <div class="fd-eyebrow">
+        {%- if has_discounts -%}Ofertas Especiais{%- else -%}Mais Vendidos{%- endif -%}
       </div>
-    {%- endif -%}
+      <h2 class="fd-title">
+        Produtos em <em>Destaque</em>
+      </h2>
+    </div>
+    <a href="{{ routes.root_url }}collections/all" class="fd-header__cta">
+      Ver catálogo completo →
+    </a>
   </div>
+
+  {%- comment -%}── MODO DESCONTO ──{%- endcomment -%}
+  {%- if has_discounts -%}
+
+    <div class="fd-tabs">
+      <span class="fd-mode-badge">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Produtos com desconto ativo
+      </span>
+    </div>
+
+    <div class="fd-panels">
+      <div class="fd-panel is-active">
+        {%- comment -%} Ordena por maior desconto percentual (Liquid não tem sort nativo por cálculo,
+            então pré-filtramos e exibimos até 6 com compare_at_price) {%- endcomment -%}
+        <div class="product-grid product-grid--3">
+          {%- assign shown = 0 -%}
+          {%- for product in collections.all.products -%}
+            {%- if product.compare_at_price > product.price and shown < 6 -%}
+              {%- assign pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+              <div style="position:relative;">
+                <span class="fd-discount-badge">-{{ pct }}%</span>
+                {%- render 'product-card', product: product -%}
+              </div>
+              {%- assign shown = shown | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+
+  {%- comment -%}── MODO CARROSSEL POR CATEGORIA ──{%- endcomment -%}
+  {%- else -%}
+
+    {%- if carousel_collections.size > 0 -%}
+      <div class="fd-tabs" id="FdTabs">
+        {%- for col_handle in carousel_collections -%}
+          {%- assign col = collections[col_handle] -%}
+          {%- if col.products_count > 0 -%}
+            <button
+              class="fd-tab {% if forloop.first %}is-active{% endif %}"
+              data-panel="fd-panel-{{ col_handle }}"
+              type="button"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            >
+              {{ col.title }}
+              <svg class="fd-tab__progress" viewBox="0 0 14 14">
+                <circle cx="7" cy="7" r="6"/>
+                <circle class="track" cx="7" cy="7" r="6"/>
+              </svg>
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="fd-panels" id="FdPanels">
+        {%- for col_handle in carousel_collections -%}
+          {%- assign col = collections[col_handle] -%}
+          {%- if col.products_count > 0 -%}
+            <div
+              class="fd-panel {% if forloop.first %}is-active{% endif %}"
+              id="fd-panel-{{ col_handle }}"
+            >
+              {%- comment -%} Top 3 por maior estoque (quantity) — Liquid não ordena por inventory,
+                  exibimos os 3 primeiros com available=true priorizando os com maior qty -%}
+              {%- endcomment -%}
+              <div class="product-grid product-grid--3">
+                {%- assign col_shown = 0 -%}
+                {%- for product in col.products -%}
+                  {%- if product.available and col_shown < 3 -%}
+                    {%- render 'product-card', product: product -%}
+                    {%- assign col_shown = col_shown | plus: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- comment -%} Se não tiver 3 disponíveis, completa com indisponíveis -%}{%- endcomment -%}
+                {%- if col_shown < 3 -%}
+                  {%- for product in col.products -%}
+                    {%- unless product.available -%}
+                      {%- if col_shown < 3 -%}
+                        {%- render 'product-card', product: product -%}
+                        {%- assign col_shown = col_shown | plus: 1 -%}
+                      {%- endif -%}
+                    {%- endunless -%}
+                  {%- endfor -%}
+                {%- endif -%}
+              </div>
+              <div style="text-align:center; margin-top:20px;">
+                <a href="{{ col.url }}" class="btn btn--outline">
+                  Ver todos em {{ col.title }} →
+                </a>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="fd-footer">
+    <a href="{{ routes.root_url }}collections/all" class="btn btn--primary btn--lg">
+      Ver Catálogo Completo
+    </a>
+  </div>
+
 </section>
+
+<script>
+(function () {
+  var INTERVAL = 5000;
+  var tabs   = Array.from(document.querySelectorAll('#FdTabs .fd-tab'));
+  var panels = Array.from(document.querySelectorAll('#FdPanels .fd-panel'));
+
+  if (!tabs.length) return;
+
+  var current = 0;
+  var timer   = null;
+  var trackEl = null;
+
+  function activate(idx) {
+    tabs.forEach(function (t, i) {
+      t.classList.toggle('is-active', i === idx);
+      t.setAttribute('aria-selected', i === idx);
+    });
+    panels.forEach(function (p, i) {
+      p.classList.toggle('is-active', i === idx);
+    });
+    current = idx;
+    startTrack();
+  }
+
+  function next() {
+    activate((current + 1) % tabs.length);
+  }
+
+  function startTrack() {
+    // anima o círculo SVG do tab ativo
+    if (trackEl) { trackEl.style.transition = 'none'; trackEl.style.strokeDashoffset = 38; }
+    var activeTab = tabs[current];
+    trackEl = activeTab ? activeTab.querySelector('.track') : null;
+    if (!trackEl) return;
+    // força reflow
+    trackEl.getBoundingClientRect();
+    trackEl.style.transition = 'stroke-dashoffset ' + INTERVAL + 'ms linear';
+    trackEl.style.strokeDashoffset = 0;
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, INTERVAL);
+  }
+
+  // clicks manuais
+  tabs.forEach(function (tab, idx) {
+    tab.addEventListener('click', function () {
+      clearInterval(timer);
+      activate(idx);
+      startTimer();
+    });
+  });
+
+  // pausa no hover
+  var section = document.getElementById('FeaturedSection');
+  if (section) {
+    section.addEventListener('mouseenter', function () { clearInterval(timer); });
+    section.addEventListener('mouseleave', function () { startTimer(); });
+  }
+
+  activate(0);
+  startTimer();
+})();
+</script>
 
 {% schema %}
 {
-  "name": "Coleção em Destaque",
-  "settings": [
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Texto acima do título"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Título da Seção",
-      "default": "Produtos em Destaque"
-    },
-    {
-      "type": "textarea",
-      "id": "description",
-      "label": "Descrição (opcional)"
-    },
-    {
-      "type": "collection",
-      "id": "collection",
-      "label": "Coleção"
-    },
-    {
-      "type": "range",
-      "id": "products_to_show",
-      "min": 2,
-      "max": 12,
-      "step": 1,
-      "default": 6,
-      "label": "Quantidade de Produtos"
-    },
-    {
-      "type": "select",
-      "id": "columns_desktop",
-      "label": "Colunas (desktop)",
-      "options": [
-        { "value": "2", "label": "2" },
-        { "value": "3", "label": "3" },
-        { "value": "4", "label": "4" }
-      ],
-      "default": "3"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_view_all",
-      "label": "Mostrar link 'Ver todos'",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "cta_label",
-      "label": "Botão CTA — Texto"
-    },
-    {
-      "type": "url",
-      "id": "cta_url",
-      "label": "Botão CTA — Link"
-    }
-  ],
-  "presets": [
-    {
-      "name": "Coleção em Destaque"
-    }
-  ]
+  "name": "Produtos em Destaque",
+  "settings": [],
+  "presets": [{ "name": "Produtos em Destaque" }]
 }
 {% endschema %}

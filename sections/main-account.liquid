@@ -1,112 +1,18 @@
-<style>
-  .account-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-
-  .account-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 40px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .account-header__title {
-    font-family: var(--font-display);
-    font-size: clamp(24px, 4vw, 36px);
-    font-weight: 800;
-    text-transform: uppercase;
-    color: var(--color-text);
-    letter-spacing: -0.01em;
-  }
-
-  .account-header__title em {
-    font-style: normal;
-    color: var(--color-accent);
-  }
-
-  .account-logout {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 1px;
-  }
-
-  .account-section-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-primary);
-    margin-bottom: 16px;
-  }
-
-  .account-orders { margin-bottom: 48px; }
-
-  .account-orders table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  .account-orders th {
-    text-align: left;
-    padding: 10px 12px;
-    background: var(--color-bg-soft);
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .account-orders td {
-    padding: 12px;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text);
-    vertical-align: middle;
-  }
-
-  .account-orders tr:hover td { background: var(--color-bg-soft); }
-
-  .order-status {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: var(--radius-full);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .order-status--fulfilled { background: #dcfce7; color: #166534; }
-  .order-status--unfulfilled { background: #fef3c7; color: #92400e; }
-  .order-status--cancelled { background: #fee2e2; color: #991b1b; }
-
-  .account-empty {
-    text-align: center;
-    padding: 48px 24px;
-    background: var(--color-bg-soft);
-    border-radius: var(--radius-lg);
-    color: var(--color-text-muted);
-  }
-
-  .account-empty p { margin-bottom: 20px; font-size: 15px; }
-</style>
-
 <div class="account-page">
   <div class="account-header">
-    <h1 class="account-header__title">Minha <em>Conta</em></h1>
-    <a href="{{ routes.account_logout_url }}" class="account-logout">Sair →</a>
+    <div class="account-header__brand">
+      <div class="account-header__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div>
+        <p style="font-size:12px;color:var(--color-text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Bem-vindo,</p>
+        <h1 class="account-header__title">{{ customer.first_name | default: 'Cliente' }} <em>{{ customer.last_name }}</em></h1>
+      </div>
+    </div>
+    <a href="{{ routes.account_logout_url }}" class="account-logout">Sair da conta →</a>
   </div>
 
   <div class="account-orders">
@@ -126,8 +32,8 @@
         <tbody>
           {%- for order in customer.orders -%}
             <tr>
-              <td><strong>#{{ order.order_number }}</strong></td>
-              <td>{{ order.created_at | date: '%d/%m/%Y' }}</td>
+              <td><strong style="font-family:var(--font-display);color:var(--color-primary);">#{{ order.order_number }}</strong></td>
+              <td style="color:var(--color-text-muted);font-size:13px;">{{ order.created_at | date: '%d/%m/%Y' }}</td>
               <td>
                 <span class="order-status order-status--{{ order.fulfillment_status | default: 'unfulfilled' }}">
                   {%- case order.fulfillment_status -%}
@@ -138,16 +44,27 @@
                   {%- endcase -%}
                 </span>
               </td>
-              <td>{{ order.total_price | money }}</td>
-              <td><a href="{{ order.customer_url }}" style="font-size:13px; color:var(--color-primary); font-weight:600;">Ver →</a></td>
+              <td style="font-weight:700;">{{ order.total_price | money }}</td>
+              <td>
+                <a href="{{ order.customer_url }}" style="font-size:13px;color:var(--color-primary);font-weight:700;display:inline-flex;align-items:center;gap:4px;">
+                  Ver detalhes
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+              </td>
             </tr>
           {%- endfor -%}
         </tbody>
       </table>
     {%- else -%}
       <div class="account-empty">
-        <p>Você ainda não realizou nenhum pedido.</p>
-        <a href="{{ routes.root_url }}collections/all" class="btn btn--primary">Ver Catálogo</a>
+        <div class="account-empty__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+          </svg>
+        </div>
+        <p style="font-weight:600;color:var(--color-text);margin-bottom:6px;">Nenhum pedido ainda</p>
+        <p style="font-size:14px;margin-bottom:24px;">Explore nosso catálogo de peças originais LIVENZA e faça seu primeiro pedido.</p>
+        <a href="{{ routes.root_url }}collections/all" class="btn btn--primary">Ver Catálogo de Peças</a>
       </div>
     {%- endif -%}
   </div>

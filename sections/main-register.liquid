@@ -90,6 +90,36 @@
 </style>
 
 <div class="auth-page">
+
+  <!-- Painel esquerdo — identidade da marca -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-panel__logo">
+      <img src="{{ 'logo-branca.png' | asset_url }}" alt="{{ shop.name }}">
+    </div>
+    <div class="auth-brand-panel__body">
+      <span class="auth-brand-panel__eyebrow">Distribuidora Oficial LIVENZA</span>
+      <h2 class="auth-brand-panel__title">Crie sua<em>conta agora.</em></h2>
+      <p class="auth-brand-panel__sub">Cadastre-se para acompanhar pedidos, solicitar cotações formais e ter acesso ao nosso catálogo completo.</p>
+      <div class="auth-brand-panel__trust">
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          Peças 100% originais LIVENZA
+        </div>
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+          Cotação formal com nota fiscal
+        </div>
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Dados protegidos — LGPD
+        </div>
+      </div>
+    </div>
+    <p class="auth-brand-panel__footer">© {{ 'now' | date: '%Y' }} APP Agro Peças Padrão · CNPJ {{ settings.store_cnpj }}</p>
+  </div>
+
+  <!-- Painel direito — formulário -->
+  <div class="auth-form-panel">
   <div class="auth-box auth-box--wide">
     <span class="auth-box__eyebrow">Nova conta</span>
     <h1 class="auth-box__title">Criar <em>cadastro</em></h1>
@@ -225,7 +255,8 @@
     <div class="auth-divider">já tem conta?</div>
     <a href="{{ routes.account_login_url }}" class="auth-link-btn">Entrar</a>
   </div>
-</div>
+  </div><!-- /auth-form-panel -->
+</div><!-- /auth-page -->
 
 <script>
 (function () {

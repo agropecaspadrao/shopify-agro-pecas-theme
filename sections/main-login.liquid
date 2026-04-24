@@ -1,33 +1,65 @@
 
 <div class="auth-page">
-  <div class="auth-box">
-    <span class="auth-box__eyebrow">Acesso à conta</span>
-    <h1 class="auth-box__title">Entrar na <em>conta</em></h1>
 
-    {%- if form.errors -%}
-      <ul class="auth-errors">
-        {%- for error in form.errors -%}
-          <li>{{ form.errors.messages[error] }}</li>
-        {%- endfor -%}
-      </ul>
-    {%- endif -%}
-
-    {%- form 'customer_login' -%}
-      <div class="auth-field">
-        <label for="CustomerEmail">E-mail</label>
-        <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" autocorrect="off" autocapitalize="off" placeholder="seu@email.com.br" required>
+  <!-- Painel esquerdo — identidade da marca -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-panel__logo">
+      <img src="{{ 'logo-branca.png' | asset_url }}" alt="{{ shop.name }}">
+    </div>
+    <div class="auth-brand-panel__body">
+      <span class="auth-brand-panel__eyebrow">Distribuidora Oficial LIVENZA</span>
+      <h2 class="auth-brand-panel__title">Bem-vindo<em>de volta.</em></h2>
+      <p class="auth-brand-panel__sub">Acesse sua conta para acompanhar pedidos, solicitar cotações e muito mais.</p>
+      <div class="auth-brand-panel__trust">
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          Peças 100% originais LIVENZA
+        </div>
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Entrega para todo o Brasil
+        </div>
+        <div class="auth-brand-panel__trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          PIX ou parcele em 10×
+        </div>
       </div>
-      <div class="auth-field">
-        <label for="CustomerPassword">Senha</label>
-        <input type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" placeholder="••••••••" required>
-      </div>
-      <a href="{{ routes.account_login_url }}#recover" class="auth-forgot">Esqueceu a senha?</a>
-      <button type="submit" class="auth-submit">Entrar</button>
-    {%- endform -%}
-
-    <div class="auth-divider">ou</div>
-    <a href="{{ routes.account_register_url }}" class="auth-link-btn">Criar conta</a>
+    </div>
+    <p class="auth-brand-panel__footer">© {{ 'now' | date: '%Y' }} APP Agro Peças Padrão · CNPJ {{ settings.store_cnpj }}</p>
   </div>
+
+  <!-- Painel direito — formulário -->
+  <div class="auth-form-panel">
+    <div class="auth-box">
+      <span class="auth-box__eyebrow">Acesso à conta</span>
+      <h1 class="auth-box__title">Entrar na <em>conta</em></h1>
+
+      {%- if form.errors -%}
+        <ul class="auth-errors">
+          {%- for error in form.errors -%}
+            <li>{{ form.errors.messages[error] }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- form 'customer_login' -%}
+        <div class="auth-field">
+          <label for="CustomerEmail">E-mail</label>
+          <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" autocorrect="off" autocapitalize="off" placeholder="seu@email.com.br" required>
+        </div>
+        <div class="auth-field">
+          <label for="CustomerPassword">Senha</label>
+          <input type="password" name="customer[password]" id="CustomerPassword" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+        <a href="{{ routes.account_login_url }}#recover" class="auth-forgot">Esqueceu a senha?</a>
+        <button type="submit" class="auth-submit">Entrar na conta</button>
+      {%- endform -%}
+
+      <div class="auth-divider">ou</div>
+      <a href="{{ routes.account_register_url }}" class="auth-link-btn">Criar conta grátis</a>
+    </div>
+  </div>
+
 </div>
 
 {%- if section.id == 'main' -%}

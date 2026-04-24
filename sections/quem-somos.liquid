@@ -1,0 +1,286 @@
+<section class="qs-hero">
+  <div class="page-width qs-hero__inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Início</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Quem Somos Nós</span>
+    </nav>
+    <div class="qs-hero__content">
+      <span class="qs-hero__eyebrow">Nossa História</span>
+      <h1 class="qs-hero__title">Especialistas em peças<br>para o agronegócio</h1>
+      <p class="qs-hero__lead">Há mais de uma década fornecendo bombas hidráulicas, sensores e componentes de alta performance para máquinas agrícolas das principais marcas do mercado.</p>
+      <div class="qs-hero__stats">
+        <div class="qs-hero__stat">
+          <strong>+10 Anos</strong>
+          <span>de experiência no setor</span>
+        </div>
+        <div class="qs-hero__stat">
+          <strong>+500</strong>
+          <span>SKUs em estoque</span>
+        </div>
+        <div class="qs-hero__stat">
+          <strong>ISO 9001</strong>
+          <span>certificação de qualidade</span>
+        </div>
+        <div class="qs-hero__stat">
+          <strong>Todo Brasil</strong>
+          <span>entrega para todo o país</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="qs-mission">
+  <div class="page-width qs-mission__grid">
+    <div class="qs-mission__text">
+      <h2>Nossa Missão</h2>
+      <p>A <strong>APP Agro Peças Padrão</strong> nasceu da necessidade real dos produtores rurais: encontrar peças confiáveis, com procedência garantida e entrega ágil, sem precisar parar a produção por dias esperando um componente.</p>
+      <p>Somos distribuidores autorizados <strong>LIVENZA</strong> e trabalhamos exclusivamente com peças 100% originais, rastreáveis e com garantia de fábrica. Cada SKU no nosso catálogo passou por inspeção técnica antes de chegar até você.</p>
+      <p>Nossa equipe é formada por técnicos especializados em hidráulica agrícola, prontos para indicar a peça certa para cada aplicação — seja numa colheitadeira John Deere, num trator New Holland ou numa bomba Case.</p>
+    </div>
+    <div class="qs-mission__visual">
+      <div class="qs-mission__card qs-mission__card--highlight">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <h3>Peças 100% Originais</h3>
+        <p>Todos os produtos são originais LIVENZA, com certificado de procedência e garantia do fabricante.</p>
+      </div>
+      <div class="qs-mission__card">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <h3>Agilidade na Entrega</h3>
+        <p>Estoque físico em Curitiba–PR. Pedidos confirmados até as 14h saem no mesmo dia via transportadora parceira.</p>
+      </div>
+      <div class="qs-mission__card">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <h3>Suporte Técnico</h3>
+        <p>Nossa equipe responde via WhatsApp em minutos. Não sabe qual peça precisa? A gente identifica pelo modelo da máquina.</p>
+      </div>
+      <div class="qs-mission__card">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        <h3>Cotação Formal</h3>
+        <p>Emitimos orçamento, nota fiscal e damos suporte para licitações e compras corporativas via CNPJ.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="qs-brands">
+  <div class="page-width">
+    <h2 class="qs-brands__title">Máquinas que atendemos</h2>
+    <p class="qs-brands__sub">Peças compatíveis com as principais marcas do agronegócio brasileiro</p>
+    <div class="qs-brands__grid">
+      {%- assign brand_names = 'John Deere,New Holland,Case IH,AGCO / Fendt,Valtra,Massey Ferguson,Komatsu,CNH Industrial,Jacto,Stara' | split: ',' -%}
+      {%- for brand in brand_names -%}
+        <div class="qs-brands__item">{{ brand }}</div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<section class="qs-values">
+  <div class="page-width">
+    <h2 class="qs-values__title">Por que escolher a APP Agro Peças?</h2>
+    <div class="qs-values__list">
+      <div class="qs-values__item">
+        <div class="qs-values__icon">01</div>
+        <div>
+          <h3>Procedência garantida</h3>
+          <p>Distribuidor oficial LIVENZA. Cada peça tem código rastreável e certificado de origem. Zero risco de falsificação.</p>
+        </div>
+      </div>
+      <div class="qs-values__item">
+        <div class="qs-values__icon">02</div>
+        <div>
+          <h3>Estoque real, não promessa</h3>
+          <p>O que aparece disponível no site, está em prateleira. Não trabalhamos com encomenda disfarçada de estoque.</p>
+        </div>
+      </div>
+      <div class="qs-values__item">
+        <div class="qs-values__icon">03</div>
+        <div>
+          <h3>Atendimento que entende do assunto</h3>
+          <p>Fale com quem conhece hidráulica agrícola. Indicamos a peça certa, evitando retrabalho e prejuízo.</p>
+        </div>
+      </div>
+      <div class="qs-values__item">
+        <div class="qs-values__icon">04</div>
+        <div>
+          <h3>Flexibilidade comercial</h3>
+          <p>PIX, cartão em até 12x, boleto, transferência. Compradores PJ contam com condições especiais e nota fiscal eletrônica.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="qs-cta">
+  <div class="page-width qs-cta__inner">
+    <div class="qs-cta__text">
+      <h2>Pronto para encontrar a peça certa?</h2>
+      <p>Navegue pelo catálogo, solicite uma cotação formal ou fale direto com nossa equipe pelo WhatsApp.</p>
+    </div>
+    <div class="qs-cta__actions">
+      <a href="{{ routes.root_url }}collections/all" class="btn btn--primary btn--lg">Ver Catálogo de Peças</a>
+      <a href="https://wa.me/5541983333338?text={{ 'Olá! Vim pela página Quem Somos e gostaria de mais informações sobre os produtos da Agro Peças Padrão.' | url_encode }}"
+         class="btn btn--whatsapp btn--lg" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Falar com a Equipe
+      </a>
+      <a href="{{ routes.root_url }}pages/contato" class="btn btn--outline btn--lg">Solicitar Cotação</a>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ===== Quem Somos Page ===== */
+.qs-hero {
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 60%, #33691e 100%);
+  color: #fff;
+  padding: 60px 0 80px;
+}
+.qs-hero .breadcrumb { color: rgba(255,255,255,.65); margin-bottom: 32px; font-size: 13px; }
+.qs-hero .breadcrumb a { color: rgba(255,255,255,.75); text-decoration: none; }
+.qs-hero .breadcrumb a:hover { color: #fff; }
+.qs-hero .breadcrumb span[aria-hidden] { margin: 0 6px; }
+.qs-hero__eyebrow {
+  display: inline-block;
+  background: rgba(200,168,75,.2);
+  border: 1px solid rgba(200,168,75,.5);
+  color: #F9A825;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.qs-hero__title {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.qs-hero__lead {
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(255,255,255,.85);
+  max-width: 640px;
+  margin-bottom: 48px;
+}
+.qs-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 24px;
+  max-width: 600px;
+}
+.qs-hero__stat strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  color: #F9A825;
+  margin-bottom: 4px;
+}
+.qs-hero__stat span { font-size: 13px; color: rgba(255,255,255,.75); }
+
+/* Mission */
+.qs-mission { padding: 80px 0; }
+.qs-mission__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+@media (max-width: 768px) { .qs-mission__grid { grid-template-columns: 1fr; gap: 40px; } }
+.qs-mission__text h2 { font-size: 28px; font-weight: 800; margin-bottom: 20px; color: var(--color-text); }
+.qs-mission__text p { font-size: 15px; line-height: 1.75; color: var(--color-text-muted); margin-bottom: 16px; }
+.qs-mission__text strong { color: var(--color-primary); }
+.qs-mission__visual { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 480px) { .qs-mission__visual { grid-template-columns: 1fr; } }
+.qs-mission__card {
+  background: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px 20px;
+}
+.qs-mission__card--highlight {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.qs-mission__card--highlight svg { stroke: rgba(255,255,255,.9); }
+.qs-mission__card--highlight h3 { color: #fff; }
+.qs-mission__card--highlight p { color: rgba(255,255,255,.8); }
+.qs-mission__card svg { margin-bottom: 12px; stroke: var(--color-primary); }
+.qs-mission__card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--color-text); }
+.qs-mission__card p { font-size: 13px; line-height: 1.6; color: var(--color-text-muted); }
+
+/* Brands */
+.qs-brands { background: var(--color-bg-soft); padding: 64px 0; text-align: center; }
+.qs-brands__title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.qs-brands__sub { color: var(--color-text-muted); font-size: 15px; margin-bottom: 36px; }
+.qs-brands__grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.qs-brands__item {
+  padding: 10px 20px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: #fff;
+  transition: border-color .2s, color .2s;
+}
+.qs-brands__item:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* Values */
+.qs-values { padding: 80px 0; }
+.qs-values__title { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 48px; }
+.qs-values__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; }
+.qs-values__item { display: flex; gap: 20px; align-items: flex-start; }
+.qs-values__icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary), #2E7D32);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qs-values__item h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--color-text); }
+.qs-values__item p { font-size: 14px; line-height: 1.65; color: var(--color-text-muted); }
+
+/* CTA */
+.qs-cta {
+  background: linear-gradient(135deg, #1a3a1a 0%, #1B5E20 100%);
+  padding: 72px 0;
+  color: #fff;
+}
+.qs-cta__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.qs-cta__text h2 { font-size: 26px; font-weight: 800; margin-bottom: 10px; }
+.qs-cta__text p { color: rgba(255,255,255,.8); font-size: 15px; max-width: 480px; }
+.qs-cta__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.qs-cta__actions .btn--outline {
+  border-color: rgba(255,255,255,.5);
+  color: #fff;
+}
+.qs-cta__actions .btn--outline:hover {
+  border-color: #fff;
+  background: rgba(255,255,255,.08);
+}
+</style>
+
+{% schema %}
+{
+  "name": "Quem Somos",
+  "settings": []
+}
+{% endschema %}

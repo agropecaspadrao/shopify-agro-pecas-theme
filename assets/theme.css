@@ -628,6 +628,64 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 .product-card__ctas .btn { flex: 1; }
 
+/* Product card price */
+.product-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.product-card__price-current {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.product-card__price-compare {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+.product-card__price--consult {
+  margin-bottom: 10px;
+}
+.product-card__price--consult span {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+/* Product card image badges */
+.product-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.product-card__badge--stock {
+  background: #1B5E20;
+  color: #fff;
+}
+.product-card__badge--consult {
+  background: #F57F17;
+  color: #fff;
+}
+
+/* Add to cart button inside card */
+.product-card__add-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 /* ---------- Stock badges ---------- */
 .stock-badge {
   display: inline-flex;

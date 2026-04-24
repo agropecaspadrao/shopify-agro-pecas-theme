@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "quem-somos": {
+      "type": "quem-somos",
+      "settings": {}
+    }
+  },
+  "order": ["quem-somos"]
+}

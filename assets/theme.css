@@ -1034,65 +1034,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .cotacao-wa-alt p { font-size: 14px; color: var(--color-text-muted); margin-bottom: 12px; }
 
 /* ---------- Footer ---------- */
-.site-footer { background: var(--color-bg-dark); color: rgba(255,255,255,.8); margin-top: 80px; }
-.footer-main { padding: 60px 0 40px; }
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-}
-@media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr repeat(auto-fit, minmax(160px, 1fr)); } }
-.footer-logo { margin-bottom: 16px; }
-.footer-logo__text {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 24px;
-  color: #fff;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.footer-logo img { max-height: 48px; filter: brightness(0) invert(1); }
-.footer-tagline { font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.6; margin-bottom: 16px; max-width: 300px; }
-.footer-contact { font-size: 14px; line-height: 1.8; }
-.footer-contact a { color: rgba(255,255,255,.7); }
-.footer-contact a:hover { color: #fff; }
-.footer-links__title {
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.45);
-  margin-bottom: 16px;
-}
-.footer-links ul { display: flex; flex-direction: column; gap: 10px; }
-.footer-links a { font-size: 14px; color: rgba(255,255,255,.7); transition: color 0.15s; }
-.footer-links a:hover { color: #fff; }
-.footer-contact-block p { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.6; margin-bottom: 16px; }
-.footer-bottom {
-  border-top: 1px solid rgba(255,255,255,.1);
-  padding: 20px 0;
-}
-.footer-bottom__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: rgba(255,255,255,.45);
-}
-.footer-badges { display: flex; gap: 8px; }
-.trust-badge {
-  padding: 3px 10px;
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,.5);
-}
+/* footer styles moved to sections/footer.liquid */
 
 /* ---------- Empty / Utilities ---------- */
 .empty-state {

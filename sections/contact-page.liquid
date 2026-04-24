@@ -4,15 +4,15 @@
   /* ── RESET LOCAL ── */
   .cp-wrap *, .cp-wrap *::before, .cp-wrap *::after { box-sizing: border-box; }
 
-  /* ── TOKENS ── */
+  /* ── TOKENS — alinhados com o tema ── */
   .cp-wrap {
-    --green:      #1a3a1a;
-    --green-mid:  #2c5c2c;
+    --green:      var(--color-primary, #1a3a1a);
+    --green-mid:  var(--color-primary-dark, #2c5c2c);
     --green-light:#e8f0e8;
-    --gold:       #c8a84b;
+    --gold:       var(--color-accent, #c8a84b);
     --gold-light: #f5eedc;
-    --cream:      #faf8f4;
-    --text:       #1c2b1c;
+    --cream:      var(--color-bg, #faf8f4);
+    --text:       var(--color-text, #1c2b1c);
     --text-muted: #5a6b5a;
     --border:     #d8e4d8;
     --white:      #ffffff;
@@ -20,7 +20,7 @@
     --shadow-sm:  0 1px 3px rgba(26,58,26,0.08), 0 1px 2px rgba(26,58,26,0.06);
     --shadow-md:  0 4px 16px rgba(26,58,26,0.10), 0 2px 6px rgba(26,58,26,0.06);
     --shadow-lg:  0 20px 48px rgba(26,58,26,0.12), 0 8px 20px rgba(26,58,26,0.08);
-    font-family: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-body-family, 'Barlow', 'Helvetica Neue', Arial, sans-serif);
     background: var(--cream);
     color: var(--text);
   }
@@ -80,10 +80,12 @@
   .cp-hero__eyebrow span { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); display: inline-block; }
 
   .cp-hero__title {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 900;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 800;
     line-height: 1.08;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     color: var(--gold-light);
     margin: 0 0 16px;
   }
@@ -91,6 +93,9 @@
   .cp-hero__title em {
     font-style: italic;
     color: var(--gold);
+    text-transform: none;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05em;
   }
 
   .cp-hero__sub {
@@ -318,9 +323,11 @@
   }
 
   .cp-form-card__title {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 24px;
-    font-weight: 700;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     color: var(--text);
     margin: 0 0 4px;
   }
@@ -504,9 +511,11 @@
   @keyframes cpCheck { to { stroke-dashoffset: 0; } }
 
   .cp-success__title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 700;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     color: var(--text);
     margin: 0;
   }
@@ -591,9 +600,11 @@
   }
 
   .cp-faq__title {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 700;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 28px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     color: var(--text);
     margin: 0 0 8px;
   }
@@ -680,8 +691,7 @@
         <span></span>Fale com a equipe comercial<span></span>
       </div>
       <h1 class="cp-hero__title">
-        Peça certa,<br>
-        no <em>tempo certo.</em>
+        Fale com a<br><em>nossa equipe</em>
       </h1>
       <p class="cp-hero__sub">
         Atendemos distribuidores, revendas e produtores rurais em todo o Brasil.<br>

@@ -20,7 +20,7 @@
   /* ── COLUNA MARCA ── */
   .footer-brand {}
   .footer-logo { margin-bottom: 14px; }
-  .footer-logo img { max-height: 48px; filter: brightness(0) invert(1); }
+  .footer-logo img { width: 80px; height: auto; display: block; }
   .footer-logo__text {
     font-family: var(--font-display);
     font-weight: 800;
@@ -188,7 +188,7 @@
       <!-- 1. MARCA + WA + SOCIAL -->
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="{{ 'logo-branca.png' | asset_url }}" alt="{{ shop.name }}" width="160" height="auto" loading="lazy">
+          <img src="{{ 'logo-branca.png' | asset_url }}" alt="{{ shop.name }}" loading="lazy">
         </div>
 
         <p class="footer-tagline">Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado.</p>

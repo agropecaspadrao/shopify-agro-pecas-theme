@@ -9,21 +9,14 @@
 
   <div class="header-main">
     <div class="page-width header-inner">
-      <!-- Logo -->
+      <!-- Logo colorida — header branco v2 -->
       <a href="{{ routes.root_url }}" class="header-logo" aria-label="{{ shop.name }}">
-        {%- if section.settings.logo != blank -%}
-          <img src="{{ section.settings.logo | image_url: width: 200 }}"
-               alt="{{ shop.name }}"
-               width="{{ section.settings.logo_width }}"
-               height="auto"
-               loading="eager">
-        {%- else -%}
-          <img src="{{ 'logo-branca.png' | asset_url }}"
-               alt="{{ shop.name }}"
-               width="{{ section.settings.logo_width | default: 160 }}"
-               height="auto"
-               loading="eager">
-        {%- endif -%}
+        <img src="{{ 'logo-colorida.png' | asset_url }}"
+             alt="{{ shop.name }}"
+             height="56"
+             width="auto"
+             loading="eager"
+             onerror="this.onerror=null;this.src='{{ 'logo-branca.png' | asset_url }}'">
       </a>
 
       <!-- Search -->

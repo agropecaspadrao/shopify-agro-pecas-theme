@@ -155,8 +155,8 @@
   },
   "order": [
     "image-banner",
-    "collection-list",
     "featured-collection",
+    "collection-list",
     "multicolumn"
   ]
 }

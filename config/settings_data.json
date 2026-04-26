@@ -25,7 +25,8 @@
       "header": {
         "type": "header",
         "settings": {
-          "logo_width": 160,
+          "logo": "shopify://shop_images/Logo_V2_Sem_fundo.png",
+          "logo_width": 230,
           "menu": "main-menu",
           "announcement_text": "🚜 Frete para todo o Brasil • Certificação ISO 9001 • Peças 100% originais LIVENZA"
         }
@@ -33,7 +34,6 @@
       "footer": {
         "type": "footer",
         "settings": {
-          "logo": "shopify://shop_images/logo-branca_4c053d5d-67b5-4c7f-9b00-3f32bc1a8211.png",
           "instagram": "",
           "facebook": "",
           "youtube": "",

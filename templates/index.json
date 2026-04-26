@@ -11,42 +11,6 @@
   "sections": {
     "image-banner": {
       "type": "image-banner",
-      "blocks": {
-        "trust1": {
-          "type": "trust_item",
-          "settings": {
-            "icon": "🏆",
-            "text": "ISO 9001 / 14001 / 18001"
-          }
-        },
-        "trust2": {
-          "type": "trust_item",
-          "settings": {
-            "icon": "🚚",
-            "text": "Entrega p/ todo Brasil"
-          }
-        },
-        "trust3": {
-          "type": "trust_item",
-          "settings": {
-            "icon": "📦",
-            "text": "Estoque Disponível"
-          }
-        },
-        "trust4": {
-          "type": "trust_item",
-          "settings": {
-            "icon": "🔧",
-            "text": "Suporte Técnico"
-          }
-        }
-      },
-      "block_order": [
-        "trust1",
-        "trust2",
-        "trust3",
-        "trust4"
-      ],
       "settings": {
         "overlay_opacity": 55,
         "full_height": false,
@@ -57,6 +21,10 @@
         "cta_primary_url": "/collections/all",
         "cta_wa_label": "Pedir Cotação"
       }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {}
     },
     "collection-list": {
       "type": "collection-list",
@@ -96,10 +64,6 @@
         "description": "Especialistas em bombas hidráulicas e sensores agrícolas de precisão.",
         "bg_dark": false
       }
-    },
-    "featured-collection": {
-      "type": "featured-collection",
-      "settings": {}
     },
     "multicolumn": {
       "type": "multicolumn",

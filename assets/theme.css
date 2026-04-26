@@ -173,8 +173,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   text-transform: uppercase;
 }
 /* logo colorida no header branco */
-.header-logo img { width: auto; height: 52px; display: block; }
-@media (max-width: 768px) { .header-logo img { height: 40px; } }
+.header-logo img { width: auto; height: 56px; display: block; }
+@media (max-width: 768px) { .header-logo img { height: 44px; } }
 
 .header-search { flex: 1; position: relative; max-width: 500px; margin: 0 auto; }
 .header-search__form {
@@ -1366,8 +1366,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   }
 }
 .auth-brand-panel__logo img {
-  width: 72px;
-  height: auto;
+  width: auto;
+  height: 52px;
 }
 .auth-brand-panel__body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0; }
 .auth-brand-panel__eyebrow {

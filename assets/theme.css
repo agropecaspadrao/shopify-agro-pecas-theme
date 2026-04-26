@@ -692,6 +692,23 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
 }
+.product-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 8px 0 4px;
+}
+.product-card__price--current {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.product-card__price--compare {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
 .product-card__ctas {
   display: flex;
   gap: 8px;

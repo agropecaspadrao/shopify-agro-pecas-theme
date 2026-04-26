@@ -59,7 +59,16 @@
       {%- endif -%}
     </div>
 
-    <!-- CTA único: WhatsApp — ZERO preço, ZERO carrinho -->
+    {%- if has_stock and product.price > 0 -%}
+      <div class="product-card__price">
+        {%- if product.compare_at_price > product.price -%}
+          <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+        {%- endif -%}
+        <span class="product-card__price--current">{{ product.price | money }}</span>
+      </div>
+    {%- endif -%}
+
+    <!-- CTAs -->
     <div class="product-card__ctas">
       <a href="https://wa.me/5541998333338?text={{ wa_msg | url_encode }}"
          class="product-card__wa-btn" target="_blank" rel="noopener">

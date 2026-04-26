@@ -173,8 +173,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   text-transform: uppercase;
 }
 /* logo colorida no header branco */
-.header-logo img { height: 80px; width: auto; }
-@media (max-width: 768px) { .header-logo img { height: 64px; } }
+.header-logo img { width: 305px; height: auto; max-height: 80px; object-fit: contain; }
+@media (max-width: 768px) { .header-logo img { width: 200px; } }
 
 .header-search { flex: 1; position: relative; max-width: 500px; margin: 0 auto; }
 .header-search__form {

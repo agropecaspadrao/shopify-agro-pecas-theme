@@ -160,8 +160,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 .header-logo { flex-shrink: 0; line-height: 0; }
 .header-logo__text {
@@ -173,8 +173,8 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   text-transform: uppercase;
 }
 /* logo colorida no header branco */
-.header-logo img { width: 152px; height: auto; display: block; }
-@media (max-width: 768px) { .header-logo img { width: 120px; } }
+.header-logo img { width: auto; height: 52px; display: block; }
+@media (max-width: 768px) { .header-logo img { height: 40px; } }
 
 .header-search { flex: 1; position: relative; max-width: 500px; margin: 0 auto; }
 .header-search__form {

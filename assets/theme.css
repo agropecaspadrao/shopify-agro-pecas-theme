@@ -457,11 +457,11 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 28px;
+  padding: 18px 20px;
   flex: 1;
   border-right: 1px solid var(--color-border);
   color: var(--color-text);
-  min-width: 180px;
+  min-width: 0;
 }
 .trust-item:last-child { border-right: none; }
 @media (max-width: 768px) {

@@ -10,36 +10,39 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── PAGE HEADER (branco com border) ── */
+  /* ── PAGE HEADER (verde — igual coleção/produtos) ── */
   .qf-page-header {
-    background: #fff;
-    border-bottom: 1px solid #e7e5e3;
+    background: var(--color-primary-dark, #1B5E20);
+    padding: 48px 0 40px;
   }
   .qf-page-header__inner {
     max-width: 896px;
     margin: 0 auto;
-    padding: 24px 24px 28px;
+    padding: 0 24px;
   }
   .qf-breadcrumb {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #78716b;
-    margin-bottom: 12px;
+    color: rgba(255,255,255,.6);
+    margin-bottom: 14px;
   }
-  .qf-breadcrumb a { color: #78716b; transition: color 0.15s; }
-  .qf-breadcrumb a:hover { color: #1B5E20; }
-  .qf-breadcrumb__sep { color: #d7d5d1; }
+  .qf-breadcrumb a { color: rgba(255,255,255,.7); transition: color 0.15s; }
+  .qf-breadcrumb a:hover { color: #fff; }
+  .qf-breadcrumb__sep { color: rgba(255,255,255,.35); }
   .qf-page-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #292524;
-    margin: 0 0 4px;
+    font-family: var(--font-display, 'Barlow Condensed', sans-serif);
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 8px;
+    letter-spacing: -.01em;
+    line-height: 1.15;
   }
   .qf-page-subtitle {
-    font-size: 14px;
-    color: #78716b;
+    font-size: 15px;
+    color: rgba(255,255,255,.75);
     margin: 0;
   }
 

@@ -9,6 +9,9 @@
  */
 {
   "current": {
+    "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
+    "logo_width": 160,
+    "logo_white": "shopify://shop_images/logo-branca_2d04137d-4631-4c5c-92b9-f1c720bc5e6f.png",
     "color_primary": "#1B4332",
     "color_primary_dark": "#153628",
     "color_primary_mid": "#2F6B4F",
@@ -21,9 +24,6 @@
     "color_bg_soft": "#f9f8f7",
     "color_border": "#e7e5e3",
     "color_footer_bg": "#1c1917",
-    "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
-    "logo_width": 160,
-    "logo_white": "shopify://shop_images/logo-branca_2d04137d-4631-4c5c-92b9-f1c720bc5e6f.png",
     "brand_tagline": "Peças originais. Entrega ágil. Confiança de verdade.",
     "brand_tagline_footer": "Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro.",
     "brand_distributor": "LIVENZA",
@@ -39,7 +39,7 @@
       "header": {
         "type": "header",
         "settings": {
-          "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
+          "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_de3bc485-9a78-4ae1-b230-ba184ebd1f13.svg",
           "logo_width": 160,
           "menu": "main-menu",
           "announcement_text": "Frete para todo o Brasil • Peças agrícolas originais • Atendimento técnico especializado"

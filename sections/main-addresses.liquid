@@ -1,0 +1,100 @@
+<div class="account-page">
+  <div class="account-hero account-hero--compact">
+    <div>
+      <p class="account-eyebrow">Cadastro</p>
+      <h1 class="account-hero__title">Meus endereços</h1>
+      <p class="account-hero__text">Mantenha seus dados de entrega completos para acelerar compras, cotações e faturamento.</p>
+    </div>
+    <a href="{{ routes.account_url }}" class="btn btn--outline">Voltar para conta</a>
+  </div>
+
+  <div class="addresses-layout">
+    <section class="account-panel">
+      <div class="account-panel__header account-panel__header--large">
+        <h2>Adicionar endereço</h2>
+      </div>
+
+      {%- form 'customer_address', customer.new_address, class: 'address-form' -%}
+        <div class="address-form__grid">
+          <div class="form-field">
+            <label class="form-label" for="AddressFirstNameNew">Nome</label>
+            <input class="form-input" type="text" id="AddressFirstNameNew" name="address[first_name]" autocomplete="given-name">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="AddressLastNameNew">Sobrenome</label>
+            <input class="form-input" type="text" id="AddressLastNameNew" name="address[last_name]" autocomplete="family-name">
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label" for="AddressCompanyNew">Empresa / Fazenda</label>
+            <input class="form-input" type="text" id="AddressCompanyNew" name="address[company]" autocomplete="organization">
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label" for="AddressAddress1New">Endereço</label>
+            <input class="form-input" type="text" id="AddressAddress1New" name="address[address1]" autocomplete="address-line1">
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label" for="AddressAddress2New">Complemento</label>
+            <input class="form-input" type="text" id="AddressAddress2New" name="address[address2]" autocomplete="address-line2">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="AddressCityNew">Cidade</label>
+            <input class="form-input" type="text" id="AddressCityNew" name="address[city]" autocomplete="address-level2">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="AddressZipNew">CEP</label>
+            <input class="form-input" type="text" id="AddressZipNew" name="address[zip]" autocomplete="postal-code">
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="AddressCountryNew">País</label>
+            <select class="form-select" id="AddressCountryNew" name="address[country]" data-default="{{ form.country }}" autocomplete="country">
+              {{ all_country_option_tags }}
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="AddressPhoneNew">Telefone</label>
+            <input class="form-input" type="tel" id="AddressPhoneNew" name="address[phone]" autocomplete="tel">
+          </div>
+        </div>
+        <label class="address-default-check">
+          {{ form.set_as_default_checkbox }}
+          <span>Usar como endereço principal</span>
+        </label>
+        <button type="submit" class="btn btn--primary">Salvar endereço</button>
+      {%- endform -%}
+    </section>
+
+    <section class="account-panel">
+      <div class="account-panel__header account-panel__header--large">
+        <h2>Endereços cadastrados</h2>
+      </div>
+
+      {%- if customer.addresses.size > 0 -%}
+        <div class="address-card-list">
+          {%- for address in customer.addresses -%}
+            <article class="address-card">
+              {%- if address == customer.default_address -%}
+                <span class="badge badge--stock">Principal</span>
+              {%- endif -%}
+              <address class="account-address">
+                <strong>{{ address.name }}</strong>
+                {{ address.address1 }}{% if address.address2 != blank %}, {{ address.address2 }}{% endif %}<br>
+                {{ address.city }}{% if address.province_code != blank %} - {{ address.province_code }}{% endif %}<br>
+                {{ address.zip }} · {{ address.country }}<br>
+                {%- if address.phone != blank -%}{{ address.phone }}{%- endif -%}
+              </address>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="account-helper-text">Você ainda não cadastrou nenhum endereço.</p>
+      {%- endif -%}
+    </section>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Endereços do cliente",
+  "settings": []
+}
+{% endschema %}

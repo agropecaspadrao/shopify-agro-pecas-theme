@@ -1702,122 +1702,276 @@ input, select, textarea { font: inherit; color: inherit; }
 .auth-errors li { margin-left: 16px; }
 @media (max-width: 480px) { .auth-box { padding: 32px 20px; } }
 
-/* ===== ACCOUNT PAGE — identidade visual ===== */
+/* ===== ACCOUNT / PROFILE / ORDERS ===== */
 .account-page {
-  max-width: 960px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: 44px var(--page-gutter) 80px;
 }
-.account-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 40px;
-  padding-bottom: 24px;
-  border-bottom: 2px solid var(--color-border);
-}
-.account-header__brand {
+.account-page--dashboard { background: linear-gradient(180deg, var(--color-bg-soft), #fff 220px); }
+.account-hero {
   display: flex;
   align-items: center;
-  gap: 14px;
-}
-.account-header__icon {
-  width: 48px; height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1B4332, #1B4332);
-  display: flex; align-items: center; justify-content: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: var(--color-primary);
   color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 22px;
+  border-bottom: 3px solid var(--color-cta);
+}
+.account-hero--compact { align-items: flex-end; }
+.account-hero__brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.account-hero__brand img {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 8px;
   flex-shrink: 0;
 }
-.account-header__title {
-  font-family: var(--font-display);
-  font-size: clamp(22px, 4vw, 32px);
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--color-text);
-  letter-spacing: -0.01em;
-}
-.account-header__title em { font-style: normal; color: var(--color-accent); }
-.account-logout {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  border-bottom: 1px solid currentColor;
-  padding-bottom: 1px;
-  transition: color 0.15s;
-}
-.account-logout:hover { color: var(--color-text); }
-.account-section-title {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-muted);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.account-section-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--color-border);
-}
-.account-orders { margin-bottom: 48px; }
-.account-orders table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  background: #fff;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border);
-}
-.account-orders thead tr {
-  background: var(--color-primary);
-}
-.account-orders th {
-  text-align: left;
-  padding: 14px 16px;
+.account-eyebrow {
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.8);
-  border-bottom: none;
+  color: var(--color-cta);
+  margin-bottom: 6px;
 }
-.account-orders td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  vertical-align: middle;
+.account-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.05;
+  font-weight: 800;
+  color: inherit;
 }
-.account-orders tbody tr:last-child td { border-bottom: none; }
-.account-orders tbody tr:hover td { background: var(--color-bg-soft); }
-.order-status {
-  display: inline-block;
-  padding: 3px 10px;
+.account-hero__text {
+  color: rgba(255,255,255,.74);
+  max-width: 620px;
+  margin-top: 8px;
+}
+.account-logout,
+.account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.account-hero .account-logout {
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.24);
   border-radius: var(--radius-full);
+  padding: 8px 14px;
+}
+.account-link:hover,
+.account-logout:hover { color: var(--color-cta-dark); }
+.account-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.account-summary-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+.account-summary-card__label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+.account-summary-card strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--color-primary);
+}
+.account-summary-card span:last-child {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+.account-layout,
+.order-detail-layout,
+.addresses-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+.account-sidebar,
+.order-detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.account-panel {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.account-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.account-panel__header--large {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 16px;
+}
+.account-panel__header h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.account-panel__header a {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.account-progress {
+  height: 8px;
+  background: var(--color-bg-stone);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.account-progress span {
+  display: block;
+  height: 100%;
+  background: var(--color-cta);
+  border-radius: inherit;
+}
+.account-data-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.account-data-list div,
+.order-total-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+}
+.account-data-list dt,
+.order-total-list dt {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.account-data-list dd,
+.order-total-list dd {
+  text-align: right;
+  font-weight: 700;
+}
+.account-helper-text {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.account-address {
+  font-style: normal;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  font-size: 14px;
+}
+.account-address strong {
+  display: block;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.account-order-list,
+.order-line-list,
+.address-card-list {
+  display: grid;
+  gap: 12px;
+}
+.account-order-card,
+.order-line-item,
+.address-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: var(--color-bg-soft);
+}
+.account-order-card__main,
+.account-order-card__meta,
+.account-order-card__actions,
+.order-line-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.account-order-card__main { margin-bottom: 12px; }
+.account-order-card__main p,
+.order-line-item__body p,
+.order-line-item__body span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.account-order-card__number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+.account-order-card__actions {
+  border-top: 1px solid var(--color-border);
+  margin-top: 14px;
+  padding-top: 12px;
+  justify-content: flex-start;
+}
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.order-status--fulfilled { background: #dcfce7; color: #166534; }
-.order-status--unfulfilled { background: #fef3c7; color: #92400e; }
-.order-status--cancelled { background: #fee2e2; color: #991b1b; }
+.order-status--fulfilled,
+.order-status--financial-paid { background: #dcfce7; color: #166534; }
+.order-status--unfulfilled,
+.order-status--financial-pending { background: #fef3c7; color: #92400e; }
+.order-status--partial,
+.order-status--financial-partially_paid { background: #dbeafe; color: #1d4ed8; }
+.order-status--restocked,
+.order-status--cancelled,
+.order-status--financial-refunded,
+.order-status--financial-voided { background: #fee2e2; color: #991b1b; }
 .account-empty {
   text-align: center;
-  padding: 64px 24px;
-  background: #fff;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  padding: 56px 24px;
   color: var(--color-text-muted);
 }
 .account-empty__icon {
@@ -1826,9 +1980,96 @@ input, select, textarea { font: inherit; color: inherit; }
   border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 16px;
-  color: var(--color-text-muted);
+  color: var(--color-primary);
 }
-.account-empty p { margin-bottom: 24px; font-size: 15px; }
+.account-empty__title {
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.account-empty__actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+.order-items-panel { min-width: 0; }
+.order-line-item__image {
+  width: 74px;
+  height: 74px;
+  border-radius: var(--radius-md);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.order-line-item__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+}
+.order-line-item__body {
+  flex: 1;
+  min-width: 0;
+}
+.order-line-item__body h2 {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.order-total-list {
+  max-width: 420px;
+  margin-left: auto;
+  margin-top: 22px;
+}
+.order-total-list__grand {
+  border-bottom: none;
+  border-top: 2px solid var(--color-primary);
+  padding-top: 12px;
+  font-size: 18px;
+}
+.address-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.address-default-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  margin: 4px 0 18px;
+}
+.address-default-check input { accent-color: var(--color-primary); }
+.address-card .badge { margin-bottom: 10px; }
+
+@media (max-width: 960px) {
+  .account-layout,
+  .order-detail-layout,
+  .addresses-layout { grid-template-columns: 1fr; }
+  .account-summary-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .account-page { padding-top: 28px; }
+  .account-hero,
+  .account-hero__brand,
+  .account-order-card__main,
+  .account-order-card__meta,
+  .account-order-card__actions,
+  .order-line-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .account-panel { padding: 18px; }
+  .address-form__grid { grid-template-columns: 1fr; }
+}
 
 /* ===== WhatsApp Flutuante ===== */
 .wa-float {

@@ -1,78 +1,173 @@
-<div class="account-page">
-  <div class="account-header">
-    <div class="account-header__brand">
-      <div class="account-header__icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      </div>
+{%- liquid
+  assign default_address = customer.default_address
+  assign completed_fields = 0
+  assign total_fields = 6
+  if customer.first_name != blank
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  if customer.last_name != blank
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  if customer.email != blank
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  if customer.phone != blank
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  if default_address != blank
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  if customer.accepts_marketing
+    assign completed_fields = completed_fields | plus: 1
+  endif
+  assign profile_percent = completed_fields | times: 100 | divided_by: total_fields
+-%}
+
+<div class="account-page account-page--dashboard">
+  <div class="account-hero">
+    <div class="account-hero__brand">
+      <img src="{{ 'APP - LOGO ICON V3.svg' | asset_url }}" alt="" width="56" height="56" loading="eager">
       <div>
-        <p style="font-size:12px;color:var(--color-text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Bem-vindo,</p>
-        <h1 class="account-header__title">{{ customer.first_name | default: 'Cliente' }} <em>{{ customer.last_name }}</em></h1>
+        <p class="account-eyebrow">Área do cliente</p>
+        <h1 class="account-hero__title">Olá, {{ customer.first_name | default: customer.name | default: 'cliente' }}</h1>
+        <p class="account-hero__text">Acompanhe pedidos, mantenha seus dados atualizados e agilize suas próximas cotações.</p>
       </div>
     </div>
-    <a href="{{ routes.account_logout_url }}" class="account-logout">Sair da conta →</a>
+    <a href="{{ routes.account_logout_url }}" class="account-logout">Sair da conta</a>
   </div>
 
-  <div class="account-orders">
-    <h2 class="account-section-title">Meus Pedidos</h2>
+  <div class="account-summary-grid">
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Pedidos realizados</span>
+      <strong>{{ customer.orders_count }}</strong>
+      <span>{{ customer.orders_count | pluralize: 'pedido no histórico', 'pedidos no histórico' }}</span>
+    </div>
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Endereços</span>
+      <strong>{{ customer.addresses_count }}</strong>
+      <span>{{ customer.addresses_count | pluralize: 'endereço cadastrado', 'endereços cadastrados' }}</span>
+    </div>
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Cadastro</span>
+      <strong>{{ profile_percent }}%</strong>
+      <span>{{ completed_fields }} de {{ total_fields }} campos principais</span>
+    </div>
+  </div>
 
-    {%- if customer.orders.size > 0 -%}
-      <table>
-        <thead>
-          <tr>
-            <th>Pedido</th>
-            <th>Data</th>
-            <th>Status</th>
-            <th>Total</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+  <div class="account-layout">
+    <aside class="account-sidebar">
+      <section class="account-panel">
+        <div class="account-panel__header">
+          <h2>Meu cadastro</h2>
+          <a href="{{ routes.account_addresses_url }}">Editar endereços</a>
+        </div>
+        <div class="account-progress" aria-label="Cadastro {{ profile_percent }}% completo">
+          <span style="width: {{ profile_percent }}%;"></span>
+        </div>
+
+        <dl class="account-data-list">
+          <div>
+            <dt>Nome</dt>
+            <dd>{{ customer.name | default: 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>E-mail</dt>
+            <dd>{{ customer.email | default: 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Telefone</dt>
+            <dd>{{ customer.phone | default: default_address.phone | default: 'Não informado' }}</dd>
+          </div>
+          <div>
+            <dt>Marketing</dt>
+            <dd>{% if customer.accepts_marketing %}Autorizado{% else %}Não autorizado{% endif %}</dd>
+          </div>
+        </dl>
+
+        <p class="account-helper-text">Para alterar nome, e-mail ou dados fiscais, fale com nossa equipe. Endereços podem ser editados direto pelo painel.</p>
+        <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Gostaria de atualizar meus dados cadastrais na APP Agro Peças Padrão.' | url_encode }}" class="btn btn--outline btn--full" target="_blank" rel="noopener">Atualizar dados pelo WhatsApp</a>
+      </section>
+
+      <section class="account-panel">
+        <div class="account-panel__header">
+          <h2>Endereço principal</h2>
+          <a href="{{ routes.account_addresses_url }}">Gerenciar</a>
+        </div>
+        {%- if default_address -%}
+          <address class="account-address">
+            <strong>{{ default_address.name }}</strong>
+            {{ default_address.address1 }}{% if default_address.address2 != blank %}, {{ default_address.address2 }}{% endif %}<br>
+            {{ default_address.city }}{% if default_address.province_code != blank %} - {{ default_address.province_code }}{% endif %}<br>
+            {{ default_address.zip }} · {{ default_address.country }}<br>
+            {%- if default_address.phone != blank -%}{{ default_address.phone }}{%- endif -%}
+          </address>
+        {%- else -%}
+          <p class="account-helper-text">Cadastre um endereço para acelerar compras e cotações futuras.</p>
+          <a href="{{ routes.account_addresses_url }}" class="btn btn--primary btn--full">Cadastrar endereço</a>
+        {%- endif -%}
+      </section>
+    </aside>
+
+    <section class="account-orders">
+      <div class="account-panel__header account-panel__header--large">
+        <div>
+          <p class="account-eyebrow">Histórico</p>
+          <h2>Meus pedidos</h2>
+        </div>
+        <a href="{{ routes.root_url }}collections/all" class="btn btn--outline btn--sm">Comprar novamente</a>
+      </div>
+
+      {%- if customer.orders.size > 0 -%}
+        <div class="account-order-list">
           {%- for order in customer.orders -%}
-            <tr>
-              <td><strong style="font-family:var(--font-display);color:var(--color-primary);">#{{ order.order_number }}</strong></td>
-              <td style="color:var(--color-text-muted);font-size:13px;">{{ order.created_at | date: '%d/%m/%Y' }}</td>
-              <td>
+            <article class="account-order-card">
+              <div class="account-order-card__main">
+                <div>
+                  <span class="account-order-card__number">Pedido #{{ order.order_number }}</span>
+                  <p>{{ order.created_at | date: '%d/%m/%Y' }} · {{ order.line_items.size }} {{ order.line_items.size | pluralize: 'item', 'itens' }}</p>
+                </div>
+                <strong>{{ order.total_price | money }}</strong>
+              </div>
+              <div class="account-order-card__meta">
+                <span class="order-status order-status--financial-{{ order.financial_status }}">{{ order.financial_status_label }}</span>
                 <span class="order-status order-status--{{ order.fulfillment_status | default: 'unfulfilled' }}">
                   {%- case order.fulfillment_status -%}
-                    {%- when 'fulfilled' -%}Entregue
+                    {%- when 'fulfilled' -%}Enviado
                     {%- when 'partial' -%}Parcial
                     {%- when 'restocked' -%}Devolvido
-                    {%- else -%}Em andamento
+                    {%- else -%}Em preparação
                   {%- endcase -%}
                 </span>
-              </td>
-              <td style="font-weight:700;">{{ order.total_price | money }}</td>
-              <td>
-                <a href="{{ order.customer_url }}" style="font-size:13px;color:var(--color-primary);font-weight:700;display:inline-flex;align-items:center;gap:4px;">
-                  Ver detalhes
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-              </td>
-            </tr>
+              </div>
+              <div class="account-order-card__actions">
+                <a href="{{ order.customer_url }}" class="account-link">Ver detalhes</a>
+                <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Gostaria de atendimento sobre o pedido #' | append: order.order_number | append: '.' | url_encode }}" class="account-link" target="_blank" rel="noopener">Pedir suporte</a>
+              </div>
+            </article>
           {%- endfor -%}
-        </tbody>
-      </table>
-    {%- else -%}
-      <div class="account-empty">
-        <div class="account-empty__icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-          </svg>
         </div>
-        <p style="font-weight:600;color:var(--color-text);margin-bottom:6px;">Nenhum pedido ainda</p>
-        <p style="font-size:14px;margin-bottom:24px;">Explore nosso catálogo de peças originais LIVENZA e faça seu primeiro pedido.</p>
-        <a href="{{ routes.root_url }}collections/all" class="btn btn--primary">Ver Catálogo de Peças</a>
-      </div>
-    {%- endif -%}
+      {%- else -%}
+        <div class="account-empty">
+          <div class="account-empty__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+            </svg>
+          </div>
+          <p class="account-empty__title">Nenhum pedido ainda</p>
+          <p>Explore o catálogo de peças originais e solicite ajuda técnica quando não souber o SKU exato.</p>
+          <div class="account-empty__actions">
+            <a href="{{ routes.root_url }}collections/all" class="btn btn--primary">Ver catálogo</a>
+            <a href="{{ routes.root_url }}pages/contato" class="btn btn--outline">Solicitar cotação</a>
+          </div>
+        </div>
+      {%- endif -%}
+    </section>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Conta do Cliente",
+  "name": "Conta do cliente",
   "settings": []
 }
 {% endschema %}

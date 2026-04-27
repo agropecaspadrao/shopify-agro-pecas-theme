@@ -1,0 +1,115 @@
+<div class="account-page">
+  <nav class="breadcrumb" aria-label="Navegação estrutural">
+    <ol>
+      <li><a href="{{ routes.account_url }}">Minha conta</a></li>
+      <li aria-current="page">Pedido #{{ order.order_number }}</li>
+    </ol>
+  </nav>
+
+  <div class="account-hero account-hero--compact">
+    <div>
+      <p class="account-eyebrow">Detalhes do pedido</p>
+      <h1 class="account-hero__title">Pedido #{{ order.order_number }}</h1>
+      <p class="account-hero__text">Realizado em {{ order.created_at | date: '%d/%m/%Y às %H:%M' }}.</p>
+    </div>
+    <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Preciso de suporte sobre o pedido #' | append: order.order_number | append: '.' | url_encode }}" class="btn btn--outline" target="_blank" rel="noopener">Falar com suporte</a>
+  </div>
+
+  <div class="account-summary-grid">
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Pagamento</span>
+      <strong>{{ order.financial_status_label }}</strong>
+      <span>Status financeiro</span>
+    </div>
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Entrega</span>
+      <strong>
+        {%- case order.fulfillment_status -%}
+          {%- when 'fulfilled' -%}Enviado
+          {%- when 'partial' -%}Parcial
+          {%- when 'restocked' -%}Devolvido
+          {%- else -%}Em preparação
+        {%- endcase -%}
+      </strong>
+      <span>Status logístico</span>
+    </div>
+    <div class="account-summary-card">
+      <span class="account-summary-card__label">Total</span>
+      <strong>{{ order.total_price | money }}</strong>
+      <span>{{ order.line_items.size }} {{ order.line_items.size | pluralize: 'item', 'itens' }}</span>
+    </div>
+  </div>
+
+  <div class="order-detail-layout">
+    <section class="account-panel order-items-panel">
+      <div class="account-panel__header account-panel__header--large">
+        <h2>Itens do pedido</h2>
+      </div>
+
+      <div class="order-line-list">
+        {%- for line_item in order.line_items -%}
+          <article class="order-line-item">
+            <a href="{{ line_item.product.url }}" class="order-line-item__image">
+              {%- if line_item.image -%}
+                <img src="{{ line_item.image | image_url: width: 160 }}" alt="{{ line_item.title }}" width="160" height="160" loading="lazy">
+              {%- endif -%}
+            </a>
+            <div class="order-line-item__body">
+              <h2>{{ line_item.title }}</h2>
+              {%- if line_item.sku != blank -%}<p>SKU: {{ line_item.sku }}</p>{%- endif -%}
+              <span>Quantidade: {{ line_item.quantity }}</span>
+            </div>
+            <strong>{{ line_item.final_line_price | money }}</strong>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      <dl class="order-total-list">
+        <div><dt>Subtotal</dt><dd>{{ order.line_items_subtotal_price | money }}</dd></div>
+        {%- for discount_application in order.cart_level_discount_applications -%}
+          <div><dt>{{ discount_application.title }}</dt><dd>-{{ discount_application.total_allocated_amount | money }}</dd></div>
+        {%- endfor -%}
+        <div><dt>Frete</dt><dd>{{ order.shipping_price | money }}</dd></div>
+        <div><dt>Impostos</dt><dd>{{ order.tax_price | money }}</dd></div>
+        <div class="order-total-list__grand"><dt>Total</dt><dd>{{ order.total_price | money }}</dd></div>
+      </dl>
+    </section>
+
+    <aside class="order-detail-sidebar">
+      <section class="account-panel">
+        <div class="account-panel__header"><h2>Entrega</h2></div>
+        {%- if order.shipping_address -%}
+          <address class="account-address">
+            <strong>{{ order.shipping_address.name }}</strong>
+            {{ order.shipping_address.address1 }}{% if order.shipping_address.address2 != blank %}, {{ order.shipping_address.address2 }}{% endif %}<br>
+            {{ order.shipping_address.city }}{% if order.shipping_address.province_code != blank %} - {{ order.shipping_address.province_code }}{% endif %}<br>
+            {{ order.shipping_address.zip }} · {{ order.shipping_address.country }}
+          </address>
+        {%- else -%}
+          <p class="account-helper-text">Endereço de entrega não informado.</p>
+        {%- endif -%}
+      </section>
+
+      <section class="account-panel">
+        <div class="account-panel__header"><h2>Cobrança</h2></div>
+        {%- if order.billing_address -%}
+          <address class="account-address">
+            <strong>{{ order.billing_address.name }}</strong>
+            {{ order.billing_address.address1 }}{% if order.billing_address.address2 != blank %}, {{ order.billing_address.address2 }}{% endif %}<br>
+            {{ order.billing_address.city }}{% if order.billing_address.province_code != blank %} - {{ order.billing_address.province_code }}{% endif %}<br>
+            {{ order.billing_address.zip }} · {{ order.billing_address.country }}
+          </address>
+        {%- else -%}
+          <p class="account-helper-text">Endereço de cobrança não informado.</p>
+        {%- endif -%}
+      </section>
+    </aside>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Detalhes do pedido",
+  "settings": []
+}
+{% endschema %}

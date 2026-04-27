@@ -453,7 +453,7 @@ input, select, textarea { font: inherit; color: inherit; }
   position: relative;
   z-index: 2;
   color: #fff;
-  padding: 80px 0;
+  padding: 80px var(--page-gutter);
   max-width: 640px;
   margin-left: 0;
   margin-right: auto;
@@ -2159,7 +2159,7 @@ input, select, textarea { font: inherit; color: inherit; }
   :root { --page-gutter: 16px; --section-padding: 40px; }
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .pdp-layout { gap: 28px; }
-  .hero-banner__content { padding: 48px 0; }
+  .hero-banner__content { padding: 48px var(--page-gutter); }
   .hero-subtitle { font-size: 16px; }
   .hero-ctas { gap: 10px; }
   .hero-title { font-size: clamp(28px, 8vw, 40px); }
@@ -2167,6 +2167,6 @@ input, select, textarea { font: inherit; color: inherit; }
 @media (max-width: 480px) {
   .product-grid { grid-template-columns: 1fr; }
   .hero-title { font-size: 28px; }
-  .hero-banner__content { padding: 40px 0; }
+  .hero-banner__content { padding: 40px var(--page-gutter); }
   .btn--lg { padding: 13px 24px; font-size: 15px; }
 }

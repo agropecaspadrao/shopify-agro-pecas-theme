@@ -4,7 +4,13 @@
   <!-- Painel esquerdo — identidade da marca -->
   <div class="auth-brand-panel">
     <div class="auth-brand-panel__logo">
-      <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="149" height="52">
+      {%- if settings.logo_white -%}
+        <img src="{{ settings.logo_white | image_url: width: 298 }}" alt="{{ shop.name }}" width="149" height="52">
+      {%- elsif settings.logo -%}
+        <img src="{{ settings.logo | image_url: width: 298 }}" alt="{{ shop.name }}" width="149" height="52">
+      {%- else -%}
+        <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="149" height="52">
+      {%- endif -%}
     </div>
     <div class="auth-brand-panel__body">
       <span class="auth-brand-panel__eyebrow">Distribuidora Oficial LIVENZA</span>

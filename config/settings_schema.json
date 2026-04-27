@@ -2,10 +2,36 @@
   {
     "name": "theme_info",
     "theme_name": "APP Agro Peças Padrão",
-    "theme_version": "1.0.0",
+    "theme_version": "1.1.0",
     "theme_author": "APP Agro Peças",
     "theme_documentation_url": "https://github.com/agropecaspadrao/shopify-agro-pecas-theme",
     "theme_support_url": "https://github.com/agropecaspadrao/shopify-agro-pecas-theme/issues"
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo da loja",
+        "info": "Recomendado: APP - LOGO - SEM FUNDO V3.svg. Use o logo com fundo transparente para melhor resultado."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Largura do logo (px)",
+        "min": 80,
+        "max": 300,
+        "step": 4,
+        "default": 160
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_white",
+        "label": "Logo versão branca",
+        "info": "Versão do logo para fundos escuros (footer, painéis de auth). Recomendado: logo-branca.png"
+      }
+    ]
   },
   {
     "name": "Cores",
@@ -13,32 +39,142 @@
       {
         "type": "color",
         "id": "color_primary",
-        "label": "Cor Primária",
-        "default": "#1B4332"
+        "label": "Cor Primária (Verde Floresta)",
+        "default": "#1B5E20",
+        "info": "Cor principal — headers, botões CTA, backgrounds escuros."
       },
       {
         "type": "color",
         "id": "color_primary_dark",
-        "label": "Cor Primária Escura",
-        "default": "#153628"
+        "label": "Cor Primária Escura (Verde Escuro)",
+        "default": "#163d18",
+        "info": "Hover states, versão mais densa do primário."
+      },
+      {
+        "type": "color",
+        "id": "color_primary_mid",
+        "label": "Cor Primária Média (Verde Médio)",
+        "default": "#2E7D32",
+        "info": "Gradientes, variações do primário."
       },
       {
         "type": "color",
         "id": "color_accent",
-        "label": "Cor de Destaque",
-        "default": "#D4AF37"
+        "label": "Cor de Destaque (Âmbar / Ouro)",
+        "default": "#F57F17",
+        "info": "Accent — destaques, badges, ícones, CTAs secundários."
+      },
+      {
+        "type": "color",
+        "id": "color_accent_light",
+        "label": "Cor de Destaque Clara (Âmbar Dourado)",
+        "default": "#F9A825",
+        "info": "Trust icons, elementos decorativos em fundos escuros."
+      },
+      {
+        "type": "color",
+        "id": "color_accent_dark",
+        "label": "Cor de Destaque Escura (Âmbar Dark)",
+        "default": "#E65100",
+        "info": "Hover do accent."
       },
       {
         "type": "color",
         "id": "color_text",
-        "label": "Cor do Texto",
-        "default": "#2F2F2F"
+        "label": "Cor do Texto Principal",
+        "default": "#212121"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Cor do Texto Suave",
+        "default": "#78716b",
+        "info": "Labels, metadados, textos secundários."
       },
       {
         "type": "color",
         "id": "color_bg",
         "label": "Cor de Fundo",
         "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_soft",
+        "label": "Cor de Fundo Suave",
+        "default": "#f9f8f7",
+        "info": "Seções zebradas, backgrounds de cards."
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Cor de Borda",
+        "default": "#e7e5e3",
+        "info": "Divisores, bordas de input."
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bg",
+        "label": "Cor de Fundo do Rodapé",
+        "default": "#1c1917",
+        "info": "Stone 900 — rodapé escuro."
+      }
+    ]
+  },
+  {
+    "name": "Tipografia",
+    "settings": [
+      {
+        "type": "select",
+        "id": "font_heading",
+        "label": "Fonte de Títulos",
+        "options": [
+          { "value": "barlow-condensed", "label": "Barlow Condensed (padrão da marca)" },
+          { "value": "system", "label": "Fonte do sistema" }
+        ],
+        "default": "barlow-condensed",
+        "info": "Barlow Condensed é a fonte oficial da identidade visual da APP Agro Peças Padrão."
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Tamanho base do texto (px)",
+        "min": 14,
+        "max": 18,
+        "step": 1,
+        "default": 15
+      }
+    ]
+  },
+  {
+    "name": "Marca",
+    "settings": [
+      {
+        "type": "text",
+        "id": "brand_tagline",
+        "label": "Tagline Principal",
+        "default": "Peças originais. Entrega ágil. Confiança de verdade.",
+        "info": "Exibida em banners, seção hero e metadados SEO."
+      },
+      {
+        "type": "text",
+        "id": "brand_tagline_footer",
+        "label": "Tagline do Rodapé",
+        "default": "Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro.",
+        "info": "Slogan secundário exibido no footer."
+      },
+      {
+        "type": "text",
+        "id": "brand_distributor",
+        "label": "Distribuidor Oficial",
+        "default": "LIVENZA",
+        "info": "Nome exibido em badges de confiança e painéis de autenticação."
+      },
+      {
+        "type": "text",
+        "id": "brand_iso_cert",
+        "label": "Certificações ISO",
+        "default": "ISO 9001 · ISO 14001 · ISO 18001",
+        "info": "Certificações exibidas em selos de confiança na PDP."
       }
     ]
   },

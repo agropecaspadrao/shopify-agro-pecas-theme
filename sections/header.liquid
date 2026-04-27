@@ -11,11 +11,19 @@
     <div class="page-width header-inner">
       <!-- Logo oficial — header branco -->
       <a href="{{ routes.root_url }}" class="header-logo" aria-label="{{ shop.name }}">
-        <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}"
-             alt="{{ shop.name }}"
-             width="{{ section.settings.logo_width }}"
-             height="56"
-             loading="eager">
+        {%- if settings.logo -%}
+          <img src="{{ settings.logo | image_url: width: 320 }}"
+               alt="{{ shop.name }}"
+               width="{{ section.settings.logo_width | default: 160 }}"
+               height="56"
+               loading="eager">
+        {%- else -%}
+          <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}"
+               alt="{{ shop.name }}"
+               width="{{ section.settings.logo_width | default: 160 }}"
+               height="56"
+               loading="eager">
+        {%- endif -%}
       </a>
 
       <!-- Search -->

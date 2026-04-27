@@ -26,7 +26,11 @@
 <div class="account-page account-page--dashboard">
   <div class="account-hero">
     <div class="account-hero__brand">
-      <img src="{{ 'APP - LOGO ICON V3.svg' | asset_url }}" alt="" width="56" height="56" loading="eager">
+      {%- if settings.logo -%}
+        <img src="{{ settings.logo | image_url: width: 112 }}" alt="" width="56" height="56" loading="eager">
+      {%- else -%}
+        <img src="{{ 'APP - LOGO ICON V3.svg' | asset_url }}" alt="" width="56" height="56" loading="eager">
+      {%- endif -%}
       <div>
         <p class="account-eyebrow">Área do cliente</p>
         <h1 class="account-hero__title">Olá, {{ customer.first_name | default: customer.name | default: 'cliente' }}</h1>

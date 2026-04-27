@@ -207,7 +207,13 @@
       <!-- 1. MARCA + WA + SOCIAL -->
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
+          {%- if settings.logo_white -%}
+            <img src="{{ settings.logo_white | image_url: width: 412 }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
+          {%- elsif settings.logo -%}
+            <img src="{{ settings.logo | image_url: width: 412 }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
+          {%- else -%}
+            <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
+          {%- endif -%}
         </div>
 
         <p class="footer-tagline">Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado.</p>

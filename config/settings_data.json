@@ -9,9 +9,9 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
-    "logo_width": 160,
-    "logo_white": "shopify://shop_images/logo-branca_2d04137d-4631-4c5c-92b9-f1c720bc5e6f.png",
+    "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3.orig.png",
+    "logo_width": 200,
+    "logo_white": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3.orig.png",
     "color_primary": "#1B4332",
     "color_primary_dark": "#153628",
     "color_primary_mid": "#2F6B4F",

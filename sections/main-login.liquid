@@ -4,7 +4,7 @@
   <!-- Painel esquerdo — identidade da marca -->
   <div class="auth-brand-panel">
     <div class="auth-brand-panel__logo">
-      <img src="{{ 'Logo V2 Sem fundo.png' | asset_url }}" alt="{{ shop.name }}" width="149" height="52">
+      <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="149" height="52">
     </div>
     <div class="auth-brand-panel__body">
       <span class="auth-brand-panel__eyebrow">Distribuidora Oficial LIVENZA</span>
@@ -34,15 +34,15 @@
       <span class="auth-box__eyebrow">Acesso à conta</span>
       <h1 class="auth-box__title">Entrar na <em>conta</em></h1>
 
-      {%- if form.errors -%}
-        <ul class="auth-errors">
-          {%- for error in form.errors -%}
-            <li>{{ form.errors.messages[error] }}</li>
-          {%- endfor -%}
-        </ul>
-      {%- endif -%}
-
       {%- form 'customer_login' -%}
+        {%- if form.errors -%}
+          <ul class="auth-errors">
+            {%- for error in form.errors -%}
+              <li>{{ form.errors.messages[error] }}</li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
         <div class="auth-field">
           <label for="CustomerEmail">E-mail</label>
           <input type="email" name="customer[email]" id="CustomerEmail" autocomplete="email" autocorrect="off" autocapitalize="off" placeholder="seu@email.com.br" required>

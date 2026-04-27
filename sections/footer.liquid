@@ -1,6 +1,6 @@
 <style>
   .site-footer {
-    background: #1B5E20;
+    background: #1B4332;
     color: rgba(255,255,255,.8);
     margin-top: 80px;
   }
@@ -19,8 +19,15 @@
 
   /* ── COLUNA MARCA ── */
   .footer-brand { min-width: 0; }
-  .footer-logo { margin-bottom: 14px; }
-  .footer-logo img { width: auto; height: 72px; display: block; }
+  .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    margin-bottom: 18px;
+  }
+  .footer-logo img { width: auto; height: 56px; display: block; }
   .footer-logo__text {
     font-family: var(--font-display);
     font-weight: 800;
@@ -78,9 +85,9 @@
     transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
   .footer-social__link:hover {
-    background: #F57F17;
-    border-color: #F57F17;
-    color: #fff;
+    background: #D4AF37;
+    border-color: #D4AF37;
+    color: #1B4332;
   }
   .footer-social__link svg { width: 16px; height: 16px; fill: currentColor; }
 
@@ -110,7 +117,7 @@
   }
   .footer-contact-item svg {
     width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;
-    fill: none; stroke: #F57F17; stroke-width: 2;
+    fill: none; stroke: #D4AF37; stroke-width: 2;
     stroke-linecap: round; stroke-linejoin: round;
   }
   .footer-contact-item a { color: rgba(255,255,255,.7); transition: color 0.15s; }
@@ -200,7 +207,7 @@
       <!-- 1. MARCA + WA + SOCIAL -->
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="{{ 'Logo V2 Sem fundo.png' | asset_url }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
+          <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="206" height="72" loading="lazy">
         </div>
 
         <p class="footer-tagline">Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro. Estoque disponível para as principais marcas do mercado.</p>

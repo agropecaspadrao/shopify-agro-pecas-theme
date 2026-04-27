@@ -144,6 +144,12 @@
     padding: 0;
   }
 
+  .cart-item__unit-price {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+  }
+
   /* ── RESUMO ── */
   .cart-summary {
     background: var(--color-bg-soft);
@@ -281,7 +287,7 @@
               <div class="cart-item">
                 <a href="{{ item.url }}" class="cart-item__img">
                   {%- if item.image -%}
-                    <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title }}" loading="lazy">
+                    <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title }}" width="160" height="160" loading="lazy">
                   {%- endif -%}
                 </a>
                 <div class="cart-item__info">
@@ -299,7 +305,7 @@
                 <div class="cart-item__price">
                   <div class="cart-item__price--total">{{ item.final_line_price | money }}</div>
                   {%- if item.quantity > 1 -%}
-                    <div style="font-size:12px; color:var(--color-text-muted); margin-top:4px;">{{ item.final_price | money }} cada</div>
+                    <div class="cart-item__unit-price">{{ item.final_price | money }} cada</div>
                   {%- endif -%}
                   <button type="button" class="cart-item__remove" data-line="{{ forloop.index }}">Remover</button>
                 </div>

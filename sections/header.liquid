@@ -9,14 +9,13 @@
 
   <div class="header-main">
     <div class="page-width header-inner">
-      <!-- Logo colorida — header branco v2 -->
+      <!-- Logo oficial — header branco -->
       <a href="{{ routes.root_url }}" class="header-logo" aria-label="{{ shop.name }}">
-        <img src="{{ 'Logo V2 Sem fundo.png' | asset_url }}"
+        <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}"
              alt="{{ shop.name }}"
-             width="160"
+             width="{{ section.settings.logo_width }}"
              height="56"
-             loading="eager"
-             onerror="this.onerror=null;this.src='{{ 'Logo V2 Fundo Branco.png' | asset_url }}'">
+             loading="eager">
       </a>
 
       <!-- Search -->
@@ -92,8 +91,9 @@
           <li class="has-dropdown">
             <a href="{{ routes.collections_url }}" {% if template == 'list-collections' %}aria-current="page"{% endif %}>Catálogo</a>
             <ul class="header-nav__dropdown">
-              {%- for collection in collections -%}
-                <li><a href="{{ collection.url }}" {% if collection.handle == current_collection.handle %}aria-current="page"{% endif %}>{{ collection.title }}</a></li>
+              {%- assign active_collection_handle = collection.handle -%}
+              {%- for nav_collection in collections -%}
+                <li><a href="{{ nav_collection.url }}" {% if nav_collection.handle == active_collection_handle %}aria-current="page"{% endif %}>{{ nav_collection.title }}</a></li>
               {%- endfor -%}
             </ul>
           </li>
@@ -169,7 +169,7 @@
       "type": "text",
       "id": "announcement_text",
       "label": "Texto do Aviso (opcional)",
-      "default": "🚜 Frete para todo o Brasil • Certificação ISO 9001 • Peças 100% originais LIVENZA"
+      "default": "Frete para todo o Brasil • Peças agrícolas originais • Atendimento técnico especializado"
     }
   ]
 }

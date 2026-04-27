@@ -14,25 +14,25 @@
         "type": "color",
         "id": "color_primary",
         "label": "Cor Primária",
-        "default": "#1B5E20"
+        "default": "#1B4332"
       },
       {
         "type": "color",
         "id": "color_primary_dark",
         "label": "Cor Primária Escura",
-        "default": "#145218"
+        "default": "#153628"
       },
       {
         "type": "color",
         "id": "color_accent",
         "label": "Cor de Destaque",
-        "default": "#F57F17"
+        "default": "#D4AF37"
       },
       {
         "type": "color",
         "id": "color_text",
         "label": "Cor do Texto",
-        "default": "#1c1917"
+        "default": "#2F2F2F"
       },
       {
         "type": "color",

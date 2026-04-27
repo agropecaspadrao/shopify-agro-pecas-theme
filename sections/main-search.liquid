@@ -74,7 +74,7 @@
               <li>Marca: "john deere", "new holland", "massey"</li>
             </ul>
           </div>
-          <a href="https://wa.me/5541998333338?text={{ 'Olá! Não encontrei a peça que preciso no site. Estou buscando por: ' | append: search.terms | url_encode }}"
+          <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Não encontrei a peça que preciso no site. Estou buscando por: ' | append: search.terms | url_encode }}"
              class="btn btn--whatsapp btn--lg"
              target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

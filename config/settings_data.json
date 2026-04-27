@@ -9,11 +9,25 @@
  */
 {
   "current": {
-    "color_primary": "#1B4332",
-    "color_primary_dark": "#153628",
-    "color_accent": "#D4AF37",
-    "color_text": "#2F2F2F",
+    "color_primary": "#1B5E20",
+    "color_primary_dark": "#163d18",
+    "color_primary_mid": "#2E7D32",
+    "color_accent": "#F57F17",
+    "color_accent_light": "#F9A825",
+    "color_accent_dark": "#E65100",
+    "color_text": "#212121",
+    "color_text_muted": "#78716b",
     "color_bg": "#ffffff",
+    "color_bg_soft": "#f9f8f7",
+    "color_border": "#e7e5e3",
+    "color_footer_bg": "#1c1917",
+    "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
+    "logo_width": 160,
+    "logo_white": "shopify://shop_images/logo-branca_2d04137d-4631-4c5c-92b9-f1c720bc5e6f.png",
+    "brand_tagline": "Peças originais. Entrega ágil. Confiança de verdade.",
+    "brand_tagline_footer": "Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro.",
+    "brand_distributor": "LIVENZA",
+    "brand_iso_cert": "ISO 9001 · ISO 14001 · ISO 18001",
     "whatsapp_number": "5541998333338",
     "whatsapp_greeting": "Olá! Estava navegando no catálogo da APP Agro Peças Padrão e tenho interesse na peça",
     "store_cnpj": "66.316.831/0001-85",
@@ -25,8 +39,8 @@
       "header": {
         "type": "header",
         "settings": {
-          "logo": "",
-          "logo_width": 270,
+          "logo": "shopify://shop_images/APP_-_LOGO_-_SEM_FUNDO_V3_d8da73ff-9dd2-4148-a444-1c5dd41c3d98.svg",
+          "logo_width": 160,
           "menu": "main-menu",
           "announcement_text": "Frete para todo o Brasil • Peças agrícolas originais • Atendimento técnico especializado"
         }

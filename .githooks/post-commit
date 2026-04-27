@@ -1,0 +1,21 @@
+#!/bin/sh
+
+branch="$(git symbolic-ref --short HEAD 2>/dev/null)"
+if [ -z "$branch" ]; then
+  exit 0
+fi
+
+upstream="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null)"
+if [ -z "$upstream" ]; then
+  git push -u origin "$branch"
+  exit $?
+fi
+
+git push
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo "Push automatico falhou. Rode: git pull --rebase && git push"
+fi
+
+exit "$status"

@@ -80,7 +80,7 @@ async function addProductToCollection(collectionId, productId) {
   if (data.errors) {
     // ignora "já existe"
     const msg = JSON.stringify(data.errors);
-    if (msg.includes('taken')) return 'ja_existe';
+    if (msg.includes('taken') || msg.includes('already exists')) return 'ja_existe';
     throw new Error(msg);
   }
   return 'adicionado';
@@ -108,6 +108,33 @@ async function uploadImageToProduct(productId, imagePath, altText) {
   throw new Error(JSON.stringify(data.errors ?? data));
 }
 
+async function getProductImages(productId) {
+  const res = await fetch(`${BASE_URL}/products/${productId}/images.json?fields=id`, {
+    headers: await headers(),
+  });
+  const data = await res.json();
+  return data.images ?? [];
+}
+
+async function deleteProductImage(productId, imageId) {
+  const res = await fetch(`${BASE_URL}/products/${productId}/images/${imageId}.json`, {
+    method: 'DELETE',
+    headers: await headers(),
+  });
+
+  if (!res.ok) {
+    throw new Error(`falha ao excluir imagem ${imageId}: ${res.status} ${await res.text()}`);
+  }
+}
+
+async function clearProductImages(productId) {
+  const images = await getProductImages(productId);
+  for (const image of images) {
+    await deleteProductImage(productId, image.id);
+  }
+  return images.length;
+}
+
 // ─── Mapeamento SKU → arquivo de imagem ──────────────────────────────────────
 
 function buildSkuToImageMap(assetsDir) {
@@ -122,8 +149,13 @@ function buildSkuToImageMap(assetsDir) {
     const match = file.match(/(\d\.\d{4}\.\d{7}(?:-\d)?)|SFLX2|PUL-?2/i);
     if (match) {
       const key = match[0].toUpperCase();
-      // prefere p1 sobre p2
-      if (!map[key] || file.includes('_p1')) {
+      const current = map[key] ? parse(map[key]).base : '';
+      const isBetter =
+        !map[key]
+        || (file.includes('_ecommerce') && !current.includes('_ecommerce'))
+        || (file.includes('_p1') && !current.includes('_ecommerce') && !current.includes('_p1'));
+
+      if (isBetter) {
         map[key] = join(assetsDir, file);
       }
     }
@@ -207,6 +239,10 @@ const TYPE_TO_COLLECTION_HANDLE = {
     const imagePath = skuToImage[sku];
     if (imagePath) {
       try {
+        if (type === 'Sensores Agrícolas') {
+          const removed = await clearProductImages(product.id);
+          if (removed) process.stdout.write(`🧹 ${removed} antiga(s) removida(s) | `);
+        }
         await uploadImageToProduct(product.id, imagePath, title);
         process.stdout.write('🖼️  imagem ok | ');
       } catch (e) {

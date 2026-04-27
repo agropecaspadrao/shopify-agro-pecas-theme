@@ -1728,13 +1728,24 @@ input, select, textarea { font: inherit; color: inherit; }
 .account-hero__brand {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 22px;
 }
-.account-hero__brand img {
-  background: #fff;
-  border-radius: var(--radius-md);
-  padding: 8px;
+.account-hero__brand-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,.25);
   flex-shrink: 0;
+}
+.account-hero__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.account-hero__logo img {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: 160px;
 }
 .account-eyebrow {
   font-family: var(--font-display);

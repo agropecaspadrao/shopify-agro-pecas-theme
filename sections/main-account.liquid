@@ -26,11 +26,16 @@
 <div class="account-page account-page--dashboard">
   <div class="account-hero">
     <div class="account-hero__brand">
-      {%- if settings.logo -%}
-        <img src="{{ settings.logo | image_url: width: 112 }}" alt="" width="56" height="56" loading="eager">
-      {%- else -%}
-        <img src="{{ 'APP - LOGO ICON V3.svg' | asset_url }}" alt="" width="56" height="56" loading="eager">
-      {%- endif -%}
+      <a href="{{ routes.root_url }}" class="account-hero__logo" aria-label="{{ shop.name }}">
+        {%- if settings.logo_white -%}
+          <img src="{{ settings.logo_white | image_url: width: 298 }}" alt="{{ shop.name }}" width="149" height="52" loading="eager">
+        {%- elsif settings.logo -%}
+          <img src="{{ settings.logo | image_url: width: 298 }}" alt="{{ shop.name }}" width="149" height="52" loading="eager">
+        {%- else -%}
+          <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}" alt="{{ shop.name }}" width="149" height="52" loading="eager">
+        {%- endif -%}
+      </a>
+      <div class="account-hero__brand-divider" aria-hidden="true"></div>
       <div>
         <p class="account-eyebrow">Área do cliente</p>
         <h1 class="account-hero__title">Olá, {{ customer.first_name | default: customer.name | default: 'cliente' }}</h1>

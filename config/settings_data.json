@@ -65,12 +65,12 @@
         "disabled": false,
         "settings": {
           "button_color": "#4ccc7a",
-          "secondary_color": "#FFFFFF",
-          "ternary_color": "#6A6A6A",
+          "secondary_color": "#ffffff",
+          "ternary_color": "#6a6a6a",
           "button_icon": "chat_bubble",
           "button_text": "chat_with_us",
           "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "lowest",
+          "button_vertical_position": "higher",
           "greeting_message": ""
         }
       }

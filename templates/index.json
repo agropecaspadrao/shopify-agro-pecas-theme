@@ -13,7 +13,7 @@
       "type": "image-banner",
       "settings": {
         "bg_image": "shopify://shop_images/banner-agro.png",
-        "overlay_opacity": 55,
+        "overlay_opacity": 0,
         "full_height": false,
         "eyebrow": "As melhores peças  • Certificação ISO 9001",
         "title": "Bombas Hidráulicas e Sensores para o Campo",

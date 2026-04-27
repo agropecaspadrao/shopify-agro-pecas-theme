@@ -40,42 +40,42 @@
         "type": "color",
         "id": "color_primary",
         "label": "Cor Primária (Verde Floresta)",
-        "default": "#1B5E20",
+        "default": "#1B4332",
         "info": "Cor principal — headers, botões CTA, backgrounds escuros."
       },
       {
         "type": "color",
         "id": "color_primary_dark",
         "label": "Cor Primária Escura (Verde Escuro)",
-        "default": "#163d18",
+        "default": "#153628",
         "info": "Hover states, versão mais densa do primário."
       },
       {
         "type": "color",
         "id": "color_primary_mid",
         "label": "Cor Primária Média (Verde Médio)",
-        "default": "#2E7D32",
+        "default": "#2F6B4F",
         "info": "Gradientes, variações do primário."
       },
       {
         "type": "color",
         "id": "color_accent",
-        "label": "Cor de Destaque (Âmbar / Ouro)",
-        "default": "#F57F17",
+        "label": "Cor de Destaque (Dourado Premium)",
+        "default": "#D4AF37",
         "info": "Accent — destaques, badges, ícones, CTAs secundários."
       },
       {
         "type": "color",
         "id": "color_accent_light",
-        "label": "Cor de Destaque Clara (Âmbar Dourado)",
-        "default": "#F9A825",
+        "label": "Cor de Destaque Clara (Dourado Claro)",
+        "default": "#E7C86A",
         "info": "Trust icons, elementos decorativos em fundos escuros."
       },
       {
         "type": "color",
         "id": "color_accent_dark",
-        "label": "Cor de Destaque Escura (Âmbar Dark)",
-        "default": "#E65100",
+        "label": "Cor de Destaque Escura (Dourado Dark)",
+        "default": "#B8942B",
         "info": "Hover do accent."
       },
       {

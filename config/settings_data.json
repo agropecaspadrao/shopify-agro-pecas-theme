@@ -9,13 +9,13 @@
  */
 {
   "current": {
-    "color_primary": "#1B5E20",
-    "color_primary_dark": "#163d18",
-    "color_primary_mid": "#2E7D32",
-    "color_accent": "#F57F17",
-    "color_accent_light": "#F9A825",
-    "color_accent_dark": "#E65100",
-    "color_text": "#212121",
+    "color_primary": "#1B4332",
+    "color_primary_dark": "#153628",
+    "color_primary_mid": "#2F6B4F",
+    "color_accent": "#D4AF37",
+    "color_accent_light": "#E7C86A",
+    "color_accent_dark": "#B8942B",
+    "color_text": "#2F2F2F",
     "color_text_muted": "#78716b",
     "color_bg": "#ffffff",
     "color_bg_soft": "#f9f8f7",

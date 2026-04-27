@@ -34,26 +34,26 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 
 | Nome | HEX | Uso |
 |------|-----|-----|
-| **Verde Floresta** | `#1B5E20` | Cor principal — headers, botões CTA, backgrounds escuros |
-| **Verde Escuro** | `#163d18` | Hover states, versão mais densa do primário |
-| **Verde Médio** | `#2E7D32` | Gradientes, variações do primário |
-| **Âmbar / Ouro** | `#F57F17` | Accent — destaques, badges, ícones, CTAs secundários |
-| **Âmbar Dourado** | `#F9A825` | Trust icons, elementos decorativos em fundos escuros |
-| **Âmbar Dark** | `#E65100` | Hover do accent |
+| **Verde Floresta** | `#1B4332` | Cor principal — headers, botões CTA, backgrounds escuros |
+| **Verde Escuro** | `#153628` | Hover states, versão mais densa do primário |
+| **Verde Médio** | `#2F6B4F` | Gradientes, variações do primário |
+| **Dourado Premium** | `#D4AF37` | Accent — destaques, badges, ícones, CTAs secundários |
+| **Dourado Claro** | `#E7C86A` | Trust icons, elementos decorativos em fundos escuros |
+| **Dourado Dark** | `#B8942B` | Hover do accent |
 
 ### Cores Neutras
 
 | Nome | HEX | Uso |
 |------|-----|-----|
-| **Texto Principal** | `#212121` | Corpo de texto |
+| **Texto Principal** | `#2F2F2F` | Corpo de texto |
 | **Texto Suave** | `#78716b` | Labels, metadados, secundários |
 | **Stone 600** | `#57534e` | Legendas, subtítulos |
 | **Stone 800** | `#292524` | Backgrounds escuros neutros |
 | **Stone 900** | `#1c1917` | Footer, quase preto |
 | **Fundo Branco** | `#ffffff` | Fundo padrão de cards e páginas |
 | **Fundo Suave** | `#f9f8f7` | Seções zebradas, backgrounds de cards |
-| **Fundo Stone** | `#f3f1f0` | Backgrounds levemente quentes |
-| **Borda** | `#e7e5e3` | Divisores, bordas de input |
+| **Fundo Neutro (Stone)** | `#E6E1D9` | Backgrounds levemente quentes, seções de contraste |
+| **Borda** | `#DCD7CE` | Divisores, bordas de input |
 
 ### Cores Funcionais
 
@@ -64,10 +64,11 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 | **Sucesso** | `#22c55e` | Badges de estoque disponível |
 
 ### Combinações aprovadas
-- **Fundo verde + texto branco** → Headers, banners, footers, painéis de auth
-- **Fundo branco + texto #212121** → Cards, formulários, páginas internas
-- **Accent âmbar em fundo verde** → Trust items, eyebrows, destaques em dark sections
+- **Fundo verde `#1B4332` + texto branco** → Headers, banners, footers, painéis de auth
+- **Fundo branco + texto `#2F2F2F`** → Cards, formulários, páginas internas
+- **Accent dourado `#D4AF37` em fundo verde** → Trust items, eyebrows, destaques em dark sections
 - **Verde primário em fundo branco** → Botões CTA, links ativos
+- **Fundo neutro `#E6E1D9`** → Seções alternadas, fundos de depoimentos e trust bar
 
 ---
 
@@ -123,29 +124,29 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 ### Botões
 
 **Primário (CTA principal)**
-- Fundo: `#1B5E20` → `#163d18` (hover)
+- Fundo: `#1B4332` → `#153628` (hover)
 - Texto: branco, Barlow Condensed 700, uppercase
 - Border-radius: 12px
-- Box-shadow: `0 4px 16px rgba(27,94,32,.3)`
+- Box-shadow: `0 4px 16px rgba(27,67,50,.3)`
 
 **WhatsApp**
 - Fundo: `#25D366` → `#1eb857` (hover)
 - Ícone SVG do WhatsApp + texto
 
 **Outline / Secundário**
-- Borda: `#1B5E20`
-- Texto: `#1B5E20`
+- Borda: `#1B4332`
+- Texto: `#1B4332`
 - Hover: fundo verde + texto branco
 
 **Accent (destaque)**
-- Fundo: `#F57F17`
-- Uso: CTAs de urgência, promoções
+- Fundo: `#D4AF37`
+- Uso: Trust items, eyebrows, badges premium
 
 ### Cards de Produto
-- Fundo branco, border `#e7e5e3`, border-radius 12px
+- Fundo branco, border `#DCD7CE`, border-radius 12px
 - Hover: `box-shadow: 0 4px 12px rgba(0,0,0,.08)` + `translateY(-2px)`
-- Badge "Em Estoque": verde `#1B5E20`
-- Badge "Sob Consulta": âmbar `#F57F17`
+- Badge "Em Estoque": verde `#1B4332`
+- Badge "Sob Consulta": dourado `#D4AF37`
 
 ### Formulários
 - Inputs: border `#e7e5e3`, border-radius 12px, focus: borda verde + shadow suave

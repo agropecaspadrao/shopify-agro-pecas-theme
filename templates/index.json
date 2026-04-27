@@ -12,9 +12,10 @@
     "image-banner": {
       "type": "image-banner",
       "settings": {
+        "bg_image": "shopify://shop_images/banner-agro.png",
         "overlay_opacity": 55,
         "full_height": false,
-        "eyebrow": "Distribuidor Oficial LIVENZA • Certificação ISO 9001",
+        "eyebrow": "As melhores peças  • Certificação ISO 9001",
         "title": "Bombas Hidráulicas e Sensores para o Campo",
         "subtitle": "Peças originais para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
         "cta_primary_label": "Ver Catálogo Completo",
@@ -70,6 +71,7 @@
       "blocks": {
         "col1": {
           "type": "column",
+          "disabled": true,
           "settings": {
             "svg_icon": "iso-cert-icon.svg",
             "icon": "🏆",

@@ -26,7 +26,7 @@
         "type": "header",
         "settings": {
           "logo": "shopify://shop_images/Logo_V2_Sem_fundo.png",
-          "logo_width": 230,
+          "logo_width": 270,
           "menu": "main-menu",
           "announcement_text": "🚜 Frete para todo o Brasil • Certificação ISO 9001 • Peças 100% originais LIVENZA"
         }
@@ -42,7 +42,25 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "blocks": {
+      "8669066016853369741": {
+        "type": "shopify://apps/hotjar-install/blocks/global/2903e4ea-7615-463e-8b60-582f487dac4f",
+        "disabled": false,
+        "settings": {}
+      },
+      "6159598353363395418": {
+        "type": "shopify://apps/google-youtube/blocks/store_widget/14ec7bd0-ac77-49a9-9417-90752398bdff",
+        "disabled": false,
+        "settings": {
+          "widget_position": "LEFT_BOTTOM",
+          "side_margin": 36,
+          "bottom_margin": 36,
+          "mobile_side_margin": 16,
+          "mobile_bottom_margin": 46
+        }
+      }
+    }
   },
   "presets": {}
 }

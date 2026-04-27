@@ -67,6 +67,7 @@
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; }
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-body);
@@ -170,8 +171,16 @@ input, select, textarea { font: inherit; color: inherit; }
   gap: 16px;
   padding-top: 8px;
   padding-bottom: 8px;
+  /* evita overflow horizontal em qualquer viewport */
+  min-width: 0;
+  overflow: hidden;
 }
-.header-logo { flex-shrink: 0; line-height: 0; }
+.header-logo {
+  flex-shrink: 0;
+  line-height: 0;
+  /* garante que o logo nunca seja espremido pelo flex */
+  min-width: 0;
+}
 .header-logo__text {
   font-family: var(--font-display);
   font-weight: 800;
@@ -180,11 +189,23 @@ input, select, textarea { font: inherit; color: inherit; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-/* logo oficial no header branco */
-.header-logo img { width: auto; height: 54px; display: block; }
-@media (max-width: 768px) { .header-logo img { height: 44px; } }
+/* logo: proporções fixadas — nunca distorce */
+.header-logo img {
+  display: block;
+  width: auto;
+  height: 48px;
+  max-width: 160px;
+  object-fit: contain;
+  object-position: left center;
+}
+@media (max-width: 1024px) {
+  .header-logo img { height: 40px; max-width: 140px; }
+}
+@media (max-width: 480px) {
+  .header-logo img { height: 34px; max-width: 120px; }
+}
 
-.header-search { flex: 1; position: relative; max-width: 500px; margin: 0 auto; }
+.header-search { flex: 1 1 0; min-width: 0; position: relative; max-width: 500px; margin: 0 auto; }
 .header-search__form {
   display: flex;
   background: var(--color-bg-soft);
@@ -225,6 +246,11 @@ input, select, textarea { font: inherit; color: inherit; }
   align-items: center;
   gap: 6px;
   margin-left: auto;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .header-actions { gap: 2px; }
+  .btn-wa-header { display: none; }
 }
 .header-icon-btn {
   display: flex;

@@ -1,5 +1,5 @@
 <section class="hero-banner {% if section.settings.full_height %}hero-banner--full{% endif %}"
-  style="{% if section.settings.bg_image != blank %}background-image: url('{{ section.settings.bg_image | image_url: width: 1600 }}');{% else %}background-image: url('{{ 'banner-agro.png' | asset_url }}');{% endif %}">
+  style="{% if section.settings.bg_image != blank %}background-image: url('{{ section.settings.bg_image | image_url: width: 1920 }}');{% else %}background-image: url('{{ 'APP - WALLPAPER - BANNER - HEADER.jpg' | asset_url }}');{% endif %}">
   <div class="hero-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
   <div class="page-width hero-banner__content">
     <div class="hero-banner__inner">
@@ -100,7 +100,7 @@
       "min": 0,
       "max": 90,
       "step": 5,
-      "default": 55,
+      "default": 35,
       "unit": "%",
       "label": "Opacidade do Overlay"
     },

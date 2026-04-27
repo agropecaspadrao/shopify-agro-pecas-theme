@@ -12,17 +12,26 @@
       <!-- Logo oficial — header branco -->
       <a href="{{ routes.root_url }}" class="header-logo" aria-label="{{ shop.name }}">
         {%- if settings.logo -%}
-          <img src="{{ settings.logo | image_url: width: 320 }}"
+          {%- assign logo_width = section.settings.logo_width | default: 160 -%}
+          {%- assign logo_width_2x = logo_width | times: 2 -%}
+          {%- assign logo_width_3x = logo_width | times: 3 -%}
+          <img src="{{ settings.logo | image_url: width: logo_width_2x }}"
+               srcset="{{ settings.logo | image_url: width: logo_width }} {{ logo_width }}w, {{ settings.logo | image_url: width: logo_width_2x }} {{ logo_width_2x }}w, {{ settings.logo | image_url: width: logo_width_3x }} {{ logo_width_3x }}w"
+               sizes="(max-width: 480px) 120px, (max-width: 1024px) 140px, {{ logo_width }}px"
                alt="{{ shop.name }}"
-               width="{{ section.settings.logo_width | default: 160 }}"
+               width="{{ logo_width }}"
                height="56"
-               loading="eager">
+               loading="eager"
+               fetchpriority="high"
+               decoding="async">
         {%- else -%}
           <img src="{{ 'APP - LOGO - SEM FUNDO V3.svg' | asset_url }}"
                alt="{{ shop.name }}"
                width="{{ section.settings.logo_width | default: 160 }}"
                height="56"
-               loading="eager">
+               loading="eager"
+               fetchpriority="high"
+               decoding="async">
         {%- endif -%}
       </a>
 

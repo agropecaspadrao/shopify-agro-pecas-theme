@@ -540,7 +540,10 @@ input, select, textarea { font: inherit; color: inherit; }
   .trust-item:nth-child(4) { border-top: 1px solid var(--color-border); border-right: none; }
 }
 @media (max-width: 480px) {
-  .trust-item { width: 100%; border-right: none; border-top: 1px solid var(--color-border); }
+  .trust-item { width: 50%; flex: none; padding: 14px 12px; }
+  .trust-item:nth-child(2) { border-right: none; }
+  .trust-item:nth-child(3) { border-top: 1px solid var(--color-border); border-right: 1px solid var(--color-border); }
+  .trust-item:nth-child(4) { border-top: 1px solid var(--color-border); border-right: none; }
   .trust-item:first-child { border-top: none; }
 }
 .trust-item__icon {

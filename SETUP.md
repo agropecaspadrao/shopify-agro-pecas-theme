@@ -1,136 +1,87 @@
-# APP Agro Peças Padrão — Guia de Instalação Shopify
+# APP Agro Peças Padrão — Guia de Instalação
 
 ## 1. Conectar o Tema via GitHub
 
-O tema está hospedado em `https://github.com/agropecaspadrao/shopify-agro-pecas-theme`.
+O tema publica automaticamente via integração GitHub ↔ Shopify.
 
 1. Shopify Admin → **Online Store → Themes → Add theme → Connect from GitHub**
 2. Autorize o Shopify a acessar sua conta GitHub
 3. Selecione o repositório `agropecaspadrao/shopify-agro-pecas-theme`
 4. Selecione a branch `main`
-5. Clique em **Connect** e aguarde
-6. Clique em **Customize** para editar ou **Publish** para publicar
+5. Clique em **Connect**
+6. Clique em **Publish** para ativar
 
-> **Alternativa via ZIP:** Baixe o repositório como `.zip` em GitHub → Code → Download ZIP e faça upload em Online Store → Themes → Upload theme.
-
----
-
-## 2. Configurar o WhatsApp
-
-1. Shopify Admin → **Online Store → Themes → Customize**
-2. Clique em **Theme Settings** (ícone de engrenagem no canto inferior esquerdo)
-3. Vá em **WhatsApp** e configure:
-   - **Número**: `5541997217541` (somente dígitos com DDI, sem espaços ou símbolos)
-   - **Saudação padrão**: personalize a mensagem inicial
+> A partir desse ponto, todo commit em `main` publica automaticamente — sem necessidade de CLI.
 
 ---
 
-## 3. Criar as Coleções
+## 2. Configurar o Theme Settings
 
-Crie estas coleções antes de importar os produtos.
+Shopify Admin → **Online Store → Themes → Customize → Theme Settings (ícone de engrenagem)**
+
+### WhatsApp
+- **Número**: `5541998333338` (DDI + DDD + número, somente dígitos)
+- **Saudação**: `Olá! Estava navegando no catálogo da APP Agro Peças Padrão e tenho interesse na peça`
+
+### Dados da Empresa
+- **CNPJ**: `66.316.831/0001-85`
+- **Telefone**: `(41) 9833-3338`
+- **E-mail**: `comercial@agropecaspadrao.com.br`
+- **Endereço**: `R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310`
+
+---
+
+## 3. Configurar o Banner da Home
+
+1. Shopify Admin → **Online Store → Themes → Customize → Home page**
+2. Clique no bloco **Banner Principal**
+3. Configure título, subtítulo e CTAs
+4. A imagem de fundo padrão já está no repositório: `APP - WALLPAPER - BANNER - HEADER.jpg`
+5. Para trocar: faça upload em **Image de Fundo** no painel do bloco
+6. **Opacidade do Overlay**: recomendado entre 35–50% para garantir leitura do texto
+
+---
+
+## 4. Criar as Coleções
 
 Shopify Admin → **Products → Collections → Create collection**
 
-| Handle (URL) | Título |
+| Handle (URL) | Título sugerido |
 |---|---|
 | `bombas-hidraulicas` | Bombas Hidráulicas |
 | `sensores-agricolas` | Sensores Agrícolas |
+| `filtros` | Filtros |
+| `kits-reparo` | Kits de Reparo |
 
-> A coleção `all` (Todos os Produtos) é criada automaticamente pelo Shopify — não precisa criar.
+A coleção `all` é criada automaticamente pelo Shopify.
 
 ---
 
-## 4. Importar os Produtos via CSV
-
-> ⚠️ **Problema conhecido:** O campo `Product Category` do CSV usa a taxonomia interna do Shopify, que não aceita valores em texto livre como `"Agricultural Machinery"`. O Shopify retorna aviso para todas as linhas e **ignora esse campo** — os produtos são importados normalmente, mas sem categoria automática.
-
-### Como importar
+## 5. Importar Produtos via CSV
 
 1. Shopify Admin → **Products → Import**
-2. Selecione o arquivo `products_import.csv`
-3. Clique em **Upload and continue**
-4. Ignore os avisos de `"Agricultural Machinery" is not a valid product category` — eles não impedem a importação
-5. Confirme a importação
+2. Selecione o arquivo CSV de produtos
+3. Após importar, associe cada produto à coleção correta via **Collections → Browse products**
 
-### Corrigir a categoria manualmente (opcional)
-
-Após importar, atribua a categoria correta em cada produto:
-
-1. Abra um produto → campo **Product category**
-2. Busque por `Vehicles & Parts > Vehicle Parts & Accessories > Motor Vehicle Parts`
-3. Repita para cada produto, ou use o **bulk edit** selecionando todos e editando em massa
-
-### Adicionar os produtos às coleções
-
-Após importar, associe cada produto à coleção correta:
-
-- **Bombas Hidráulicas**: todos os produtos com tipo `Bombas Hidráulicas`
-- **Sensores Agrícolas**: `Sensor de Fluxo SFLX2` e `Sensor de Semente PUL-2`
-
-Você pode fazer isso em **Products → Collections → [nome da coleção] → Browse products**.
-
----
-
-## 5. Subir as Imagens dos Produtos
-
-As imagens estão na pasta `assets/` do repositório. Após a importação do CSV, substitua as imagens placeholder pelas fotos reais:
-
-| SKU | Arquivo de Imagem |
-|-----|-------------------|
-| 5.0220.0548824-2 | `5.0220.0548824-2_p1.png` |
-| 5.1301.0565008 | `5.1301.0565008_p1.png` |
-| 5.1301.0565017 | `5.1301.0565017_p1.png` |
-| 5.1301.0565035 | `5.1301.0565035_p1.png` |
-| 5.1305.0565036 | `5.1305.0565036_p1.png` |
-| 5.1305.0565071 | `5.1305.0565071_p1.png` |
-| 5.0220.0547201 | `Livenza_5.0220.0547201-CT_REV._0_p1.png` |
-| 5.0220.0547205 | `Livenza_5.0220.0547205-CT_REV._0_p1.png` |
-| 5.0220.0547206 | `Livenza_5.0220.0547206-CT_REV._0_p1.png` |
-| 5.1302.0547820 | `Livenza_5.1302.0547820-CT_REV._0_p1.png` + `...p2.png` (2 imagens) |
-| 5.1302.0547844 | `Livenza_5.1302.0547844-CT_REV._A_p1.png` |
-| 5.1302.0565053 | `Livenza_5.1302.0565053-1_p1.png` |
-| 5.1301.0565001 | `Livenza_5.1301.0565001-CT_REV._0_p1.png` |
-| 5.1301.0565002 | `Livenza_5.1301.0565002-CT_REV._0_p1.png` |
-| 5.1301.0565004 | `Livenza_5.1301.0565004-CT_REV._A_p1.png` |
-| 5.0220.0548836 | `Livenza_5.0220.0548836-CT_REV._0_p1.png` |
-| SFLX2 | `sensor_SFLX2.jpg` |
+> **Aviso esperado:** `"Agricultural Machinery" is not a valid product category` — ignore, não impede a importação.
 
 ---
 
 ## 6. Configurar Metafields dos Produtos
 
-Os metafields habilitam dados avançados na PDP: SKU Livenza, referência OEM, badge de estoque, especificações e compatibilidade.
-
-### Criar as definições
-
 Shopify Admin → **Settings → Custom Data → Products → Add definition**
 
-| Namespace | Key | Tipo | Para que serve |
-|-----------|-----|------|----------------|
-| `agro` | `sku_livenza` | Single line text | Código SKU Livenza exibido na PDP e no card |
+| Namespace | Key | Tipo | Finalidade |
+|-----------|-----|------|-----------|
+| `agro` | `sku_livenza` | Single line text | Código SKU Livenza exibido na PDP |
 | `agro` | `part_number` | Single line text | Referência OEM do fabricante |
-| `agro` | `stock_status` | Single line text | Badge de estoque: `available`, `low` ou `unavailable` |
-| `agro` | `specs` | Multi-line text | Especificações separadas por `\|` (ex: `Caudal I: 22,5 l/min\|Caudal II: 16 l/min`) |
-| `agro` | `compatibility` | Multi-line text | Modelos compatíveis separados por `\|` (ex: `VALTRA 885\|VALTRA 985`) |
-
-### Preencher os metafields
-
-**Opção A — Manual:** Edite cada produto no admin e preencha os campos `agro.*` no final da página.
-
-**Opção B — Em massa:** Use o app **Matrixify** (gratuito até certo limite) para importar os metafields via planilha Excel/CSV. É o método mais rápido para os 18 produtos.
+| `agro` | `stock_status` | Single line text | Badge: `available`, `low` ou `unavailable` |
+| `agro` | `specs` | Multi-line text | Especificações separadas por `\|` |
+| `agro` | `compatibility` | Multi-line text | Modelos compatíveis separados por `\|` |
 
 ---
 
-## 7. Criar a Página de Cotação
-
-1. Shopify Admin → **Online Store → Pages → Add page**
-2. **Title**: `Cotação`
-3. **URL handle**: `cotacao` (verificar em "Website SEO")
-4. O template `page.cotacao` é aplicado automaticamente pois o arquivo `templates/page.cotacao.liquid` já existe no tema
-
----
-
-## 8. Configurar os Menus
+## 7. Configurar os Menus
 
 Shopify Admin → **Online Store → Navigation**
 
@@ -139,70 +90,40 @@ Shopify Admin → **Online Store → Navigation**
 | Item | URL |
 |------|-----|
 | Início | `/` |
-| Bombas Hidráulicas | `/collections/bombas-hidraulicas` |
-| Sensores Agrícolas | `/collections/sensores-agricolas` |
-| Solicitar Cotação | `/pages/cotacao` |
-| Buscar | `/search` |
-
-### Rodapé Produtos (`footer-produtos`)
-
-| Item | URL |
-|------|-----|
-| Bombas Hidráulicas | `/collections/bombas-hidraulicas` |
-| Sensores Agrícolas | `/collections/sensores-agricolas` |
-| Todos os Produtos | `/collections/all` |
-
-### Rodapé Institucional (`footer-institucional`)
-
-| Item | URL |
-|------|-----|
-| Sobre Nós | `/pages/sobre` |
-| Cotação B2B | `/pages/cotacao` |
+| Produtos | `/collections/all` |
+| Catálogo | `/collections` |
+| Quem Somos | `/pages/quem-somos` |
 | Contato | `/pages/contato` |
 
 ---
 
-## 9. Configurar o Banner da Home
+## 8. Criar Páginas de Conteúdo
 
-1. Shopify Admin → **Online Store → Themes → Customize → Home page**
-2. Clique no bloco **Banner Principal**
-3. Faça upload da imagem `banner-agro.png` (disponível na pasta `assets/` do repositório)
-4. Ajuste título, subtítulo, CTAs e opacidade do overlay
+Shopify Admin → **Online Store → Pages → Add page**
 
----
-
-## 10. Preços
-
-O tema foi construído **sem exibir preços** — nenhum campo de preço aparece nas páginas. Para garantir:
-
-- Deixe os produtos sem preço configurado, ou defina como `0`
-- Não exiba "Compare at price"
-- Se precisar ocultar o preço por segurança adicional, use o app **Hulk Hide Price**
+| Handle | Título | Template |
+|--------|--------|---------|
+| `quem-somos` | Quem Somos Nós | `page.quem-somos` |
+| `contato` | Contato | `page.contact` |
+| `politica-de-devolucao` | Política de Devolução | `page` (padrão) |
+| `politica-de-envio` | Política de Envio | `page` (padrão) |
 
 ---
 
-## 11. Testar antes de publicar
+## 9. Checklist antes de publicar
 
-- [ ] Home carrega banner, categorias e produtos em destaque
-- [ ] PLP filtra por categoria e disponibilidade
-- [ ] PDP exibe SKU, badge de estoque, botão WhatsApp e formulário de cotação
-- [ ] Busca em `/search?q=john+deere` retorna resultados
-- [ ] Formulário de cotação em `/pages/cotacao` envia corretamente
-- [ ] Links de WhatsApp abrem com mensagem pré-preenchida no celular
+- [ ] Home carrega banner e produtos em destaque
+- [ ] Grade de categorias aparece na home
+- [ ] PDP exibe SKU, badge de estoque e botão WhatsApp
+- [ ] Busca retorna resultados em `/search?q=john+deere`
+- [ ] Links de WhatsApp abrem com mensagem pré-preenchida
 - [ ] Menu mobile funciona em resolução < 1024px
-
----
-
-## Problemas conhecidos e soluções
-
-| Problema | Causa | Solução |
-|----------|-------|---------|
-| `"Agricultural Machinery" is not a valid product category` | Taxonomia do Shopify não aceita texto livre nesse campo | Ignore o aviso — produtos são importados normalmente; corrija a categoria manualmente depois |
-| `Branch isn't a valid theme` no GitHub integration | `{% sections %}` (plural) com JSON de section group inválido | Corrigido: tema agora usa `{% section %}` (singular) diretamente no `theme.liquid` |
+- [ ] Rodapé exibe CNPJ, endereço e telefone corretos
+- [ ] Trust bar aparece abaixo do banner (entrega, estoque, suporte, pagamento)
 
 ---
 
 ## Suporte
 
-WhatsApp: (41) 99721-7541  
-E-mail: contato@appagropecas.com.br
+WhatsApp: (41) 9833-3338  
+E-mail: comercial@agropecaspadrao.com.br

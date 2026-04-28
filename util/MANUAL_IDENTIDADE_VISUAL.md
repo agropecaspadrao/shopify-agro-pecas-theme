@@ -291,10 +291,10 @@ Peças compatíveis com as principais marcas do agronegócio brasileiro:
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `logo-branca.png` | Logo branca para fundos escuros (789×819px) |
-| `banner-agro.png` | Imagem de fundo do hero banner |
+| `APP - LOGO - SEM FUNDO V3.png` | Logo PNG 640px (Retina-safe) — fundo transparente |
+| `APP - WALLPAPER - BANNER - HEADER.jpg` | Imagem de fundo do hero banner da home |
 | `fonts.css` | Import Google Fonts (Barlow Condensed + Barlow) |
-| `theme.css` | Folha de estilos principal com todos os tokens |
+| `theme.css` | Folha de estilos principal com todos os tokens CSS |
 
 ---
 
@@ -318,4 +318,4 @@ Peças compatíveis com as principais marcas do agronegócio brasileiro:
 
 ---
 
-*Documento gerado em {{ data_atual }} · APP Agro Peças Padrão · CNPJ 66.316.831/0001-85*
+*Atualizado em 2026-04-27 · APP Agro Peças Padrão · CNPJ 66.316.831/0001-85*

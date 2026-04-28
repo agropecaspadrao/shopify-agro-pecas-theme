@@ -136,12 +136,6 @@ input, select, textarea { font: inherit; color: inherit; }
   border-color: var(--color-whatsapp);
 }
 .btn--whatsapp:hover { background: var(--color-whatsapp-dark); border-color: var(--color-whatsapp-dark); }
-.btn--accent {
-  background: var(--color-cta);
-  color: var(--color-primary);
-  border-color: var(--color-cta);
-}
-.btn--accent:hover { background: var(--color-cta-dark); border-color: var(--color-cta-dark); }
 .btn--lg { padding: 15px 32px; font-size: 16px; }
 .btn--sm { padding: 8px 16px; font-size: 12px; }
 .btn--full { width: 100%; justify-content: center; }
@@ -1019,7 +1013,7 @@ input, select, textarea { font: inherit; color: inherit; }
   gap: 48px;
   margin-bottom: 64px;
 }
-@media (min-width: 900px) { .pdp-layout { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .pdp-layout { grid-template-columns: 1fr 1fr; } }
 .pdp-gallery__main {
   background: var(--color-bg-soft);
   border-radius: var(--radius-lg);
@@ -1395,7 +1389,7 @@ input, select, textarea { font: inherit; color: inherit; }
   grid-template-columns: 1fr;
   gap: 48px;
 }
-@media (min-width: 900px) { .cotacao-layout { grid-template-columns: 1fr 340px; } }
+@media (min-width: 1024px) { .cotacao-layout { grid-template-columns: 1fr 340px; } }
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1540,7 +1534,7 @@ input, select, textarea { font: inherit; color: inherit; }
   position: relative;
 }
 /* faixa lateral verde apenas em desktop */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .auth-page {
     grid-template-columns: 400px 1fr;
     min-height: 100vh;
@@ -1558,7 +1552,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .auth-brand-panel {
   display: none;
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .auth-brand-panel {
     display: flex;
     flex-direction: column;
@@ -1622,7 +1616,7 @@ input, select, textarea { font: inherit; color: inherit; }
   justify-content: center;
   padding: 60px 24px;
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .auth-form-panel { padding: 60px 48px; }
 }
 .auth-box {
@@ -2126,7 +2120,7 @@ input, select, textarea { font: inherit; color: inherit; }
 .address-default-check input { accent-color: var(--color-primary); }
 .address-card .badge { margin-bottom: 10px; }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .account-layout,
   .order-detail-layout,
   .addresses-layout { grid-template-columns: 1fr; }

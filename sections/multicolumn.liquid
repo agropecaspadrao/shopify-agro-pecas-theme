@@ -1,12 +1,13 @@
-<style>
-  .multicolumn__icon--svg img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-  }
-</style>
+{%- liquid
+  assign icon_iso     = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L6 12v14c0 9.94 7.6 19.24 18 22 10.4-2.76 18-12.06 18-22V12L24 4z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M17 24l5 5 9-9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  assign icon_compat  = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="16" width="40" height="24" rx="4" stroke="currentColor" stroke-width="2.4"/><path d="M14 16V12a4 4 0 014-4h12a4 4 0 014 4v4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="28" r="4" stroke="currentColor" stroke-width="2.4"/><path d="M24 32v4M20 36h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  assign icon_truck   = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 10h28v22H2z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M30 18h8l6 8v6h-14V18z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="10" cy="36" r="4" stroke="currentColor" stroke-width="2.4"/><circle cx="36" cy="36" r="4" stroke="currentColor" stroke-width="2.4"/><path d="M14 36h18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  assign icon_support = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2.4"/><path d="M15 24a9 9 0 009 9m0-18a9 9 0 00-9 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6 20h6a3 3 0 013 3v2a3 3 0 01-3 3H6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M42 20h-6a3 3 0 00-3 3v2a3 3 0 003 3h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  assign icon_gear    = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="6" stroke="currentColor" stroke-width="2.4"/><path d="M24 4v4M24 40v4M4 24h4M40 24h4M9.17 9.17l2.83 2.83M35.17 35.17l2.83 2.83M9.17 38.83l2.83-2.83M35.17 12.83l2.83-2.83" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  assign icon_star    = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6l4.9 9.9 10.9 1.6-7.9 7.7 1.9 10.8L24 31l-9.8 5.1 1.9-10.9L8.2 17.5l10.9-1.6L24 6z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg>'
+  assign icon_box     = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4L4 14v20l20 10 20-10V14L24 4z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M4 14l20 10M44 14L24 24M24 44V24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M14 9l20 10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  assign icon_wrench  = '<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 8a10 10 0 00-9.9 11.4L8 35.4A4 4 0 0013.6 41l16-16.1A10 10 0 0034 8z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="34" cy="13" r="2" fill="currentColor"/></svg>'
+-%}
 
 <section class="multicolumn section-padding {% if section.settings.bg_dark %}section--dark{% endif %}">
   <div class="page-width">
@@ -18,19 +19,21 @@
     <div class="multicolumn__grid multicolumn__grid--{{ section.blocks.size | at_most: 4 }}">
       {%- for block in section.blocks -%}
         <div class="multicolumn__item" {{ block.shopify_attributes }}>
-          {%- if block.settings.svg_icon != blank -%}
-            <div class="multicolumn__icon multicolumn__icon--svg">
-              <img
-                src="{{ block.settings.svg_icon | asset_url }}"
-                alt="{{ block.settings.title }}"
-                width="56"
-                height="56"
-                loading="lazy"
-              >
-            </div>
-          {%- elsif block.settings.icon != blank -%}
-            <div class="multicolumn__icon">{{ block.settings.icon }}</div>
+          {%- assign icon_key = block.settings.icon_key -%}
+          {%- if icon_key == 'iso'     -%}{%- assign svg = icon_iso     -%}
+          {%- elsif icon_key == 'compat'  -%}{%- assign svg = icon_compat  -%}
+          {%- elsif icon_key == 'truck'   -%}{%- assign svg = icon_truck   -%}
+          {%- elsif icon_key == 'support' -%}{%- assign svg = icon_support -%}
+          {%- elsif icon_key == 'gear'    -%}{%- assign svg = icon_gear    -%}
+          {%- elsif icon_key == 'star'    -%}{%- assign svg = icon_star    -%}
+          {%- elsif icon_key == 'box'     -%}{%- assign svg = icon_box     -%}
+          {%- elsif icon_key == 'wrench'  -%}{%- assign svg = icon_wrench  -%}
+          {%- else -%}{%- assign svg = icon_star -%}
           {%- endif -%}
+          <div class="multicolumn__icon-wrap">
+            <div class="multicolumn__icon-inner">{{ svg }}</div>
+          </div>
+          <div class="multicolumn__divider"></div>
           <h3 class="multicolumn__title">{{ block.settings.title }}</h3>
           {%- if block.settings.text != blank -%}
             <p class="multicolumn__text">{{ block.settings.text }}</p>
@@ -65,22 +68,19 @@
       "settings": [
         {
           "type": "select",
-          "id": "svg_icon",
-          "label": "Ícone SVG",
+          "id": "icon_key",
+          "label": "Ícone",
           "options": [
-            { "value": "", "label": "Nenhum" },
-            { "value": "iso-cert-icon.svg", "label": "Certificação ISO" },
-            { "value": "stock-available-icon.svg", "label": "Estoque Disponível" },
-            { "value": "truck-delivery-icon.svg", "label": "Entrega / Caminhão" },
-            { "value": "technical-support-icon.svg", "label": "Suporte Técnico" }
+            { "value": "iso",     "label": "Escudo / Certificação" },
+            { "value": "compat",  "label": "Compatibilidade" },
+            { "value": "truck",   "label": "Entrega / Caminhão" },
+            { "value": "support", "label": "Suporte / Headset" },
+            { "value": "gear",    "label": "Engrenagem / Precisão" },
+            { "value": "star",    "label": "Estrela / Qualidade" },
+            { "value": "box",     "label": "Caixa / Estoque" },
+            { "value": "wrench",  "label": "Chave / Técnico" }
           ],
-          "default": ""
-        },
-        {
-          "type": "text",
-          "id": "icon",
-          "label": "Ícone emoji (fallback)",
-          "default": "🏆"
+          "default": "star"
         },
         {
           "type": "text",
@@ -100,10 +100,10 @@
     {
       "name": "Multicoluna",
       "blocks": [
-        { "type": "column", "settings": { "svg_icon": "iso-cert-icon.svg", "icon": "🏆", "title": "ISO 9001 / 14001 / 18001", "text": "Todas as peças LIVENZA são fabricadas sob rigorosas certificações internacionais de qualidade e gestão ambiental." } },
-        { "type": "column", "settings": { "svg_icon": "stock-available-icon.svg", "icon": "🚜", "title": "Maior Compatibilidade", "text": "Cobrimos John Deere, New Holland, Massey Ferguson, Valtra e Valmet com referências OEM cruzadas." } },
-        { "type": "column", "settings": { "svg_icon": "truck-delivery-icon.svg", "icon": "🚚", "title": "Entrega Nacional", "text": "Estoque disponível em Curitiba–PR com envio para todo o Brasil via transportadora parceira." } },
-        { "type": "column", "settings": { "svg_icon": "technical-support-icon.svg", "icon": "📞", "title": "Suporte Técnico", "text": "Equipe especializada para identificar a peça correta pelo modelo, SKU ou número OEM do fabricante." } }
+        { "type": "column", "settings": { "icon_key": "iso",     "title": "ISO 9001 / 14001 / 18001",  "text": "Todas as peças LIVENZA são fabricadas sob rigorosas certificações internacionais de qualidade e gestão ambiental." } },
+        { "type": "column", "settings": { "icon_key": "compat",  "title": "Maior Compatibilidade",     "text": "Cobrimos John Deere, New Holland, Massey Ferguson, Valtra e Valmet com referências OEM cruzadas." } },
+        { "type": "column", "settings": { "icon_key": "truck",   "title": "Entrega Nacional",           "text": "Estoque disponível em Curitiba–PR com envio para todo o Brasil via transportadora parceira." } },
+        { "type": "column", "settings": { "icon_key": "support", "title": "Suporte Técnico",            "text": "Equipe especializada para identificar a peça correta pelo modelo, SKU ou número OEM do fabricante." } }
       ]
     }
   ]

@@ -24,38 +24,96 @@
       <aside class="plp-sidebar" id="PlpSidebar">
         <div class="plp-sidebar__inner">
 
-          <!-- Sort -->
+          <!-- Part Number / SKU search -->
           <div class="filter-group">
-            <h3 class="filter-group__title">Ordenar</h3>
-            <select class="filter-select" id="SortSelect" onchange="window.location = this.value">
-              {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-              <option value="{{ collection.url }}?sort_by=manual" {% if sort_by == 'manual' %}selected{% endif %}>Em Destaque</option>
-              <option value="{{ collection.url }}?sort_by=title-ascending" {% if sort_by == 'title-ascending' %}selected{% endif %}>Nome A–Z</option>
-              <option value="{{ collection.url }}?sort_by=title-descending" {% if sort_by == 'title-descending' %}selected{% endif %}>Nome Z–A</option>
-              <option value="{{ collection.url }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
+            <h3 class="filter-group__title">Part Number / SKU</h3>
+            <form class="filter-pn-form" action="{{ routes.search_url }}" method="get">
+              <input type="hidden" name="type" value="product">
+              <div class="filter-pn-wrap">
+                <input class="filter-pn-input" type="search" name="q"
+                  placeholder="Ex: 5.1301.0565008"
+                  autocomplete="off"
+                  value="{{ search.terms | escape }}">
+                <button type="submit" class="filter-pn-btn" aria-label="Buscar">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Categoria (coleções) -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Categoria</h3>
+            <ul class="filter-list">
+              <li>
+                <a href="{{ routes.all_products_collection_url }}"
+                   class="filter-link {% if collection.handle == 'all' %}is-active{% endif %}">
+                  Todos os Produtos
+                </a>
+              </li>
+              {%- for col in collections -%}
+                {%- unless col.handle == 'frontpage' or col.handle == 'all' -%}
+                  <li>
+                    <a href="{{ col.url }}"
+                       class="filter-link {% if col.handle == collection.handle %}is-active{% endif %}">
+                      {{ col.title }}
+                      <span style="font-size:11px;opacity:.5;margin-left:4px;">{{ col.products_count }}</span>
+                    </a>
+                  </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+
+          <!-- Marca do Trator -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Marca do Trator</h3>
+            <ul class="filter-list">
+              {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,case' | split: ',' -%}
+              {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH' | split: ',' -%}
+              {%- for brand in brands -%}
+                <li>
+                  <a href="{{ collection.url }}/{{ brand }}"
+                     class="filter-link {% if current_tags contains brand %}is-active{% endif %}">
+                    {{ brand_labels[forloop.index0] }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+
+          <!-- Série / Modelo -->
+          <div class="filter-group">
+            <h3 class="filter-group__title">Série / Modelo</h3>
+            <select class="filter-select" id="SerieSelectCol" onchange="if(this.value) window.location=this.value">
+              <option value="">Selecione a série...</option>
+              <optgroup label="John Deere">
+                <option value="{{ collection.url }}/série-5000" {% if current_tags contains 'série-5000' %}selected{% endif %}>Série 5000</option>
+                <option value="{{ collection.url }}/série-6000" {% if current_tags contains 'série-6000' %}selected{% endif %}>Série 6000</option>
+              </optgroup>
+              <optgroup label="New Holland / Ford">
+                <option value="{{ collection.url }}/TB" {% if current_tags contains 'TB' %}selected{% endif %}>TB / TS (clássica)</option>
+                <option value="{{ collection.url }}/TS6000" {% if current_tags contains 'TS6000' %}selected{% endif %}>TS6000</option>
+                <option value="{{ collection.url }}/T6" {% if current_tags contains 'T6' %}selected{% endif %}>T6 Series</option>
+                <option value="{{ collection.url }}/5600" {% if current_tags contains '5600' %}selected{% endif %}>5600–7700</option>
+                <option value="{{ collection.url }}/5610" {% if current_tags contains '5610' %}selected{% endif %}>5610–8210</option>
+                <option value="{{ collection.url }}/340" {% if current_tags contains '340' %}selected{% endif %}>340–4630</option>
+              </optgroup>
+              <optgroup label="Massey Ferguson">
+                <option value="{{ collection.url }}/4215" {% if current_tags contains '4215' %}selected{% endif %}>4215–4255</option>
+                <option value="{{ collection.url }}/4299" {% if current_tags contains '4299' %}selected{% endif %}>4299</option>
+                <option value="{{ collection.url }}/362" {% if current_tags contains '362' %}selected{% endif %}>362–390</option>
+              </optgroup>
+              <optgroup label="Valtra / Valmet">
+                <option value="{{ collection.url }}/885" {% if current_tags contains '885' %}selected{% endif %}>885 / 985</option>
+                <option value="{{ collection.url }}/880" {% if current_tags contains '880' %}selected{% endif %}>880 / 980 / 1780</option>
+                <option value="{{ collection.url }}/118" {% if current_tags contains '118' %}selected{% endif %}>118ES–148</option>
+                <option value="{{ collection.url }}/BH160" {% if current_tags contains 'BH160' %}selected{% endif %}>BH160</option>
+              </optgroup>
             </select>
           </div>
 
-          <!-- Filter by type -->
-          {%- unless collection.all_types == empty -%}
-            <div class="filter-group">
-              <h3 class="filter-group__title">Categoria</h3>
-              <ul class="filter-list">
-                <li><a href="{{ collection.url }}" class="filter-link {% unless current_tags %}is-active{% endunless %}">Todos</a></li>
-                {%- for type in collection.all_types -%}
-                  {%- if type != blank -%}
-                    <li>
-                      <a href="{{ collection.url }}/{{ type | handle }}" class="filter-link {% if current_tags contains type %}is-active{% endif %}">
-                        {{ type }}
-                      </a>
-                    </li>
-                  {%- endif -%}
-                {%- endfor -%}
-              </ul>
-            </div>
-          {%- endunless -%}
-
-          <!-- Filter by availability -->
+          <!-- Disponibilidade -->
           <div class="filter-group">
             <h3 class="filter-group__title">Disponibilidade</h3>
             <ul class="filter-list">
@@ -73,20 +131,16 @@
             </ul>
           </div>
 
-          <!-- Brands (tags) -->
+          <!-- Sort -->
           <div class="filter-group">
-            <h3 class="filter-group__title">Marca do Trator</h3>
-            <ul class="filter-list">
-              {%- assign brands = 'john-deere,new-holland,massey-ferguson,valtra,valmet' | split: ',' -%}
-              {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra,Valmet' | split: ',' -%}
-              {%- for brand in brands -%}
-                <li>
-                  <a href="{{ collection.url }}/{{ brand }}" class="filter-link {% if current_tags contains brand %}is-active{% endif %}">
-                    {{ brand_labels[forloop.index0] }}
-                  </a>
-                </li>
-              {%- endfor -%}
-            </ul>
+            <h3 class="filter-group__title">Ordenar</h3>
+            <select class="filter-select" id="SortSelect" onchange="window.location = this.value">
+              {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+              <option value="{{ collection.url }}?sort_by=manual" {% if sort_by == 'manual' %}selected{% endif %}>Em Destaque</option>
+              <option value="{{ collection.url }}?sort_by=title-ascending" {% if sort_by == 'title-ascending' %}selected{% endif %}>Nome A–Z</option>
+              <option value="{{ collection.url }}?sort_by=title-descending" {% if sort_by == 'title-descending' %}selected{% endif %}>Nome Z–A</option>
+              <option value="{{ collection.url }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
+            </select>
           </div>
 
         </div>

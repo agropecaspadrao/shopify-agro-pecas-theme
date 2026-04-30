@@ -295,6 +295,41 @@
 
   .ap-sort-select:focus { border-color: var(--color-primary, #1B4332); }
 
+  /* Part Number search */
+  .ap-pn-form { margin: 0; }
+  .ap-pn-wrap {
+    display: flex;
+    border: 1px solid var(--color-border, #DCD7CE);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--color-bg-soft, #FAF9F7);
+    transition: border-color 0.2s;
+  }
+  .ap-pn-wrap:focus-within { border-color: var(--color-primary, #1B4332); }
+  .ap-pn-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 9px 10px;
+    font-size: 13px;
+    font-family: var(--font-body, 'Barlow', sans-serif);
+    color: var(--color-text, #2F2F2F);
+    min-width: 0;
+  }
+  .ap-pn-input::placeholder { color: var(--color-text-muted, #78716b); font-size: 12px; }
+  .ap-pn-btn {
+    background: var(--color-primary, #1B4332);
+    border: none;
+    padding: 0 12px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+  }
+  .ap-pn-btn:hover { background: var(--color-primary-dark, #153628); }
+
   /* stock dot */
   .ap-stock-dot {
     width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -472,33 +507,47 @@
       <span>Filtros</span>
     </div>
 
-    {%- comment -%} Ordenar {%- endcomment -%}
+    {%- comment -%} Detecta coleção ativa e base URL para filtros por tag {%- endcomment -%}
+    {%- assign active_col_handle = collection.handle | default: 'all' -%}
+    {%- assign filter_base = collection.url | default: routes.all_products_collection_url -%}
+
+    {%- comment -%} Busca por Part Number / SKU {%- endcomment -%}
     <div class="ap-filter-group">
-      <p class="ap-filter-group__title">Ordenar por</p>
-      {%- assign sort_by = collection.sort_by | default: 'manual' -%}
-      <select class="ap-sort-select" onchange="window.location = this.value">
-        <option value="{{ routes.all_products_collection_url }}?sort_by=manual"             {% if sort_by == 'manual'             %}selected{% endif %}>Em Destaque</option>
-        <option value="{{ routes.all_products_collection_url }}?sort_by=title-ascending"    {% if sort_by == 'title-ascending'    %}selected{% endif %}>Nome A–Z</option>
-        <option value="{{ routes.all_products_collection_url }}?sort_by=title-descending"   {% if sort_by == 'title-descending'   %}selected{% endif %}>Nome Z–A</option>
-        <option value="{{ routes.all_products_collection_url }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
-      </select>
+      <p class="ap-filter-group__title">Part Number / SKU</p>
+      <form class="ap-pn-form" action="{{ routes.search_url }}" method="get">
+        <input type="hidden" name="type" value="product">
+        <div class="ap-pn-wrap">
+          <input
+            class="ap-pn-input"
+            type="search"
+            name="q"
+            placeholder="Ex: 5.1301.0565008"
+            autocomplete="off"
+            value="{{ search.terms | escape }}"
+          >
+          <button type="submit" class="ap-pn-btn" aria-label="Buscar">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+      </form>
     </div>
 
-    {%- comment -%} Categorias / coleções {%- endcomment -%}
+    {%- comment -%} Categoria {%- endcomment -%}
     <div class="ap-filter-group">
       <p class="ap-filter-group__title">Categoria</p>
       <ul class="ap-filter-list">
         <li>
           <a href="{{ routes.all_products_collection_url }}"
-             class="ap-filter-link {% unless current_tags %}is-active{% endunless %}">
-            Todas as categorias
-            <span class="count">{{ all_products.products_count }}</span>
+             class="ap-filter-link {% if active_col_handle == 'all' %}is-active{% endif %}">
+            Todos os Produtos
+            <span class="count">{{ collections.all.products_count }}</span>
           </a>
         </li>
         {%- for col in collections -%}
           {%- unless col.handle == 'frontpage' or col.handle == 'all' -%}
             <li>
-              <a href="{{ col.url }}" class="ap-filter-link">
+              <a href="{{ col.url }}"
+                 class="ap-filter-link {% if col.handle == active_col_handle %}is-active{% endif %}">
                 {{ col.title }}
                 <span class="count">{{ col.products_count }}</span>
               </a>
@@ -508,24 +557,74 @@
       </ul>
     </div>
 
+    {%- comment -%} Marca do Trator {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Marca do Trator</p>
+      {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,valmet,case' | split: ',' -%}
+      {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH' | split: ',' -%}
+      <ul class="ap-filter-list">
+        {%- for brand in brands -%}
+          {%- unless brand == 'valmet' -%}
+            <li>
+              <a href="{{ filter_base }}/{{ brand }}"
+                 class="ap-filter-link {% if current_tags contains brand %}is-active{% endif %}">
+                {{ brand_labels[forloop.index0] }}
+              </a>
+            </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    {%- comment -%} Série — dropdown select {%- endcomment -%}
+    <div class="ap-filter-group">
+      <p class="ap-filter-group__title">Série / Modelo</p>
+      <select class="ap-sort-select" id="SerieSelect">
+        <option value="">Selecione a série...</option>
+        <optgroup label="John Deere">
+          <option value="{{ filter_base }}/série-5000" {% if current_tags contains 'série-5000' %}selected{% endif %}>Série 5000</option>
+          <option value="{{ filter_base }}/série-6000" {% if current_tags contains 'série-6000' %}selected{% endif %}>Série 6000</option>
+        </optgroup>
+        <optgroup label="New Holland / Ford">
+          <option value="{{ filter_base }}/TB" {% if current_tags contains 'TB' %}selected{% endif %}>TB / TS (clássica)</option>
+          <option value="{{ filter_base }}/TS6000" {% if current_tags contains 'TS6000' %}selected{% endif %}>TS6000</option>
+          <option value="{{ filter_base }}/T6" {% if current_tags contains 'T6' %}selected{% endif %}>T6 Series</option>
+          <option value="{{ filter_base }}/5600" {% if current_tags contains '5600' %}selected{% endif %}>5600–7700</option>
+          <option value="{{ filter_base }}/5610" {% if current_tags contains '5610' %}selected{% endif %}>5610–8210</option>
+          <option value="{{ filter_base }}/340" {% if current_tags contains '340' %}selected{% endif %}>340–4630</option>
+        </optgroup>
+        <optgroup label="Massey Ferguson">
+          <option value="{{ filter_base }}/4215" {% if current_tags contains '4215' %}selected{% endif %}>4215–4255</option>
+          <option value="{{ filter_base }}/4299" {% if current_tags contains '4299' %}selected{% endif %}>4299</option>
+          <option value="{{ filter_base }}/362" {% if current_tags contains '362' %}selected{% endif %}>362–390</option>
+        </optgroup>
+        <optgroup label="Valtra / Valmet">
+          <option value="{{ filter_base }}/885" {% if current_tags contains '885' %}selected{% endif %}>885 / 985</option>
+          <option value="{{ filter_base }}/880" {% if current_tags contains '880' %}selected{% endif %}>880 / 980 / 1780</option>
+          <option value="{{ filter_base }}/118" {% if current_tags contains '118' %}selected{% endif %}>118ES–148</option>
+          <option value="{{ filter_base }}/BH160" {% if current_tags contains 'BH160' %}selected{% endif %}>BH160</option>
+        </optgroup>
+      </select>
+    </div>
+
     {%- comment -%} Disponibilidade {%- endcomment -%}
     <div class="ap-filter-group">
       <p class="ap-filter-group__title">Disponibilidade</p>
       <ul class="ap-filter-list">
         <li>
-          <a href="{{ routes.all_products_collection_url }}"
+          <a href="{{ filter_base }}"
              class="ap-filter-link {% unless current_tags contains 'disponivel' or current_tags contains 'baixo-estoque' %}is-active{% endunless %}">
             Todos
           </a>
         </li>
         <li>
-          <a href="{{ routes.all_products_collection_url }}/disponivel"
+          <a href="{{ filter_base }}/disponivel"
              class="ap-filter-link {% if current_tags contains 'disponivel' %}is-active{% endif %}">
             <span class="ap-stock-dot ap-stock-dot--in"></span>Em Estoque
           </a>
         </li>
         <li>
-          <a href="{{ routes.all_products_collection_url }}/baixo-estoque"
+          <a href="{{ filter_base }}/baixo-estoque"
              class="ap-filter-link {% if current_tags contains 'baixo-estoque' %}is-active{% endif %}">
             <span class="ap-stock-dot ap-stock-dot--low"></span>Últimas Unidades
           </a>
@@ -533,27 +632,22 @@
       </ul>
     </div>
 
-    {%- comment -%} Compatibilidade {%- endcomment -%}
+    {%- comment -%} Ordenar {%- endcomment -%}
     <div class="ap-filter-group">
-      <p class="ap-filter-group__title">Marca do Trator</p>
-      {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,valmet' | split: ',' -%}
-      {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra,Valmet'  | split: ',' -%}
-      <ul class="ap-filter-list">
-        {%- for brand in brands -%}
-          <li>
-            <a href="{{ routes.all_products_collection_url }}/{{ brand }}"
-               class="ap-filter-link {% if current_tags contains brand %}is-active{% endif %}">
-              {{ brand_labels[forloop.index0] }}
-            </a>
-          </li>
-        {%- endfor -%}
-      </ul>
+      <p class="ap-filter-group__title">Ordenar por</p>
+      {%- assign sort_by = collection.sort_by | default: 'manual' -%}
+      <select class="ap-sort-select" onchange="window.location = this.value">
+        <option value="{{ filter_base }}?sort_by=manual"             {% if sort_by == 'manual'             %}selected{% endif %}>Em Destaque</option>
+        <option value="{{ filter_base }}?sort_by=title-ascending"    {% if sort_by == 'title-ascending'    %}selected{% endif %}>Nome A–Z</option>
+        <option value="{{ filter_base }}?sort_by=title-descending"   {% if sort_by == 'title-descending'   %}selected{% endif %}>Nome Z–A</option>
+        <option value="{{ filter_base }}?sort_by=created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>Mais Recentes</option>
+      </select>
     </div>
 
     {%- comment -%} Limpar filtros {%- endcomment -%}
     {%- if current_tags -%}
       <div class="ap-filter-group">
-        <a href="{{ routes.all_products_collection_url }}" class="ap-filter-link ap-filter-link--danger">
+        <a href="{{ filter_base }}" class="ap-filter-link ap-filter-link--danger">
           <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           Limpar filtros
         </a>
@@ -571,7 +665,7 @@
           Filtros
         </button>
         <span class="ap-count">
-          <strong>{{ all_products.products_count }}</strong> produtos encontrados
+          <strong>{{ collection.products_count }}</strong> produtos encontrados
         </span>
       </div>
       {%- if current_tags -%}
@@ -629,20 +723,26 @@
   (function () {
     var toggle = document.getElementById('ApFilterToggle');
     var sidebar = document.getElementById('ApSidebar');
-    if (!toggle || !sidebar) return;
+    if (toggle && sidebar) {
+      toggle.addEventListener('click', function () {
+        var open = sidebar.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', open);
+      });
+      sidebar.addEventListener('click', function (e) {
+        if (e.target === sidebar) {
+          sidebar.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
 
-    toggle.addEventListener('click', function () {
-      var open = sidebar.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', open);
-    });
-
-    // fechar ao clicar no overlay (shadow)
-    sidebar.addEventListener('click', function (e) {
-      if (e.target === sidebar) {
-        sidebar.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', false);
-      }
-    });
+    // Série / modelo dropdown
+    var serieSelect = document.getElementById('SerieSelect');
+    if (serieSelect) {
+      serieSelect.addEventListener('change', function () {
+        if (this.value) window.location = this.value;
+      });
+    }
   })();
 </script>
 

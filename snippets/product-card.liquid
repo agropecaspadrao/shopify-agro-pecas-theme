@@ -1,7 +1,7 @@
 {%- liquid
-  assign sku_livenza = product.metafields.agro.sku_livenza.value
+  assign sku_oem = product.metafields.agro.sku_oem.value
   assign part_number = product.metafields.agro.part_number.value
-  assign wa_sku      = sku_livenza | default: product.variants.first.sku
+  assign wa_sku      = sku_oem | default: product.variants.first.sku
   assign wa_msg      = 'Olá! Interesse na peça *' | append: product.title | append: '* (SKU: ' | append: wa_sku | append: '). Preço e disponibilidade?'
   assign has_stock   = false
   if product.available and product.variants.first.inventory_quantity > 0
@@ -49,8 +49,8 @@
     </h3>
 
     <div class="product-card__codes">
-      {%- if sku_livenza != blank -%}
-        <span class="product-card__sku">{{ sku_livenza }}</span>
+      {%- if sku_oem != blank -%}
+        <span class="product-card__sku">{{ sku_oem }}</span>
       {%- elsif product.variants.first.sku != blank -%}
         <span class="product-card__sku">{{ product.variants.first.sku }}</span>
       {%- endif -%}

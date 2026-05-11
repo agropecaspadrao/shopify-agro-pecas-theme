@@ -17,7 +17,7 @@
         "full_height": false,
         "eyebrow": "As melhores peças  • Certificação ISO 9001",
         "title": "Soluções em Bombas Hidráulicas, Sensores e Componentes Plásticos para o Agro",
-        "subtitle": "Peças originais para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
+        "subtitle": "Peças no padrão OEM para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
         "cta_primary_label": "Ver Catálogo Completo",
         "cta_primary_url": "/collections/all",
         "cta_wa_label": "Pedir Cotação"
@@ -60,22 +60,35 @@
             "collection": "pecas-plasticas-injetadas",
             "asset_image": "",
             "image": "shopify://shop_images/ACX3454710_ecommerce_1.png",
-            "title": "Peças Plásticas",
-            "description": "",
-            "cta_label": "Ver Pecas",
-            "custom_url": "shopify://collections/pecas-plasticas-injetadas"
+            "title": "Peças Plásticas Injetadas",
+            "description": "Condutores, reservatórios, acoplamentos e componentes plásticos no padrão OEM para plantadeiras.",
+            "cta_label": "Ver Peças Plásticas",
+            "custom_url": "/collections/pecas-plasticas-injetadas"
+          }
+        },
+        "cat-precisao": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "",
+            "asset_image": "greco_GR141207_ecommerce.png",
+            "image": "",
+            "title": "Agricultura de Precisão",
+            "description": "GPS agrícola, monitores de plantio, iluminação e kits para o agronegócio moderno.",
+            "cta_label": "Ver Precisão",
+            "custom_url": "/collections/agricultura-de-precisao"
           }
         }
       },
       "block_order": [
         "cat-bombas",
         "cat-sensores",
-        "collection_card_kKMKeP"
+        "collection_card_kKMKeP",
+        "cat-precisao"
       ],
       "settings": {
         "eyebrow": "Nosso Catálogo",
         "title": "Categorias de Produtos",
-        "description": "Especialistas em bombas hidráulicas e sensores agrícolas de precisão.",
+        "description": "Especialistas em bombas hidráulicas, sensores agrícolas, peças plásticas e soluções de precisão para o agronegócio.",
         "bg_dark": false
       }
     },
@@ -87,7 +100,7 @@
           "settings": {
             "icon_key": "iso",
             "title": "ISO 9001 / 14001 / 18001",
-            "text": "Todas as peças LIVENZA são fabricadas sob rigorosas certificações internacionais de qualidade e gestão ambiental."
+            "text": "Trabalhamos com peças no padrão OEM, produzidas sob rigorosas certificações internacionais de qualidade e gestão ambiental."
           }
         },
         "col2": {

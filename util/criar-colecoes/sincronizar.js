@@ -15,6 +15,13 @@ const CLIENT_ID = process.env.SHOPIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
 const ASSETS_DIR = process.env.ASSETS_DIR;
 const CSV_PATH = process.env.CSV_PATH;
+const ONLY_SKUS = new Set(
+  (process.env.ONLY_SKUS || '')
+    .split(',')
+    .map(sku => sku.trim().toUpperCase())
+    .filter(Boolean)
+);
+const REPLACE_IMAGES = ['1', 'true', 'yes', 'sim'].includes((process.env.REPLACE_IMAGES || '').toLowerCase());
 
 if (!SHOP || !CLIENT_ID || !CLIENT_SECRET || !ASSETS_DIR || !CSV_PATH) {
   console.error('Variáveis necessárias: SHOPIFY_SHOP, SHOPIFY_CLIENT_ID, SHOPIFY_CLIENT_SECRET, ASSETS_DIR, CSV_PATH');
@@ -146,7 +153,7 @@ function buildSkuToImageMap(assetsDir) {
     // ex: "Livenza_5.0220.0547201-CT_REV._0_p1.png" → "5.0220.0547201"
     // ex: "5.1301.0565008_p1.png"                  → "5.1301.0565008"
     // ex: "sensor_SFLX2.jpg"                        → "SFLX2"
-    const match = file.match(/(\d\.\d{4}\.\d{7}(?:-\d)?)|SFLX2|PUL-?2/i);
+    const match = file.match(/(\d\.\d{4}\.\d{7}(?:-\d)?)|GR\d{6}(?:-\d{2}M)?|SFLX2|PUL-?2/i);
     if (match) {
       const key = match[0].toUpperCase();
       const current = map[key] ? parse(map[key]).base : '';
@@ -202,6 +209,12 @@ const TYPE_TO_COLLECTION_HANDLE = {
   'Bombas Hidráulicas': 'bombas-hidraulicas',
   'Sensores Agrícolas': 'sensores-agricolas',
   'Peças Plásticas Injetadas': 'pecas-plasticas-injetadas',
+  'Peças para Plantadeira': 'pecas-plasticas-injetadas',
+  'Peças para Trator': 'pecas-plasticas-injetadas',
+  'GPS Agrícola': 'agricultura-de-precisao',
+  'Iluminação Agrícola': 'agricultura-de-precisao',
+  'Kits Agrícolas': 'agricultura-de-precisao',
+  'Monitores Agrícolas': 'agricultura-de-precisao',
 };
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -218,6 +231,10 @@ const TYPE_TO_COLLECTION_HANDLE = {
   console.log(`   Produtos no CSV : ${rows.length}`);
   console.log(`   Imagens mapeadas: ${Object.keys(skuToImage).length}`);
   console.log(`   Coleções na loja: ${collections.map(c => c.title).join(', ')}\n`);
+  if (ONLY_SKUS.size) console.log(`   Filtro de SKUs  : ${[...ONLY_SKUS].join(', ')}\n`);
+  if (REPLACE_IMAGES) console.log('   Modo imagem     : substituir imagens atuais antes do upload\n');
+
+  const clearedProductIds = new Set();
 
   for (const row of rows) {
     const handle = row['Handle'];
@@ -226,8 +243,9 @@ const TYPE_TO_COLLECTION_HANDLE = {
     const title = row['Title'];
 
     if (!handle) continue;
+    if (ONLY_SKUS.size && !ONLY_SKUS.has(sku)) continue;
 
-    process.stdout.write(`🔍  ${title}... `);
+    process.stdout.write(`🔍  ${title || handle}... `);
 
     const product = await getProductByHandle(handle);
     if (!product) {
@@ -239,11 +257,12 @@ const TYPE_TO_COLLECTION_HANDLE = {
     const imagePath = skuToImage[sku];
     if (imagePath) {
       try {
-        if (type === 'Sensores Agrícolas') {
+        if ((REPLACE_IMAGES || type === 'Sensores Agrícolas') && !clearedProductIds.has(product.id)) {
           const removed = await clearProductImages(product.id);
           if (removed) process.stdout.write(`🧹 ${removed} antiga(s) removida(s) | `);
+          clearedProductIds.add(product.id);
         }
-        await uploadImageToProduct(product.id, imagePath, title);
+        await uploadImageToProduct(product.id, imagePath, title || product.title || handle);
         process.stdout.write('🖼️  imagem ok | ');
       } catch (e) {
         process.stdout.write(`⚠️  imagem erro (${e.message.slice(0, 40)}) | `);

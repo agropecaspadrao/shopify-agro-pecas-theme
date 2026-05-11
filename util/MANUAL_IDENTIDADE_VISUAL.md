@@ -12,16 +12,16 @@
 ### Nome
 **APP Agro Peças Padrão**
 - Sigla: **APP**
-- Nome curto em comunicação informal: **Agro Peças**
+- Nome curto em comunicação informal: **Agro Peças Padrão**
 
 ### Tagline principal
-> *"Peças originais. Entrega ágil. Confiança de verdade."*
+> *"Peças com padrão original. Entrega ágil. Confiança de verdade."*
 
 ### Tagline secundária (rodapé/assinatura)
-> *"Especialistas em bombas hidráulicas e peças para o agronegócio brasileiro."*
+> *"Especialistas em bombas hidráulicas, sensores e soluções em pec1as plasticas para o agronegócio brasileiro."*
 
 ### Propósito da marca
-A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confiança** para quem trabalha com máquinas agrícolas no Brasil. O produtor rural não pode perder dias esperando uma peça. Criamos esta empresa para ser a resposta rápida que o setor precisa.
+A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confiança** para quem trabalha com máquinas agrícolas no Brasil. O produtor rural não pode perder dias esperando uma peça ou pagando carissimo por por elas na concessionaria . Criamos esta empresa para ser a resposta rápida que o setor precisa.
 
 ### Posicionamento
 **Distribuidora especializada** em peças hidráulicas e sensores agrícolas originais LIVENZA, com foco em agilidade, procedência garantida e suporte técnico direto via WhatsApp — para produtores rurais, técnicos agrícolas e empresas do agronegócio brasileiro.

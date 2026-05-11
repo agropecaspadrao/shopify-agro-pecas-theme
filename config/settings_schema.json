@@ -166,7 +166,7 @@
         "type": "text",
         "id": "brand_distributor",
         "label": "Distribuidor Oficial",
-        "default": "LIVENZA",
+        "default": "APP Agro Peças Padrão",
         "info": "Nome exibido em badges de confiança e painéis de autenticação."
       },
       {

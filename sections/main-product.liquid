@@ -1,7 +1,7 @@
 {%- liquid
-  assign sku_livenza = product.metafields.agro.sku_livenza.value
+  assign sku_oem = product.metafields.agro.sku_oem.value
   assign part_number = product.metafields.agro.part_number.value
-  assign wa_sku      = sku_livenza | default: product.variants.first.sku
+  assign wa_sku      = sku_oem | default: product.variants.first.sku
   assign wa_msg      = 'Olá! Tenho interesse na peça *' | append: product.title | append: '* (SKU: ' | append: wa_sku | append: '). Poderiam informar disponibilidade e condições?'
   assign has_stock   = false
   if product.available and product.variants.first.inventory_quantity > 0
@@ -89,10 +89,10 @@
 
         <!-- Codes -->
         <div class="pdp-codes">
-          {%- if sku_livenza != blank -%}
+          {%- if sku_oem != blank -%}
             <div class="pdp-code">
-              <span class="pdp-code__label">SKU Livenza</span>
-              <code class="pdp-code__value">{{ sku_livenza }}</code>
+              <span class="pdp-code__label">Cód. OEM</span>
+              <code class="pdp-code__value">{{ sku_oem }}</code>
             </div>
           {%- elsif product.variants.first.sku != blank -%}
             <div class="pdp-code">
@@ -253,7 +253,7 @@
               </svg>
               <div class="doc-item__body">
                 <span class="doc-item__name">Ficha Técnica — {{ product.title }}</span>
-                <span class="doc-item__meta">PDF · Documento técnico LIVENZA</span>
+                <span class="doc-item__meta">PDF · Documento técnico</span>
               </div>
               <a href="{{ ficha_url }}" class="btn btn--primary btn--sm" target="_blank" rel="noopener">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>

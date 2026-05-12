@@ -152,7 +152,7 @@
         "type": "text",
         "id": "brand_tagline",
         "label": "Tagline Principal",
-        "default": "Peças originais. Entrega ágil. Confiança de verdade.",
+        "default": "Peças no padrão OEM. Entrega ágil. Confiança de verdade.",
         "info": "Exibida em banners, seção hero e metadados SEO."
       },
       {

@@ -263,8 +263,9 @@
             então pré-filtramos e exibimos até 6 com compare_at_price) {%- endcomment -%}
         <div class="product-grid product-grid--3">
           {%- assign shown = 0 -%}
+          {%- comment -%} Pass 1: com desconto + imagem -%}{%- endcomment -%}
           {%- for product in collections.all.products -%}
-            {%- if product.compare_at_price > product.price and shown < 6 -%}
+            {%- if product.compare_at_price > product.price and product.featured_image != blank and shown < 6 -%}
               {%- assign pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
               <div style="position:relative;">
                 <span class="fd-discount-badge">-{{ pct }}%</span>
@@ -273,6 +274,19 @@
               {%- assign shown = shown | plus: 1 -%}
             {%- endif -%}
           {%- endfor -%}
+          {%- comment -%} Pass 2: com desconto + sem imagem -%}{%- endcomment -%}
+          {%- if shown < 6 -%}
+            {%- for product in collections.all.products -%}
+              {%- if product.compare_at_price > product.price and product.featured_image == blank and shown < 6 -%}
+                {%- assign pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+                <div style="position:relative;">
+                  <span class="fd-discount-badge">-{{ pct }}%</span>
+                  {%- render 'product-card', product: product -%}
+                </div>
+                {%- assign shown = shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
         </div>
       </div>
     </div>
@@ -309,26 +323,40 @@
               class="fd-panel {% if forloop.first %}is-active{% endif %}"
               id="fd-panel-{{ col_handle }}"
             >
-              {%- comment -%} Top 3 por maior estoque (quantity) — Liquid não ordena por inventory,
-                  exibimos os 3 primeiros com available=true priorizando os com maior qty -%}
-              {%- endcomment -%}
               <div class="product-grid product-grid--3">
                 {%- assign col_shown = 0 -%}
+                {%- comment -%} Pass 1: com imagem + disponível -%}{%- endcomment -%}
                 {%- for product in col.products -%}
-                  {%- if product.available and col_shown < 3 -%}
+                  {%- if col_shown < 3 and product.featured_image != blank and product.available -%}
                     {%- render 'product-card', product: product -%}
                     {%- assign col_shown = col_shown | plus: 1 -%}
                   {%- endif -%}
                 {%- endfor -%}
-                {%- comment -%} Se não tiver 3 disponíveis, completa com indisponíveis -%}{%- endcomment -%}
+                {%- comment -%} Pass 2: com imagem + indisponível -%}{%- endcomment -%}
                 {%- if col_shown < 3 -%}
                   {%- for product in col.products -%}
-                    {%- unless product.available -%}
-                      {%- if col_shown < 3 -%}
-                        {%- render 'product-card', product: product -%}
-                        {%- assign col_shown = col_shown | plus: 1 -%}
-                      {%- endif -%}
-                    {%- endunless -%}
+                    {%- if col_shown < 3 and product.featured_image != blank and product.available == false -%}
+                      {%- render 'product-card', product: product -%}
+                      {%- assign col_shown = col_shown | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                {%- comment -%} Pass 3: sem imagem + disponível -%}{%- endcomment -%}
+                {%- if col_shown < 3 -%}
+                  {%- for product in col.products -%}
+                    {%- if col_shown < 3 and product.featured_image == blank and product.available -%}
+                      {%- render 'product-card', product: product -%}
+                      {%- assign col_shown = col_shown | plus: 1 -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                {%- comment -%} Pass 4: sem imagem + indisponível -%}{%- endcomment -%}
+                {%- if col_shown < 3 -%}
+                  {%- for product in col.products -%}
+                    {%- if col_shown < 3 and product.featured_image == blank and product.available == false -%}
+                      {%- render 'product-card', product: product -%}
+                      {%- assign col_shown = col_shown | plus: 1 -%}
+                    {%- endif -%}
                   {%- endfor -%}
                 {%- endif -%}
               </div>
@@ -364,6 +392,7 @@
   var current = 0;
   var timer   = null;
   var trackEl = null;
+  var paused  = false;
 
   function activate(idx) {
     tabs.forEach(function (t, i) {
@@ -374,7 +403,7 @@
       p.classList.toggle('is-active', i === idx);
     });
     current = idx;
-    startTrack();
+    if (!paused) startTrack();
   }
 
   function next() {
@@ -382,15 +411,20 @@
   }
 
   function startTrack() {
-    // anima o círculo SVG do tab ativo
     if (trackEl) { trackEl.style.transition = 'none'; trackEl.style.strokeDashoffset = 38; }
     var activeTab = tabs[current];
     trackEl = activeTab ? activeTab.querySelector('.track') : null;
     if (!trackEl) return;
-    // força reflow
     trackEl.getBoundingClientRect();
     trackEl.style.transition = 'stroke-dashoffset ' + INTERVAL + 'ms linear';
     trackEl.style.strokeDashoffset = 0;
+  }
+
+  function freezeTrack() {
+    if (!trackEl) return;
+    var computed = window.getComputedStyle(trackEl).strokeDashoffset;
+    trackEl.style.transition = 'none';
+    trackEl.style.strokeDashoffset = computed;
   }
 
   function startTimer() {
@@ -398,20 +432,39 @@
     timer = setInterval(next, INTERVAL);
   }
 
-  // clicks manuais
+  function pause() {
+    paused = true;
+    clearInterval(timer);
+    freezeTrack();
+    tabs[current] && tabs[current].setAttribute('aria-pressed', 'true');
+  }
+
+  function resume() {
+    paused = false;
+    tabs[current] && tabs[current].setAttribute('aria-pressed', 'false');
+    startTrack();
+    startTimer();
+  }
+
   tabs.forEach(function (tab, idx) {
     tab.addEventListener('click', function () {
-      clearInterval(timer);
-      activate(idx);
-      startTimer();
+      if (idx === current) {
+        // tab ativo: alterna pausa/retomada
+        paused ? resume() : pause();
+      } else {
+        // outro tab: troca de painel sem alterar estado de pausa
+        clearInterval(timer);
+        activate(idx);
+        if (!paused) startTimer();
+      }
     });
   });
 
   // pausa no hover
   var section = document.getElementById('FeaturedSection');
   if (section) {
-    section.addEventListener('mouseenter', function () { clearInterval(timer); });
-    section.addEventListener('mouseleave', function () { startTimer(); });
+    section.addEventListener('mouseenter', function () { if (!paused) clearInterval(timer); });
+    section.addEventListener('mouseleave', function () { if (!paused) { startTrack(); startTimer(); } });
   }
 
   activate(0);

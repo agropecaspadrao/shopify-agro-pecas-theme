@@ -40,14 +40,14 @@ const GQL = `https://${SHOP}.myshopify.com/admin/api/2025-01/graphql.json`;
 const LOGOS = [
   {
     label:    'Logo principal (sem fundo)',
-    filePath: resolve(ROOT, 'assets/APP - LOGO - SEM FUNDO V3.svg'),
+    filePath: resolve(ROOT, 'assets/logo_app_sem_fundo_v3.svg'),
     mimeType: 'image/svg+xml',
     alt:      'APP Agro Peças Padrão — Logo oficial',
     settingKey: 'logo',
   },
   {
     label:    'Logo branca',
-    filePath: resolve(ROOT, 'assets/logo-branca.png'),
+    filePath: resolve(ROOT, 'assets/logo_app_branca.png'),
     mimeType: 'image/png',
     alt:      'APP Agro Peças Padrão — Logo branca',
     settingKey: 'logo_white',

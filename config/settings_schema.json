@@ -14,7 +14,7 @@
         "type": "image_picker",
         "id": "logo",
         "label": "Logo da loja",
-        "info": "Recomendado: APP - LOGO - SEM FUNDO V3.svg. Use o logo com fundo transparente para melhor resultado."
+        "info": "Recomendado: logo_app_sem_fundo_v3.svg. Use o logo com fundo transparente para melhor resultado."
       },
       {
         "type": "range",
@@ -29,7 +29,7 @@
         "type": "image_picker",
         "id": "logo_white",
         "label": "Logo versão branca",
-        "info": "Versão do logo para fundos escuros (footer, painéis de auth). Recomendado: logo-branca.png"
+        "info": "Versão do logo para fundos escuros (footer, painéis de auth). Recomendado: logo_app_branca.png"
       }
     ]
   },

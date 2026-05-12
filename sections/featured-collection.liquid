@@ -280,25 +280,7 @@
               {%- assign shown = shown | plus: 1 -%}
             {%- endif -%}
           {%- endfor -%}
-          {%- comment -%} Pass 2: com desconto + sem imagem real -%}{%- endcomment -%}
-          {%- if shown < 6 -%}
-            {%- for product in collections.all.products -%}
-              {%- assign img_ok = false -%}
-              {%- if product.featured_image != blank -%}
-                {%- unless product.featured_image.src contains 'placeholder' -%}
-                  {%- assign img_ok = true -%}
-                {%- endunless -%}
-              {%- endif -%}
-              {%- if product.compare_at_price > product.price and img_ok == false and shown < 6 -%}
-                {%- assign pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
-                <div style="position:relative;">
-                  <span class="fd-discount-badge">-{{ pct }}%</span>
-                  {%- render 'product-card', product: product -%}
-                </div>
-                {%- assign shown = shown | plus: 1 -%}
-              {%- endif -%}
-            {%- endfor -%}
-          {%- endif -%}
+          {%- comment -%} Produtos com desconto mas sem imagem real não aparecem nos destaques -%}{%- endcomment -%}
         </div>
       </div>
     </div>
@@ -338,7 +320,7 @@
               <div class="product-grid product-grid--3">
                 {%- assign col_shown = 0 -%}
 
-                {%- comment -%} Pass 1: imagem real + disponível -%}{%- endcomment -%}
+                {%- comment -%} Pass 1: imagem real + disponível — exibidos primeiro -%}{%- endcomment -%}
                 {%- for product in col.products -%}
                   {%- assign img_ok = false -%}
                   {%- if product.featured_image != blank -%}
@@ -352,7 +334,7 @@
                   {%- endif -%}
                 {%- endfor -%}
 
-                {%- comment -%} Pass 2: imagem real + indisponível -%}{%- endcomment -%}
+                {%- comment -%} Pass 2: imagem real + indisponível — só se ainda há vagas -%}{%- endcomment -%}
                 {%- if col_shown < 3 -%}
                   {%- for product in col.products -%}
                     {%- assign img_ok = false -%}
@@ -368,37 +350,7 @@
                   {%- endfor -%}
                 {%- endif -%}
 
-                {%- comment -%} Pass 3: sem imagem real + disponível -%}{%- endcomment -%}
-                {%- if col_shown < 3 -%}
-                  {%- for product in col.products -%}
-                    {%- assign img_ok = false -%}
-                    {%- if product.featured_image != blank -%}
-                      {%- unless product.featured_image.src contains 'placeholder' -%}
-                        {%- assign img_ok = true -%}
-                      {%- endunless -%}
-                    {%- endif -%}
-                    {%- if col_shown < 3 and img_ok == false and product.available -%}
-                      {%- render 'product-card', product: product -%}
-                      {%- assign col_shown = col_shown | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endfor -%}
-                {%- endif -%}
-
-                {%- comment -%} Pass 4: sem imagem real + indisponível -%}{%- endcomment -%}
-                {%- if col_shown < 3 -%}
-                  {%- for product in col.products -%}
-                    {%- assign img_ok = false -%}
-                    {%- if product.featured_image != blank -%}
-                      {%- unless product.featured_image.src contains 'placeholder' -%}
-                        {%- assign img_ok = true -%}
-                      {%- endunless -%}
-                    {%- endif -%}
-                    {%- if col_shown < 3 and img_ok == false and product.available == false -%}
-                      {%- render 'product-card', product: product -%}
-                      {%- assign col_shown = col_shown | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endfor -%}
-                {%- endif -%}
+                {%- comment -%} Produtos sem imagem nunca aparecem nos destaques -%}{%- endcomment -%}
 
               </div>
               <div style="text-align:center; margin-top:20px;">

@@ -53,11 +53,24 @@
             "cta_label": "Ver Sensores",
             "custom_url": "/collections/sensores-agricolas"
           }
+        },
+        "collection_card_kKMKeP": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "pecas-plasticas-injetadas",
+            "asset_image": "",
+            "image": "shopify://shop_images/ACX3454710_ecommerce_1.png",
+            "title": "Peças Plásticas",
+            "description": "",
+            "cta_label": "Ver Pecas",
+            "custom_url": "shopify://collections/pecas-plasticas-injetadas"
+          }
         }
       },
       "block_order": [
         "cat-bombas",
-        "cat-sensores"
+        "cat-sensores",
+        "collection_card_kKMKeP"
       ],
       "settings": {
         "eyebrow": "Nosso Catálogo",

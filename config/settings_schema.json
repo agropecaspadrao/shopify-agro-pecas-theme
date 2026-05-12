@@ -185,7 +185,7 @@
         "type": "text",
         "id": "whatsapp_number",
         "label": "Número WhatsApp (com DDI)",
-        "default": "5541983333338",
+        "default": "5541984151085",
         "info": "Somente números, ex: 5541999999999"
       },
       {
@@ -215,7 +215,7 @@
         "type": "text",
         "id": "store_phone",
         "label": "Telefone",
-        "default": "+55 41 99833-3338"
+        "default": "+55 41 98415-1085"
       },
       {
         "type": "text",

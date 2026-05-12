@@ -25,7 +25,7 @@ Shopify Admin → **Online Store → Themes → Customize → Theme Settings (í
 
 ### Dados da Empresa
 - **CNPJ**: `66.316.831/0001-85`
-- **Telefone**: `(41) 9833-3338`
+- **Telefone**: `(41) 98415-1085`
 - **E-mail**: `comercial@agropecaspadrao.com.br`
 - **Endereço**: `R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310`
 
@@ -125,5 +125,5 @@ Shopify Admin → **Online Store → Pages → Add page**
 
 ## Suporte
 
-WhatsApp: (41) 9833-3338  
+WhatsApp: (41) 98415-1085  
 E-mail: comercial@agropecaspadrao.com.br

@@ -118,6 +118,6 @@ shopify theme dev --store agropecaspadrao.myshopify.com
 
 ## Suporte
 
-- WhatsApp: (41) 9833-3338  
+- WhatsApp: (41) 98415-1085  
 - E-mail: comercial@agropecaspadrao.com.br  
 - CNPJ: 66.316.831/0001-85

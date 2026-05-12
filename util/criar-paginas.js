@@ -19,8 +19,8 @@ const STORE = {
   name:     'APP Agro Peças Padrão',
   cnpj:     '66.316.831/0001-85',
   address:  'R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310',
-  phone:    '(41) 9833-3338',
-  whatsapp: '5541983333338',
+  phone:    '(41) 98415-1085',
+  whatsapp: '5541984151085',
   email:    'comercial@agropecaspadrao.com.br',
 };
 

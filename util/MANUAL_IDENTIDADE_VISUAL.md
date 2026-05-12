@@ -218,13 +218,13 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 
 | Área | Número | Mensagem pré-preenchida |
 |------|--------|------------------------|
-| **SAC (rodapé)** | 5541998333338 | `Olá! Preciso de atendimento do SAC da Agro Peças Padrão.` |
-| **Produto específico** | 5541998333338 | `Olá! Tenho interesse na peça *[TÍTULO]* (SKU: [SKU]) do catálogo Agro Peças Padrão. Gostaria de saber preço e disponibilidade.` |
-| **Catálogo** | 5541998333338 | `Olá! Estava navegando no catálogo da APP Agro Peças Padrão e tenho interesse na peça` |
-| **Quem Somos** | 5541998333338 | `Olá! Vim pela página Quem Somos e gostaria de mais informações sobre os produtos da Agro Peças Padrão.` |
-| **Cotação formal** | 5541998333338 | `Olá! Gostaria de solicitar uma cotação pela APP Agro Peças Padrão. Podem me atender?` |
-| **Busca sem resultado** | 5541998333338 | `Olá! Não encontrei a peça que preciso no site. Estou buscando por: [TERMO]` |
-| **Ficha técnica** | 5541998333338 | `Olá! Gostaria de solicitar a ficha técnica da peça [TÍTULO] (SKU: [SKU]).` |
+| **SAC (rodapé)** | 5541984151085 | `Olá! Preciso de atendimento do SAC da Agro Peças Padrão.` |
+| **Produto específico** | 5541984151085 | `Olá! Tenho interesse na peça *[TÍTULO]* (SKU: [SKU]) do catálogo Agro Peças Padrão. Gostaria de saber preço e disponibilidade.` |
+| **Catálogo** | 5541984151085 | `Olá! Estava navegando no catálogo da APP Agro Peças Padrão e tenho interesse na peça` |
+| **Quem Somos** | 5541984151085 | `Olá! Vim pela página Quem Somos e gostaria de mais informações sobre os produtos da Agro Peças Padrão.` |
+| **Cotação formal** | 5541984151085 | `Olá! Gostaria de solicitar uma cotação pela APP Agro Peças Padrão. Podem me atender?` |
+| **Busca sem resultado** | 5541984151085 | `Olá! Não encontrei a peça que preciso no site. Estou buscando por: [TERMO]` |
+| **Ficha técnica** | 5541984151085 | `Olá! Gostaria de solicitar a ficha técnica da peça [TÍTULO] (SKU: [SKU]).` |
 
 ---
 
@@ -235,8 +235,8 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 | **Razão Social** | APP Agro Peças Padrão |
 | **CNPJ** | 66.316.831/0001-85 |
 | **Endereço** | R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310 |
-| **Telefone** | (41) 9833-3338 |
-| **WhatsApp** | (41) 9983-3338 — `5541998333338` |
+| **Telefone** | (41) 98415-1085 |
+| **WhatsApp** | (41) 98415-1085 — `5541984151085` |
 | **E-mail** | comercial@agropecaspadrao.com.br |
 | **Loja online** | agropecaspadrao-2.myshopify.com |
 | **Fornecedor principal** | LIVENZA (distribuidor autorizado) |

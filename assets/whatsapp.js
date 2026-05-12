@@ -11,7 +11,7 @@
   var searchTimeout;
 
   function buildWaUrl(productTitle, sku) {
-    var number = window.waNumber || '5541997217541';
+    var number = window.waNumber || '5541984151085';
     var msg = 'Olá! Estava navegando no catálogo e tenho interesse na peça *' + productTitle + '* (SKU: ' + sku + '). Poderiam me passar disponibilidade?';
     return 'https://wa.me/' + number + '?text=' + encodeURIComponent(msg);
   }

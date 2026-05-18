@@ -451,7 +451,7 @@ SLIDES_DEF = (
      lambda: story_slide(
        "background:linear-gradient(160deg,var(--verde) 0%,#0F2B1E 50%,var(--azul) 100%)",
        "Lançamento Oficial · 2026",
-       "logo_app_icon_v3.svg",
+       "APP - LOGO Quadrada SEM FUNDO.png",
        "Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em>",
        "Bombas Hidráulicas, Peças Plásticas padrão OEM e Agricultura de Precisão. Entrega nacional, suporte técnico.",
        "Solicitar catálogo",

@@ -218,10 +218,10 @@ body{font-family:'Barlow',sans-serif;background:#111;color:#fff}
 .feat-logo{height:26px;width:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
 .feat-img{flex:1;display:flex;align-items:center;justify-content:center;
   position:relative;min-height:0;padding:.8rem}
-.feat-img::before{content:'';position:absolute;width:270px;height:270px;
+.feat-img::before{content:'';position:absolute;width:378px;height:378px;
   border:1.5px solid rgba(212,175,55,.08);border-radius:50%}
-.feat-img img{width:210px;height:210px;object-fit:contain;position:relative;z-index:2;
-  background:#fff;border-radius:50%;padding:22px;
+.feat-img img{width:294px;height:294px;object-fit:contain;position:relative;z-index:2;
+  background:#fff;border-radius:50%;padding:31px;
   border:2px solid rgba(212,175,55,.15);
   filter:drop-shadow(0 8px 24px rgba(0,0,0,.4))}
 .feat-body{padding:.75rem 1.2rem 1.1rem;position:relative;z-index:2}
@@ -269,13 +269,18 @@ body{font-family:'Barlow',sans-serif;background:#111;color:#fff}
 /* Story image: produto em círculo — área central */
 .st-img{flex:1;display:flex;align-items:center;justify-content:center;
   padding:1rem;min-height:0}
-.st-img img{max-width:200px;max-height:200px;object-fit:contain;background:#fff;
-  border-radius:50%;padding:22px;border:2px solid rgba(212,175,55,.2);
+.st-img img{max-width:280px;max-height:280px;object-fit:contain;background:#fff;
+  border-radius:50%;padding:31px;border:2px solid rgba(212,175,55,.2);
   filter:drop-shadow(0 6px 20px rgba(0,0,0,.45))}
+/* Story 47 — logo hero (sem fundo branco circular) */
+.st-img-logo{flex:1;display:flex;align-items:center;justify-content:center;
+  padding:2rem;min-height:0}
+.st-logo-hero{max-width:300px;width:85%;height:auto;
+  filter:drop-shadow(0 4px 20px rgba(0,0,0,.5))}
 /* Story body: logo branca no corpo + badge + título + desc + cta */
 .st-body{padding:1rem 1.4rem 1.2rem;position:relative;z-index:2}
 .st-logo-body{height:24px;width:auto;display:block;margin-bottom:.7rem;
-  filter:brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,.4))}
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.4))}
 .st-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.44rem;
   letter-spacing:4px;text-transform:uppercase;color:var(--dourado);
   border:1px solid rgba(212,175,55,.3);padding:.18rem .62rem;border-radius:3px;
@@ -334,12 +339,19 @@ def single_slide(img_name, sku, name, series, bg_css, badge, cta="Consultar disp
   </div>"""
 
 
-def story_slide(bg_css, badge, img_name, title, desc, cta="Solicitar catálogo"):
-    """Story: logo branca no CORPO (não no header). Header só tem texto de categoria."""
+def story_slide(bg_css, badge, img_name, title, desc, cta="Solicitar catálogo", img_mode="product"):
+    """Story: logo branca no CORPO (não no header). Header só tem texto de categoria.
+    img_mode='logo' — exibe a imagem como logotipo grande, sem fundo branco circular.
+    img_mode='product' (padrão) — imagem em círculo branco.
+    """
+    if img_mode == "logo":
+        img_area = f'<div class="st-img-logo">{img(img_name, title, "st-logo-hero")}</div>'
+    else:
+        img_area = f'<div class="st-img">{img(img_name, title)}</div>'
     return f"""<div class="s-story" style="{bg_css}">
     <div class="gl-t"></div>
     <div class="st-top"><div class="st-badge-h">{badge}</div></div>
-    <div class="st-img">{img(img_name, title)}</div>
+    {img_area}
     <div class="st-body">
       {img(LOGO_BRANCA, 'APP Agro Peças', 'st-logo-body')}
       <div class="st-badge">{badge}</div>
@@ -439,10 +451,11 @@ SLIDES_DEF = (
      lambda: story_slide(
        "background:linear-gradient(160deg,var(--verde) 0%,#0F2B1E 50%,var(--azul) 100%)",
        "Lançamento Oficial · 2026",
-       LOGO_ICON,
+       LOGO_BRANCA,
        "Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em>",
        "Bombas Hidráulicas, Peças Plásticas padrão OEM e Agricultura de Precisão. Entrega nacional, suporte técnico.",
-       "Solicitar catálogo")),
+       "Solicitar catálogo",
+       img_mode="logo")),
 
     ("stories", "Story 48 — Bombas Hidráulicas", "st",
      lambda: story_slide(

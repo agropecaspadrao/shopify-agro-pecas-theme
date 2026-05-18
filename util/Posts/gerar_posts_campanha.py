@@ -455,7 +455,7 @@ SLIDES_DEF = (
        "Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em>",
        "Bombas Hidráulicas, Peças Plásticas padrão OEM e Agricultura de Precisão. Entrega nacional, suporte técnico.",
        "Solicitar catálogo",
-       img_mode="logo")),
+       img_mode="product")),
 
     ("stories", "Story 48 — Bombas Hidráulicas", "st",
      lambda: story_slide(

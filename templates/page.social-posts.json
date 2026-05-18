@@ -1,0 +1,10 @@
+{
+  "layout": "bare",
+  "sections": {
+    "main": {
+      "type": "social-posts",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

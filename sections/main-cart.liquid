@@ -358,6 +358,32 @@
 
 <script>
 (function () {
+  // GA4 begin_checkout
+  var checkoutBtn = document.querySelector('.cart-checkout-btn');
+  if (checkoutBtn && window.gtag) {
+    checkoutBtn.addEventListener('click', function() {
+      fetch('/cart.js')
+        .then(function(r) { return r.json(); })
+        .then(function(cart) {
+          gtag('event', 'begin_checkout', {
+            currency: cart.currency,
+            value: cart.total_price / 100,
+            items: cart.items.map(function(item, idx) {
+              return {
+                item_id:       item.sku,
+                item_name:     item.product_title,
+                item_brand:    item.vendor,
+                item_category: item.product_type,
+                price:         item.final_price / 100,
+                quantity:      item.quantity,
+                index:         idx,
+              };
+            }),
+          });
+        });
+    });
+  }
+
   document.addEventListener('click', function (e) {
     var removeBtn = e.target.closest('.cart-item__remove');
     if (removeBtn) {

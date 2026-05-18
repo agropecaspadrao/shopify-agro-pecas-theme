@@ -77,4 +77,25 @@
     search_term: {{ search.terms | json }},
   });
   {% endif %}
+
+  {% comment %}── view_cart (página de carrinho) ─────────────────────────{% endcomment %}
+  {% if template contains 'cart' %}
+  gtag('event', 'view_cart', {
+    currency: {{ cart.currency.iso_code | json }},
+    value: {{ cart.total_price | divided_by: 100.0 }},
+    items: [
+      {% for item in cart.items %}
+      {
+        item_id:       {{ item.sku | json }},
+        item_name:     {{ item.product.title | json }},
+        item_brand:    {{ item.vendor | json }},
+        item_category: {{ item.product.type | json }},
+        price:         {{ item.final_price | divided_by: 100.0 }},
+        quantity:      {{ item.quantity }},
+        index:         {{ forloop.index0 }},
+      },
+      {% endfor %}
+    ],
+  });
+  {% endif %}
 </script>

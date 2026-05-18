@@ -318,6 +318,23 @@
       if (panel) { panel.classList.add('is-active'); panel.hidden = false; }
     });
   });
+
+  // GA4 add_to_cart
+  document.getElementById('PdpForm')?.addEventListener('submit', function() {
+    if (!window.gtag) return;
+    gtag('event', 'add_to_cart', {
+      currency: 'BRL',
+      value: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+      items: [{
+        item_id: {{ product.variants.first.sku | json }},
+        item_name: {{ product.title | json }},
+        item_brand: {{ product.vendor | json }},
+        item_category: {{ product.type | json }},
+        price: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
+        quantity: parseInt(document.getElementById('PdpQty')?.value || '1', 10),
+      }]
+    });
+  });
 </script>
 
 {% schema %}

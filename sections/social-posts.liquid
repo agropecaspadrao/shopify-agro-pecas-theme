@@ -1,0 +1,1053 @@
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,700;1,800&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#1B4332;--azul:#1D3557;--dourado:#D4AF37;--carvao:#2F2F2F;
+  --areia:#E6E1D9;--whatsapp:#25D366}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:#111;color:#fff}
+.wrap{padding:2rem 1.5rem 4rem;display:flex;flex-direction:column;align-items:center;gap:2.5rem}
+.tb{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.95);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(212,175,55,.2);padding:.8rem 1.5rem;display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem}
+.tb-t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;
+  color:var(--dourado);letter-spacing:2px;text-transform:uppercase}
+.tb-nav{display:flex;gap:.4rem;flex-wrap:wrap}
+.tb-b{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.7rem;
+  letter-spacing:1px;text-transform:uppercase;padding:.4rem .8rem;
+  border:1px solid rgba(255,255,255,.12);background:transparent;
+  color:rgba(255,255,255,.5);cursor:pointer;transition:.25s;border-radius:4px}
+.tb-b:hover,.tb-b.on{background:var(--dourado);color:#0a0a0a;border-color:var(--dourado)}
+.tb-i{font-size:.65rem;color:rgba(255,255,255,.3);width:100%;text-align:center}
+.grp{display:none;flex-direction:column;align-items:center;gap:2rem}
+.grp.on{display:flex}
+.lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.7rem;
+  letter-spacing:3px;text-transform:uppercase;color:var(--dourado);
+  padding:.35rem 1rem;border:1px solid rgba(212,175,55,.25);border-radius:4px}
+/* frames */
+.f{position:relative;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,.5);
+  flex-shrink:0;border-radius:12px}
+.f.sq{width:540px;height:540px}
+.f.pt{width:540px;height:675px}
+.f.st{width:405px;height:720px}
+/* gold lines */
+.gl-t,.gl-b{position:absolute;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 8%,var(--dourado) 50%,transparent 92%);z-index:5}
+.gl-t{top:0}.gl-b{bottom:0}
+.gl-s{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--dourado);z-index:5}
+/* ── HERO ── */
+.s-hero{width:100%;height:100%;
+  background:linear-gradient(160deg,var(--verde) 0%,#0F2B1E 40%,var(--azul) 100%);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:2.5rem;position:relative}
+.s-hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 120% 60% at 30% 80%,rgba(212,175,55,.07) 0%,transparent 60%),
+  repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(212,175,55,.015) 40px,rgba(212,175,55,.015) 41px)}
+.hz{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+.badge-hero{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--dourado);
+  border:1.5px solid var(--dourado);padding:.3rem 1.1rem;margin-bottom:1.4rem;border-radius:3px}
+.hero-logo{width:260px;max-width:75%;margin-bottom:1.6rem;
+  filter:drop-shadow(0 4px 16px rgba(0,0,0,.35))}
+.hero-h{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.45rem;
+  color:#fff;line-height:1.3;margin-bottom:.65rem;text-transform:uppercase}
+.hero-h em{color:var(--dourado);font-style:normal}
+.hero-p{font-weight:400;font-size:.76rem;color:rgba(255,255,255,.6);
+  line-height:1.6;max-width:360px;margin:0 auto 1.6rem}
+.hero-cta{display:inline-flex;align-items:center;gap:.45rem;background:var(--whatsapp);
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+  letter-spacing:1.5px;text-transform:uppercase;padding:.58rem 1.4rem;border-radius:6px}
+.hero-cta svg{width:16px;height:16px;fill:currentColor}
+.hero-url{margin-top:.9rem;font-size:.6rem;color:rgba(255,255,255,.3);letter-spacing:1.5px}
+/* ── SINGLE SLIDE (portrait + square) ── */
+.s-feat{width:100%;height:100%;display:flex;flex-direction:column;position:relative}
+.feat-hd{padding:.85rem 1.2rem;display:flex;align-items:center;
+  justify-content:space-between;position:relative;z-index:2}
+.feat-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.48rem;
+  letter-spacing:3px;text-transform:uppercase;color:var(--dourado);
+  border:1px solid rgba(212,175,55,.4);padding:.2rem .6rem;border-radius:3px}
+.feat-logo{height:26px;width:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.feat-img{flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;min-height:0;padding:.8rem}
+.feat-img::before{content:'';position:absolute;width:270px;height:270px;
+  border:1.5px solid rgba(212,175,55,.08);border-radius:50%}
+.feat-img img{width:210px;height:210px;object-fit:contain;position:relative;z-index:2;
+  background:#fff;border-radius:50%;padding:22px;
+  border:2px solid rgba(212,175,55,.15);
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,.4))}
+.feat-body{padding:.75rem 1.2rem 1.1rem;position:relative;z-index:2}
+.feat-sku{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.54rem;
+  color:var(--dourado);letter-spacing:3px;margin-bottom:.25rem}
+.feat-nm{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.05rem;
+  color:#fff;line-height:1.2;margin-bottom:.25rem;text-transform:uppercase}
+.feat-ser{font-weight:400;font-size:.64rem;color:rgba(255,255,255,.45);
+  line-height:1.5;margin-bottom:.75rem}
+.feat-cta{display:inline-flex;align-items:center;gap:.4rem;background:var(--whatsapp);
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.64rem;
+  letter-spacing:1.5px;text-transform:uppercase;padding:.4rem 1rem;border-radius:6px}
+.feat-cta svg{width:13px;height:13px;fill:currentColor}
+/* ── CTA ── */
+.s-cta{width:100%;height:100%;
+  background:linear-gradient(160deg,var(--azul) 0%,#0D1B2A 60%,var(--verde) 100%);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:2.5rem;position:relative}
+.s-cta::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,
+  rgba(212,175,55,.015) 40px,rgba(212,175,55,.015) 41px)}
+.cz{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+.cta-icon{width:50px;height:50px;border:2px solid var(--dourado);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem}
+.cta-icon svg{width:22px;height:22px;fill:var(--dourado)}
+.cta-h{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.45rem;
+  color:#fff;line-height:1.15;margin-bottom:.65rem;text-transform:uppercase}
+.cta-h em{color:var(--dourado);font-style:normal}
+.cta-p{font-weight:400;font-size:.78rem;color:rgba(255,255,255,.55);
+  line-height:1.6;margin-bottom:1.6rem;max-width:340px}
+.cta-btn{display:inline-flex;align-items:center;gap:.45rem;background:var(--whatsapp);
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.82rem;
+  letter-spacing:1.5px;text-transform:uppercase;padding:.65rem 1.7rem;
+  margin-bottom:1.1rem;border-radius:6px}
+.cta-btn svg{width:17px;height:17px;fill:currentColor}
+.cta-meta{display:flex;flex-direction:column;gap:.22rem;font-size:.62rem;color:rgba(255,255,255,.32)}
+.cta-meta .g{color:var(--dourado)}
+.cta-logo{margin-top:1.6rem;height:42px;width:auto;filter:drop-shadow(0 2px 8px rgba(0,0,0,.4))}
+/* ── STORY ── */
+.s-story{width:100%;height:100%;display:flex;flex-direction:column;position:relative}
+/* Story header: só badge de categoria (sem logo) */
+.st-top{padding:.85rem 1.4rem;position:relative;z-index:2}
+.st-badge-h{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.44rem;
+  letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.38)}
+/* Story image: produto em círculo — área central */
+.st-img{flex:1;display:flex;align-items:center;justify-content:center;
+  padding:1rem;min-height:0}
+.st-img img{max-width:200px;max-height:200px;object-fit:contain;background:#fff;
+  border-radius:50%;padding:22px;border:2px solid rgba(212,175,55,.2);
+  filter:drop-shadow(0 6px 20px rgba(0,0,0,.45))}
+/* Story body: logo branca no corpo + badge + título + desc + cta */
+.st-body{padding:1rem 1.4rem 1.2rem;position:relative;z-index:2}
+.st-logo-body{height:24px;width:auto;display:block;margin-bottom:.7rem;
+  filter:brightness(0) invert(1) drop-shadow(0 1px 4px rgba(0,0,0,.4))}
+.st-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.44rem;
+  letter-spacing:4px;text-transform:uppercase;color:var(--dourado);
+  border:1px solid rgba(212,175,55,.3);padding:.18rem .62rem;border-radius:3px;
+  display:inline-block;margin-bottom:.6rem}
+.st-h{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.2rem;
+  color:#fff;line-height:1.2;margin-bottom:.38rem;text-transform:uppercase}
+.st-h em{color:var(--dourado);font-style:normal}
+.st-p{font-size:.68rem;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:.85rem}
+.st-cta{display:inline-flex;align-items:center;gap:.38rem;background:var(--whatsapp);
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.68rem;
+  letter-spacing:1.5px;text-transform:uppercase;padding:.45rem 1.05rem;border-radius:6px}
+.st-cta svg{width:13px;height:13px;fill:currentColor}
+.st-url{margin-top:.55rem;font-size:.54rem;color:rgba(255,255,255,.28);letter-spacing:1.5px}
+@media(max-width:600px){
+  .f.sq{width:340px;height:340px}.f.pt{width:340px;height:425px}
+  .f.st{width:256px;height:455px}}
+</style>
+<div class="tb"><div class="tb-t">APP — Campanha v1 · 52 posts</div><div class="tb-nav"><button class="tb-b on" onclick="sw('carousel',this)">Carrossel Feed</button>
+    <button class="tb-b" onclick="sw('bombas',this)">Bombas Hidráulicas</button>
+    <button class="tb-b" onclick="sw('pecas',this)">Peças Padrão OEM</button>
+    <button class="tb-b" onclick="sw('greco',this)">Greco / Sensores</button>
+    <button class="tb-b" onclick="sw('sensores',this)">Sensores Agral</button>
+    <button class="tb-b" onclick="sw('stories',this)">Stories</button>
+    </div><div class="tb-i">Feed 1080×1080 · Portrait 1080×1350 · Stories 810×1440</div></div>
+<div class="wrap">
+<div class="grp on" id="g-carousel">
+  <div class="lbl">Slide 01 — Capa Lançamento</div>
+  <div class="f sq"><div class="s-hero">
+  <div class="gl-t"></div><div class="gl-b"></div>
+  <div class="hz">
+    <div class="badge-hero">Lançamento Oficial · 2026</div>
+    <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="hero-logo">
+    <div class="hero-h">As peças que você precisa,<br><em>no padrão</em><br>que você merece.</div>
+    <div class="hero-p">Bombas hidráulicas, peças plásticas com padrão original OEM e tecnologia de precisão — com entrega para todo o Brasil.</div>
+    <div class="hero-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Solicitar Catálogo</div>
+    <div class="hero-url">agropecaspadrao.com.br</div>
+  </div>
+</div></div>
+
+  <div class="lbl">Slide 02 — Bomba Hidráulica</div>
+  <div class="f sq"><div class="s-feat" style="background:linear-gradient(175deg,#071510 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547201-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547201</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 885 · 985 · 1280 · 1480</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver catálogo</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Slide 03 — Peça Padrão OEM</div>
+  <div class="f sq"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX3454710_ecommerce_1.png' | asset_url }}" alt="Reservatório de Sementes Mecânico"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX3454710</div>
+      <div class="feat-nm">Reservatório de Sementes Mecânico</div>
+      <div class="feat-ser">Plantadeira Momentum — Sistema de Dosagem</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver catálogo</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Slide 04 — Tecnologia GPS</div>
+  <div class="f sq"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR141207_ecommerce.png' | asset_url }}" alt="GPS Agrícola GR200"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR141207</div>
+      <div class="feat-nm">GPS Agrícola GR200</div>
+      <div class="feat-ser">Navegação de Precisão — Barra de Luz</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver produtos</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Slide 05 — CTA</div>
+  <div class="f sq"><div class="s-cta">
+  <div class="gl-t"></div><div class="gl-b"></div>
+  <div class="cz">
+    <div class="cta-icon"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+    <div class="cta-h">Solicite cotação.<br><em>Resposta em minutos.</em></div>
+    <div class="cta-p">Bombas hidráulicas com padrão original, peças com Padrão Original - OEM e tecnologia de precisão. Entrega para todo o Brasil.</div>
+    <div class="cta-btn"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Falar com Especialista</div>
+    <div class="cta-meta">
+      <span>Frete nacional · Suporte técnico</span>
+      <span class="g">Padrão Original · Padrão OEM</span>
+      <span>ISO 9001 · 14001 · OHSAS 18001</span>
+    </div>
+    <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="cta-logo">
+  </div>
+</div></div>
+</div>
+
+<div class="grp" id="g-bombas">
+  <div class="lbl">Post 06 — 5.0220.0547201</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#071510 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547201-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547201</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 885 · 985 · 1280 · 1480</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 07 — 5.0220.0547205</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#071510 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547205-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547205</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 880 · 980 · 1780</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 08 — 5.0220.0547206</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#071510 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547206-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547206</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 118ES · 128 · 138 · 148</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 09 — 5.0220.0547202</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#071510 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547202-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547202</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 62 · 65 · 68 · 85 · 86 · 88 · 78EL</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 10 — 5.1301.0565008</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565008_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565008</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Séries TB · TS (CNH A-008)</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 11 — 5.1301.0565017</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565017_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565017</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Série TS6000 (CNH A-017)</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 12 — 5.1301.0565002</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565002-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565002</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 5610 · 7610 · 7810</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 13 — 5.1301.0565035</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565035_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565035</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Série T6 — T6110 · T6140</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 14 — 5.1301.0565001</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565001-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565001</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Séries 5600 · 6600 · 7600 · 7700 · 8030</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 15 — 5.1301.0565004</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(165deg,#0A1A10 0%,#2A5540 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1301.0565004-CT_REV._A_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1301.0565004</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Séries 340 · 2910 · 3930 · 4630</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 16 — 5.1302.0547844</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1302.0547844-CT_REV._A_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1302.0547844</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Séries 4215 · 4220 · 4235 · 4255</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 17 — 5.1302.0565053</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1302.0565053-1_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1302.0565053</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Trator 4299</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 18 — 5.1302.0547820</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1302.0547820-CT_REV._0_p1.png' | asset_url }}" alt="Bomba — Direção e Levante"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1302.0547820</div>
+      <div class="feat-nm">Bomba — Direção e Levante</div>
+      <div class="feat-ser">Séries 3050 · 6110 · 6120 · 6190</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 19 — 5.0220.0548836</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0548836-CT_REV._0_p1.png' | asset_url }}" alt="Bomba de Direção"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0548836</div>
+      <div class="feat-nm">Bomba de Direção</div>
+      <div class="feat-ser">Séries 194-4F · 362 · 365 · 372 · 390</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 20 — 5.0220.0547216</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0547216-CT_REV._0_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0547216</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 296-4 · 297-4 · 299-4</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 21 — 5.0220.0548824-2</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.0220.0548824-2_p1.png' | asset_url }}" alt="Bomba Hidráulica Dupla"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0220.0548824-2</div>
+      <div class="feat-nm">Bomba Hidráulica Dupla</div>
+      <div class="feat-ser">BH160 — Engrenagem Dupla</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 22 — 5.1305.0565036</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(170deg,#0B1A0F 0%,#173629 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1305.0565036_p1.png' | asset_url }}" alt="Bomba Hidráulica Principal"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1305.0565036</div>
+      <div class="feat-nm">Bomba Hidráulica Principal</div>
+      <div class="feat-ser">Séries 6010 · 6110 · 6220 · 6420 · 6620</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 23 — 5.1305.0565071</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(170deg,#0B1A0F 0%,#173629 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1305.0565071_p1.png' | asset_url }}" alt="Bomba — Direção e Levante"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.1305.0565071</div>
+      <div class="feat-nm">Bomba — Direção e Levante</div>
+      <div class="feat-ser">Séries 5210 · 5310 · 5420 · 5520 · 6000</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 24 — 5.0209.0547219</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(170deg,#0B1A0F 0%,#173629 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Bomba Hidráulica · Padrão Original</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'livenza_5.1305.0565032_p1.png' | asset_url }}" alt="Bomba Hidráulica"></div>
+    <div class="feat-body">
+      <div class="feat-sku">5.0209.0547219</div>
+      <div class="feat-nm">Bomba Hidráulica</div>
+      <div class="feat-ser">Colhedeiras 1150 · 1165 · 7300 · 7500 · 8500</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+</div>
+
+<div class="grp" id="g-pecas">
+  <div class="lbl">Post 25 — ACX3454710</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX3454710_ecommerce_1.png' | asset_url }}" alt="Reservatório de Sementes Mecânico"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX3454710</div>
+      <div class="feat-nm">Reservatório de Sementes Mecânico</div>
+      <div class="feat-ser">Plantadeira Momentum — Sistema de Dosagem</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 26 — ACX3266690</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX3266690_ecommerce_1.png' | asset_url }}" alt="Suporte do Dosador"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX3266690</div>
+      <div class="feat-nm">Suporte do Dosador</div>
+      <div class="feat-ser">Plantadeira Momentum Pneumática</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 27 — 33070004</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_33070004_ecommerce.png' | asset_url }}" alt="Condutor Reto de Sementes"></div>
+    <div class="feat-body">
+      <div class="feat-sku">33070004</div>
+      <div class="feat-nm">Condutor Reto de Sementes</div>
+      <div class="feat-ser">Plantadeira Momentum — Linha de Condução</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 28 — ACW0551840</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACW0551840_ecommerce_1.png' | asset_url }}" alt="Condutor de Sementes para Sensor"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACW0551840</div>
+      <div class="feat-nm">Condutor de Sementes para Sensor</div>
+      <div class="feat-ser">Plantadeira Momentum — Compatível PM400/SRM</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 29 — 7038105M1</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_7038105M1_ecommerce.png' | asset_url }}" alt="Acoplamento do Condutor"></div>
+    <div class="feat-body">
+      <div class="feat-sku">7038105M1</div>
+      <div class="feat-nm">Acoplamento do Condutor</div>
+      <div class="feat-ser">Plantadeira Momentum — Condutor de Sementes</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 30 — 7038106M1</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_7038106M1_ecommerce.png' | asset_url }}" alt="Acoplamento da Curva"></div>
+    <div class="feat-body">
+      <div class="feat-sku">7038106M1</div>
+      <div class="feat-nm">Acoplamento da Curva</div>
+      <div class="feat-ser">Plantadeira Momentum — Condutor de Sementes</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 31 — ACX3371800</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX3371800_ecommerce.png' | asset_url }}" alt="Bocal Cotovelo de Vácuo"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX3371800</div>
+      <div class="feat-nm">Bocal Cotovelo de Vácuo</div>
+      <div class="feat-ser">Plantadeira Momentum — Sistema Pneumático</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 32 — ACX2414460</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX2414460_ecommerce.png' | asset_url }}" alt="Conjunto Adaptador de Vácuo"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX2414460</div>
+      <div class="feat-nm">Conjunto Adaptador de Vácuo</div>
+      <div class="feat-ser">Plantadeira Momentum Pneumática</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 33 — ACX363311B</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX363311B_ecommerce.png' | asset_url }}" alt="Copo Venturi B"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX363311B</div>
+      <div class="feat-nm">Copo Venturi B</div>
+      <div class="feat-ser">Dosador Pneumático — Plantadeira Momentum</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 34 — ACX363311C</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX363311C_ecommerce.png' | asset_url }}" alt="Copo Venturi C"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX363311C</div>
+      <div class="feat-nm">Copo Venturi C</div>
+      <div class="feat-ser">Dosador Pneumático — Plantadeira Momentum</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 35 — ACX5458940</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX5458940_ecommerce.png' | asset_url }}" alt="Proteção SRM"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX5458940</div>
+      <div class="feat-nm">Proteção SRM</div>
+      <div class="feat-ser">Monitor de Linhas — Plantadeira Momentum</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 36 — ACX329796A</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Peças com Padrão Original - OEM</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'agco_ACX329796A_ecommerce.png' | asset_url }}" alt="Defletor do Radiador"></div>
+    <div class="feat-body">
+      <div class="feat-sku">ACX329796A</div>
+      <div class="feat-nm">Defletor do Radiador</div>
+      <div class="feat-ser">Sistema de Arrefecimento — Trator</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+</div>
+
+<div class="grp" id="g-greco">
+  <div class="lbl">Post 37 — GR141207</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR141207_ecommerce.png' | asset_url }}" alt="GPS Agrícola GR200"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR141207</div>
+      <div class="feat-nm">GPS Agrícola GR200</div>
+      <div class="feat-ser">Navegação de Precisão — Barra de Luz</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 38 — GR142398</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR142398_ecommerce.png' | asset_url }}" alt="Monitor de Sementes GR500"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR142398</div>
+      <div class="feat-nm">Monitor de Sementes GR500</div>
+      <div class="feat-ser">Kit Completo — Plantadeira de Precisão</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 39 — GR142226</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR142226_ecommerce.png' | asset_url }}" alt="Sensor de Fluxo 25,4mm"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR142226</div>
+      <div class="feat-nm">Sensor de Fluxo 25,4mm</div>
+      <div class="feat-ser">Compatível Precision Planting PM400</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 40 — GR142227</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR142227_ecommerce.png' | asset_url }}" alt="Sensor de Fluxo 32mm"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR142227</div>
+      <div class="feat-nm">Sensor de Fluxo 32mm</div>
+      <div class="feat-ser">Compatível Precision Planting PM400</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 41 — GR140682</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR140682_ecommerce.png' | asset_url }}" alt="Sensor de Levante — Haste"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR140682</div>
+      <div class="feat-nm">Sensor de Levante — Haste</div>
+      <div class="feat-ser">Compatível Precision Planting PM400</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 42 — GR140012</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR140012_ecommerce.png' | asset_url }}" alt="Sensor de Levante — Corrente"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR140012</div>
+      <div class="feat-nm">Sensor de Levante — Corrente</div>
+      <div class="feat-ser">Compatível Precision Planting PM400</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 43 — GR141165</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR141165_ecommerce.png' | asset_url }}" alt="Kit Iluminação Noturna"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR141165</div>
+      <div class="feat-nm">Kit Iluminação Noturna</div>
+      <div class="feat-ser">Pulverização — Visibilidade Noturna</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 44 — GR140990-30M</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'greco_GR140990-30M_ecommerce.png' | asset_url }}" alt="Kit Ponta de Cerca — 30 Metros"></div>
+    <div class="feat-body">
+      <div class="feat-sku">GR140990-30M</div>
+      <div class="feat-nm">Kit Ponta de Cerca — 30 Metros</div>
+      <div class="feat-ser">Divisa de Lavoura e Pastagem</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+</div>
+
+<div class="grp" id="g-sensores">
+  <div class="lbl">Post 45 — SFLX2</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1a2d4a 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Sensor Agrícola · Agral</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'sensor_SFLX2_ecommerce.png' | asset_url }}" alt="Sensor de Fluxo SFLX2"></div>
+    <div class="feat-body">
+      <div class="feat-sku">SFLX2</div>
+      <div class="feat-nm">Sensor de Fluxo SFLX2</div>
+      <div class="feat-ser">Plantadeira de Precisão — Monitor Dickey-John</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Post 46 — PUL-2</div>
+  <div class="f pt"><div class="s-feat" style="background:linear-gradient(175deg,#0D1B2A 0%,#1a2d4a 100%)">
+    <div class="gl-t"></div>
+    <div class="feat-hd">
+      <div class="feat-badge">Sensor Agrícola · Agral</div>
+      <img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="APP" class="feat-logo">
+    </div>
+    <div class="feat-img"><img src="{{ 'sensor_PUL2_agral_ecommerce.png' | asset_url }}" alt="Sensor de Semente PUL-2"></div>
+    <div class="feat-body">
+      <div class="feat-sku">PUL-2</div>
+      <div class="feat-nm">Sensor de Semente PUL-2</div>
+      <div class="feat-ser">Plantadeira de Precisão — Monitor Dickey-John</div>
+      <div class="feat-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Consultar disponibilidade</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+</div>
+
+<div class="grp" id="g-stories">
+  <div class="lbl">Story 47 — Lançamento APP</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(160deg,var(--verde) 0%,#0F2B1E 50%,var(--azul) 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Lançamento Oficial · 2026</div></div>
+    <div class="st-img"><img src="{{ 'APP - LOGO - COM FUNDO V3.png' | asset_url }}" alt="Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em>"></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Lançamento Oficial · 2026</div>
+      <div class="st-h">Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em></div>
+      <div class="st-p">Bombas Hidráulicas, Peças Plásticas padrão OEM e Agricultura de Precisão. Entrega nacional, suporte técnico.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Solicitar catálogo</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Story 48 — Bombas Hidráulicas</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(160deg,#0B1A0F 0%,#1B4332 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Bombas Hidráulicas · Padrão Original</div></div>
+    <div class="st-img"><img src="{{ 'livenza_5.0220.0547201-CT_REV._0_p1.png' | asset_url }}" alt="Sua bomba<br>no <em>padrão</em><br>de fábrica."></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Bombas Hidráulicas · Padrão Original</div>
+      <div class="st-h">Sua bomba<br>no <em>padrão</em><br>de fábrica.</div>
+      <div class="st-p">Para tratores das séries 885, 985, 880 e 980. ISO 9001 — mesma especificação do equipamento novo.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver disponibilidade</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Story 49 — Peças Padrão OEM</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(160deg,var(--azul) 0%,#0D1B2A 60%,#1a3040 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Peças com Padrão Original - OEM</div></div>
+    <div class="st-img"><img src="{{ 'agco_ACX3454710_ecommerce_1.png' | asset_url }}" alt="Sua plantadeira<br>no <em>padrão</em><br>de fábrica."></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Peças com Padrão Original - OEM</div>
+      <div class="st-h">Sua plantadeira<br>no <em>padrão</em><br>de fábrica.</div>
+      <div class="st-p">Condutores, dosadores, acoplamentos e mais — com padrão OEM. Compatível com as principais plantadeiras do mercado.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver catálogo</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Story 50 — Greco Agro Tech</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(160deg,#0D1B2A 0%,#1D3557 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Tecnologia de Precisão · Greco Agro Tech</div></div>
+    <div class="st-img"><img src="{{ 'greco_GR141207_ecommerce.png' | asset_url }}" alt="GPS, monitores<br>e <em>sensores</em><br>de precisão."></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Tecnologia de Precisão · Greco Agro Tech</div>
+      <div class="st-h">GPS, monitores<br>e <em>sensores</em><br>de precisão.</div>
+      <div class="st-p">Barra de luz GR200, monitor GR500 e sensores compatíveis com Precision Planting PM400.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver disponibilidade</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Story 51 — Sensores Agral</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(175deg,#0D1B2A 0%,#1a2d4a 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Sensores Agrícolas · Agral</div></div>
+    <div class="st-img"><img src="{{ 'sensor_SFLX2.jpg' | asset_url }}" alt="Sensores para<br><em>plantio</em><br>de precisão."></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Sensores Agrícolas · Agral</div>
+      <div class="st-h">Sensores para<br><em>plantio</em><br>de precisão.</div>
+      <div class="st-p">Sensor de fluxo SFLX2 e sensor de semente PUL-2. Compatível com monitor Dickey-John e PM400.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Ver disponibilidade</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+
+  <div class="lbl">Story 52 — CTA WhatsApp</div>
+  <div class="f st"><div class="s-story" style="background:linear-gradient(160deg,var(--azul) 0%,#0D1B2A 60%,var(--verde) 100%)">
+    <div class="gl-t"></div>
+    <div class="st-top"><div class="st-badge-h">Atendimento Técnico · APP Agro Peças</div></div>
+    <div class="st-img"><img src="{{ 'greco_GR141207_ecommerce.png' | asset_url }}" alt="Fale agora.<br><em>Resposta rápida.</em>"></div>
+    <div class="st-body">
+      <img src="{{ 'logo_app_branca.png' | asset_url }}" alt="APP Agro Peças" class="st-logo-body">
+      <div class="st-badge">Atendimento Técnico · APP Agro Peças</div>
+      <div class="st-h">Fale agora.<br><em>Resposta rápida.</em></div>
+      <div class="st-p">Nossa equipe técnica está pronta. Bombas, peças OEM e sensores — tudo em estoque, entrega nacional.</div>
+      <div class="st-cta"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Chamar no WhatsApp</div>
+      <div class="st-url">agropecaspadrao.com.br</div>
+    </div>
+    <div class="gl-s"></div>
+  </div></div>
+</div>
+</div>
+<script>
+function sw(g,b){
+  document.querySelectorAll('.grp').forEach(e=>e.classList.remove('on'));
+  document.getElementById('g-'+g)?.classList.add('on');
+  document.querySelectorAll('.tb-b').forEach(e=>e.classList.remove('on'));
+  b.classList.add('on');
+}
+</script>
+
+{% schema %}
+{
+  "name": "Social Posts",
+  "settings": []
+}
+{% endschema %}

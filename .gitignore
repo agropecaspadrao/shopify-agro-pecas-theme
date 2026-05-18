@@ -1,2 +1,11 @@
 .env
 criar-colecoes.js
+
+# Gerados / locais
+.DS_Store
+.claude/
+util/Posts/node_modules/
+util/Posts/app_posts*.html
+util/Posts/app_posts*.html
+util/Posts/posts_campanha_v1/
+util/Posts/posts_prontos/

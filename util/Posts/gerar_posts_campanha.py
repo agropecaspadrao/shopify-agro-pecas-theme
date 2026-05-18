@@ -32,7 +32,7 @@ def _b64(name):
         print(f"  ⚠  não encontrada: {name}", file=sys.stderr)
         return ""
     ext = p.suffix.lower().lstrip(".")
-    mime = {"jpg": "jpeg", "jpeg": "jpeg", "png": "png"}.get(ext, "png")
+    mime = {"jpg": "jpeg", "jpeg": "jpeg", "png": "png", "svg": "svg+xml"}.get(ext, "png")
     return f"data:image/{mime};base64,{base64.b64encode(p.read_bytes()).decode()}"
 
 
@@ -353,7 +353,7 @@ def story_slide(bg_css, badge, img_name, title, desc, cta="Solicitar catálogo",
     <div class="st-top"><div class="st-badge-h">{badge}</div></div>
     {img_area}
     <div class="st-body">
-      {img(LOGO_BRANCA, 'APP Agro Peças', 'st-logo-body')}
+      {img(LOGO_ICON, 'APP Agro Peças', 'st-logo-body')}
       <div class="st-badge">{badge}</div>
       <div class="st-h">{title}</div>
       <div class="st-p">{desc}</div>
@@ -451,7 +451,7 @@ SLIDES_DEF = (
      lambda: story_slide(
        "background:linear-gradient(160deg,var(--verde) 0%,#0F2B1E 50%,var(--azul) 100%)",
        "Lançamento Oficial · 2026",
-       LOGO_BRANCA,
+       "logo_app_icon_v3.svg",
        "Chegou o Padrão<br>para o Campo.<br><em>Chegou a APP.</em>",
        "Bombas Hidráulicas, Peças Plásticas padrão OEM e Agricultura de Precisão. Entrega nacional, suporte técnico.",
        "Solicitar catálogo",

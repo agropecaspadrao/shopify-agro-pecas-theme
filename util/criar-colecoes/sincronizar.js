@@ -152,8 +152,7 @@ function buildSkuToImageMap(assetsDir) {
     // extrai o código numérico do nome do arquivo
     // ex: "livenza_5.0220.0547201-CT_REV._0_p1.png" → "5.0220.0547201"
     // ex: "livenza_5.1301.0565008_p1.png"                  → "5.1301.0565008"
-    // ex: "sensor_SFLX2.jpg"                        → "SFLX2"
-    const match = file.match(/(\d\.\d{4}\.\d{7}(?:-\d)?)|GR\d{6}(?:-\d{2}M)?|SFLX2|PUL-?2/i);
+    const match = file.match(/(\d\.\d{4}\.\d{7}(?:-\d)?)|GR\d{6}(?:-\d{2}M)?/i);
     if (match) {
       const key = match[0].toUpperCase();
       const current = map[key] ? parse(map[key]).base : '';

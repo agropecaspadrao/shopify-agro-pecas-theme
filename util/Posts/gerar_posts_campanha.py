@@ -131,12 +131,6 @@ GRECO = [
     ("greco_GR140990-30M_ecommerce.png", "GR140990-30M",  "Kit Ponta de Cerca — 30 Metros", "Divisa de Lavoura e Pastagem"),
 ]
 
-AGRAL = [
-    ("sensor_SFLX2_ecommerce.png",      "SFLX2", "Sensor de Fluxo SFLX2",   "Plantadeira de Precisão — Monitor Dickey-John"),
-    ("sensor_PUL2_agral_ecommerce.png", "PUL-2", "Sensor de Semente PUL-2", "Plantadeira de Precisão — Monitor Dickey-John"),
-]
-
-
 # ── background gradients ───────────────────────────────────────────────────────
 
 BG_V   = "background:linear-gradient(175deg,#071510 0%,#1B4332 100%)"
@@ -145,7 +139,6 @@ BG_MF  = "background:linear-gradient(175deg,#0D1A15 0%,#1e4a36 100%)"
 BG_JD  = "background:linear-gradient(170deg,#0B1A0F 0%,#173629 100%)"
 BG_AGC = "background:linear-gradient(175deg,#0B1820 0%,#1a3040 100%)"
 BG_GRC = "background:linear-gradient(175deg,#0D1B2A 0%,#1D3557 100%)"
-BG_SEN = "background:linear-gradient(175deg,#0D1B2A 0%,#1a2d4a 100%)"
 
 
 # ── CSS ───────────────────────────────────────────────────────────────────────
@@ -414,7 +407,6 @@ def _posts(group, products, badge, bg, size="pt", n0=1):
 _BADGE_B = "Bomba Hidráulica · Padrão Original"
 _BADGE_P = "Peças com Padrão Original - OEM"
 _BADGE_G = "Tecnologia de Precisão · Greco Agro Tech"
-_BADGE_S = "Sensor Agrícola · Agral"
 
 # ── SLIDES_DEF: (group, label, size, builder_lambda) ──────────────────────────
 
@@ -442,10 +434,7 @@ SLIDES_DEF = (
   # ── GRECO (8 posts pt) ────────────────────────────────────────────────────
   + _posts("greco",    GRECO, _BADGE_G, BG_GRC, n0=37)
 
-  # ── SENSORES (2 posts pt) ─────────────────────────────────────────────────
-  + _posts("sensores", AGRAL, _BADGE_S, BG_SEN, n0=45)
-
-  # ── STORIES (6 stories st) ────────────────────────────────────────────────
+  # ── STORIES (5 stories st) ────────────────────────────────────────────────
   + [
     ("stories", "Story 47 — Lançamento APP", "st",
      lambda: story_slide(
@@ -484,16 +473,7 @@ SLIDES_DEF = (
        "Barra de luz GR200, monitor GR500 e sensores compatíveis com Precision Planting PM400.",
        "Ver disponibilidade")),
 
-    ("stories", "Story 51 — Sensores Agral", "st",
-     lambda: story_slide(
-       "background:linear-gradient(175deg,#0D1B2A 0%,#1a2d4a 100%)",
-       "Sensores Agrícolas · Agral",
-       "sensor_SFLX2.jpg",
-       "Sensores para<br><em>plantio</em><br>de precisão.",
-       "Sensor de fluxo SFLX2 e sensor de semente PUL-2. Compatível com monitor Dickey-John e PM400.",
-       "Ver disponibilidade")),
-
-    ("stories", "Story 52 — CTA WhatsApp", "st",
+    ("stories", "Story 51 — CTA WhatsApp", "st",
      lambda: story_slide(
        "background:linear-gradient(160deg,var(--azul) 0%,#0D1B2A 60%,var(--verde) 100%)",
        "Atendimento Técnico · APP Agro Peças",
@@ -512,7 +492,6 @@ GROUPS = {
   "bombas":   "Bombas Hidráulicas",
   "pecas":    "Peças Padrão OEM",
   "greco":    "Greco / Sensores",
-  "sensores": "Sensores Agral",
   "stories":  "Stories",
 }
 
@@ -569,14 +548,13 @@ def build(mode: str) -> str:
 
 print("🔍 Verificando imagens...")
 needed = set()
-for products in [VALTRA, NH, MF, JD, AGCO, GRECO, AGRAL]:
+for products in [VALTRA, NH, MF, JD, AGCO, GRECO]:
     for (img_name, *_) in products:
         needed.add(img_name)
 needed.update([LOGO_BRANCA, LOGO_ICON,
                "livenza_5.0220.0547201-CT_REV._0_p1.png",
                "agco_ACX3454710_ecommerce_1.png",
-               "greco_GR141207_ecommerce.png",
-               "sensor_SFLX2.jpg"])
+               "greco_GR141207_ecommerce.png"])
 
 ok, missing = 0, []
 for n in sorted(needed):

@@ -149,7 +149,7 @@ CONSOLIDACAO_TIPO = {
 # ── Distribuidor por tipo (mapeamento padrão) ────────────────────────────────
 DISTRIBUIDOR_TIPO = {
     "Bombas Hidráulicas":    "LIVENZA / Sohipren",
-    "Sensores Agrícolas":    "Agral (ADG)",
+    "Sensores Agrícolas":    "Greco Agro Tech",
     "GPS Agrícola":          "Greco Agro Tech",
     "Monitores Agrícolas":   "Greco Agro Tech",
     "Iluminação Agrícola":   "Greco Agro Tech",
@@ -608,7 +608,6 @@ def _aba_frete_fabrica(ws):
         ["LIVENZA / Sohipren", "São Paulo - SP", "Transportadora (CIF)", "3–5 dias úteis", 350,  0.050, 80.0,  "Pedidos acima de R$5.000 geralmente CIF. Verificar incoterm no pedido."],
         ["Greco Agro Tech",    "Curitiba - PR (ou SP)", "Própria / Correios", "1–2 dias úteis", 50,  0.030, 20.0,  "Fabricante próximo. Frete pode ser isento acima de certo valor mínimo de pedido."],
         ["AGCO / ADG",         "São Paulo - SP", "Transportadora (FOB)", "4–6 dias úteis", 120, 0.045, 55.0,  "Frete FOB — APP paga. Agrupar pedidos para reduzir custo unitário."],
-        ["Agral",              "São Paulo - SP", "Correios / Transportadora", "3–5 dias úteis", 30, 0.035, 15.0,  "Peças leves. Ideal agrupar para Sedex/Pac empresarial."],
     ]
 
     for i, row_data in enumerate(dados):
@@ -749,7 +748,7 @@ def _aba_embalagem_progressiva(ws):
         ["Bomba Hidráulica (pequena)",   2.5, "25×20×15",   1, 3.2,  "30×25×20",  "2,5",  "1 bomba/caixa — sempre individual"],
         ["Bomba Hidráulica (média)",     5.0, "30×25×20",   1, 6.0,  "35×30×25",  "4,4",  "1 bomba/caixa — caixa reforçada"],
         ["Bomba Hidráulica (dupla/grande)",9.0,"40×30×25",  1,10.5,  "45×35×30",  "7,1",  "Peso real > volumétrico — cobrar peso real"],
-        ["Sensor Agrícola (pequeno)",    0.15,"10×8×5",    10, 1.8,  "25×20×12",  "1,0",  "10 sensores/caixa — verificar com ADG/Agral"],
+        ["Sensor Agrícola (pequeno)",    0.15,"10×8×5",    10, 1.8,  "25×20×12",  "1,0",  "10 sensores/caixa — embalagem Greco Agro Tech"],
         ["Sensor de Fluxo (médio)",      0.30,"15×10×8",    5, 1.8,  "22×18×12",  "0,7",  ""],
         ["GPS / Monitor Agrícola",       0.80,"20×15×8",    3, 2.8,  "32×22×12",  "1,4",  "Embalagem original do fabricante"],
         ["Kit Ponta de Cerca",           0.35,"20×15×5",    8, 3.2,  "30×22×16",  "1,7",  "Bolsas + caixa master"],

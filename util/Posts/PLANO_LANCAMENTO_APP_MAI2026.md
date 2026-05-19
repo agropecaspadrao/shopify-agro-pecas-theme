@@ -101,7 +101,7 @@ Vamos usar dois tipos de campanha:
 
 ---
 
-### Semana 4 — Greco Agro Tech + Sensores + CTA Final (23 a 30/jun)
+### Semana 4 — Greco Agro Tech + CTA Final (23 a 30/jun)
 
 | Dia | Formato | Post | Impulsionar? |
 |-----|---------|------|-------------|
@@ -110,8 +110,8 @@ Vamos usar dois tipos de campanha:
 | **Qua 25** | Feed | `38_greco_monitor_gr500` — Monitor GR500 | Não |
 | **Qui 26** | Feed | `39_greco_sensor_fluxo_254` — Sensor de Fluxo | Não |
 | **Sex 27** | **Reel** | 🎬 *"GPS no campo: como o GR200 ajuda a plantar mais e gastar menos"* | Não |
-| **Sáb 28** | Feed | `45_sensor_sflx2` — Sensor SFLX2 Agral | Não |
-| **Dom 29** | Story | `52_story_cta_whatsapp` — CTA WhatsApp | ✅ Sim — R$ 30/dia × 3 dias |
+| **Sáb 28** | Feed | `44_greco_kit_ponta_cerca` — Kit Ponta de Cerca | Não |
+| **Dom 29** | Story | `51_story_cta_whatsapp` — CTA WhatsApp | ✅ Sim — R$ 30/dia × 3 dias |
 | **Seg 30** | Feed | `05_carousel_cta` — Carrossel CTA "Solicitar catálogo" | ✅ Sim — R$ 30/dia × 3 dias |
 
 ---

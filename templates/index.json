@@ -46,8 +46,8 @@
           "type": "collection_card",
           "settings": {
             "collection": "",
-            "asset_image": "",
-            "image": "shopify://shop_images/image_3cd5b90f-08ed-47a9-a518-67d519fb5e2a.png",
+            "asset_image": "greco_GR142229_ecommerce.png",
+            "image": "",
             "title": "Sensores Agrícolas",
             "description": "Sensores de fluxo e sementes para plantadeiras de precisão.",
             "cta_label": "Ver Sensores",
@@ -58,8 +58,8 @@
           "type": "collection_card",
           "settings": {
             "collection": "pecas-plasticas-injetadas",
-            "asset_image": "",
-            "image": "shopify://shop_images/ACX3454710_ecommerce_1.png",
+            "asset_image": "agco_ACX3454710_ecommerce_1.png",
+            "image": "",
             "title": "Peças Plásticas Injetadas",
             "description": "Condutores, reservatórios de sementes, copos Venturi, acoplamentos e demais peças plásticas injetadas para sistemas dosadores e pneumáticos de plantadeiras de precisão.",
             "cta_label": "Ver Peças Plásticas",

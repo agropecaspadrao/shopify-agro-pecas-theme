@@ -1,6 +1,22 @@
 <section class="hero-banner {% if section.settings.full_height %}hero-banner--full{% endif %}"
   style="{% if section.settings.bg_image != blank %}background-image: url('{{ section.settings.bg_image | image_url: width: 1920 }}');{% else %}background-image: url('{{ 'banner_wallpaper_header.jpg' | asset_url }}');{% endif %}">
   <div class="hero-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+  {%- if section.settings.cnpj_badge_show -%}
+    <a href="{{ section.settings.cnpj_badge_url | default: '/pages/contato#cnpj' }}"
+       class="hero-banner__cnpj-badge"
+       aria-label="Compras CNPJ: condições especiais para empresas">
+      <span class="hero-banner__cnpj-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </span>
+      <span class="hero-banner__cnpj-text">
+        <strong>{{ section.settings.cnpj_badge_title | default: 'Compras CNPJ' }}</strong>
+        <span>{{ section.settings.cnpj_badge_subtitle | default: 'Condições especiais para empresas' }}</span>
+      </span>
+    </a>
+  {%- endif -%}
   <div class="page-width hero-banner__content">
     <div class="hero-banner__inner">
       {%- if section.settings.eyebrow != blank -%}
@@ -144,6 +160,33 @@
       "id": "cta_wa_label",
       "label": "Botão WhatsApp — Texto",
       "default": "Pedir Cotação"
+    },
+    {
+      "type": "header",
+      "content": "Badge Compras CNPJ (superior direito)"
+    },
+    {
+      "type": "checkbox",
+      "id": "cnpj_badge_show",
+      "label": "Exibir badge Compras CNPJ",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cnpj_badge_title",
+      "label": "Título do badge",
+      "default": "Compras CNPJ"
+    },
+    {
+      "type": "text",
+      "id": "cnpj_badge_subtitle",
+      "label": "Subtítulo do badge",
+      "default": "Condições especiais para empresas"
+    },
+    {
+      "type": "url",
+      "id": "cnpj_badge_url",
+      "label": "Link do badge"
     }
   ],
   "presets": [

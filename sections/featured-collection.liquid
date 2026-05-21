@@ -317,7 +317,7 @@
               class="fd-panel {% if forloop.first %}is-active{% endif %}"
               id="fd-panel-{{ col_handle }}"
             >
-              <div class="product-grid product-grid--3">
+              <div class="product-grid product-grid--4">
                 {%- assign col_shown = 0 -%}
 
                 {%- comment -%} Pass 1: imagem real + disponível — exibidos primeiro -%}{%- endcomment -%}
@@ -328,14 +328,14 @@
                       {%- assign img_ok = true -%}
                     {%- endunless -%}
                   {%- endif -%}
-                  {%- if col_shown < 3 and img_ok and product.available -%}
+                  {%- if col_shown < 4 and img_ok and product.available -%}
                     {%- render 'product-card', product: product -%}
                     {%- assign col_shown = col_shown | plus: 1 -%}
                   {%- endif -%}
                 {%- endfor -%}
 
                 {%- comment -%} Pass 2: imagem real + indisponível — só se ainda há vagas -%}{%- endcomment -%}
-                {%- if col_shown < 3 -%}
+                {%- if col_shown < 4 -%}
                   {%- for product in col.products -%}
                     {%- assign img_ok = false -%}
                     {%- if product.featured_image != blank -%}
@@ -343,7 +343,7 @@
                         {%- assign img_ok = true -%}
                       {%- endunless -%}
                     {%- endif -%}
-                    {%- if col_shown < 3 and img_ok and product.available == false -%}
+                    {%- if col_shown < 4 and img_ok and product.available == false -%}
                       {%- render 'product-card', product: product -%}
                       {%- assign col_shown = col_shown | plus: 1 -%}
                     {%- endif -%}

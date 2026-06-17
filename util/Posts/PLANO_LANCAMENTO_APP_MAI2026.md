@@ -1,6 +1,21 @@
 # Plano de Lançamento Digital — APP Agro Peças Padrão
-**Investimento:** R$ 2.500/mês · **Período inicial:** 30 dias  
-**Data de início sugerida:** 02 de junho de 2026
+**Período inicial:** 30 dias · **Data de início:** 17 de junho de 2026
+
+---
+
+> ## 🔄 Atualização — Fase 1 ORGÂNICA (sem impulsionamento)
+>
+> Esta rodada começa **100% orgânica**: publicamos todo o calendário no feed e
+> stories, **sem gastar em anúncios ainda**. O impulsionamento pago (Meta Ads)
+> fica para a **Fase 2**, depois de medirmos o que engaja organicamente.
+>
+> **Publicação automatizada:** os posts são publicados via Graph API oficial pelo
+> utilitário [`util/Posts/social/`](social/) (script `publicar_social.py` +
+> `posts.json`). Calendário re-datado para começar em **17/jun/2026**; hashtags
+> vão como **1º comentário** (legenda limpa = melhor alcance).
+>
+> **Reels:** os 4 roteiros abaixo seguem pendentes de gravação — entram no
+> calendário assim que os vídeos ficarem prontos.
 
 ---
 
@@ -8,7 +23,7 @@
 
 A APP já tem produto, estrutura e identidade. O que falta agora é presença: as pessoas certas precisam saber que a gente existe. Esse plano resolve isso com um orçamento conservador — suficiente para gerar resultado real sem queimar dinheiro em experiências sem direção.
 
-A estratégia é simples: **todo dia um post no feed**, **stories toda semana**, **Reels regulares** para crescer organicamente, e **impulsionamento pago** nos posts mais estratégicos para chegar nas pessoas que de fato compram. Tudo direcionado para converter em contato via WhatsApp ou pedido na loja.
+A estratégia da **Fase 1** é simples e orgânica: **todo dia um post no feed**, **stories toda semana** e **Reels** assim que produzidos, para crescer a base sem gastar em mídia. O **impulsionamento pago** (descrito mais abaixo) entra na **Fase 2**, depois de identificarmos os posts que mais engajam. Tudo direcionado para converter em contato via WhatsApp ou pedido na loja.
 
 ---
 
@@ -155,7 +170,7 @@ Esses vídeos podem ser gravados com celular em cenário simples (bancada, lavou
 **Roteiro:**
 > "Olha essas duas peças. Visualmente parecem iguais.
 > Mas essa aqui [aponta para a genérica] é feita com plástico reciclado de segunda geração. Em 6 meses, racha.
-> Essa aqui [aponta para a OEM] segue o padrão AGCO — mesmo polímero, mesma espessura, mesma resistência à pressão.
+> Essa aqui [aponta para a OEM] segue o padrão original OEM — mesmo polímero, mesma espessura, mesma resistência à pressão.
 > A diferença de preço é pequena. A diferença de resultado é enorme.
 > Na APP, todas as nossas peças plásticas são Padrão OEM. Sem exceção."
 
@@ -179,7 +194,7 @@ Esses vídeos podem ser gravados com celular em cenário simples (bancada, lavou
 
 **Roteiro:**
 > "A APP nasceu para resolver um problema real do campo brasileiro: falta de fornecedor técnico, confiável e com entrega rápida para o interior.
-> A gente é distribuidora de bombas hidráulicas, peças plásticas padrão AGCO OEM e tecnologia de precisão Greco Agro Tech.
+> A gente é distribuidora de bombas hidráulicas, peças plásticas no padrão OEM original e tecnologia de precisão Greco Agro Tech.
 > Atendemos mecânicos, fazendas e revendas em todo o Brasil.
 > Não é só peça — é suporte técnico e parceria de verdade."
 

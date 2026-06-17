@@ -1,7 +1,7 @@
 # APP Agro Peças Padrão — Shopify Theme
 
 Tema Shopify customizado para [agropecaspadrao.com.br](https://www.agropecaspadrao.com.br).  
-Distribuidora especializada em bombas hidráulicas e peças para o agronegócio brasileiro — distribuidor oficial LIVENZA.
+Distribuidora especializada em bombas hidráulicas e peças no padrão original / OEM para o agronegócio brasileiro.
 
 ---
 

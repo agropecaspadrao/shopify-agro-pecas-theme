@@ -24,7 +24,7 @@
 A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confiança** para quem trabalha com máquinas agrícolas no Brasil. O produtor rural não pode perder dias esperando uma peça ou pagando carissimo por por elas na concessionaria . Criamos esta empresa para ser a resposta rápida que o setor precisa.
 
 ### Posicionamento
-**Distribuidora especializada** em peças hidráulicas e sensores agrícolas originais LIVENZA, com foco em agilidade, procedência garantida e suporte técnico direto via WhatsApp — para produtores rurais, técnicos agrícolas e empresas do agronegócio brasileiro.
+**Distribuidora especializada** em peças hidráulicas e sensores agrícolas no **padrão original / OEM**, com foco em agilidade, procedência garantida e suporte técnico direto via WhatsApp — para produtores rurais, técnicos agrícolas e empresas do agronegócio brasileiro.
 
 ---
 
@@ -195,7 +195,7 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 - Parceiro do produtor rural
 - Especialista em hidráulica agrícola
 - Solução rápida para máquina parada
-- Referência em peças originais LIVENZA
+- Referência em peças no padrão original / OEM
 
 ### O que a marca NÃO é:
 - Genérica
@@ -239,8 +239,8 @@ A APP Agro Peças Padrão nasceu de um sonho: entregar **mais agilidade e confia
 | **WhatsApp** | (41) 98415-1085 — `5541984151085` |
 | **E-mail** | comercial@agropecaspadrao.com.br |
 | **Loja online** | agropecaspadrao-2.myshopify.com |
-| **Fornecedor principal** | LIVENZA (distribuidor autorizado) |
-| **Certificações** | ISO 9001 / ISO 14001 / OHSAS 18001 |
+| **Fornecedores** | Peças no padrão original / OEM, de fornecedores certificados |
+| **Certificações dos fornecedores** | ISO 9001 / ISO 14001 / OHSAS 18001 |
 | **Horário** | Seg–Sex 08h–18h · Sáb 08h–12h |
 
 ---

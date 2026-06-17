@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## O que é este projeto
 
-Tema Shopify OS 2.0 customizado para **APP Agro Peças Padrão** (`agropecaspadrao.com.br`) — distribuidora de bombas hidráulicas, sensores agrícolas e peças plásticas para o agronegócio brasileiro. Distribuidor oficial LIVENZA.
+Tema Shopify OS 2.0 customizado para **APP Agro Peças Padrão** (`agropecaspadrao.com.br`) — distribuidora de bombas hidráulicas, sensores agrícolas e peças plásticas no **padrão original / OEM** para o agronegócio brasileiro.
+
+> ⚠️ **Conformidade de marca (regra crítica):** NUNCA afirmar ser distribuidor oficial/autorizado nem OEM de LIVENZA, AGCO ou qualquer fabricante. Use sempre "peças no padrão original" / "padrão OEM" (genérico, sem marca). Marcas de máquinas (Valtra, New Holland, Massey Ferguson, John Deere etc.) só podem aparecer em contexto de **compatibilidade de modelo** ("compatível com…"), nunca como padrão/afiliação. A certificação **ISO pertence aos fornecedores**, não à empresa — sempre atribua a "fornecedores com certificação ISO".
 
 ---
 
@@ -194,5 +196,5 @@ Colunas relevantes: `Handle`, `Title`, `Body (HTML)`, `Vendor`, `Type`, `Tags`, 
 | WhatsApp | `5541984151085` |
 | E-mail | comercial@agropecaspadrao.com.br |
 | Loja Shopify | agropecaspadrao-2.myshopify.com |
-| Fornecedor principal | LIVENZA (distribuidor autorizado) |
-| Certificações | ISO 9001 · ISO 14001 · OHSAS 18001 |
+| Fornecedores | Peças no padrão original / OEM, de fornecedores certificados |
+| Certificações dos fornecedores | ISO 9001 · ISO 14001 · OHSAS 18001 |

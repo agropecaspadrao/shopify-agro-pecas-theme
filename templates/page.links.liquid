@@ -13,10 +13,12 @@
 
 <main class="wrap">
 
-  <img class="logo"
-       src="{{ 'APP - LOGO Quadrada SEM FUNDO_circle_512px.png' | asset_url }}"
-       width="120" height="120"
-       alt="APP Agro Peças Padrão">
+  <div class="logo-ring">
+    <img class="logo"
+         src="{{ 'APP - LOGO Quadrada SEM FUNDO_circle_512px.png' | asset_url }}"
+         width="116" height="116"
+         alt="APP Agro Peças Padrão">
+  </div>
 
   <h1 class="brand">Agro Peças <span class="accent">Padrão</span></h1>
   <p class="tagline">Bombas hidráulicas e peças no padrão original / OEM para o agronegócio.</p>
@@ -38,9 +40,7 @@
     {%- comment -%} ── Site / E-commerce ── {%- endcomment -%}
     <a class="btn btn--site" href="{{ routes.root_url }}" target="_blank" rel="noopener">
       <span class="ico">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v10a1 1 0 001 1h14a1 1 0 001-1V9"/><path d="M9 22V12h6v10"/>
-        </svg>
+        <img src="{{ 'logo_app_icon_v3.svg' | asset_url }}" width="34" height="34" alt="" loading="lazy">
       </span>
       <span class="txt">Loja Online<small>Catálogo completo · compre pelo site</small></span>
       <span class="arw">→</span>

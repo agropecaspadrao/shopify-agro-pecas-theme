@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>{{ page_title }} | {{ shop.name }}</title>
   <meta name="description" content="Links oficiais da APP Agro Peças Padrão — WhatsApp, loja online e Mercado Livre. Bombas hidráulicas e peças no padrão original / OEM para o agronegócio.">
+  <meta name="theme-color" content="{{ settings.color_primary | default: '#1B4332' }}">
 
   {%- render 'meta-tags' -%}
   <link rel="icon" type="image/svg+xml" href="{{ 'logo_app_icon_v3.svg' | asset_url }}">
@@ -22,103 +23,138 @@
       --gold-light:   {{ settings.color_accent_light | default: '#E7C86A' }};
       --whatsapp:     #25D366;
       --ml-yellow:    #FFE600;
+
+      /* tokens de vidro (estilo Apple) */
+      --glass-bg:     rgba(255,255,255,.085);
+      --glass-bg-2:   rgba(255,255,255,.14);
+      --glass-brd:    rgba(255,255,255,.18);
+      --glass-hi:     rgba(255,255,255,.28);
+      --blur:         22px;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:100%}
     body{
-      font-family:'Barlow',system-ui,sans-serif;
+      font-family:'Barlow',system-ui,-apple-system,sans-serif;
       min-height:100dvh;
       color:#fff;
+      position:relative;
+      overflow-x:hidden;
       background:
-        radial-gradient(110% 60% at 50% 0%, var(--green-mid) 0%, transparent 55%),
-        linear-gradient(160deg, var(--green) 0%, var(--green-dark) 100%);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:max(40px,env(safe-area-inset-top)) 20px max(40px,env(safe-area-inset-bottom));
+        radial-gradient(125% 80% at 50% -12%, var(--green-mid) 0%, transparent 58%),
+        linear-gradient(168deg, var(--green) 0%, var(--green-dark) 100%);
+      display:flex;flex-direction:column;align-items:center;
+      padding:max(44px,env(safe-area-inset-top)) 20px max(40px,env(safe-area-inset-bottom));
     }
+    /* orbes de luz ambiente (profundidade Apple) */
+    body::before,body::after{
+      content:"";position:fixed;z-index:0;border-radius:50%;
+      filter:blur(70px);opacity:.5;pointer-events:none;
+    }
+    body::before{width:340px;height:340px;top:-90px;left:-110px;
+      background:radial-gradient(circle,var(--gold) 0%,transparent 70%);opacity:.22}
+    body::after{width:420px;height:420px;bottom:-140px;right:-130px;
+      background:radial-gradient(circle,var(--green-mid) 0%,transparent 70%);opacity:.55}
+
     .wrap{
-      width:100%;
-      max-width:440px;
-      margin:auto;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      position:relative;z-index:1;
+      width:100%;max-width:440px;margin:auto;
+      display:flex;flex-direction:column;align-items:center;
     }
+    .wrap>*{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+    .wrap>*:nth-child(1){animation-delay:.04s}
+    .wrap>*:nth-child(2){animation-delay:.10s}
+    .wrap>*:nth-child(3){animation-delay:.16s}
+    .wrap>*:nth-child(4){animation-delay:.22s}
+    .links .btn{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+    .links .btn:nth-child(1){animation-delay:.26s}
+    .links .btn:nth-child(2){animation-delay:.32s}
+    .links .btn:nth-child(3){animation-delay:.38s}
+    @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
     /* ── Cabeçalho / marca ── */
+    .logo-ring{
+      position:relative;width:128px;height:128px;border-radius:50%;
+      display:grid;place-items:center;
+      background:linear-gradient(160deg,rgba(231,200,106,.5),rgba(212,175,55,.15));
+      box-shadow:0 14px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.10);
+    }
+    .logo-ring::after{
+      content:"";position:absolute;inset:-7px;border-radius:50%;
+      background:radial-gradient(circle,rgba(212,175,55,.45),transparent 68%);
+      filter:blur(10px);z-index:-1;
+    }
     .logo{
-      width:120px;height:120px;border-radius:50%;
-      object-fit:cover;
-      border:3px solid var(--gold);
-      box-shadow:0 10px 40px rgba(0,0,0,.45);
-      background:#fff;
+      width:116px;height:116px;border-radius:50%;object-fit:cover;
+      border:2px solid rgba(255,255,255,.55);background:#fff;
     }
     .brand{
-      font-family:'Barlow Condensed',sans-serif;
-      font-weight:700;
-      font-size:30px;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      text-align:center;
-      margin-top:20px;
-      line-height:1.05;
+      font-family:'Barlow Condensed',sans-serif;font-weight:700;
+      font-size:32px;letter-spacing:.04em;text-transform:uppercase;
+      text-align:center;margin-top:22px;line-height:1.05;
     }
-    .brand .accent{color:var(--gold-light)}
+    .brand .accent{
+      background:linear-gradient(180deg,var(--gold-light),var(--gold));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
     .tagline{
-      margin-top:10px;
-      text-align:center;
-      font-size:14.5px;
-      font-weight:500;
-      color:rgba(255,255,255,.78);
-      max-width:300px;
-      line-height:1.45;
+      margin-top:10px;text-align:center;font-size:14.5px;font-weight:500;
+      color:rgba(255,255,255,.74);max-width:300px;line-height:1.45;
     }
-    .divider{
-      width:54px;height:3px;border-radius:2px;
-      background:var(--gold);
-      margin:22px 0 26px;
-    }
+    .divider{width:54px;height:3px;border-radius:2px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+      margin:22px 0 26px}
 
-    /* ── Botões ── */
+    /* ── Botões de vidro ── */
     .links{width:100%;display:flex;flex-direction:column;gap:14px}
     .btn{
-      display:flex;align-items:center;gap:14px;
-      width:100%;
-      padding:16px 20px;
-      border-radius:14px;
-      text-decoration:none;
-      font-weight:600;
-      font-size:16.5px;
-      background:#fff;color:var(--green-dark);
-      box-shadow:0 4px 18px rgba(0,0,0,.22);
-      transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
-      border:1px solid rgba(0,0,0,.04);
+      position:relative;display:flex;align-items:center;gap:15px;width:100%;
+      padding:14px 18px;border-radius:20px;text-decoration:none;
+      font-weight:600;font-size:16.5px;color:#fff;
+      background:var(--glass-bg);
+      -webkit-backdrop-filter:blur(var(--blur)) saturate(170%);
+      backdrop-filter:blur(var(--blur)) saturate(170%);
+      border:1px solid var(--glass-brd);
+      box-shadow:0 8px 30px rgba(0,0,0,.26), inset 0 1px 0 var(--glass-hi);
+      transition:transform .18s cubic-bezier(.2,.7,.2,1), background .18s ease, box-shadow .25s ease;
+      -webkit-tap-highlight-color:transparent;
     }
-    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.32)}
-    .btn:active{transform:translateY(0)}
-    .btn .ico{flex:0 0 30px;width:30px;height:30px;display:flex;align-items:center;justify-content:center}
-    .btn .txt{flex:1}
-    .btn .txt small{display:block;font-weight:500;font-size:12.5px;opacity:.62;letter-spacing:.01em}
-    .btn .arw{opacity:.4;flex:0 0 auto}
+    .btn:hover{transform:translateY(-3px);background:var(--glass-bg-2)}
+    .btn:active{transform:translateY(-1px) scale(.99)}
 
-    .btn--wa{background:var(--whatsapp);color:#fff}
-    .btn--wa .txt small{opacity:.85}
-    .btn--wa .arw{opacity:.7}
-    .btn--site{background:var(--gold);color:var(--green-dark)}
-    .btn--ml{background:var(--ml-yellow);color:#2D3277}
+    .btn .ico{
+      flex:0 0 46px;width:46px;height:46px;border-radius:13px;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 2px 8px rgba(0,0,0,.18);
+    }
+    .btn .ico img{width:100%;height:100%;object-fit:contain;border-radius:9px}
+    .btn .txt{flex:1;line-height:1.2}
+    .btn .txt small{display:block;font-weight:500;font-size:12.5px;
+      color:rgba(255,255,255,.62);letter-spacing:.01em;margin-top:2px}
+    .btn .arw{opacity:.45;font-size:18px;transition:transform .18s ease,opacity .18s ease}
+    .btn:hover .arw{opacity:.8;transform:translateX(3px)}
+
+    /* acentos por tipo (cor da marca como brilho, vidro mantido) */
+    .btn--wa   .ico{background:linear-gradient(160deg,#34dd7d,#1fa84f);color:#fff}
+    .btn--site .ico{background:linear-gradient(160deg,var(--green-mid),var(--green-dark));padding:7px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 2px 8px rgba(0,0,0,.22)}
+    .btn--ml   .ico{background:linear-gradient(160deg,#fff04d,var(--ml-yellow));color:#2D3277}
+    .btn--wa:hover  {box-shadow:0 12px 36px rgba(37,211,102,.32), inset 0 1px 0 var(--glass-hi)}
+    .btn--site:hover{box-shadow:0 12px 36px rgba(212,175,55,.34), inset 0 1px 0 var(--glass-hi)}
+    .btn--ml:hover  {box-shadow:0 12px 36px rgba(255,230,0,.26),  inset 0 1px 0 var(--glass-hi)}
 
     /* ── Rodapé ── */
-    .foot{
-      margin-top:30px;text-align:center;
-      font-size:12px;color:rgba(255,255,255,.55);
-      line-height:1.7;
-    }
-    .foot b{color:rgba(255,255,255,.8);font-weight:600}
+    .foot{margin-top:32px;text-align:center;font-size:12px;
+      color:rgba(255,255,255,.52);line-height:1.7}
+    .foot b{color:rgba(255,255,255,.82);font-weight:600}
 
     @media (max-width:360px){
-      .brand{font-size:26px}
-      .btn{font-size:15.5px;padding:15px 17px}
+      .brand{font-size:27px}
+      .btn{font-size:15.5px;padding:13px 15px;border-radius:18px}
+      .btn .ico{flex-basis:42px;width:42px;height:42px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .wrap>*,.links .btn{animation:none}
+      .btn,.btn .arw{transition:none}
     }
   </style>
 </head>

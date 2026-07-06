@@ -94,4 +94,39 @@
   if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
 
+  /* ---------- Rastreamento de lead WhatsApp (GA4 + Meta Pixel) ----------
+     Listener único e delegado: captura clique em QUALQUER link wa.me do site
+     (botão flutuante, card, PDP, rodapé, etc.) e dispara a conversão.
+     A origem vem de data-wa-source; se ausente, é inferida pela URL.        */
+  function waSource(link) {
+    if (link.getAttribute('data-wa-source')) return link.getAttribute('data-wa-source');
+    if (link.closest('.product-card')) return 'card';
+    var p = window.location.pathname;
+    if (p.indexOf('/products/') > -1)    return 'pdp';
+    if (p.indexOf('/collections/') > -1) return 'collection';
+    if (p.indexOf('/cart') > -1)         return 'cart';
+    if (p.indexOf('/search') > -1)       return 'search';
+    if (p === '/' || p === '')           return 'home';
+    return p.replace(/^\//, '') || 'other';
+  }
+
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
+    if (!link) return;
+    var source = waSource(link);
+
+    // GA4 — evento generate_lead (marque como Evento-chave/conversão no GA4)
+    if (typeof gtag === 'function') {
+      gtag('event', 'generate_lead', {
+        method: 'whatsapp',
+        lead_source: source,
+        page_path: window.location.pathname
+      });
+    }
+    // Meta Pixel — evento Lead (fbq é injetado pelo canal Meta do Shopify)
+    if (typeof fbq === 'function') {
+      fbq('track', 'Lead', { content_name: 'whatsapp:' + source });
+    }
+  }, true);
+
 })();

@@ -1,4 +1,13 @@
 .env
+
+# Segredos / credenciais (NUNCA commitar)
+client_secret*.json
+*client_secret*.json
+application_default_credentials.json
+*-credentials.json
+service-account*.json
+*.pem
+
 criar-colecoes.js
 
 # Gerados / locais

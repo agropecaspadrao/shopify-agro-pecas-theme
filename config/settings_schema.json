@@ -197,6 +197,21 @@
     ]
   },
   {
+    "name": "Marketing & Integrações",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Meta (Facebook / Instagram)"
+      },
+      {
+        "type": "text",
+        "id": "meta_domain_verification",
+        "label": "Verificação de domínio",
+        "info": "Business Manager → Segurança da marca → Domínios. Cole apenas o código (o valor 'content' da meta-tag facebook-domain-verification)."
+      }
+    ]
+  },
+  {
     "name": "Informações da Loja",
     "settings": [
       {

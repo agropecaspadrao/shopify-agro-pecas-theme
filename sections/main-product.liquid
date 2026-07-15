@@ -131,14 +131,26 @@
         {%- if has_stock -%}
           {%- form 'product', product, id: 'PdpForm' -%}
             <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+            {%- comment -%} Pedido mínimo: peças abaixo de R$200 exigem 50 un., em lotes de 50 {%- endcomment -%}
+            {%- assign pdp_min_qty = 1 -%}
+            {%- assign pdp_qty_step = 1 -%}
+            {%- if product.variants.first.price < 20000 -%}
+              {%- assign pdp_min_qty = 50 -%}
+              {%- assign pdp_qty_step = 50 -%}
+            {%- endif -%}
             <div class="pdp-qty-row">
               <label for="PdpQty" class="pdp-qty-label">Quantidade</label>
               <div class="pdp-qty">
                 <button type="button" class="pdp-qty__btn" data-action="decrease">−</button>
-                <input type="number" id="PdpQty" name="quantity" value="1" min="1" class="pdp-qty__input">
+                <input type="number" id="PdpQty" name="quantity" value="{{ pdp_min_qty }}" min="{{ pdp_min_qty }}" step="{{ pdp_qty_step }}" data-min-qty="{{ pdp_min_qty }}" data-step-qty="{{ pdp_qty_step }}" class="pdp-qty__input">
                 <button type="button" class="pdp-qty__btn" data-action="increase">+</button>
               </div>
             </div>
+            {%- if pdp_min_qty > 1 -%}
+              <p class="pdp-qty-note" style="margin:.5rem 0 0;font-size:.85rem;color:var(--color-text-soft,#6b7280);">
+                Venda mínima: <strong>{{ pdp_min_qty }} unidades</strong> — esta peça é vendida em lotes de {{ pdp_qty_step }}.
+              </p>
+            {%- endif -%}
             <div class="pdp-ctas">
               <button type="submit" name="add" class="btn btn--primary btn--lg btn--full">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
@@ -293,10 +305,30 @@
   document.querySelectorAll('.pdp-qty__btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var input = this.closest('.pdp-qty').querySelector('.pdp-qty__input');
-      var val = parseInt(input.value) || 1;
-      input.value = this.dataset.action === 'increase' ? val + 1 : Math.max(1, val - 1);
+      var step = parseInt(input.dataset.stepQty, 10) || 1;
+      var min = parseInt(input.dataset.minQty, 10) || 1;
+      var val = parseInt(input.value, 10) || min;
+      input.value = this.dataset.action === 'increase' ? val + step : Math.max(min, val - step);
     });
   });
+
+  // Normaliza a quantidade para respeitar o mínimo e o lote (venda em múltiplos)
+  function pdpNormalizeQty(input) {
+    var step = parseInt(input.dataset.stepQty, 10) || 1;
+    var min = parseInt(input.dataset.minQty, 10) || 1;
+    var val = parseInt(input.value, 10) || min;
+    if (val < min) { val = min; }
+    if (step > 1 && (val - min) % step !== 0) {
+      val = min + Math.ceil((val - min) / step) * step;
+    }
+    input.value = val;
+  }
+  var pdpQtyInput = document.getElementById('PdpQty');
+  if (pdpQtyInput) {
+    pdpQtyInput.addEventListener('change', function() { pdpNormalizeQty(this); });
+    // Normaliza no envio (roda antes do handler de GA4, garantindo valor correto)
+    document.getElementById('PdpForm')?.addEventListener('submit', function() { pdpNormalizeQty(pdpQtyInput); });
+  }
 
   document.querySelectorAll('.pdp-gallery__thumb').forEach(function(btn) {
     btn.addEventListener('click', function() {

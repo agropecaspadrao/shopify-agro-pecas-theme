@@ -7,6 +7,11 @@
   if product.available and product.variants.first.inventory_quantity > 0
     assign has_stock = true
   endif
+  # Pedido mínimo: peças abaixo de R$200 (20000 centavos) exigem 50 unidades
+  assign min_qty = 1
+  if product.variants.first.price < 20000
+    assign min_qty = 50
+  endif
 -%}
 
 <article class="product-card">
@@ -73,7 +78,7 @@
       {%- if has_stock -%}
         <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="product-card__cart-form">
           <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="quantity" value="{{ min_qty }}">
           <button type="submit" class="product-card__cart-btn" aria-label="Adicionar {{ product.title | escape }} ao carrinho">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>

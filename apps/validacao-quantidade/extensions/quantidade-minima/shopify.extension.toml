@@ -1,0 +1,21 @@
+# Referência da configuração da extensão (Function de validação de carrinho).
+# IMPORTANTE: prefira o arquivo gerado pelo `shopify app generate extension`
+# (ele já vem correto para a sua versão do CLI). Se usar este, confira que o
+# `target` e o `export` batem com os nomes abaixo.
+
+api_version = "2025-01"
+
+[[extensions]]
+name = "Quantidade mínima por preço"
+handle = "quantidade-minima"
+type = "function"
+description = "Peças abaixo de R$200 exigem pedido mínimo de 50 unidades."
+
+  [[extensions.targeting]]
+  target = "cart.validations.generate.run"
+  input_query = "src/cart_validations_generate_run.graphql"
+  export = "cartValidationsGenerateRun"
+
+  [extensions.build]
+  command = ""
+  watch = ["src/**.js"]

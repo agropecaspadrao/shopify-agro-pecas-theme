@@ -1,0 +1,25 @@
+# Consulta de entrada da Function.
+# Traz só o que a regra precisa: quantidade e preço unitário de cada linha.
+query CartValidationsGenerateRunInput {
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          title
+          product {
+            title
+          }
+        }
+      }
+    }
+  }
+}

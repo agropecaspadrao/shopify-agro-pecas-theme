@@ -131,21 +131,9 @@
         {%- if has_stock -%}
           {%- form 'product', product, id: 'PdpForm' -%}
             <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-            {%- comment -%} Pedido mínimo: peça avulsa abaixo de R$200 precisa fechar R$200 em valor no item (qtd = R$200 ÷ preço) — kits (tag 'kit') isentos {%- endcomment -%}
+            {%- comment -%} Pedido mínimo de R$200 é validado pelo TOTAL do carrinho (gate em main-cart) {%- endcomment -%}
             {%- assign pdp_min_qty = 1 -%}
             {%- assign pdp_qty_step = 1 -%}
-            {%- assign pdp_is_kit = false -%}
-            {%- if product.tags contains 'kit' -%}
-              {%- assign pdp_is_kit = true -%}
-            {%- endif -%}
-            {%- assign pdp_price = product.variants.first.price -%}
-            {%- if pdp_price > 0 and pdp_price < 20000 and pdp_is_kit == false -%}
-              {%- assign pdp_min_qty = 20000 | divided_by: pdp_price -%}
-              {%- assign pdp_min_total = pdp_min_qty | times: pdp_price -%}
-              {%- if pdp_min_total < 20000 -%}
-                {%- assign pdp_min_qty = pdp_min_qty | plus: 1 -%}
-              {%- endif -%}
-            {%- endif -%}
             <div class="pdp-qty-row">
               <label for="PdpQty" class="pdp-qty-label">Quantidade</label>
               <div class="pdp-qty">
@@ -154,9 +142,9 @@
                 <button type="button" class="pdp-qty__btn" data-action="increase">+</button>
               </div>
             </div>
-            {%- if pdp_min_qty > 1 -%}
+            {%- if product.variants.first.price < 20000 -%}
               <p class="pdp-qty-note" style="margin:.5rem 0 0;font-size:.85rem;color:var(--color-text-soft,#6b7280);">
-                Venda mínima: <strong>{{ pdp_min_qty }} unidades</strong> — pedido mínimo de {{ 20000 | money }} por peça avulsa. Prefere volume? Veja a versão em kit.
+                Pedido mínimo da loja: <strong>{{ 20000 | money }}</strong> por carrinho — combine peças e kits para fechar o valor.
               </p>
             {%- endif -%}
             <div class="pdp-ctas">

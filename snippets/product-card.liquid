@@ -7,21 +7,8 @@
   if product.available and product.variants.first.inventory_quantity > 0
     assign has_stock = true
   endif
-  # Pedido mínimo: peça avulsa abaixo de R$200 precisa fechar R$200 em valor no item
-  # (qtd mínima = R$200 ÷ preço, arredondado p/ cima) — kits (tag 'kit') isentos
+  # Pedido mínimo de R$200 é validado pelo TOTAL do carrinho (gate em main-cart) — aqui adiciona 1 un.
   assign min_qty = 1
-  assign card_is_kit = false
-  if product.tags contains 'kit'
-    assign card_is_kit = true
-  endif
-  assign card_price = product.variants.first.price
-  if card_price > 0 and card_price < 20000 and card_is_kit == false
-    assign min_qty = 20000 | divided_by: card_price
-    assign card_min_total = min_qty | times: card_price
-    if card_min_total < 20000
-      assign min_qty = min_qty | plus: 1
-    endif
-  endif
 -%}
 
 <article class="product-card">

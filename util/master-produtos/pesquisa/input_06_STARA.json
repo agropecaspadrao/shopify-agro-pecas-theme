@@ -1,0 +1,90 @@
+[
+ {
+  "sku": "6424-4005",
+  "part": "6424-4005",
+  "titulo": "ACABAMENTO LATERAL RESERVATORIO DE SEMENTES",
+  "montadora": "STARA",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "9.0x4.5x25.0",
+  "peso_kg": 0.008,
+  "cruzados": null
+ },
+ {
+  "sku": "8031-4009",
+  "part": "8031-4009",
+  "titulo": "BICO CENTRAL 45/50",
+  "montadora": "STARA",
+  "equip": "COLHEITADEIRA DE MILHO",
+  "funcao": null,
+  "dims_cm": "39.5x89.4x25.6",
+  "peso_kg": 4.1,
+  "cruzados": null
+ },
+ {
+  "sku": "6424-4028",
+  "part": "6424-4028",
+  "titulo": "BOCAL PIPOQUEIRA",
+  "montadora": "STARA",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "8.5x9.5x8.2",
+  "peso_kg": 0.061,
+  "cruzados": null
+ },
+ {
+  "sku": "6424-4026",
+  "part": "6424-4026",
+  "titulo": "CONEXAO MANGUEIRA SEMENTES",
+  "montadora": "STARA",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "6.2x6.2x6.6",
+  "peso_kg": 0.031,
+  "cruzados": null
+ },
+ {
+  "sku": "8031-4010",
+  "part": "8031-4010",
+  "titulo": "CARENAGEM CENTRAL",
+  "montadora": "STARA",
+  "equip": "COLHEITADEIRA DE MILHO",
+  "funcao": null,
+  "dims_cm": "24.0x84.0x35.8",
+  "peso_kg": 4.1,
+  "cruzados": null
+ },
+ {
+  "sku": "6117-4142",
+  "part": "6117-4142",
+  "titulo": "BUCHA DO MANCAL PANTOGRAFICO",
+  "montadora": "STARA",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "3.2x3.2x2.5",
+  "peso_kg": 0.02,
+  "cruzados": null
+ },
+ {
+  "sku": "8031-4008",
+  "part": "8031-4008",
+  "titulo": "PONTEIRA BICO",
+  "montadora": "STARA",
+  "equip": "COLHEITADEIRA DE MILHO",
+  "funcao": null,
+  "dims_cm": "11.5x23.4x10.0",
+  "peso_kg": 0.25,
+  "cruzados": null
+ },
+ {
+  "sku": "6424-4013",
+  "part": "6424-4013",
+  "titulo": "CONDUTOR ADUBO DISCO DUPLO",
+  "montadora": "STARA",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "10.0x54.0x7.0",
+  "peso_kg": 0.2,
+  "cruzados": null
+ }
+]

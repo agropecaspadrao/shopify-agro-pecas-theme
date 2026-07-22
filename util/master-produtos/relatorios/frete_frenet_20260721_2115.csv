@@ -1,0 +1,144 @@
+aba,linha,sku,sku_shopify,tipo,kit_n,caixa,peso_kg,invoice,cotacoes,escolhida,frete_antigo,frete_novo,obs
+04_GRECO,6,GR141207,GR141207,unit,1,58.0x40.0x26.5,2.21,4100.0,Correios PAC: R$77.00 (7d) | Jadlog Jadlog Package: R$87.18 (8d) | Correios Sedex: R$124.34 (3d),Correios PAC,96.0,77.0,
+04_GRECO,7,GR141165,GR141165,unit,1,58.0x40.0x26.5,0.5,890.0,Jadlog Jadlog Package: R$60.69 (8d) | Correios PAC: R$77.00 (7d) | Correios Sedex: R$124.34 (3d),Jadlog Jadlog Package,96.0,60.69,
+04_GRECO,8,GR140990,GR140990,unit,1,58.0x40.0x26.5,4.5,1097.0,Jadlog Jadlog Package: R$62.40 (8d) | Correios PAC: R$77.00 (7d) | Correios Sedex: R$124.34 (3d),Jadlog Jadlog Package,96.0,62.4,
+04_GRECO,9,GR140682,GR140682,unit,1,31.0x24.0x25.0,0.42,590.0,Jadlog Jadlog Package: R$29.27 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,29.27,
+04_GRECO,10,GR140012,GR140012,unit,1,31.0x24.0x25.0,0.489,490.0,Jadlog Jadlog Package: R$28.45 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,28.45,
+04_GRECO,11,GR142398,GR142398,unit,1,31.0x24.0x25.0,1.642,7700.0,Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d) | Jadlog Jadlog Package: R$87.92 (8d),Correios PAC,96.0,39.11,
+04_GRECO,12,GR142226,GR142226,unit,1,31.0x24.0x25.0,0.33,290.0,Jadlog Jadlog Package: R$26.80 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,26.8,
+04_GRECO,13,GR142227,GR142227,unit,1,31.0x24.0x25.0,0.29,310.0,Jadlog Jadlog Package: R$26.96 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,26.96,
+04_GRECO,14,GR142228,GR142228,unit,1,31.0x24.0x25.0,0.56,360.0,Jadlog Jadlog Package: R$27.37 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,27.37,
+04_GRECO,15,GR142229,GR142229,unit,1,31.0x24.0x25.0,0.011,140.0,Jadlog Jadlog Package: R$25.55 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,96.0,25.55,
+03_AGCO,6,ACX3266690,ACX3266690,unit,1,12.0x3.0x6.0,0.36,100.96,Jadlog Jadlog Package: R$16.75 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package,19.1,16.75,
+03_AGCO,7,ACW0551840,ACW0551840,rateio caixa 25,1,50.0x7.0x4.5,3.5,9.15,Jadlog Jadlog Package: R$25.22 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package → R$951.75/25,18.5,38.07,
+03_AGCO,8,ACW0551840,ACW0551840-KIT25,kit,25,50.0x25.0x50.0,87.5,228.75,Jadlog Jadlog Package: R$951.75 (8d),Jadlog Jadlog Package,,951.75,
+03_AGCO,9,ACX2865730,ACX2865730-KIT60,kit,60,35.0x43.0x50.0,22.4,10.02,Jadlog Jadlog Package: R$105.71 (8d) | Correios PAC: R$178.88 (7d) | Correios Sedex: R$288.98 (3d),Jadlog Jadlog Package,142.0,105.71,
+03_AGCO,10,ACX3454710,ACX3454710-KIT25,kit,25,100.0x120.0x72.0,32.5,893.5,Jadlog Jadlog Package: R$1609.15 (8d),Jadlog Jadlog Package,40.06,1609.15,
+03_AGCO,11,ACX3454710,ACX3454710,rateio caixa 25,1,31.0x25.0x25.0,1.3,35.74,Jadlog Jadlog Package: R$25.22 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package → R$1609.15/25,40.06,64.37,
+03_AGCO,12,ACX3454710,ACX3454710-KIT12,kit,12,100.0x60.0x60.0,15.600000000000001,428.88,Jadlog Jadlog Package: R$644.59 (8d),Jadlog Jadlog Package,,644.59,
+03_AGCO,13,ACX2719210,ACX2719210,rateio caixa 30,1,4.4x16.3x9.2,0.2,13.81,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$33.55/30,18.5,1.12,
+03_AGCO,14,ACX2719210,ACX2719210-KIT30,kit,30,50.0x18.0x32.0,6.0,414.3,Jadlog Jadlog Package: R$33.55 (8d) | Correios PAC: R$47.45 (7d) | Correios Sedex: R$84.37 (3d),Jadlog Jadlog Package,,33.55,
+03_AGCO,15,4383927M4,4383927M4,rateio caixa 10,1,3.0x12.5x8.0,0.19,20.01,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$20.77/10,18.5,2.08,
+03_AGCO,16,4383927M4,4383927M4-KIT10,kit,10,35.0x15.0x10.0,1.9,200.10000000000002,Jadlog Jadlog Package: R$20.77 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,20.77,
+03_AGCO,17,ACX283890A,ACX283890A,rateio caixa 10,1,16.1x20.7x1.5,0.1,20.14,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$20.78/10,18.5,2.08,
+03_AGCO,18,ACX283890A,ACX283890A-KIT10,kit,10,18.0x22.0x18.0,1.0,201.4,Jadlog Jadlog Package: R$20.78 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,20.78,
+03_AGCO,19,ACX310603A,ACX310603A,rateio caixa 50,1,5.4x11.7x3.4,0.06,4.53,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$24.71/50,18.5,0.49,
+03_AGCO,20,ACX310603A,ACX310603A-KIT50,kit,50,30.0x14.0x20.0,3.0,226.5,Jadlog Jadlog Package: R$24.71 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,,24.71,
+03_AGCO,21,4383923M4,4383923M4,unit,1,3.0x12.5x8.0,0.19,20.01,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package,18.5,16.74,
+03_AGCO,22,ACX363311C,ACX363311C,rateio caixa 60,1,3.0x11.0x7.0,0.19,8.31,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$61.52/60,18.5,1.03,
+03_AGCO,23,ACX363311C,ACX363311C-KIT60,kit,60,45.0x32.0x18.0,11.4,498.6,Jadlog Jadlog Package: R$61.52 (8d) | Correios PAC: R$85.49 (7d) | Correios Sedex: R$138.06 (3d),Jadlog Jadlog Package,,61.52,
+03_AGCO,24,ACX363311B,ACX363311B,rateio caixa 60,1,3.0x10.0x7.0,0.19,8.31,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$61.52/60,18.5,1.03,
+03_AGCO,25,ACX363311B,ACX363311B-KIT60,kit,60,45.0x32.0x18.0,11.4,498.6,Jadlog Jadlog Package: R$61.52 (8d) | Correios PAC: R$85.49 (7d) | Correios Sedex: R$138.06 (3d),Jadlog Jadlog Package,,61.52,
+03_AGCO,26,ACX2414460,ACX2414460,rateio caixa 20,1,22.5x12.0x4.0,0.1,9.02,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$27.58/20,18.5,1.38,
+03_AGCO,27,ACX2414460,ACX2414460-KIT20,kit,20,25.0x25.0x45.0,2.0,180.39999999999998,Jadlog Jadlog Package: R$27.58 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,,27.58,
+03_AGCO,28,ACX3371800,ACX3371800,rateio caixa 50,1,6.7x12.0x6.7,0.25,5.77,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$63.83/50,18.5,1.28,
+03_AGCO,29,ACX3371800,ACX3371800-KIT50,kit,50,40.0x25.0x40.0,12.5,288.5,Jadlog Jadlog Package: R$63.83 (8d) | Correios PAC: R$93.98 (7d) | Correios Sedex: R$151.78 (3d),Jadlog Jadlog Package,,63.83,
+03_AGCO,30,7038105M1,7038105M1,rateio caixa 60,1,8.5x10.0x4.0,0.1,3.94,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$32.09/60,18.5,0.53,
+03_AGCO,31,7038105M1,7038105M1-KIT60,kit,60,20.0x32.0x45.0,6.0,236.4,Jadlog Jadlog Package: R$32.09 (8d) | Correios PAC: R$47.45 (7d) | Correios Sedex: R$84.37 (3d),Jadlog Jadlog Package,,32.09,
+03_AGCO,32,7038106M1,7038106M1,rateio caixa 60,1,8.5x10.0x3.8,0.1,3.94,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$32.09/60,18.5,0.53,
+03_AGCO,33,7038106M1,7038106M1-KIT60,kit,60,20.0x32.0x45.0,6.0,236.4,Jadlog Jadlog Package: R$32.09 (8d) | Correios PAC: R$47.45 (7d) | Correios Sedex: R$84.37 (3d),Jadlog Jadlog Package,,32.09,
+03_AGCO,34,ACX5458940,ACX5458940,rateio caixa 40,1,13.0x14.0x13.2,0.16,8.64,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package → R$72.41/40,19.5,1.81,
+03_AGCO,35,ACX5458940,ACX5458940-KIT40,kit,40,35.0x40.0x60.0,6.4,345.6,Jadlog Jadlog Package: R$72.41 (8d) | Correios PAC: R$102.47 (7d) | Correios Sedex: R$165.50 (3d),Jadlog Jadlog Package,,72.41,
+03_AGCO,36,ACX3601860,ACX3601860,rateio caixa 60,1,8.8x13.0x3.0,0.12,9.57,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$40.99/60,18.5,0.68,
+03_AGCO,37,ACX3601860,ACX3601860-KIT60,kit,60,30.0x30.0x45.0,7.199999999999999,574.2,Jadlog Jadlog Package: R$40.99 (8d) | Correios PAC: R$65.33 (7d) | Correios Sedex: R$99.79 (3d),Jadlog Jadlog Package,,40.99,
+03_AGCO,38,4383933M4,4383933M4,rateio caixa 10,1,3.0x12.5x8.0,0.19,20.01,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$20.77/10,18.5,2.08,
+03_AGCO,39,4383933M4,4383933M4-KIT10,kit,10,35.0x15.0x10.0,1.9,200.10000000000002,Jadlog Jadlog Package: R$20.77 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,20.77,
+03_AGCO,40,4383934M4,4383934M4,rateio caixa 10,1,3.0x12.5x8.0,0.19,20.01,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$20.77/10,18.5,2.08,
+03_AGCO,41,4383934M4,4383934M4-KIT10,kit,10,35.0x15.0x10.0,1.9,200.10000000000002,Jadlog Jadlog Package: R$20.77 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,20.77,
+03_AGCO,42,ACX3473430,ACX3473430,rateio caixa 40,1,10.0x10.0x2.5,0.08,5.46,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$26.20/40,18.5,0.66,
+03_AGCO,43,ACX3473430,ACX3473430-KIT40,kit,40,22.0x22.0x35.0,3.2,218.4,Jadlog Jadlog Package: R$26.20 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,26.2,
+03_AGCO,44,ACX329796A,ACX329796A,unit,1,14.0x52.5x52.5,1.85,85.45,Jadlog Jadlog Package: R$37.07 (8d) | Correios PAC: R$65.33 (7d) | Correios Sedex: R$99.79 (3d),Jadlog Jadlog Package,30.52,37.07,
+03_AGCO,45,33070004,33070004,rateio caixa 25,1,6.7x6.7x47.5,0.14,6.44,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package → R$66.85/25,19.05,2.67,
+03_AGCO,46,33070004,33070004-KIT25,kit,25,40.0x40.0x50.0,3.5000000000000004,161.0,Jadlog Jadlog Package: R$66.85 (8d) | Correios PAC: R$102.47 (7d) | Correios Sedex: R$165.50 (3d),Jadlog Jadlog Package,,66.85,
+03_AGCO,47,6237989M1,6237989M1,rateio caixa 10,1,10.9x9.4x9.2,0.132,26.46,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$25.01/10,,2.5,
+03_AGCO,48,6237989M1,6237989M1-KIT10,kit,10,17.0x35.0x22.0,1.32,264.6,Jadlog Jadlog Package: R$25.01 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,30.0,25.01,
+03_AGCO,49,ACX363311C,ACX363311C-KIT25,kit,25,45.0x32.0x7.5,4.75,207.75,Jadlog Jadlog Package: R$27.80 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,18.5,27.8,
+03_AGCO,50,ACX363311B,ACX363311B-KIT25,kit,25,45.0x32.0x7.5,4.75,207.75,Jadlog Jadlog Package: R$27.80 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,18.5,27.8,
+03_AGCO,51,ACX3601860,ACX3601860-KIT25,kit,25,30.0x30.0x18.8,3.0,239.25,Jadlog Jadlog Package: R$24.81 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,18.5,24.81,
+05_JOHN_DEERE,6,H-102724,H-102724,rateio caixa 50,1,26.5x2.0x2.0,0.074,5.0,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$26.47/50,,0.53,
+05_JOHN_DEERE,7,H-102724,H-102724-KIT50,kit,50,30.0x22.0x12.0,3.6999999999999997,250.0,Jadlog Jadlog Package: R$26.47 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,26.47,
+05_JOHN_DEERE,8,H-169914,H-169914,rateio caixa 50,1,28.0x1.5x1.5,0.084,5.0,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$28.15/50,,0.56,
+05_JOHN_DEERE,9,H-169914,H-169914-KIT50,kit,50,30.0x22.0x12.0,4.2,250.0,Jadlog Jadlog Package: R$28.15 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,,28.15,
+05_JOHN_DEERE,10,H-175727,H-175727,rateio caixa 50,1,2.5x8.4x3.0,0.02,2.9,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$18.26/50,,0.37,
+05_JOHN_DEERE,11,H-175727,H-175727-KIT50,kit,50,30.0x10.0x18.0,1.0,145.0,Jadlog Jadlog Package: R$18.26 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package,,18.26,
+05_JOHN_DEERE,12,KK31823,KK31823-KIT25,kit,25,33.6x38.0x4.0,4.375,180.0,Jadlog Jadlog Package: R$27.57 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,,27.57,
+05_JOHN_DEERE,13,KK31824,KK31824-KIT25,kit,25,33.4x27.0x4.0,,120.0,Jadlog Jadlog Package: R$18.05 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package,,18.05,
+05_JOHN_DEERE,14,KK31825,KK31825-KIT25,kit,25,33.0x16.2x4.0,,100.0,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package,,16.74,
+05_JOHN_DEERE,16,N276747,N276747,rateio caixa 25,1,7.9x8.6x7.9,0.047,9.9,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$26.44/25,,1.06,
+05_JOHN_DEERE,17,N276747,N276747-KIT25,kit,25,45.0x10.0x45.0,1.175,247.5,Jadlog Jadlog Package: R$26.44 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,26.44,
+05_JOHN_DEERE,18,A56254,A56254,unit,1,61.9x61.9x4.1,0.22,65.0,Jadlog Jadlog Package: R$23.66 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,,23.66,
+05_JOHN_DEERE,19,CQ59313,CQ59313,unit,1,11.2x20.0x13.6,0.26,27.0,Jadlog Jadlog Package: R$17.89 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package,,17.89,
+05_JOHN_DEERE,20,CQ65827,CQ65827,rateio caixa 50,1,9.0x33.0x6.5,0.09,4.1,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package → R$98.23/50,,1.96,
+05_JOHN_DEERE,21,CQ65827,CQ65827-KIT50,kit,50,50.0x35.0x70.0,4.5,204.99999999999997,Jadlog Jadlog Package: R$98.23 (8d) | Correios PAC: R$161.90 (7d) | Correios Sedex: R$261.54 (3d),Jadlog Jadlog Package,,98.23,
+05_JOHN_DEERE,22,CQ54137,CQ54137,rateio caixa 50,1,22.0x7.0x6.0,0.075,4.5,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$59.27/50,,1.19,
+05_JOHN_DEERE,23,CQ54137,CQ54137-KIT50,kit,50,50.0x40.0x35.0,3.75,225.0,Jadlog Jadlog Package: R$59.27 (8d) | Correios PAC: R$85.49 (7d) | Correios Sedex: R$138.06 (3d),Jadlog Jadlog Package,,59.27,
+05_JOHN_DEERE,24,AA67780,AA67780,rateio caixa 10,1,12.0x5.0x50.0,,19.5,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package → R$34.89/10,,3.49,
+05_JOHN_DEERE,25,AA67780,AA67780-KIT10,kit,10,12.0x50.0x50.0,,195.0,Jadlog Jadlog Package: R$34.89 (8d) | Correios PAC: R$50.71 (7d) | Correios Sedex: R$89.67 (3d),Jadlog Jadlog Package,,34.89,
+05_JOHN_DEERE,26,CQ73378,CQ73378-KIT30,kit,30,38.0x30.0x60.0,4.35,140.1,Jadlog Jadlog Package: R$58.56 (8d) | Correios PAC: R$85.49 (7d) | Correios Sedex: R$138.06 (3d),Jadlog Jadlog Package,,58.56,
+05_JOHN_DEERE,27,A75169,A75169,rateio caixa 50,1,6.0x7.0x6.0,0.045,4.5,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$26.26/50,,0.53,
+05_JOHN_DEERE,28,A75169,A75169-KIT50,kit,50,35.0x16.0x35.0,2.25,225.0,Jadlog Jadlog Package: R$26.26 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,26.26,
+05_JOHN_DEERE,29,A71321,A71321,rateio caixa 50,1,9.5x7.5x7.5,0.039,4.5,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$31.99/50,,0.64,
+05_JOHN_DEERE,30,A71321,A71321-KIT50,kit,50,20.0x40.0x40.0,1.95,225.0,Jadlog Jadlog Package: R$31.99 (8d) | Correios PAC: R$47.45 (7d) | Correios Sedex: R$84.37 (3d),Jadlog Jadlog Package,,31.99,
+05_JOHN_DEERE,31,A72758,A72758,rateio caixa 50,1,7.0x10.0x1.5,0.019,5.6,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$21.43/50,,0.43,
+05_JOHN_DEERE,32,A72758,A72758-KIT50,kit,50,15.0x12.0x40.0,0.95,280.0,Jadlog Jadlog Package: R$21.43 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,21.43,
+05_JOHN_DEERE,33,A78269,A78269,unit,1,81.5x81.5x9.0,2.6,189.0,Jadlog Jadlog Package: R$40.88 (8d) | Correios PAC: R$90.89 (7d) | Correios Sedex: R$133.00 (3d),Jadlog Jadlog Package,,40.88,
+05_JOHN_DEERE,34,A74430,A74430,rateio caixa 10,1,13.0x8.0x7.0,0.097,15.0,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$20.35/10,,2.04,
+05_JOHN_DEERE,35,A74430,A74430-KIT10,kit,10,15.0x10.0x70.0,0.97,150.0,Jadlog Jadlog Package: R$20.35 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,20.35,
+05_JOHN_DEERE,37,KK31823,KK31823-KIT50,kit,50,37.0x40.0x10.0,8.75,360.0,Jadlog Jadlog Package: R$41.02 (8d) | Correios PAC: R$67.18 (7d) | Correios Sedex: R$105.19 (3d),Jadlog Jadlog Package,,41.02,
+05_JOHN_DEERE,39,KK31824,KK31824-KIT50,kit,50,37.0x32.0x10.0,,240.0,Jadlog Jadlog Package: R$21.10 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,21.1,
+06_STARA,6,6424-4005,6424-4005,rateio caixa 50,1,9.0x4.5x25.0,0.008,3.9744,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$24.48/50,,0.49,
+06_STARA,7,6424-4005,6424-4005-KIT50,kit,50,40.0x15.0x28.0,0.4,198.72,Jadlog Jadlog Package: R$24.48 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,,24.48,
+06_STARA,8,6117-4170,6117-4170,unit,1,0.0x0.0x0.0,,1.903986,,,,25.0,sem peso/dims → default
+06_STARA,9,6424-4004,6424-4004,unit,1,0.0x0.0x0.0,,32.19264,,,,25.0,sem peso/dims → default
+06_STARA,10,8031-4009,8031-4009,unit,1,39.5x89.4x25.6,4.1,156.90996,Jadlog Jadlog Package: R$75.61 (8d) | Correios PAC: R$141.83 (7d) | Correios Sedex: R$215.32 (3d),Jadlog Jadlog Package,,75.61,
+06_STARA,11,6424-4028,6424-4028,unit,1,8.5x9.5x8.2,0.061,6.47082,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package,,16.74,
+06_STARA,12,6424-4026,6424-4026,rateio caixa 50,1,6.2x6.2x6.6,0.031,3.96198,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$26.04/50,,0.52,
+06_STARA,13,6424-4026,6424-4026-KIT50,kit,50,35.0x35.0x15.0,1.55,198.099,Jadlog Jadlog Package: R$26.04 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,26.04,
+06_STARA,14,8031-4010,8031-4010,unit,1,24.0x84.0x35.8,4.1,160.38,Jadlog Jadlog Package: R$62.78 (8d) | Correios PAC: R$116.36 (7d) | Correios Sedex: R$174.16 (3d),Jadlog Jadlog Package,,62.78,
+06_STARA,15,6426-1113,6426-1113,unit,1,0.0x0.0x0.0,,3.5397,,,,25.0,sem peso/dims → default
+06_STARA,16,6445-4035,6445-4035,unit,1,0.0x0.0x0.0,,0.5589,,,,25.0,sem peso/dims → default
+06_STARA,17,6445-4041,6445-4041,unit,1,0.0x0.0x0.0,,0.84456,,,,25.0,sem peso/dims → default
+06_STARA,18,7310-5946,7310-5946,unit,1,0.0x0.0x0.0,,8.91756,,,,25.0,sem peso/dims → default
+06_STARA,19,7920-4426,7920-4426,unit,1,0.0x0.0x0.0,,1.387314,,,,25.0,sem peso/dims → default
+06_STARA,20,1084-4162,1084-4162,unit,1,0.0x0.0x0.0,,10.4895,,,,25.0,sem peso/dims → default
+06_STARA,21,6445-4040,6445-4040,unit,1,0.0x0.0x0.0,,0.29,,,,25.0,sem peso/dims → default
+06_STARA,22,6445-4042,6445-4042,unit,1,0.0x0.0x0.0,,0.63,,,,25.0,sem peso/dims → default
+06_STARA,23,6039-4130,6039-4130,unit,1,0.0x0.0x0.0,,2.02446,,,,25.0,sem peso/dims → default
+06_STARA,24,6117-4142,6117-4142,rateio caixa 50,1,3.2x3.2x2.5,0.02,1.4904,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$17.89/50,,0.36,
+06_STARA,25,6117-4142,6117-4142-KIT50,kit,50,18.0x18.0x7.0,1.0,74.52,Jadlog Jadlog Package: R$17.89 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package,30.0,17.89,
+06_STARA,26,6123-4506,6123-4506,unit,1,0.0x0.0x0.0,,1.37862,,,,25.0,sem peso/dims → default
+06_STARA,27,7310-4832,7310-4832,unit,1,0.0x0.0x0.0,,13.67442,,,,25.0,sem peso/dims → default
+06_STARA,28,6424-4008,6424-4008,unit,1,0.0x0.0x0.0,,1.93752,,,,25.0,sem peso/dims → default
+06_STARA,29,6112-4193,6112-4193,unit,1,0.0x0.0x0.0,,2.68272,,,,25.0,sem peso/dims → default
+06_STARA,30,6117-4294,6117-4294,unit,1,0.0x0.0x0.0,,1.242,,,,25.0,sem peso/dims → default
+06_STARA,31,6424-4092,6424-4092,unit,1,0.0x0.0x0.0,,101.576349,,,,25.0,sem peso/dims → default
+06_STARA,32,8031-4008,8031-4008,rateio caixa 10,1,11.5x23.4x10.0,0.25,21.43692,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package → R$31.90/10,19.98,3.19,
+06_STARA,33,8031-4008,8031-4008-KIT10,kit,10,25.0x26.0x55.0,2.5,214.3692,Jadlog Jadlog Package: R$31.90 (8d) | Correios PAC: R$47.45 (7d) | Correios Sedex: R$84.37 (3d),Jadlog Jadlog Package,,31.9,
+06_STARA,34,10110-4158,10110-4158,unit,1,0.0x0.0x0.0,,1.87542,,,,25.0,sem peso/dims → default
+06_STARA,35,6112-4192,6112-4192,unit,1,0.0x0.0x0.0,,3.75084,,,,25.0,sem peso/dims → default
+06_STARA,36,6117-4251,6117-4251,unit,1,0.0x0.0x0.0,,11.06622,,,,25.0,sem peso/dims → default
+06_STARA,37,6123-4126,6123-4126,unit,1,0.0x0.0x0.0,,3.37824,,,,25.0,sem peso/dims → default
+06_STARA,38,6424-4003,6424-4003,unit,1,0.0x0.0x0.0,,6.06096,,,,25.0,sem peso/dims → default
+06_STARA,39,6424-4013,6424-4013,rateio caixa 25,1,10.0x54.0x7.0,0.2,8.23446,Jadlog Jadlog Package: R$17.89 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package → R$98.23/25,19.91,3.93,
+06_STARA,40,6424-4013,6424-4013-KIT25,kit,25,50.0x60.0x40.0,5.0,205.8615,Jadlog Jadlog Package: R$98.23 (8d) | Correios PAC: R$153.41 (7d) | Correios Sedex: R$247.82 (3d),Jadlog Jadlog Package,,98.23,
+06_STARA,41,6435-3320,6435-3320,unit,1,0.0x0.0x0.0,,6.38388,,,,25.0,sem peso/dims → default
+06_STARA,42,6424-4006,6424-4006,unit,1,0.0x0.0x0.0,,5.16672,,,,25.0,sem peso/dims → default
+06_STARA,43,6424-4009,6424-4009,unit,1,0.0x0.0x0.0,,4.11102,,,,25.0,sem peso/dims → default
+06_STARA,44,6424-4022,6424-4022,unit,1,0.0x0.0x0.0,,3.3534,,,,25.0,sem peso/dims → default
+06_STARA,45,6424-4027,6424-4027,unit,1,0.0x0.0x0.0,,4.75686,,,,25.0,sem peso/dims → default
+07_GTS,6,IPCX03009065,IPCX03009065,rateio caixa 100,1,2.6x10.0x2.3,0.035,1.4364,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$25.59/100,,0.26,
+07_GTS,7,IPCX03009065,IPCX03009065-KIT100,kit,100,35.0x12.0x35.0,3.5000000000000004,143.64,Jadlog Jadlog Package: R$25.59 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,25.59,
+07_GTS,8,IPCX03009064,IPCX03009064,rateio caixa 100,1,2.6x10.0x2.3,0.035,1.4364,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$25.59/100,,0.26,
+07_GTS,9,IPCX03009064,IPCX03009064-KIT100,kit,100,35.0x12.0x35.0,3.5000000000000004,143.64,Jadlog Jadlog Package: R$25.59 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,25.59,
+07_GTS,10,IPCX05009034,IPCX05009034,rateio caixa 75,1,4.0x4.0x5.0,0.06,2.8512,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Jadlog Jadlog Package → R$27.85/75,,0.37,
+07_GTS,11,IPCX05009034,IPCX05009034-KIT75,kit,75,25.0x25.0x17.0,4.5,213.84,Jadlog Jadlog Package: R$27.85 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,,27.85,
+07_GTS,12,IPCX03007010,IPCX03007010-KIT20,kit,20,7.0x35.0x45.0,1.5,67.0,Jadlog Jadlog Package: R$19.94 (8d) | Correios PAC: R$26.47 (7d) | Correios Sedex: R$50.57 (3d),Jadlog Jadlog Package,,19.94,
+07_GTS,13,IPCX03007010,IPCX03007010-KIT50,kit,50,18.0x35.0x20.0,3.75,167.5,Jadlog Jadlog Package: R$25.78 (8d) | Correios PAC: R$39.11 (7d) | Correios Sedex: R$66.02 (3d),Jadlog Jadlog Package,,25.78,
+07_GTS,14,IPCX03007010,IPCX03007010-KIT100,kit,100,35.0x35.0x20.0,7.5,335.0,Jadlog Jadlog Package: R$39.01 (8d) | Correios PAC: R$65.33 (7d) | Correios Sedex: R$99.79 (3d),Jadlog Jadlog Package,,39.01,
+07_GTS,15,IPCX03006056,IPCX03006056,rateio caixa 60,1,3.0x8.3x2.0,0.035,3.4236,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$24.53/60,,0.41,
+07_GTS,16,IPCX03006056,IPCX03006056-KIT60,kit,60,35.0x18.0x8.0,2.1,205.416,Jadlog Jadlog Package: R$24.53 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,,24.53,
+07_GTS,17,IPCX03006047,IPCX03006047,rateio caixa 50,1,4.5x9.5x1.8,0.042,3.564,Correios Mini Envios: R$14.87 (10d) | Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$18.95 (7d) | Correios Sedex: R$38.41 (3d),Correios Mini Envios → R$24.31/50,,0.49,
+07_GTS,18,IPCX03006047,IPCX03006047-KIT50,kit,50,25.0x12.0x25.0,2.1,178.2,Jadlog Jadlog Package: R$24.31 (8d) | Correios PAC: R$30.50 (7d) | Correios Sedex: R$60.61 (3d),Jadlog Jadlog Package,,24.31,
+05_JOHN_DEERE,36,KK31823,KK31823-KIT25,kit,25,33.6x38.0x4.0,4.375,180.0,Jadlog Jadlog Package: R$27.57 (8d) | Correios PAC: R$40.96 (7d) | Correios Sedex: R$79.84 (3d),Jadlog Jadlog Package,,27.57,
+05_JOHN_DEERE,38,KK31824,KK31824-KIT25,kit,25,33.4x27.0x4.0,,120.0,Jadlog Jadlog Package: R$18.05 (8d) | Correios PAC: R$22.30 (7d) | Correios Sedex: R$40.43 (3d),Jadlog Jadlog Package,,18.05,
+05_JOHN_DEERE,40,KK31825,KK31825-KIT25,kit,25,33.0x16.2x4.0,,100.0,Jadlog Jadlog Package: R$16.74 (8d) | Correios PAC: R$21.05 (7d) | Correios Sedex: R$39.42 (3d),Jadlog Jadlog Package,,16.74,

@@ -1,0 +1,399 @@
+[
+ {
+  "sku": "H-102724",
+  "especificacoes": {
+   "material": "nylon (poliamida)",
+   "comprimento_mm": 265,
+   "secao_mm": "20 x 20 (perfil quadrado)",
+   "peso_g": 74,
+   "codigos_equivalentes": ["CQ70754", "H150050", "H162662"],
+   "aplicacao_plataformas_pes": "14, 16, 19, 23 e 25 pés (Séries 200/300)"
+  },
+  "compatibilidade": [
+   "Colheitadeiras John Deere 1165 / 1175 / 1185",
+   "Colheitadeiras John Deere 1450 / 1550",
+   "Colheitadeiras John Deere 6200 / 6300 / 7200 / 7300 / 7500 / 7700",
+   "Plataformas de corte John Deere Séries 200 e 300 (14 a 25 pés)"
+  ],
+  "funcao": "Dedo retrátil do sem-fim (caracol) da plataforma de corte: avança e recolhe ciclicamente para puxar a massa colhida em direção ao canal alimentador da colheitadeira, evitando embuchamento.",
+  "descricao_tecnica": "Dedo retrátil em nylon com perfil quadrado (aprox. 20 x 20 mm e 265 mm de comprimento), no padrão original (OEM), compatível com o código de referência H102724 e equivalentes CQ70754 / H150050 / H162662. Aplicável no sem-fim das plataformas de corte Séries 200/300 de colheitadeiras compatíveis com John Deere 1165, 1175, 1185, 1450, 1550, 6200, 6300, 7200, 7300, 7500 e 7700, em plataformas de 14 a 25 pés. Item de desgaste de reposição periódica, essencial para alimentação uniforme da colheitadeira.",
+  "confianca": "alta",
+  "fontes": [
+   "https://www.agrimaq.com.br/dedo-retratil-nylon---h102724-cq70754-h150050---033",
+   "https://www.colhesul.com.br/produto/H102724-dedo-retratil.html",
+   "https://www.agribor.com.br/produto/h102724-dedo-retratil-john-deere-serie-200-300-6200-7200-71164",
+   "https://www.agrotrator.com.br/dedo-retratil-colheitadeira-jd-ref-h102724-h102724usi/p",
+   "https://www.fontanatratorpecas.com.br/dedo-retratil-john-deere-h102724"
+  ]
+ },
+ {
+  "sku": "H-169914",
+  "especificacoes": {
+   "comprimento_mm": 280,
+   "diametro_mm": 16,
+   "peso_g": 84,
+   "encaixe": "sem-fim de plataformas John Deere Série 600"
+  },
+  "compatibilidade": [
+   "Plataformas de corte John Deere Série 600 (614R, 615P/615R, 616R, 618R, 620R/620F, 622R/622X, 625R/625X, 630R/630X, 635R/635X, 640X)",
+   "Plataformas John Deere Série 700 (até 740X, conforme catálogo)",
+   "Colheitadeiras John Deere 1450 CWS/WTS e 1550 CWS/WTS"
+  ],
+  "funcao": "Dedo retrátil do sem-fim da plataforma de corte: conduz a cultura cortada até o centro da plataforma e a empurra para o canal alimentador, mantendo o fluxo contínuo e reduzindo embuchamentos.",
+  "descricao_tecnica": "Dedo retrátil no padrão original (OEM) com 280 mm de comprimento e 16 mm de diâmetro, compatível com o código de referência H169914. Aplicável no sem-fim das plataformas de corte Série 600 e modelos correlatos usados em colheitadeiras compatíveis com John Deere 1450/1550 CWS-WTS e nas plataformas 614R a 640X. Projetado para fluxo suave da cultura e menor risco de embuchamento, é item de desgaste com troca recorrente em manutenção de plataforma.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/us/product/H169914:-Auger-Finger/p/H169914",
+   "https://nimerparts.com/en/h169914-dedo-retractil-600-cosechadora-john-deere",
+   "https://reavalleytractors.com/john-deere-retractable-auger-finger-h169914",
+   "https://www.amazon.com/WN-H169914-Auger-Finger-Fits-Deere/dp/B09NFGG9V6",
+   "https://www.agrorurale.com.br/dedo-retratil-para-colheitadeiras-john-deere-codigo-h169914-"
+  ]
+ },
+ {
+  "sku": "H-175727",
+  "especificacoes": {
+   "material": "PEAD (polietileno de alta densidade)",
+   "dimensoes_cm": "9,0 x 3,5 x 2,5 (aprox.)",
+   "peso_g": 30,
+   "codigos_relacionados": ["87041572", "1347084", "84469382", "6210519", "9842300"]
+  },
+  "compatibilidade": [
+   "Plataformas de corte John Deere Série 600 (molinete coletor)",
+   "Plataformas John Deere Série 900",
+   "Colheitadeiras John Deere 1450 / 1550 (suporte do tubo do molinete)"
+  ],
+  "funcao": "Suporte plástico do molinete coletor: apoia e fixa o tubo/cano dos dedos do molinete, mantendo o alinhamento dos dedos recolhedores durante o giro do molinete na plataforma de corte.",
+  "descricao_tecnica": "Suporte do molinete coletor em PEAD, no padrão original (OEM), compatível com o código de referência H175727 e correlatos de mercado (87041572 / 1347084). Aplicável em plataformas de corte compatíveis com John Deere Séries 600 e 900 e em colheitadeiras 1450/1550. Peça leve (aprox. 30 g) que sustenta o cano do molinete e preserva o posicionamento correto dos dedos recolhedores, reduzindo desgaste dos componentes metálicos.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/br/pt/product/H175727:-Suporte-do-Molinete-Coletor/p/H175727",
+   "https://www.paloagro.com.br/suporte-molinete-colheitadeira-h175727-alternativa-john-deere",
+   "https://www.mgpecas.com.br/site/produtos/detalhes/24717/h175727/suporte-tecnil-molinete-jd1450",
+   "https://www.centeragro.com.br/produtos/6304/suporte-do-cano-do-molinete-87041572-h175727-1347084/",
+   "https://partscatalog.deere.com/jdrc/partdetails/partnum/H175727"
+  ]
+ },
+ {
+  "sku": "KK31823",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "grande (large)",
+   "dimensoes_embalagem_cm": "33,6 x 38,0 x 4,0",
+   "peso_kg": 4.375,
+   "quantidade_por_maquina": 3,
+   "codigo_substituido": "N383019"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "funcao": "Guia plástica de amarração (wrap guide) do módulo enfardador: direciona o filme de envolvimento durante a formação e amarração do fardo redondo de algodão. São usadas 3 unidades do tamanho grande por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho grande em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31823 e com o código anterior N383019. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, sendo utilizadas 3 unidades por máquina. Componente conhecido no campo como dedo/guia do enfardador, essencial para o envolvimento correto do fardo redondo.",
+  "confianca": "media",
+  "fontes": [
+   "https://certipik.com/john-deere/miscellaneous/",
+   "https://www.ebay.com/itm/154290943884"
+  ]
+ },
+ {
+  "sku": "KK31824",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "médio (medium)",
+   "dimensoes_embalagem_cm": "33,4 x 27,0 x 4,0",
+   "quantidade_por_maquina": 2,
+   "codigo_substituido": "N400244"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "funcao": "Guia plástica de amarração (wrap guide) tamanho médio do módulo enfardador: conduz o filme de envolvimento na formação do fardo redondo de algodão. São usadas 2 unidades do tamanho médio por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho médio em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31824 e com o código anterior N400244. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, com 2 unidades utilizadas por máquina. Trabalha em conjunto com as guias grande (KK31823) e pequena (KK31825) no envolvimento do fardo.",
+  "confianca": "media",
+  "fontes": [
+   "https://certipik.com/john-deere/miscellaneous/",
+   "https://www.ebay.com/itm/154290943884"
+  ]
+ },
+ {
+  "sku": "KK31825",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "pequeno (small)",
+   "dimensoes_embalagem_cm": "33,0 x 16,2 x 4,0",
+   "quantidade_por_maquina": 2,
+   "codigo_substituido": "N383021"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "funcao": "Guia plástica de amarração (wrap guide) tamanho pequeno do módulo enfardador: orienta o filme de envolvimento durante a amarração do fardo redondo de algodão. São usadas 2 unidades do tamanho pequeno por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho pequeno em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31825 e com o código anterior N383021. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, com 2 unidades por máquina. Completa o jogo de guias de amarração junto aos tamanhos grande (KK31823) e médio (KK31824).",
+  "confianca": "media",
+  "fontes": [
+   "https://certipik.com/john-deere/miscellaneous/",
+   "https://www.ebay.com/itm/154290943884"
+  ]
+ },
+ {
+  "sku": "N276747",
+  "especificacoes": {
+   "material": "plástico transparente",
+   "comprimento_mm": 76,
+   "altura_mm": 86,
+   "peso_g": 45,
+   "codigo_substituto": "KK65432"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 9935 / 9970 / 9976 / 9986 / 9996",
+   "Colhedoras de algodão John Deere 7260 / 7660 / 7760",
+   "Colhedoras de algodão John Deere CP690 (sistema umectante)"
+  ],
+  "funcao": "Tampa (capa) do bico da coluna umectante do sistema de água da colhedora de algodão: protege e direciona o conjunto de umectação que lubrifica os fusos, evitando acúmulo de fiapos e respingos.",
+  "descricao_tecnica": "Tampa plástica transparente da coluna umectante, no padrão original (OEM), compatível com o código de referência N276747 (substituído pelo código KK65432). Aplicável no sistema umectante de colhedoras de algodão compatíveis com John Deere 9935, 9970, 9976, 9986, 9996, 7260, 7660, 7760 e CP690. Componente leve (aprox. 45 g) que mantém a aspersão de água direcionada aos fusos, contribuindo para a limpeza e a eficiência de colheita.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/us/product/N276747:-Cover/p/N276747",
+   "https://www.worthingtonagparts.com.au/distributor-cup-moisture-tower-to-fit-john-deere-new-aftermarket-wn-n276747",
+   "https://www.qualityfarmsupply.com/products/moistener-column-nozzle-cover-replaces-n276747",
+   "https://sutterbros.com/SMA-SMA276747.html",
+   "https://certipik.com/john-deere/water-system/"
+  ]
+ },
+ {
+  "sku": "A56254",
+  "especificacoes": {
+   "tipo": "anel roscado da tampa do tanque",
+   "diametro_cm": 62,
+   "altura_cm": 4.6,
+   "peso_kg": 0.331
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 2100 (2109 a 2134, linha sul-americana)",
+   "Plantadeiras John Deere 1690 / 1720 / 1725 / 1745 / 1760 / 1770 / 1790",
+   "Plantadeiras John Deere Série DB (DB37 a DB90)",
+   "Semeadoras John Deere DR12 a DR24"
+  ],
+  "funcao": "Anel (aro) roscado que fixa e veda a tampa do reservatório de sementes/adubo da unidade de plantio, garantindo fechamento estanque do tanque contra poeira e umidade.",
+  "descricao_tecnica": "Aro da tampa do reservatório de sementes no padrão original (OEM), com aproximadamente 62 cm de diâmetro, compatível com o código de referência A56254. Aplicável em plantadeiras compatíveis com John Deere Série 2100, Série DB (DB37–DB90), modelos 1690 a 1790 e semeadoras DR12–DR24. Garante o travamento correto da tampa do tanque, protegendo sementes e fertilizante da umidade e de contaminação durante o plantio.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/br/pt/product/A56254:-Anel-Roscado-do-Tanque-de-Adubo-da-Unidade-de-Plantio/p/A56254",
+   "https://www.agronovapecas.com.br/a56254-aro-da-tampa-cx-semente",
+   "https://www.agrotrator.com.br/anel-da-tampa-db-plantadeira-jd-ref-a56254-a56254ig/p",
+   "https://www.plantiodistribuidora.com.br/produto/plantadeiras/john-deere/anel-da-tampa/2112/",
+   "https://mcl.ind.br/produto/a56254-anel-alternativa-john-deere-plantadeira-p-46"
+  ]
+ },
+ {
+  "sku": "CQ59313",
+  "especificacoes": {
+   "tipo": "caixa (depósito alimentador) do mini-hopper",
+   "dimensoes_embalagem_cm": "11,2 x 20,0 x 13,6",
+   "peso_g": 260
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere a vácuo com mini-hopper (linha sul-americana)",
+   "Plantadeiras John Deere Série 2100 com dosador VacuMeter (2109, 2111, 2113, 2115, 2117, 2122, 2126, 2130)",
+   "Plantadeiras John Deere 1111 / 1113 com abastecimento central"
+  ],
+  "funcao": "Caixa de sementes do mini-hopper: pequeno depósito plástico que recebe as sementes do sistema de abastecimento central e mantém volume constante junto ao dosador a vácuo de cada linha de plantio.",
+  "descricao_tecnica": "Caixa de sementes tipo mini-hopper no padrão original (OEM), compatível com o código de referência CQ59313, aplicável no conjunto dosador a vácuo (VacuMeter) de plantadeiras compatíveis com John Deere de linha sul-americana, como as Séries 1100 e 2100 com abastecimento central. Mantém a coluna de sementes estável sobre o dosador, contribuindo para singulação precisa. Identificação de aplicação por dedução de catálogo — confirmar o modelo da plantadeira antes da compra.",
+  "confianca": "baixa",
+  "fontes": [
+   "https://777parts.com/johndeere/2115+-+PLANTER/s1171835.html",
+   "https://pdfcoffee.com/catalogo-peas-plantadeira-john-deere-1113-pdf-free.html",
+   "https://vppecasagricolas.com.br/produtos/marcas/jumil/plantadeira-jumil/"
+  ]
+ },
+ {
+  "sku": "CQ65827",
+  "especificacoes": {
+   "tipo": "condutor de extensão maior (adubo)",
+   "comprimento_cm": 33,
+   "peso_g": 90
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere de linha nacional/sul-americana (Séries 1100 e 2100)"
+  ],
+  "funcao": "Extensão maior do condutor de adubo: prolonga o tubo condutor entre o dosador de fertilizante e o sulco, direcionando o adubo até a linha de plantio sem desperdício.",
+  "descricao_tecnica": "Condutor de extensão maior no padrão original (OEM), compatível com o código de referência CQ65827, aplicável na linha de adubo de plantadeiras compatíveis com John Deere de fabricação nacional (linha verde). Fornecedores brasileiros listam o item tanto como condutor de adubo quanto como tubo condutor de semente maior — a aplicação predominante em catálogo é na condução de fertilizante. Peça plástica leve (aprox. 90 g), de reposição simples e baixo custo.",
+  "confianca": "media",
+  "fontes": [
+   "https://loja.tblagropecas.com.br/fechadura-cq65827",
+   "https://www.gamacparts.com.br/pecas-agricolas/plantadeiras/tubo-condutor-semente-maior-plantadeira-john-deere-cq65827"
+  ]
+ },
+ {
+  "sku": "CQ54137",
+  "especificacoes": {
+   "tipo": "condutor de semente formato \"S\"",
+   "comprimento_cm": 22,
+   "peso_g": 75
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere de linha nacional/sul-americana (linha verde)"
+  ],
+  "funcao": "Condutor (tubo) de semente em formato \"S\": recebe a semente do dosador e a deposita no sulco de plantio com trajetória controlada, preservando o espaçamento entre sementes.",
+  "descricao_tecnica": "Condutor de semente tipo \"S\" no padrão original (OEM), compatível com o código de referência CQ54137, aplicável em plantadeiras compatíveis com John Deere de fabricação nacional (linha verde). Com aproximadamente 22 cm, direciona a semente dosada até o fundo do sulco com mínima interferência na trajetória, fator determinante para a uniformidade de deposição. Item plástico de desgaste com reposição de baixo custo.",
+  "confianca": "media",
+  "fontes": [
+   "https://www.mercadolivre.com.br/condutor-tubo-semente-para-plantadeira-john-deere-cq54137/up/MLBU2344854388",
+   "https://www.agrotrator.com.br/condutor-tubo-de-semente-plantadeira-jd-ref-cq54137-cq54137ig/p",
+   "https://loja.tblagropecas.com.br/flange-cq54137"
+  ]
+ },
+ {
+  "sku": "AA67780",
+  "especificacoes": {
+   "material": "policarbonato transparente",
+   "tipo": "tubo condutor de semente face lisa (flush face) com janela para sensor",
+   "furo_sensor_pol": "3/4",
+   "comprimento_cm": 50,
+   "acompanha": "vedação e abraçadeiras (em kits de reposição)"
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere MaxEmerge 2 / MaxEmerge Plus / XP e XP-Pro",
+   "Plantadeiras John Deere 7200 / 7300",
+   "Plantadeiras John Deere Série 1700 (1710, 1720, 1720 CCS, 1730, 1750, 1760, 1760NT, 1770, 1770NT, 1780, 1790)",
+   "Plantadeiras John Deere Série DB (DB44, DB58, DB60, DB66, DB80, DB90)",
+   "Semeadoras John Deere 1530 / 1535"
+  ],
+  "funcao": "Tubo condutor de semente transparente: conduz a semente do dosador ao sulco e, por ser translúcido e ter janela de sensor, permite a leitura do sensor de população/monitor de plantio.",
+  "descricao_tecnica": "Condutor de semente em policarbonato transparente, face lisa (flush face), no padrão original (OEM), compatível com o código de referência AA67780. Possui furo de 3/4\" para sensor de sementes, sendo aplicável em plantadeiras compatíveis com John Deere MaxEmerge 2, MaxEmerge Plus e XP — modelos 7200/7300, Série 1700 (1710 a 1790, incl. NT e CCS), Série DB e semeadoras 1530/1535. A transparência do tubo viabiliza o monitoramento de população em tempo real, e o perfil interno liso garante deposição uniforme da semente no sulco.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/us/product/AA67780:-Seed-Tube/p/AA67780",
+   "https://www.abilenemachine.com/clear-seed-tube-amaa67780",
+   "https://www.greenpartstore.com/john-deere-flush-face-seed-tube-aa67780.html",
+   "https://www.qualityfarmsupply.com/products/seed-tube-kit-with-seal-and-2-tie-bands-for-7300-1700-series-1530-1535-xp-xp-pro-replaces-jd-aa67780",
+   "https://loja.tblagropecas.com.br/aa67780"
+  ]
+ },
+ {
+  "sku": "CQ73378",
+  "especificacoes": {
+   "tipo": "condutor flexível de plantadeira",
+   "comprimento_mm": 360,
+   "peso_embalagem_kg": 4.35
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 1100 (linha sul-americana)",
+   "Plantadeiras John Deere Série 2100 (linha sul-americana)"
+  ],
+  "funcao": "Condutor de 360 mm da linha de plantio: conduz o insumo (adubo/semente, conforme a posição de montagem) do dosador até o sulco, protegendo o fluxo contra vento e respingos.",
+  "descricao_tecnica": "Condutor de plantadeira com 360 mm de comprimento, no padrão original (OEM), compatível com o código de referência CQ73378, aplicável em plantadeiras compatíveis com John Deere das Séries 1100 e 2100 (linha sul-americana). Fornecedores brasileiros listam o item como condutor de semente e também como condutor de adubo, conforme a posição de uso na máquina. Peça plástica de reposição frequente na revisão de pré-plantio.",
+  "confianca": "media",
+  "fontes": [
+   "https://loja.tblagropecas.com.br/pecas-para-plantadeiras?sort=+preco&pagina=13",
+   "https://zotti.ind.br/Produtos/categoria/21/Plantadeira",
+   "https://www.originparts.de/sitemap_en/JOHNDEERE/JOHNDEERE0207.html"
+  ]
+ },
+ {
+  "sku": "A75169",
+  "especificacoes": {
+   "tipo": "conexão do medidor de vácuo",
+   "dimensoes_embalagem_cm": "6,0 x 7,0 x 6,0",
+   "peso_g": 45
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere com dosador a vácuo (VacuMeter / MaxEmerge com sistema de vácuo)"
+  ],
+  "funcao": "Conexão plástica do medidor de vácuo (popularmente chamada de \"pipoqueira\"): interliga a linha de vácuo ao manômetro/medidor, permitindo o monitoramento da pressão de vácuo do dosador de sementes.",
+  "descricao_tecnica": "Conexão do medidor de vácuo no padrão original (OEM), compatível com o código de referência A75169, aplicável no sistema de vácuo de plantadeiras compatíveis com John Deere equipadas com dosador pneumático. Componente plástico leve (aprox. 45 g) que garante a vedação da tomada de leitura de vácuo, essencial para regulagem correta da singulação de sementes. Confirmar o modelo da plantadeira e o ponto de instalação antes da compra.",
+  "confianca": "media",
+  "fontes": [
+   "https://www.agrotrator.com.br/conexao-medidor-de-vacuo-plantadeira-jd-ref-a75169-a75169ig/p"
+  ]
+ },
+ {
+  "sku": "A71321",
+  "especificacoes": {
+   "tipo": "conexão/engate de vácuo do condutor",
+   "dimensoes_cm": "9,1 x 8,6 x 6,9",
+   "peso_kg": 0.036
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere 1207 / 1209 / 1211 / 1213 (linha sul-americana)",
+   "Plantadeiras John Deere Série 1700, 1770NT / 1775NT / 1790 / 1795",
+   "Plantadeiras John Deere Série DB (DB37 a DB120) com MaxEmerge / ExactEmerge",
+   "Semeadoras John Deere DR8T / DR12 / DR16 / DR18 / DR24"
+  ],
+  "funcao": "Engate (conexão) de vácuo: acopla a mangueira da linha de vácuo ao dosador/condutor da unidade de plantio, mantendo a vedação necessária para a sucção que fixa as sementes no disco dosador.",
+  "descricao_tecnica": "Engate de vácuo no padrão original (OEM), com aproximadamente 9,1 x 8,6 x 6,9 cm e 36 g, compatível com o código de referência A71321. Aplicável na linha de vácuo de plantadeiras compatíveis com John Deere 1207–1213, Série 1700 (incl. 1770NT/1775NT/1790/1795), Série DB (DB37–DB120) e semeadoras DR. A vedação correta desta conexão é determinante para a estabilidade do vácuo no dosador e a precisão de singulação.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/ca/fr/product/A71321:-Raccord-%C3%A0-vide/p/A71321"
+  ]
+ },
+ {
+  "sku": "A72758",
+  "especificacoes": {
+   "tipo": "peneira (tela) do mini-hopper do dosador",
+   "dimensoes_embalagem_cm": "7,0 x 10,0 x 1,5",
+   "peso_g": 19
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere 1720 (conjunto dosador a vácuo, até s/n 725100)",
+   "Unidades de plantio John Deere Pro-Series XP com mini-hopper (abastecimento central/CCS)"
+  ],
+  "funcao": "Peneira do mini-hopper do conjunto dosador a vácuo: retém impurezas e fragmentos junto ao depósito de sementes, permitindo a passagem do ar e protegendo o dosador contra obstruções.",
+  "descricao_tecnica": "Peneira (tela) do mini-hopper no padrão original (OEM), compatível com o código de referência A72758, aplicável no conjunto de dosagem a vácuo de plantadeiras compatíveis com John Deere, como a 1720 e unidades Pro-Series XP com mini-hopper de abastecimento central. Peça plástica leve (aprox. 19 g) que evita a entrada de detritos no dosador, preservando a precisão de distribuição de sementes.",
+  "confianca": "media",
+  "fontes": [
+   "https://www.ebay.com/itm/186367442758",
+   "https://avs.parts/deere/catalog/1720-planter-28702/79227/1152162/"
+  ]
+ },
+ {
+  "sku": "A78269",
+  "especificacoes": {
+   "material": "plástico",
+   "tipo": "tampa do reservatório central de sementes (CCS)",
+   "comprimento_entre_extremidades_cm": 81,
+   "diametro_cm": 81.5,
+   "peso_kg": 2.6
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 2100 (linha ADG — Alto Desempenho em Grãos)",
+   "Plantadeiras John Deere com reservatório central de sementes (CCS)"
+  ],
+  "funcao": "Tampa plástica do reservatório central de sementes: fecha e veda o tanque central (CCS) da plantadeira, protegendo a carga de sementes contra chuva, poeira e umidade entre os abastecimentos.",
+  "descricao_tecnica": "Tampa plástica do reservatório central de sementes no padrão original (OEM), com aproximadamente 81 cm entre extremidades, compatível com o código de referência A78269. Aplicável no tanque central (CCS) de plantadeiras compatíveis com John Deere Série 2100 / linha ADG. Disponível no mercado também em versão reforçada, é item de reposição comum por exposição contínua a sol e intempéries, garantindo vedação e proteção da semente armazenada.",
+  "confianca": "alta",
+  "fontes": [
+   "https://shop.deere.com/br/pt/product/A78269:-Tampa-Pl%C3%A1stica-do-Reservat%C3%B3rio-de-Sementes-para-Plantadeiras/p/A78269",
+   "https://www.zotti.ind.br/Produtos/2890/Z2585-TAMPA-RESERVATORIO-CENTRAL-DE-SEMENTES-PLANTADEIRA-JOHN-DEERE:-A78269",
+   "https://loja.tblagropecas.com.br/tampa-de-vedacao-da-caixa-ccs-reforcada-plantadeira-john-deere-cod-a78269",
+   "https://www.altapaulistapecas.com.br/produtos/item/tampa-reservatorio-central-de-sementes-adg-jd2100-a78269-john-deere",
+   "https://produto.mercadolivre.com.br/MLB-5247509570-tampa-do-reservatorio-da-plantadeira-john-deere-sementes-_JM"
+  ]
+ },
+ {
+  "sku": "A74430",
+  "especificacoes": {
+   "tipo": "engate rápido (quick-connect) do dosador a vácuo",
+   "dimensoes_embalagem_cm": "13,0 x 8,0 x 7,0",
+   "peso_g": 97
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere com mini-hopper Pro-Series e abastecimento central (bulk-fill/CCS)",
+   "Unidades de plantio John Deere com dosador a vácuo (vac meter)"
+  ],
+  "funcao": "Engate de conexão rápida do sistema do dosador a vácuo com mini-hopper: permite acoplar e desacoplar rapidamente a linha do dosador, agilizando manutenção e troca de unidades sem ferramentas.",
+  "descricao_tecnica": "Engate rápido no padrão original (OEM), compatível com o código de referência A74430, listado em catálogos como quick-connect coupler do dosador a vácuo (vac meter). Aplicável em plantadeiras compatíveis com John Deere equipadas com mini-hopper Pro-Series e abastecimento central (bulk-fill). Facilita a conexão rápida da linha do dosador durante regulagens e limpeza. Código em processo de substituição em catálogo — confirmar aplicação pelo modelo da plantadeira.",
+  "confianca": "media",
+  "fontes": [
+   "https://www.rdoequipment.com/product-details/john-deere-quick-connect-coupler-vac-meter-a74430",
+   "https://carrico-implement.myshopify.com/products/john-deere-a74430-hyd-quick-connector",
+   "https://yieldtechnologyservice.com/product/a74430-hydraulic-quick-connect-coupler-used/"
+  ]
+ }
+]

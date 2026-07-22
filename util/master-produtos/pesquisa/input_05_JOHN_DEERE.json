@@ -1,0 +1,200 @@
+[
+ {
+  "sku": "H-102724",
+  "part": "H-102724",
+  "titulo": "DEDO RETRATIL JD QUADRADO",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "26.5x2.0x2.0",
+  "peso_kg": 0.074,
+  "cruzados": null
+ },
+ {
+  "sku": "H-169914",
+  "part": "H-169914",
+  "titulo": "DEDO RETRATIL JD",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "28.0x1.5x1.5",
+  "peso_kg": 0.084,
+  "cruzados": null
+ },
+ {
+  "sku": "H-175727",
+  "part": "H-175727",
+  "titulo": "SUPORTE DO MOLINETE",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "2.5x8.4x3.0",
+  "peso_kg": 0.02,
+  "cruzados": null
+ },
+ {
+  "sku": "KK31823",
+  "part": "KK31823",
+  "titulo": "DEDO RECOLHEDOR ALGODÃO GRANDE",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "33.6x38.0x4.0",
+  "peso_kg": 4.375,
+  "cruzados": null
+ },
+ {
+  "sku": "KK31824",
+  "part": "KK31824",
+  "titulo": "DEDO RECOLHEDOR ALGODÃO MÉDIO",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "33.4x27.0x4.0",
+  "peso_kg": null,
+  "cruzados": null
+ },
+ {
+  "sku": "KK31825",
+  "part": "KK31825",
+  "titulo": "DEDO RECOLHEDOR ALGODÃO PEQUENO",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "33.0x16.2x4.0",
+  "peso_kg": null,
+  "cruzados": null
+ },
+ {
+  "sku": "N276747",
+  "part": "N276747",
+  "titulo": "TAMPA ALGODÃO",
+  "montadora": "JOHN DEERE",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "7.9x8.6x7.9",
+  "peso_kg": 0.047,
+  "cruzados": null
+ },
+ {
+  "sku": "A56254",
+  "part": "A56254",
+  "titulo": "ARO TAMPA RESERVATORIO CENTRAL DE SEMENTES",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "61.9x61.9x4.1",
+  "peso_kg": 0.22,
+  "cruzados": null
+ },
+ {
+  "sku": "CQ59313",
+  "part": "CQ59313",
+  "titulo": "CAIXA DE SEMENTES MINI HOOPER",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "11.2x20.0x13.6",
+  "peso_kg": 0.26,
+  "cruzados": null
+ },
+ {
+  "sku": "CQ65827",
+  "part": "CQ65827",
+  "titulo": "CONDUTOR JD",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "9.0x33.0x6.5",
+  "peso_kg": 0.09,
+  "cruzados": null
+ },
+ {
+  "sku": "CQ54137",
+  "part": "CQ54137",
+  "titulo": "CONDUTOR JOHN DEERE",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "22.0x7.0x6.0",
+  "peso_kg": 0.075,
+  "cruzados": null
+ },
+ {
+  "sku": "AA67780",
+  "part": "AA67780",
+  "titulo": "CONDUTOR JOHN DEERE ACRILICO",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "12.0x5.0x50.0",
+  "peso_kg": null,
+  "cruzados": null
+ },
+ {
+  "sku": "CQ73378",
+  "part": "CQ73378",
+  "titulo": "CONDUTOR PLANTADEIRA JOHN DEERE",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "38.0x30.0x60.0",
+  "peso_kg": 4.35,
+  "cruzados": null
+ },
+ {
+  "sku": "A75169",
+  "part": "A75169",
+  "titulo": "CONEXÃO PIPOQUEIRA JD",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "6.0x7.0x6.0",
+  "peso_kg": 0.045,
+  "cruzados": null
+ },
+ {
+  "sku": "A71321",
+  "part": "A71321",
+  "titulo": "ENGATE CONDUTOR JD",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "9.5x7.5x7.5",
+  "peso_kg": 0.039,
+  "cruzados": null
+ },
+ {
+  "sku": "A72758",
+  "part": "A72758",
+  "titulo": "PENEIRA MINI HOOPER",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "7.0x10.0x1.5",
+  "peso_kg": 0.019,
+  "cruzados": null
+ },
+ {
+  "sku": "A78269",
+  "part": "A78269",
+  "titulo": "TAMPA RESERVATORIO CENTRAL DE SEMENTES",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "81.5x81.5x9.0",
+  "peso_kg": 2.6,
+  "cruzados": null
+ },
+ {
+  "sku": "A74430",
+  "part": "A74430",
+  "titulo": "ENGATE HIDR. RAPIDO",
+  "montadora": "JOHN DEERE",
+  "equip": "PLANTADEIRA",
+  "funcao": null,
+  "dims_cm": "13.0x8.0x7.0",
+  "peso_kg": 0.097,
+  "cruzados": null
+ }
+]

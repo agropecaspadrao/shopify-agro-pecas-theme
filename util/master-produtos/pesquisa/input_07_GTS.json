@@ -1,0 +1,68 @@
+[
+ {
+  "sku": "IPCX03009065",
+  "part": null,
+  "titulo": "GIRO MOLINETE 2",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "2.6x10.0x2.3",
+  "peso_kg": 0.035,
+  "cruzados": null
+ },
+ {
+  "sku": "IPCX03009064",
+  "part": null,
+  "titulo": "GIRO MOLINETE 1",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "2.6x10.0x2.3",
+  "peso_kg": 0.035,
+  "cruzados": null
+ },
+ {
+  "sku": "IPCX05009034",
+  "part": null,
+  "titulo": "ROTULA MOLINETE",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "4.0x4.0x5.0",
+  "peso_kg": 0.06,
+  "cruzados": null
+ },
+ {
+  "sku": "IPCX03007010",
+  "part": "kit 20",
+  "titulo": "DEDO MOLINETE GTS",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "7.0x35.0x45.0",
+  "peso_kg": 1.5,
+  "cruzados": null
+ },
+ {
+  "sku": "IPCX03006056",
+  "part": null,
+  "titulo": "MANCAL DEDO RETRÁTIL",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "3.0x8.3x2.0",
+  "peso_kg": 0.035,
+  "cruzados": null
+ },
+ {
+  "sku": "IPCX03006047",
+  "part": null,
+  "titulo": "GUIA DEDO RETRATIL",
+  "montadora": "GTS",
+  "equip": "COLHEITADEIRA",
+  "funcao": null,
+  "dims_cm": "4.5x9.5x1.8",
+  "peso_kg": 0.042,
+  "cruzados": null
+ }
+]

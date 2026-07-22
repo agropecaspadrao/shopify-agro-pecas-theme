@@ -1,0 +1,285 @@
+[
+ {
+  "sku": "6424-4005",
+  "especificacoes": {
+   "dimensoes_cm": "9.0 x 4.5 x 25.0",
+   "peso_kg": 0.008,
+   "serie_catalogo": "6424 (catálogo da plantadeira Stara Estrela)"
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela (série de catálogo 6424)"
+  ],
+  "funcao": "Peça plástica de acabamento da lateral do reservatório de sementes da plantadeira, protegendo bordas e encaixes do conjunto do reservatório.",
+  "descricao_tecnica": "Acabamento lateral para o reservatório de sementes, aplicável em plantadeiras compatíveis com a linha Stara Estrela (série de catálogo 6424). Peça plástica leve (8 g) com 25 cm de comprimento, no padrão original (OEM), destinada à reposição direta do item de fábrica. Na Estrela, o reservatório central de sementes é pressurizado e produzido em polietileno, e os acabamentos laterais completam a vedação e o aspecto visual do conjunto.",
+  "confianca": "baixa",
+  "fontes": [
+   "https://www.scribd.com/document/542400616/Catalogo-Estrela-Stara",
+   "https://stara.com.br/produtos/maquinas-agricolas/plantadeiras-e-semeadoras/estrela/"
+  ]
+ },
+ {
+  "sku": "8031-4009",
+  "especificacoes": {
+   "dimensoes_cm": "39.5 x 89.4 x 25.6",
+   "peso_kg": 4.1,
+   "espacamento_linhas_cm": "45/50",
+   "referencia_cruzada": "8036-4173 (código correspondente nas versões mais recentes da linha)"
+  },
+  "compatibilidade": [
+   "Plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras de grãos de diversas marcas equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "funcao": "Bico/carenagem central da plataforma de milho: cobre o conjunto entre as linhas e direciona as plantas para as correntes recolhedoras durante a colheita.",
+  "descricao_tecnica": "Bico central 45/50 aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (referência 8031-4009, com correspondente 8036-4173 nas versões mais recentes). Peça plástica de grande porte (89,4 cm de comprimento, 4,1 kg) que faz a cobertura central entre linhas com espaçamento de 45/50 cm — nessa linha de plataformas, o ajuste de 45 para 50 cm é feito pela troca das chapas laterais das carenagens centrais. No mercado de reposição o mesmo código também aparece descrito como \"carenagem central 45/50\". Peça no padrão original (OEM).",
+  "confianca": "media",
+  "fontes": [
+   "https://maqtem.com.br/produto/carenagem-central-45-50-8031-4009-8036-4173/",
+   "https://www.mgpecas.com.br/site/produtos/detalhes/28599/8031-3031/chassi-linha-reb-stara-brava",
+   "https://www.agrolink.com.br/noticias/bravissima--conheca-a-nova-plataforma-de-milho-da-stara_505499.html",
+   "https://apoio.stara.com.br/usados/plataforma-para-colheita-brava-1"
+  ]
+ },
+ {
+  "sku": "6424-4028",
+  "especificacoes": {
+   "dimensoes_cm": "8.5 x 9.5 x 8.2",
+   "peso_kg": 0.061,
+   "denominacao_catalogo": "Bocal 2 (6424-4028)"
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela com reservatório central pressurizado e pipoqueiras por linha (ex.: Estrela Top 18/20 e Estrela 22 a 32 linhas)"
+  ],
+  "funcao": "Bocal plástico da pipoqueira — o mini-reservatório de sementes de cada linha de plantio — onde acopla a mangueira que traz as sementes do reservatório central pressurizado.",
+  "descricao_tecnica": "Bocal para pipoqueira compatível com plantadeiras pneumáticas da linha Stara Estrela, cujo reservatório central pressurizado alimenta as pipoqueiras de sementes de cada linha por meio de mangueiras. Em catálogo de reposição, o código 6424-4028 aparece com a denominação \"Bocal 2\". Peça plástica compacta (8,5 x 9,5 x 8,2 cm, 61 g) no padrão original (OEM), que serve de ponto de acoplamento do fluxo pneumático de sementes na linha.",
+  "confianca": "media",
+  "fontes": [
+   "https://solusagricola.com.br/produto/bocal-2-6424-4028/",
+   "https://stara.com.br/produtos/maquinas-agricolas/plantadeiras-e-semeadoras/estrela/",
+   "https://produto.mercadolivre.com.br/MLB-5197819376-capa-para-pipoqueira-plantadeira-estrela-stara-top18-20-_JM"
+  ]
+ },
+ {
+  "sku": "6424-4026",
+  "especificacoes": {
+   "dimensoes_cm": "6.2 x 6.2 x 6.6",
+   "peso_kg": 0.031
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela (sistema de condução pneumática de sementes do reservatório central às linhas)"
+  ],
+  "funcao": "Conexão plástica que une as mangueiras de condução pneumática de sementes entre o reservatório central pressurizado e as linhas de plantio.",
+  "descricao_tecnica": "Conexão para mangueira de sementes aplicável em plantadeiras compatíveis com a linha Stara Estrela, listada em catálogo de reposição sob o código 6424-4026. Peça plástica compacta (6,2 x 6,2 x 6,6 cm, 31 g) no padrão original (OEM), que garante a emenda estanque das mangueiras do sistema pneumático — requisito para manter a pressurização e a uniformidade na alimentação das pipoqueiras de sementes.",
+  "confianca": "media",
+  "fontes": [
+   "https://solusagricola.com.br/produto/6424-4026-conexao/",
+   "https://stara.com.br/produtos/maquinas-agricolas/plantadeiras-e-semeadoras/estrela/"
+  ]
+ },
+ {
+  "sku": "8031-4010",
+  "especificacoes": {
+   "dimensoes_cm": "24.0 x 84.0 x 35.8",
+   "peso_kg": 4.1,
+   "material": "polietileno (equivalentes de mercado em PE linear de média densidade com proteção UV)",
+   "espacamento_linhas_cm": "45/50",
+   "referencia_relacionada": "8036-4133 (carenagem central 45 das versões mais recentes da linha)"
+  },
+  "compatibilidade": [
+   "Plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras de grãos de diversas marcas equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "funcao": "Carenagem central da plataforma de milho: cobre a estrutura entre os bicos, direcionando plantas e palhada e protegendo os mecanismos recolhedores.",
+  "descricao_tecnica": "Carenagem central aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (série de catálogo 8031; nas versões mais recentes a peça correspondente é a 8036-4133). Peça plástica de grande porte (84 cm de comprimento, 4,1 kg) que faz a cobertura e o direcionamento do fluxo de plantas entre as linhas de colheita com espaçamento 45/50 cm. Equivalentes de mercado desta carenagem são produzidos em polietileno linear de média densidade com proteção UV, material leve, atóxico e resistente a agentes químicos. Peça no padrão original (OEM).",
+  "confianca": "media",
+  "fontes": [
+   "https://www.mgpecas.com.br/site/produtos/detalhes/30394/8036-4133/carenagem-central-45-stara",
+   "https://durafortrotomoldagem.com.br/produto-carenagem-capa-direcionadora-45cm-plataforma-similar-stara",
+   "https://maqtem.com.br/produto/carenagem-central-45-50-8031-4009-8036-4173/",
+   "https://www.hidraulicauniversal.com.br/produtos/rolo-recolhedor-8031-4116-80314116-stara/"
+  ]
+ },
+ {
+  "sku": "6117-4142",
+  "especificacoes": {
+   "material": "poliamida (nylon)",
+   "diametro_interno_mm": 25,
+   "diametro_externo_mm": 32,
+   "comprimento_mm": 25,
+   "peso_kg": 0.02,
+   "denominacao_catalogo": "Bucha cilíndrica poliamida 25x32x25"
+  },
+  "compatibilidade": [
+   "Linhas de plantio pantográficas de plantadeiras Stara (série de catálogo 6117 — ex.: Princesa e Victória)"
+  ],
+  "funcao": "Bucha que trabalha como mancal deslizante nas articulações do sistema pantográfico da linha de plantio, absorvendo o desgaste da oscilação vertical da linha ao copiar o terreno.",
+  "descricao_tecnica": "Bucha cilíndrica de poliamida com furo de 25 mm, diâmetro externo de 32 mm e 25 mm de comprimento, aplicada no mancal do sistema pantográfico de linhas de plantio compatíveis com plantadeiras Stara (série de catálogo 6117, presente nos catálogos de modelos como Princesa e Victória). Em listas de reposição aparece como \"bucha cilíndrica poliamida 25x32x25\". A poliamida oferece baixo atrito e alta resistência ao desgaste, dispensando lubrificação constante nas articulações do pantógrafo. Peça no padrão original (OEM).",
+  "confianca": "media",
+  "fontes": [
+   "https://wordpecasagricolas.com.br/?page_id=654",
+   "https://catalogosemanuais24horas.com/products/catalogo-de-pecas-plantadeira-princesa-top-stara",
+   "https://www.scribd.com/document/461408835/Stara-Victoria-Top-Catalogo-pdf"
+  ]
+ },
+ {
+  "sku": "8031-4008",
+  "especificacoes": {
+   "dimensoes_cm": "11.5 x 23.4 x 10.0",
+   "peso_kg": 0.25,
+   "material": "plástico injetado",
+   "formato_venda_mercado": "também comercializada em kits (ex.: 5 unidades)"
+  },
+  "compatibilidade": [
+   "Bicos de plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "funcao": "Ponteira do bico da plataforma de milho: é a extremidade que desliza rente ao solo entre as fileiras, erguendo plantas e guiando os colmos para dentro da linha de colheita.",
+  "descricao_tecnica": "Ponteira de bico em plástico injetado, aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (referência 8031-4008). Com 23,4 cm e 250 g, é a ponta de sacrifício do bico central — item de desgaste por atrito com solo e palhada, comercializado no mercado de reposição também em kits com várias unidades. No mercado aparece descrita como \"ponteira central injetada\". Peça no padrão original (OEM), de troca rápida para manter o direcionamento correto das plantas na colheita.",
+  "confianca": "media",
+  "fontes": [
+   "https://www.borrachaslondrinashop.com.br/MLB-1957051000-ponteira-central-injetada-original-stara-8031-4008-5-uni-_JM",
+   "https://www.mgpecas.com.br/site/produtos/detalhes/28599/8031-3031/chassi-linha-reb-stara-brava",
+   "https://www.agrolink.com.br/noticias/bravissima--conheca-a-nova-plataforma-de-milho-da-stara_505499.html"
+  ]
+ },
+ {
+  "sku": "6424-4013",
+  "especificacoes": {
+   "dimensoes_cm": "10.0 x 54.0 x 7.0",
+   "comprimento_cm": 54,
+   "peso_kg": 0.2
+  },
+  "compatibilidade": [
+   "Plantadeiras Stara Estrela (série de catálogo 6424) equipadas com disco duplo de adubo"
+  ],
+  "funcao": "Condutor plástico que leva o fertilizante dosado até o fundo do sulco aberto pelo disco duplo de adubo, garantindo deposição uniforme e sem obstrução.",
+  "descricao_tecnica": "Condutor de adubo para linhas com disco duplo, aplicável em plantadeiras compatíveis com a linha Stara Estrela (referência 6424-4013, listada em catálogos do mercado de reposição). Peça plástica alongada (54 cm, 200 g) instalada entre o dosador e o disco duplo, conduzindo o fertilizante de forma protegida até o sulco. Peça no padrão original (OEM), item de reposição frequente por trabalhar em contato direto com fertilizantes corrosivos e abrasivos.",
+  "confianca": "media",
+  "fontes": [
+   "https://novabrasilpecas.com.br/produto/engrenagem-da-catraca-esquerda-6117-1234",
+   "https://www.scribd.com/document/542400616/Catalogo-Estrela-Stara",
+   "https://ingapecas.com/produto/condutor-inox-adubo-estrela-cinderela-princesa-dpstop/"
+  ]
+ },
+ {
+  "sku": "IPCX03009065",
+  "especificacoes": {
+   "dimensoes_cm": "2.6 x 10.0 x 2.3",
+   "peso_kg": 0.035,
+   "denominacao": "Giro molinete 2 (variação da posição/lado do giro molinete 1 — IPCX03009064)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS",
+   "Colheitadeiras de grãos equipadas com plataformas GTS"
+  ],
+  "funcao": "Peça plástica de articulação (\"giro\") da barra porta-dedos do molinete: serve de apoio em que a barra gira durante o ciclo de rotação do molinete.",
+  "descricao_tecnica": "Giro do molinete (versão 2) aplicável em molinetes de plataformas de corte compatíveis com a linha GTS, comercializado no mercado de reposição sob o código IPCX03009065, par da versão 1 (IPCX03009064). Peça plástica compacta (10 cm, 35 g) que funciona como ponto de articulação/abraçadeira da barra porta-dedos, permitindo o giro suave da barra que comanda a inclinação dos dedos recolhedores. Peça no padrão original (OEM).",
+  "confianca": "baixa",
+  "fontes": [
+   "https://forcepartsagricola.com.br/products/ipcx03009064-giro-molinete-1",
+   "https://www.ampecasgts.com.br/catalogo/giro-molinete-1/",
+   "https://www.indagril.com.br/produtos/gts-do-brasil/"
+  ]
+ },
+ {
+  "sku": "IPCX03009064",
+  "especificacoes": {
+   "dimensoes_cm": "2.6 x 10.0 x 2.3",
+   "peso_kg": 0.035,
+   "denominacao": "Giro molinete 1 (par do giro molinete 2 — IPCX03009065)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS",
+   "Colheitadeiras de grãos equipadas com plataformas GTS"
+  ],
+  "funcao": "Peça plástica de articulação (\"giro\") da barra porta-dedos do molinete: serve de apoio em que a barra gira durante o ciclo de rotação do molinete.",
+  "descricao_tecnica": "Giro do molinete (versão 1) aplicável em molinetes de plataformas de corte compatíveis com a linha GTS, listado no mercado de reposição sob o código IPCX03009064 — inclusive em catálogos especializados em peças para plataformas GTS. Em catálogos de reposição, o código aparece associado à abraçadeira do molinete, com as versões 1 e 2 correspondendo a lados/posições distintas da barra porta-dedos. Peça plástica compacta (10 cm, 35 g) que garante o giro suave da barra que comanda os dedos recolhedores. Peça no padrão original (OEM).",
+  "confianca": "media",
+  "fontes": [
+   "https://forcepartsagricola.com.br/products/ipcx03009064-giro-molinete-1",
+   "https://www.ampecasgts.com.br/catalogo/giro-molinete-1/",
+   "https://www.lojapivot.com.br/giro-molinete-1---ipcx03009064/p"
+  ]
+ },
+ {
+  "sku": "IPCX05009034",
+  "especificacoes": {
+   "dimensoes_cm": "4.0 x 4.0 x 5.0",
+   "peso_kg": 0.06
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS (aplicação específica a confirmar)"
+  ],
+  "funcao": "Rótula (articulação esférica) do conjunto do molinete, que permite o movimento angular entre o braço e os elementos de comando do molinete da plataforma de corte.",
+  "descricao_tecnica": "Rótula de molinete aplicável em plataformas de corte compatíveis com a linha GTS, comercializada sob o código IPCX05009034. Peça plástica compacta (4 x 4 x 5 cm, 60 g) do tipo articulação esférica, categoria de componente usada nos mecanismos de comando e sustentação do molinete para absorver desalinhamentos angulares. Código não localizado em catálogos públicos até o momento — especificações limitadas aos dados dimensionais.",
+  "confianca": "baixa",
+  "fontes": [
+   "https://sulmatre.com.br/pecas-para-colheitadeiras/rotulas-da-plataforma/",
+   "https://www.gtsdobrasil.ind.br/br/blog/gts-do-brasil-lanca-a-maior-plataforma-de-corte-do-mundo/21"
+  ]
+ },
+ {
+  "sku": "IPCX03007010",
+  "especificacoes": {
+   "material": "nylon (poliamida)",
+   "quantidade_kit": 20,
+   "comprimento_mm": 300,
+   "peso_unitario_g": 75,
+   "fixacao": "parafuso especial de dedo draper (ref. de mercado IPCX03009042)",
+   "referencias_cruzadas": "87561020 (Case IH/New Holland), 84130300 (New Holland), Z3288 (Zotti)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas draper GTS (ex.: linha Flexer, de 25 a 62 pés)",
+   "Plataformas draper MacDon",
+   "Plataformas draper/soja de colheitadeiras Case IH e New Holland (refs. 87561020 / 84130300)"
+  ],
+  "funcao": "Dedo recolhedor do molinete: conduz as plantas para a barra de corte e as esteiras da plataforma draper, evitando embuchamento e perdas na alimentação da colheitadeira.",
+  "descricao_tecnica": "Kit com 20 dedos recolhedores de molinete em nylon (poliamida), aplicáveis em plataformas draper compatíveis com as linhas GTS e MacDon e em plataformas draper de colheitadeiras Case IH e New Holland (referências cruzadas 87561020 e 84130300). Cada dedo tem aproximadamente 30 cm de comprimento e 75-80 g, com fixação à barra porta-dedos do molinete por parafuso especial. O nylon proporciona alta resistência a impacto e flexibilidade, reduzindo quebras no contato com a cultura. Peça no padrão original (OEM).",
+  "confianca": "alta",
+  "fontes": [
+   "https://www.paloagro.com.br/dedo-recolhedor-molinete-draper-plataforma-soja-ipcx03007010-alternativa-gts",
+   "https://www.zotti.ind.br/Produtos/645/Z3288-DEDO-RECOLHEDOR-MOLINETE-DRAPER-GTS-MACDON-87561020-CASE-NEW-HOLLAND-84130300%C2%A0%C2%A0NEW-HOLLAND%C2%A0-IPCX03007010-GTS",
+   "https://www.lojapivot.com.br/dedo-molinete-gts---ipcx03007010/p",
+   "https://www.mercadolivre.com.br/dedo-recolhedor-molinete-md-draper-87561020-plataforma-100un/up/MLBU3233968753",
+   "https://revistacultivar.com.br/noticias/gts-do-brasil-produz-a-maior-plataforma-de-corte-para-colheitadeiras"
+  ]
+ },
+ {
+  "sku": "IPCX03006056",
+  "especificacoes": {
+   "dimensoes_cm": "3.0 x 8.3 x 2.0",
+   "peso_kg": 0.035,
+   "material": "plástico técnico",
+   "referencia_equivalente_mercado": "MCL03006056"
+  },
+  "compatibilidade": [
+   "Caracol (sem-fim alimentador) de plataformas de corte GTS",
+   "Plataformas de corte de colheitadeiras diversas com sistema de dedos retráteis"
+  ],
+  "funcao": "Mancal do dedo retrátil do caracol: apoia o dedo dentro do tubo do sem-fim e permite sua oscilação de avanço e recolhimento durante a alimentação da colheitadeira.",
+  "descricao_tecnica": "Mancal plástico para dedo retrátil, utilizado no caracol (sem-fim alimentador) de plataformas de corte compatíveis com a linha GTS e aplicável em plataformas de colheitadeiras diversas — o mesmo número base circula no mercado de reposição também como MCL03006056. Peça compacta (8,3 cm, 35 g) que sustenta o dedo retrátil no interior do tubo do caracol, permitindo o movimento cíclico de exposição e recolhimento do dedo. Peça no padrão original (OEM), item de desgaste que evita folga e quebra dos dedos retráteis.",
+  "confianca": "media",
+  "fontes": [
+   "https://mcl.ind.br/produto/mcl03006056-mancal-dedo-retratil-diversos-colheitadeira-p-2733",
+   "https://www.mercadolivre.com.br/mancal-dedo-retratil-com-guia-colheitadeira-826823/up/MLBU1798393844"
+  ]
+ },
+ {
+  "sku": "IPCX03006047",
+  "especificacoes": {
+   "dimensoes_cm": "4.5 x 9.5 x 1.8",
+   "peso_kg": 0.042,
+   "referencias_relacionadas_mercado": "guias equivalentes para plataformas Case: 1307259C2 / 86632613"
+  },
+  "compatibilidade": [
+   "Caracol (sem-fim alimentador) de plataformas de corte GTS",
+   "Sistemas de dedos retráteis de plataformas de colheitadeiras diversas"
+  ],
+  "funcao": "Guia que mantém o alinhamento e a estabilidade do dedo retrátil no caracol da plataforma, garantindo o funcionamento suave e preciso do sistema de alimentação.",
+  "descricao_tecnica": "Guia de dedo retrátil aplicável em plataformas de corte compatíveis com a linha GTS, comercializada no mercado de reposição sob o código IPCX03006047. É peça essencial para garantir o alinhamento, a estabilidade e o funcionamento adequado dos dedos retráteis nos sistemas mecânicos de colheita e alimentação. Peça plástica compacta (9,5 cm, 42 g) de encaixe preciso, projetada para trabalho agrícola intensivo; guias equivalentes para plataformas Case circulam sob as referências 1307259C2 e 86632613. Peça no padrão original (OEM).",
+  "confianca": "alta",
+  "fontes": [
+   "https://www.agripecas.net/guia-dedo-retratil-ipcx03006047",
+   "https://www.agripecas.net/marca/gts.html"
+  ]
+ }
+]

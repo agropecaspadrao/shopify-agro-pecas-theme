@@ -162,6 +162,7 @@ def main():
             "id": p["id"],
             "nome": det.get("nome") or p.get("nome"),
             "unidade": det.get("unidade") or "UN",
+            "tipo": det.get("tipo") or "P",         # P=produto (obrigatório no alterar)
             "origem": det.get("origem") or "0",
             "situacao": det.get("situacao") or "A",
             "preco": round(d["preco_novo"], 2),
@@ -210,6 +211,7 @@ def main():
             "codigo": d["sku_shopify"],
             "nome": d["titulo_shopify"][:120],
             "unidade": "UN",
+            "tipo": "P",
             "preco": round(d["preco_novo"], 2),
             "preco_custo": round(d["custo"], 2),
             "origem": "0",

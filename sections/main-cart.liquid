@@ -296,16 +296,19 @@
                   {%- if item.sku != blank -%}
                     <div class="cart-item__sku">SKU: {{ item.sku }}</div>
                   {%- endif -%}
-                  {%- comment -%} Pedido mínimo: peças avulsas abaixo de R$50 exigem 50 un., em lotes de 50 — kits (tag 'kit') isentos {%- endcomment -%}
+                  {%- comment -%} Pedido mínimo: peça avulsa abaixo de R$200 precisa fechar R$200 em valor no item (qtd = R$200 ÷ preço) — kits (tag 'kit') isentos {%- endcomment -%}
                   {%- assign line_min = 1 -%}
                   {%- assign line_step = 1 -%}
                   {%- assign line_is_kit = false -%}
                   {%- if item.product.tags contains 'kit' -%}
                     {%- assign line_is_kit = true -%}
                   {%- endif -%}
-                  {%- if item.final_price < 5000 and line_is_kit == false -%}
-                    {%- assign line_min = 50 -%}
-                    {%- assign line_step = 50 -%}
+                  {%- if item.final_price > 0 and item.final_price < 20000 and line_is_kit == false -%}
+                    {%- assign line_min = 20000 | divided_by: item.final_price -%}
+                    {%- assign line_min_total = line_min | times: item.final_price -%}
+                    {%- if line_min_total < 20000 -%}
+                      {%- assign line_min = line_min | plus: 1 -%}
+                    {%- endif -%}
                   {%- endif -%}
                   <div class="cart-item__qty">
                     <button type="button" class="qty-btn" data-action="decrease" data-line="{{ forloop.index }}">−</button>

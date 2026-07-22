@@ -7,9 +7,13 @@
   if product.available and product.variants.first.inventory_quantity > 0
     assign has_stock = true
   endif
-  # Pedido mínimo: peças abaixo de R$200 (20000 centavos) exigem 50 unidades
+  # Pedido mínimo: peças avulsas abaixo de R$50 (5000 centavos) exigem 50 unidades — kits (tag 'kit') isentos
   assign min_qty = 1
-  if product.variants.first.price < 20000
+  assign card_is_kit = false
+  if product.tags contains 'kit'
+    assign card_is_kit = true
+  endif
+  if product.variants.first.price < 5000 and card_is_kit == false
     assign min_qty = 50
   endif
 -%}

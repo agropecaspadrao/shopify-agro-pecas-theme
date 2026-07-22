@@ -296,10 +296,14 @@
                   {%- if item.sku != blank -%}
                     <div class="cart-item__sku">SKU: {{ item.sku }}</div>
                   {%- endif -%}
-                  {%- comment -%} Pedido mínimo: peças abaixo de R$200 exigem 50 un., em lotes de 50 {%- endcomment -%}
+                  {%- comment -%} Pedido mínimo: peças avulsas abaixo de R$50 exigem 50 un., em lotes de 50 — kits (tag 'kit') isentos {%- endcomment -%}
                   {%- assign line_min = 1 -%}
                   {%- assign line_step = 1 -%}
-                  {%- if item.final_price < 20000 -%}
+                  {%- assign line_is_kit = false -%}
+                  {%- if item.product.tags contains 'kit' -%}
+                    {%- assign line_is_kit = true -%}
+                  {%- endif -%}
+                  {%- if item.final_price < 5000 and line_is_kit == false -%}
                     {%- assign line_min = 50 -%}
                     {%- assign line_step = 50 -%}
                   {%- endif -%}

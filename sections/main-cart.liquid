@@ -218,6 +218,22 @@
   }
 
   .cart-checkout-btn:hover { background: var(--color-primary-dark); }
+  .cart-checkout-btn--disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: .75;
+  }
+  .cart-min-notice {
+    margin: 0 0 .75rem;
+    padding: .65rem .85rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    font-size: .85rem;
+    color: #92400e;
+    line-height: 1.45;
+  }
 
   .cart-continue {
     display: block;
@@ -296,20 +312,9 @@
                   {%- if item.sku != blank -%}
                     <div class="cart-item__sku">SKU: {{ item.sku }}</div>
                   {%- endif -%}
-                  {%- comment -%} Pedido mínimo: peça avulsa abaixo de R$200 precisa fechar R$200 em valor no item (qtd = R$200 ÷ preço) — kits (tag 'kit') isentos {%- endcomment -%}
+                  {%- comment -%} Pedido mínimo de R$200 é validado pelo TOTAL do carrinho (gate no checkout, abaixo) {%- endcomment -%}
                   {%- assign line_min = 1 -%}
                   {%- assign line_step = 1 -%}
-                  {%- assign line_is_kit = false -%}
-                  {%- if item.product.tags contains 'kit' -%}
-                    {%- assign line_is_kit = true -%}
-                  {%- endif -%}
-                  {%- if item.final_price > 0 and item.final_price < 20000 and line_is_kit == false -%}
-                    {%- assign line_min = 20000 | divided_by: item.final_price -%}
-                    {%- assign line_min_total = line_min | times: item.final_price -%}
-                    {%- if line_min_total < 20000 -%}
-                      {%- assign line_min = line_min | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endif -%}
                   <div class="cart-item__qty">
                     <button type="button" class="qty-btn" data-action="decrease" data-line="{{ forloop.index }}">−</button>
                     <input type="number" name="updates[]" value="{{ item.quantity }}" min="{{ line_min }}" step="{{ line_step }}" data-min-qty="{{ line_min }}" data-step-qty="{{ line_step }}" aria-label="Quantidade">
@@ -352,7 +357,16 @@
           <span>{{ cart.total_price | money }}</span>
         </div>
         <p class="cart-summary__note">Impostos e frete calculados no checkout. Parcele em até 12x no cartão.</p>
-        <a href="/checkout" class="cart-checkout-btn">Finalizar Compra →</a>
+        {%- comment -%} Pedido mínimo de R$200 por carrinho — bloqueia o checkout abaixo disso {%- endcomment -%}
+        {%- if cart.total_price < 20000 -%}
+          <div class="cart-min-notice">
+            Pedido mínimo: <strong>{{ 20000 | money }}</strong> por carrinho.<br>
+            Faltam <strong>{{ 20000 | minus: cart.total_price | money }}</strong> — adicione mais peças para finalizar.
+          </div>
+          <span class="cart-checkout-btn cart-checkout-btn--disabled" role="button" aria-disabled="true" title="Pedido mínimo de R$ 200,00">Finalizar Compra →</span>
+        {%- else -%}
+          <a href="/checkout" class="cart-checkout-btn">Finalizar Compra →</a>
+        {%- endif -%}
         <a href="{{ routes.root_url }}collections/all" class="cart-continue">← Continuar comprando</a>
 
         <div class="cart-payment-icons">

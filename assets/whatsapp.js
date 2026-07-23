@@ -31,36 +31,100 @@
       });
   }
 
-  /* Busca por aproximação de SKU: se o termo parece um código e não retornou
-     nada, tenta versões progressivamente mais curtas (o predictive search da
-     Shopify casa por prefixo). Ex.: "5.0220.0548836.0" -> "5.0220.0548836". */
-  function skuCandidates(q) {
-    var cands = [];
-    if (!/\d/.test(q) || q.length < 5) return cands;
-    var t = q;
-    for (var i = 0; i < 3; i++) {
-      var curto = t.replace(/[\s.\-\/_]+[^\s.\-\/_]*$/, '');
-      if (curto.length >= 5 && curto !== t) { cands.push(curto); t = curto; }
-      else break;
+  /* ===== Busca por aproximação =====
+     Quando a busca nativa não retorna nada, casa o termo contra um índice
+     local de TODO o catálogo (título, SKU, tags/part numbers, marca, tipo e
+     descrição), por substring de tokens normalizados. Cobre: código com .0
+     sobrando, part number no meio do SKU (ex. "680005" em 5.1621.0680005.0),
+     código sem pontos, referência OEM cruzada, erro de digitação no fim. */
+
+  function normTxt(s) {
+    return (s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
+      .replace(/[^a-z0-9]+/g, '');
+  }
+
+  var INDEX_KEY = 'appSearchIndexV1';
+  var indexPromise = null;
+  function loadIndex() {
+    if (indexPromise) return indexPromise;
+    try {
+      var cache = JSON.parse(sessionStorage.getItem(INDEX_KEY) || 'null');
+      if (cache && cache.ts && (Date.now() - cache.ts) < 1800000 && cache.itens) {
+        indexPromise = Promise.resolve(cache.itens);
+        return indexPromise;
+      }
+    } catch (e) { /* sessionStorage indisponível: segue sem cache */ }
+    // baixa o catálogo inteiro (até 4 páginas de 250)
+    function paginas(pg, acc) {
+      return fetch('/products.json?limit=250&page=' + pg)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var lote = data.products || [];
+          acc = acc.concat(lote);
+          if (lote.length === 250 && pg < 4) return paginas(pg + 1, acc);
+          return acc;
+        });
     }
-    var pref = q.replace(/[^A-Za-z0-9.\-]/g, '');
-    pref = pref.slice(0, Math.max(5, Math.ceil(pref.length * 0.6)));
-    if (pref.length >= 5 && pref !== q && cands.indexOf(pref) === -1) cands.push(pref);
-    return cands;
+    indexPromise = paginas(1, [])
+      .then(function(products) {
+        var itens = products.map(function(p) {
+          var v = (p.variants && p.variants[0]) || {};
+          var img = (p.images && p.images[0] && p.images[0].src) || '';
+          var corpo = (p.body_html || '').replace(/<[^>]*>/g, ' ');
+          return {
+            title: p.title,
+            url: '/products/' + p.handle,
+            image: img ? img + (img.indexOf('?') > -1 ? '&' : '?') + 'width=96' : '',
+            sku: v.sku || '',
+            skuN: normTxt(v.sku),
+            busca: normTxt(p.title) + '|' + normTxt(v.sku) + '|' +
+                   normTxt((p.tags || []).join(' ')) + '|' + normTxt(p.vendor) + '|' +
+                   normTxt(p.product_type) + '|' + normTxt(corpo)
+          };
+        });
+        try { sessionStorage.setItem(INDEX_KEY, JSON.stringify({ ts: Date.now(), itens: itens })); } catch (e) {}
+        return itens;
+      });
+    return indexPromise;
+  }
+
+  function localSearch(q, limit) {
+    return loadIndex().then(function(itens) {
+      var tokens = q.split(/[\s.,\-\/_]+/).map(normTxt).filter(function(t) { return t.length >= 3; });
+      if (!tokens.length) {
+        var unico = normTxt(q);
+        if (unico.length < 3) return [];
+        tokens = [unico];
+      }
+      var achados = [];
+      itens.forEach(function(it) {
+        var pontos = 0;
+        for (var i = 0; i < tokens.length; i++) {
+          if (it.busca.indexOf(tokens[i]) === -1) return; // todos os tokens precisam casar
+          pontos += (it.skuN && it.skuN.indexOf(tokens[i]) > -1) ? 2 : 1;
+        }
+        achados.push({ it: it, pontos: pontos });
+      });
+      achados.sort(function(a, b) { return b.pontos - a.pontos; });
+      return achados.slice(0, limit || 5).map(function(a) {
+        return { title: a.it.title, url: a.it.url, image: a.it.image,
+                 variants: [{ sku: a.it.sku }] };
+      });
+    });
   }
 
   function suggestAprox(q, limit) {
-    var fila = [q].concat(skuCandidates(q));
-    var i = 0;
-    function tenta() {
-      if (i >= fila.length) return Promise.resolve({ products: [], termo: q });
-      var termo = fila[i++];
-      return suggestFetch(termo, limit).then(function(products) {
-        if (products.length > 0) return { products: products, termo: termo };
-        return tenta();
+    return suggestFetch(q, limit).then(function(products) {
+      if (products.length > 0) return { products: products, termo: q, aprox: false };
+      return localSearch(q, limit).then(function(locais) {
+        return { products: locais, termo: q, aprox: locais.length > 0 };
       });
-    }
-    return tenta();
+    }).catch(function() {
+      return localSearch(q, limit).then(function(locais) {
+        return { products: locais, termo: q, aprox: locais.length > 0 };
+      });
+    });
   }
   /* Exposto p/ a página de busca (fallback de 0 resultados) */
   window.appSuggestAprox = suggestAprox;
@@ -104,7 +168,7 @@
         suggestAprox(q, 5)
           .then(function(res) {
             if (seq !== searchSeq) return; // resposta velha: ignora
-            renderResults(res.products, res.termo !== q ? res.termo : null);
+            renderResults(res.products, res.aprox ? res.termo : null);
           })
           .catch(function() {
             if (searchResults) searchResults.hidden = true;

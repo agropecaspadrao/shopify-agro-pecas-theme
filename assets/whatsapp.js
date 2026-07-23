@@ -91,39 +91,55 @@
 
   function localSearch(q, limit) {
     return loadIndex().then(function(itens) {
+      var qN = normTxt(q);
       var tokens = q.split(/[\s.,\-\/_]+/).map(normTxt).filter(function(t) { return t.length >= 3; });
       if (!tokens.length) {
-        var unico = normTxt(q);
-        if (unico.length < 3) return [];
-        tokens = [unico];
+        if (qN.length < 3) return [];
+        tokens = [qN];
       }
       var achados = [];
       itens.forEach(function(it) {
-        var pontos = 0;
-        for (var i = 0; i < tokens.length; i++) {
-          if (it.busca.indexOf(tokens[i]) === -1) return; // todos os tokens precisam casar
-          pontos += (it.skuN && it.skuN.indexOf(tokens[i]) > -1) ? 2 : 1;
+        // correspondência FORTE: o código digitado contém o SKU inteiro ou
+        // vice-versa (ex.: "5.1302.0565053.0" digitado x SKU 5.1302.0565053)
+        var forte = it.skuN.length >= 5 && qN.length >= 5 &&
+                    (qN.indexOf(it.skuN) > -1 || it.skuN.indexOf(qN) > -1);
+        var pontos = forte ? 100 : 0;
+        if (!forte) {
+          for (var i = 0; i < tokens.length; i++) {
+            if (it.busca.indexOf(tokens[i]) === -1) return; // todos os tokens precisam casar
+            pontos += (it.skuN && it.skuN.indexOf(tokens[i]) > -1) ? 2 : 1;
+          }
         }
-        achados.push({ it: it, pontos: pontos });
+        achados.push({ it: it, pontos: pontos, forte: forte });
       });
       achados.sort(function(a, b) { return b.pontos - a.pontos; });
       return achados.slice(0, limit || 5).map(function(a) {
         return { title: a.it.title, url: a.it.url, image: a.it.image,
-                 variants: [{ sku: a.it.sku }] };
+                 sku: a.it.sku, forte: a.forte, variants: [{ sku: a.it.sku }] };
       });
     });
   }
+  /* Exposto p/ a página de busca */
+  window.appLocalSearch = localSearch;
+
+  function urlPath(u) { return (u || '').split('?')[0]; }
 
   function suggestAprox(q, limit) {
-    return suggestFetch(q, limit).then(function(products) {
-      if (products.length > 0) return { products: products, termo: q, aprox: false };
-      return localSearch(q, limit).then(function(locais) {
-        return { products: locais, termo: q, aprox: locais.length > 0 };
+    var pNativo = suggestFetch(q, limit).catch(function() { return []; });
+    var pLocal = localSearch(q, limit).catch(function() { return []; });
+    return Promise.all([pNativo, pLocal]).then(function(r) {
+      var nativos = r[0], locais = r[1];
+      var fortes = locais.filter(function(l) { return l.forte; });
+      // correspondência forte primeiro, depois busca nativa, depois aproximados
+      var vistos = {}, out = [];
+      fortes.concat(nativos).concat(nativos.length === 0 ? locais : []).forEach(function(p) {
+        var k = urlPath(p.url);
+        if (!k || vistos[k]) return;
+        vistos[k] = 1;
+        out.push(p);
       });
-    }).catch(function() {
-      return localSearch(q, limit).then(function(locais) {
-        return { products: locais, termo: q, aprox: locais.length > 0 };
-      });
+      return { products: out.slice(0, limit || 5), termo: q,
+               aprox: nativos.length === 0 && out.length > 0 };
     });
   }
   /* Exposto p/ a página de busca (fallback de 0 resultados) */

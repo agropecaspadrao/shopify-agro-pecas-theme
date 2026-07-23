@@ -27,6 +27,57 @@
     </div>
 
     {%- if search.performed -%}
+      {%- comment -%} Busca por aproximação (window.appLocalSearch em whatsapp.js):
+      roda SEMPRE. Correspondência forte de código aparece acima dos resultados
+      nativos; com 0 resultados nativos, mostra aproximados e esconde o vazio. {%- endcomment -%}
+      <div id="SearchAprox" class="search-aprox" hidden>
+        <h2 class="search-aprox__title" id="SearchAproxTitle">Resultados aproximados</h2>
+        <p class="search-aprox__hint" id="SearchAproxHint"></p>
+        <div id="SearchAproxList" class="search-aprox__list"></div>
+        <p class="search-aprox__cta">Não é essa peça?
+          <a href="https://wa.me/{{ settings.whatsapp_number }}?text={{ 'Olá! Não encontrei a peça que preciso no site. Estou buscando por: ' | append: search.terms | url_encode }}"
+             target="_blank" rel="noopener">Fale com nossa equipe no WhatsApp</a></p>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var termo = {{ search.terms | json }};
+          var nativos = {{ search.results_count | default: 0 }};
+          if (!window.appLocalSearch || !termo) return;
+          window.appLocalSearch(termo, 8).then(function(hits) {
+            // remove o que já está na grade de resultados nativa
+            var vistos = {};
+            document.querySelectorAll('.product-grid a[href*="/products/"]').forEach(function(a) {
+              vistos[a.pathname.split('?')[0]] = 1;
+            });
+            var novos = hits.filter(function(h) {
+              var path = h.url.split('?')[0];
+              return !vistos[path];
+            });
+            // com resultados nativos na tela, só vale a pena somar correspondência forte
+            if (nativos > 0) novos = novos.filter(function(h) { return h.forte; });
+            if (!novos.length) return;
+            var temForte = novos.some(function(h) { return h.forte; });
+            document.getElementById('SearchAproxTitle').textContent =
+              temForte ? 'É isso que você procura?' : 'Resultados aproximados';
+            document.getElementById('SearchAproxHint').textContent = temForte
+              ? 'Encontramos a peça cujo código corresponde a "' + termo + '":'
+              : 'Não achamos "' + termo + '" exatamente, mas encontramos peças com código parecido:';
+            document.getElementById('SearchAproxList').innerHTML = novos.map(function(p) {
+              var img = p.image ? '<img src="' + p.image + '" class="predictive-result__img" alt="" width="48" height="48">' : '';
+              return '<a href="' + p.url + '" class="predictive-result">' + img +
+                '<div class="predictive-result__info">' +
+                  '<div class="predictive-result__title">' + p.title + '</div>' +
+                  (p.sku ? '<div class="predictive-result__sku">' + p.sku + '</div>' : '') +
+                '</div></a>';
+            }).join('');
+            document.getElementById('SearchAprox').hidden = false;
+            if (nativos === 0) {
+              var vazio = document.querySelector('.search-empty');
+              if (vazio) vazio.hidden = true;
+            }
+          }).catch(function() {});
+        });
+      </script>
       {%- if search.results_count > 0 -%}
         <p class="search-count">{{ search.results_count }} {{ search.results_count | pluralize: 'resultado encontrado', 'resultados encontrados' }}</p>
         <div class="product-grid product-grid--3">
@@ -57,33 +108,6 @@
           {%- endpaginate -%}
         {%- endif -%}
       {%- else -%}
-        {%- comment -%} Busca por aproximação de SKU: preenchida via JS
-        (window.appSuggestAprox em whatsapp.js) quando a busca exata falha {%- endcomment -%}
-        <div id="SearchAprox" class="search-aprox" hidden>
-          <h2 class="search-aprox__title">Resultados aproximados</h2>
-          <p class="search-aprox__hint">Não achamos "{{ search.terms }}" exatamente, mas encontramos peças com código parecido:</p>
-          <div id="SearchAproxList" class="search-aprox__list"></div>
-        </div>
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            var termo = {{ search.terms | json }};
-            if (!window.appSuggestAprox || !termo) return;
-            window.appSuggestAprox(termo, 8).then(function(res) {
-              if (!res.products || !res.products.length) return;
-              var list = document.getElementById('SearchAproxList');
-              list.innerHTML = res.products.map(function(p) {
-                var img = p.image ? '<img src="' + p.image + '" class="predictive-result__img" alt="" width="48" height="48">' : '';
-                var sku = (p.variants && p.variants[0] && p.variants[0].sku) ? p.variants[0].sku : '';
-                return '<a href="' + p.url + '" class="predictive-result">' + img +
-                  '<div class="predictive-result__info">' +
-                    '<div class="predictive-result__title">' + p.title + '</div>' +
-                    (sku ? '<div class="predictive-result__sku">' + sku + '</div>' : '') +
-                  '</div></a>';
-              }).join('');
-              document.getElementById('SearchAprox').hidden = false;
-            }).catch(function() {});
-          });
-        </script>
         <div class="search-empty">
           <div class="search-empty__icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">

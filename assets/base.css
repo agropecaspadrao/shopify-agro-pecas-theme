@@ -80,3 +80,12 @@
   border-radius: 10px;
   overflow: hidden;
 }
+.search-aprox__cta {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #78716c;
+}
+.search-aprox__cta a {
+  color: #1B4332;
+  font-weight: 600;
+}

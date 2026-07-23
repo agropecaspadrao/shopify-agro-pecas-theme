@@ -57,6 +57,33 @@
           {%- endpaginate -%}
         {%- endif -%}
       {%- else -%}
+        {%- comment -%} Busca por aproximação de SKU: preenchida via JS
+        (window.appSuggestAprox em whatsapp.js) quando a busca exata falha {%- endcomment -%}
+        <div id="SearchAprox" class="search-aprox" hidden>
+          <h2 class="search-aprox__title">Resultados aproximados</h2>
+          <p class="search-aprox__hint">Não achamos "{{ search.terms }}" exatamente, mas encontramos peças com código parecido:</p>
+          <div id="SearchAproxList" class="search-aprox__list"></div>
+        </div>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var termo = {{ search.terms | json }};
+            if (!window.appSuggestAprox || !termo) return;
+            window.appSuggestAprox(termo, 8).then(function(res) {
+              if (!res.products || !res.products.length) return;
+              var list = document.getElementById('SearchAproxList');
+              list.innerHTML = res.products.map(function(p) {
+                var img = p.image ? '<img src="' + p.image + '" class="predictive-result__img" alt="" width="48" height="48">' : '';
+                var sku = (p.variants && p.variants[0] && p.variants[0].sku) ? p.variants[0].sku : '';
+                return '<a href="' + p.url + '" class="predictive-result">' + img +
+                  '<div class="predictive-result__info">' +
+                    '<div class="predictive-result__title">' + p.title + '</div>' +
+                    (sku ? '<div class="predictive-result__sku">' + sku + '</div>' : '') +
+                  '</div></a>';
+              }).join('');
+              document.getElementById('SearchAprox').hidden = false;
+            }).catch(function() {});
+          });
+        </script>
         <div class="search-empty">
           <div class="search-empty__icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">

@@ -53,3 +53,30 @@
   color: #78716c;
   text-align: center;
 }
+.predictive-aprox {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #78716c;
+  background: #fafaf9;
+  border-bottom: 1px solid #f0efee;
+}
+
+/* Resultados aproximados na página de busca (0 resultados exatos) */
+.search-aprox { margin: 24px 0 32px; }
+.search-aprox__title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.search-aprox__hint {
+  font-size: 14px;
+  color: #78716c;
+  margin-bottom: 16px;
+}
+.search-aprox__list {
+  max-width: 620px;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  overflow: hidden;
+}

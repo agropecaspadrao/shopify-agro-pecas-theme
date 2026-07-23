@@ -16,7 +16,56 @@
     return 'https://wa.me/' + number + '?text=' + encodeURIComponent(msg);
   }
 
-  function renderResults(products) {
+  /* Campos pesquisados no predictive search — inclui SKU, código de barras
+     e corpo da descrição (onde ficam part numbers e códigos cruzados). */
+  var SUGGEST_FIELDS = 'title,product_type,variants.sku,variants.barcode,vendor,tag,body';
+
+  function suggestFetch(q, limit) {
+    var url = '/search/suggest.json?q=' + encodeURIComponent(q) +
+      '&resources[type]=product&resources[limit]=' + (limit || 5) +
+      '&resources[options][fields]=' + SUGGEST_FIELDS;
+    return fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        return (data.resources && data.resources.results && data.resources.results.products) || [];
+      });
+  }
+
+  /* Busca por aproximação de SKU: se o termo parece um código e não retornou
+     nada, tenta versões progressivamente mais curtas (o predictive search da
+     Shopify casa por prefixo). Ex.: "5.0220.0548836.0" -> "5.0220.0548836". */
+  function skuCandidates(q) {
+    var cands = [];
+    if (!/\d/.test(q) || q.length < 5) return cands;
+    var t = q;
+    for (var i = 0; i < 3; i++) {
+      var curto = t.replace(/[\s.\-\/_]+[^\s.\-\/_]*$/, '');
+      if (curto.length >= 5 && curto !== t) { cands.push(curto); t = curto; }
+      else break;
+    }
+    var pref = q.replace(/[^A-Za-z0-9.\-]/g, '');
+    pref = pref.slice(0, Math.max(5, Math.ceil(pref.length * 0.6)));
+    if (pref.length >= 5 && pref !== q && cands.indexOf(pref) === -1) cands.push(pref);
+    return cands;
+  }
+
+  function suggestAprox(q, limit) {
+    var fila = [q].concat(skuCandidates(q));
+    var i = 0;
+    function tenta() {
+      if (i >= fila.length) return Promise.resolve({ products: [], termo: q });
+      var termo = fila[i++];
+      return suggestFetch(termo, limit).then(function(products) {
+        if (products.length > 0) return { products: products, termo: termo };
+        return tenta();
+      });
+    }
+    return tenta();
+  }
+  /* Exposto p/ a página de busca (fallback de 0 resultados) */
+  window.appSuggestAprox = suggestAprox;
+
+  function renderResults(products, termoAprox) {
     if (!searchResults) return;
     if (!products || products.length === 0) {
       searchResults.innerHTML = '<p class="predictive-no-results">Nenhum resultado encontrado.</p>';
@@ -34,10 +83,14 @@
         '</div>' +
         '</a>';
     }).join('');
+    if (termoAprox) {
+      html = '<p class="predictive-aprox">Resultados aproximados para "' + termoAprox + '"</p>' + html;
+    }
     searchResults.innerHTML = html;
     searchResults.hidden = false;
   }
 
+  var searchSeq = 0;
   if (searchInput) {
     searchInput.addEventListener('input', function() {
       var q = this.value.trim();
@@ -47,11 +100,11 @@
         return;
       }
       searchTimeout = setTimeout(function() {
-        fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product&resources[limit]=5')
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            var products = (data.resources && data.resources.results && data.resources.results.products) || [];
-            renderResults(products);
+        var seq = ++searchSeq;
+        suggestAprox(q, 5)
+          .then(function(res) {
+            if (seq !== searchSeq) return; // resposta velha: ignora
+            renderResults(res.products, res.termo !== q ? res.termo : null);
           })
           .catch(function() {
             if (searchResults) searchResults.hidden = true;

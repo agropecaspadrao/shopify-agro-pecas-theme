@@ -2,7 +2,7 @@ import express from 'express';
 import { config, validarConfig } from './config.js';
 import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
-import { responder } from './claude.js';
+import { responder, resumirConversa } from './claude.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida } from './whatsapp.js';
 
 const NUMERO_LOJA = process.env.WA_BUSINESS_NUMBER || '5541984151085';
@@ -120,6 +120,21 @@ app.post('/api/chat', async (req, res) => {
       reply:
         'Tivemos uma instabilidade agora. Tente novamente em instantes ou chame no WhatsApp (41) 98415-1085.',
     });
+  }
+});
+
+// Resumo da conversa do widget para levar de contexto ao WhatsApp
+app.post('/api/resumo', async (req, res) => {
+  try {
+    const { sessionId } = req.body || {};
+    if (typeof sessionId !== 'string' || sessionId.length > 64) {
+      return res.status(400).json({ error: 'sessionId inválido' });
+    }
+    const resumo = await resumirConversa(`site:${sessionId}`);
+    res.json({ resumo });
+  } catch (e) {
+    console.error('[api/resumo] erro:', e);
+    res.json({ resumo: null });
   }
 });
 

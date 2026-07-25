@@ -28,6 +28,7 @@
   var lista = root.querySelector('.carol-messages');
   var form = root.querySelector('.carol-form');
   var campo = root.querySelector('.carol-input');
+  var btnWhats = root.querySelector('.carol-whats');
   var enviando = false;
 
   function addMsg(texto, quem) {
@@ -57,6 +58,30 @@
   fechar.addEventListener('click', function () {
     root.classList.remove('is-open');
   });
+
+  // Continuar no WhatsApp: pede um resumo da conversa ao backend e abre o
+  // wa.me da loja com o contexto pré-preenchido na mensagem do cliente.
+  if (btnWhats) {
+    btnWhats.addEventListener('click', function () {
+      var numero = (window.carolWhatsNumber || '5541984151085').replace(/\D/g, '');
+      btnWhats.disabled = true;
+      var abrir = function (resumo) {
+        var texto = resumo
+          ? 'Ola! Estava conversando com a Carol no site. Contexto: ' + resumo
+          : 'Ola! Estava conversando com a Carol no site da Agro Pecas Padrao e quero continuar por aqui.';
+        window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto), '_blank', 'noopener');
+        btnWhats.disabled = false;
+      };
+      fetch(backend + '/api/resumo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: sessionId }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) { abrir(data && data.resumo); })
+        .catch(function () { abrir(null); });
+    });
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();

@@ -56,6 +56,33 @@ function sanitizar(texto) {
 }
 
 /**
+ * Gera um resumo de uma linha da conversa, para levar de contexto ao WhatsApp.
+ * Retorna null quando não há histórico.
+ */
+export async function resumirConversa(sessaoId) {
+  const historico = obterHistorico(sessaoId);
+  if (!historico.length) return null;
+
+  const transcricao = historico
+    .map((m) => `${m.role === 'user' ? 'Cliente' : 'Carol'}: ${typeof m.content === 'string' ? m.content : ''}`)
+    .join('\n')
+    .slice(-6000);
+
+  const resposta = await client.messages.create({
+    model: config.claudeModel,
+    max_tokens: 150,
+    system:
+      'Resuma a conversa de atendimento abaixo em UMA linha curta em português, para a equipe entender o contexto. Inclua peça/código, máquina e dados do cliente se houver. Sem travessão, sem emoji, sem aspas. Exemplo: Conversa sobre bomba hidraulica MF-AX, cliente quer 2 unidades para trator Massey 275, aguardando orcamento.',
+    messages: [{ role: 'user', content: transcricao }],
+  });
+
+  const texto = sanitizar(
+    resposta.content.filter((b) => b.type === 'text').map((b) => b.text).join(' ')
+  );
+  return texto ? texto.split('\n')[0].slice(0, 300) : null;
+}
+
+/**
  * Processa uma mensagem do cliente e devolve a resposta da Carol.
  * @param {string} sessaoId identificador da conversa (telefone do WhatsApp ou id do widget)
  * @param {string} mensagem texto enviado pelo cliente

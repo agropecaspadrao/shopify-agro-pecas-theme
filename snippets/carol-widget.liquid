@@ -1,13 +1,17 @@
 {% comment %}
   Widget de chat da Carol (atendente virtual com IA).
   Renderizado em theme.liquid apenas quando settings.carol_enabled está ativo
-  e settings.carol_backend_url está preenchido (URL do serviço no Railway/Render).
+  e settings.carol_backend_url está preenchido (URL do serviço no Railway).
+  Quando ativo, substitui o botão flutuante antigo de link direto do WhatsApp:
+  o botão verde abre o chat da Carol, e dentro do chat existe o botão
+  "Continuar no WhatsApp", que leva a conversa (com resumo de contexto) para
+  o número da loja.
 {% endcomment %}
 
 <div id="carol-widget" class="carol-widget">
-  <button type="button" class="carol-toggle" aria-label="Conversar com a Carol, atendente virtual">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  <button type="button" class="carol-toggle" aria-label="Conversar com a Carol pelo chat ou WhatsApp">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
     <span class="carol-toggle__label">Fale com a Carol</span>
   </button>
@@ -21,6 +25,12 @@
       <button type="button" class="carol-close" aria-label="Fechar chat">&times;</button>
     </div>
     <div class="carol-messages" aria-live="polite"></div>
+    <button type="button" class="carol-whats" aria-label="Continuar a conversa no WhatsApp">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Continuar no WhatsApp
+    </button>
     <form class="carol-form" autocomplete="off">
       <input class="carol-input" type="text" maxlength="2000" placeholder="Digite sua mensagem..." aria-label="Sua mensagem">
       <button type="submit" class="carol-send" aria-label="Enviar">
@@ -31,19 +41,19 @@
 </div>
 
 <style>
-  .carol-widget { position: fixed; right: 20px; bottom: 92px; z-index: 60; font-family: var(--font-body, 'Barlow', sans-serif); }
+  .carol-widget { position: fixed; right: 20px; bottom: 20px; z-index: 60; font-family: var(--font-body, 'Barlow', sans-serif); }
   .carol-toggle {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--color-primary, #1B4332); color: #fff;
-    border: none; border-radius: 999px; padding: 12px 18px;
+    display: flex; align-items: center; gap: 9px;
+    background: var(--color-whatsapp, #25D366); color: #fff;
+    border: none; border-radius: 999px; padding: 13px 20px 13px 15px;
     font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
     box-shadow: 0 4px 14px rgba(0,0,0,.25);
-    transition: background .2s ease, transform .2s ease;
+    transition: filter .2s ease, transform .2s ease;
   }
-  .carol-toggle:hover { background: var(--color-primary-dark, #153628); transform: translateY(-1px); }
+  .carol-toggle:hover { filter: brightness(.93); transform: translateY(-1px); }
   .carol-panel {
-    display: none; position: absolute; right: 0; bottom: 58px;
-    width: min(360px, calc(100vw - 32px)); height: min(480px, 70vh);
+    display: none; position: absolute; right: 0; bottom: 64px;
+    width: min(360px, calc(100vw - 32px)); height: min(520px, 72vh);
     background: #fff; border-radius: 14px; overflow: hidden;
     box-shadow: 0 12px 40px rgba(0,0,0,.28);
     flex-direction: column;
@@ -61,17 +71,26 @@
   .carol-msg--carol, .carol-msg--typing { background: #fff; color: #1c1917; border: 1px solid #e5e2dc; border-bottom-left-radius: 4px; align-self: flex-start; }
   .carol-msg--typing { color: #78716c; font-style: italic; }
   .carol-msg--user { background: var(--color-primary, #1B4332); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .carol-whats {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    background: var(--color-whatsapp, #25D366); color: #fff;
+    border: none; margin: 0 14px 10px; padding: 10px; border-radius: 9px;
+    font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  }
+  .carol-whats:hover { filter: brightness(.93); }
+  .carol-whats[disabled] { opacity: .6; cursor: wait; }
   .carol-form { display: flex; border-top: 1px solid #e5e2dc; background: #fff; }
   .carol-input { flex: 1; border: none; padding: 13px 14px; font-family: inherit; font-size: 14px; outline: none; }
   .carol-send { background: none; border: none; color: var(--color-primary, #1B4332); padding: 0 16px; cursor: pointer; }
   @media (max-width: 640px) {
-    .carol-widget { bottom: 84px; right: 14px; }
+    .carol-widget { bottom: 16px; right: 14px; }
     .carol-toggle__label { display: none; }
-    .carol-toggle { padding: 13px; }
+    .carol-toggle { padding: 14px; }
   }
 </style>
 
 <script>
   window.carolBackendUrl = {{ settings.carol_backend_url | json }};
+  window.carolWhatsNumber = {{ settings.whatsapp_number | json }};
 </script>
 <script src="{{ 'carol-chat.js' | asset_url }}" defer></script>

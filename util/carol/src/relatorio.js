@@ -1,6 +1,7 @@
 // Relatório diário da Carol: resume os atendimentos das últimas 24h e envia
 // por e-mail para a equipe (Dai) todo dia às 8h de Brasília.
 
+import dns from 'node:dns/promises';
 import nodemailer from 'nodemailer';
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from './config.js';
@@ -106,13 +107,19 @@ export async function enviarRelatorio() {
     return { enviado: false, motivo: 'SMTP não configurado' };
   }
   const { assunto, corpo } = await montarRelatorio();
+  // O ambiente do Railway não tem rota IPv6 de saída e o nodemailer resolve
+  // AAAA primeiro; conectamos pelo IPv4 explicitamente, validando o TLS pelo
+  // hostname via servername.
+  let hostConexao = SMTP_HOST;
+  try {
+    [hostConexao] = await dns.resolve4(SMTP_HOST);
+  } catch {}
   const transporte = nodemailer.createTransport({
-    host: SMTP_HOST,
+    host: hostConexao,
     port: SMTP_PORT,
     secure: SMTP_PORT === 465,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
-    // Sem timeout, um bloqueio de porta SMTP (ex.: plano Trial do Railway)
-    // deixaria a requisição pendurada para sempre.
+    tls: { servername: SMTP_HOST },
     connectionTimeout: 20000,
     greetingTimeout: 20000,
     socketTimeout: 30000,

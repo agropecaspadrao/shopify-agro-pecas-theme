@@ -3,6 +3,7 @@ import { config, validarConfig } from './config.js';
 import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
+import { agendarRelatorioDiario, enviarRelatorio, montarRelatorio } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida } from './whatsapp.js';
 
 const NUMERO_LOJA = process.env.WA_BUSINESS_NUMBER || '5541984151085';
@@ -138,6 +139,31 @@ app.post('/api/resumo', async (req, res) => {
   }
 });
 
+// Disparo manual do relatório diário (protegido por chave):
+//   GET  /admin/relatorio?key=X            → mostra o relatório sem enviar
+//   POST /admin/relatorio?key=X            → envia o e-mail agora
+const ADMIN_KEY = process.env.CAROL_ADMIN_KEY || '';
+function autorizado(req) {
+  return ADMIN_KEY && req.query.key === ADMIN_KEY;
+}
+app.get('/admin/relatorio', async (req, res) => {
+  if (!autorizado(req)) return res.sendStatus(403);
+  try {
+    const { assunto, corpo } = await montarRelatorio();
+    res.type('text/plain').send(`ASSUNTO: ${assunto}\n\n${corpo}`);
+  } catch (e) {
+    res.status(500).type('text/plain').send('Erro: ' + e.message);
+  }
+});
+app.post('/admin/relatorio', async (req, res) => {
+  if (!autorizado(req)) return res.sendStatus(403);
+  try {
+    res.json(await enviarRelatorio());
+  } catch (e) {
+    res.status(500).json({ enviado: false, erro: e.message });
+  }
+});
+
 // ── Boot ──────────────────────────────────────────────────────────────────
 const faltando = validarConfig({ exigirWhatsApp: false });
 if (faltando.length) {
@@ -150,6 +176,7 @@ if (!config.waPhoneNumberId || !config.waVerifyToken) {
 carregarCatalogo()
   .catch((e) => console.error('[catalogo] falha na carga inicial:', e.message))
   .finally(() => {
+    agendarRelatorioDiario();
     app.listen(config.port, () => {
       console.log(`Carol no ar na porta ${config.port} (horário comercial agora: ${horarioComercial()})`);
     });

@@ -5,6 +5,7 @@ import { montarSystem } from './persona.js';
 import { catalogoResumo, carregarCatalogo, buscarProdutosTexto, detalharProduto } from './catalogo.js';
 import { contextoHorario } from './horario.js';
 import { obterHistorico, salvarHistorico } from './sessions.js';
+import { registrarAtendimento } from './registro.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -140,5 +141,6 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
   }
 
   salvarHistorico(sessaoId, [...mensagens, { role: 'assistant', content: resposta }]);
+  registrarAtendimento({ canal, sessao: sessaoId, mensagem, resposta });
   return resposta;
 }

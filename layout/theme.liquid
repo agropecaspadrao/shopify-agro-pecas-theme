@@ -97,6 +97,10 @@
     </svg>
   </a>
 
+  {%- if settings.carol_enabled and settings.carol_backend_url != blank -%}
+    {%- render 'carol-widget' -%}
+  {%- endif -%}
+
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
   <script src="{{ 'whatsapp.js' | asset_url }}" defer></script>
 

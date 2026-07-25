@@ -212,6 +212,24 @@
     ]
   },
   {
+    "name": "Carol (Atendente Virtual)",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "carol_enabled",
+        "label": "Ativar chat da Carol no site",
+        "info": "Exibe o widget de chat com a atendente virtual (IA) em todas as páginas.",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "carol_backend_url",
+        "label": "URL do servidor da Carol",
+        "info": "Endereço do serviço no Railway/Render, sem barra no final. Ex: https://carol-agropecas.up.railway.app"
+      }
+    ]
+  },
+  {
     "name": "Informações da Loja",
     "settings": [
       {

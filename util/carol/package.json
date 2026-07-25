@@ -1,0 +1,20 @@
+{
+  "name": "carol-atendente",
+  "version": "1.0.0",
+  "description": "Carol — atendente virtual da APP Agro Peças Padrão (Claude API + WhatsApp Cloud API + widget do site)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "conversar": "node scripts/conversar.js",
+    "conhecimento": "node scripts/gerar_conhecimento.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2"
+  }
+}

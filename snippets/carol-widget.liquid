@@ -1,0 +1,77 @@
+{% comment %}
+  Widget de chat da Carol (atendente virtual com IA).
+  Renderizado em theme.liquid apenas quando settings.carol_enabled está ativo
+  e settings.carol_backend_url está preenchido (URL do serviço no Railway/Render).
+{% endcomment %}
+
+<div id="carol-widget" class="carol-widget">
+  <button type="button" class="carol-toggle" aria-label="Conversar com a Carol, atendente virtual">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+    <span class="carol-toggle__label">Fale com a Carol</span>
+  </button>
+
+  <div class="carol-panel" role="dialog" aria-label="Chat com a Carol">
+    <div class="carol-header">
+      <div>
+        <strong>Carol</strong>
+        <span class="carol-header__sub">Atendente virtual · Agro Peças Padrão</span>
+      </div>
+      <button type="button" class="carol-close" aria-label="Fechar chat">&times;</button>
+    </div>
+    <div class="carol-messages" aria-live="polite"></div>
+    <form class="carol-form" autocomplete="off">
+      <input class="carol-input" type="text" maxlength="2000" placeholder="Digite sua mensagem..." aria-label="Sua mensagem">
+      <button type="submit" class="carol-send" aria-label="Enviar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .carol-widget { position: fixed; right: 20px; bottom: 92px; z-index: 60; font-family: var(--font-body, 'Barlow', sans-serif); }
+  .carol-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--color-primary, #1B4332); color: #fff;
+    border: none; border-radius: 999px; padding: 12px 18px;
+    font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    transition: background .2s ease, transform .2s ease;
+  }
+  .carol-toggle:hover { background: var(--color-primary-dark, #153628); transform: translateY(-1px); }
+  .carol-panel {
+    display: none; position: absolute; right: 0; bottom: 58px;
+    width: min(360px, calc(100vw - 32px)); height: min(480px, 70vh);
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.28);
+    flex-direction: column;
+  }
+  .carol-widget.is-open .carol-panel { display: flex; }
+  .carol-header {
+    background: var(--color-primary, #1B4332); color: #fff;
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .carol-header strong { display: block; font-family: var(--font-heading, 'Barlow Condensed', sans-serif); font-size: 18px; letter-spacing: .02em; }
+  .carol-header__sub { font-size: 12px; opacity: .85; }
+  .carol-close { background: none; border: none; color: #fff; font-size: 24px; line-height: 1; cursor: pointer; padding: 0 4px; }
+  .carol-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #f6f5f2; }
+  .carol-msg { max-width: 85%; padding: 10px 12px; border-radius: 12px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .carol-msg--carol, .carol-msg--typing { background: #fff; color: #1c1917; border: 1px solid #e5e2dc; border-bottom-left-radius: 4px; align-self: flex-start; }
+  .carol-msg--typing { color: #78716c; font-style: italic; }
+  .carol-msg--user { background: var(--color-primary, #1B4332); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .carol-form { display: flex; border-top: 1px solid #e5e2dc; background: #fff; }
+  .carol-input { flex: 1; border: none; padding: 13px 14px; font-family: inherit; font-size: 14px; outline: none; }
+  .carol-send { background: none; border: none; color: var(--color-primary, #1B4332); padding: 0 16px; cursor: pointer; }
+  @media (max-width: 640px) {
+    .carol-widget { bottom: 84px; right: 14px; }
+    .carol-toggle__label { display: none; }
+    .carol-toggle { padding: 13px; }
+  }
+</style>
+
+<script>
+  window.carolBackendUrl = {{ settings.carol_backend_url | json }};
+</script>
+<script src="{{ 'carol-chat.js' | asset_url }}" defer></script>

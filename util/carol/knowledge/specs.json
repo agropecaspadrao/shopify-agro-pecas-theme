@@ -1,0 +1,528 @@
+{
+ "61174142": {
+  "sku": "6117-4142",
+  "funcao": "Bucha que trabalha como mancal deslizante nas articulações do sistema pantográfico da linha de plantio, absorvendo o desgaste da oscilação vertical da linha ao copiar o terreno.",
+  "descricao_tecnica": "Bucha cilíndrica de poliamida com furo de 25 mm, diâmetro externo de 32 mm e 25 mm de comprimento, aplicada no mancal do sistema pantográfico de linhas de plantio compatíveis com plantadeiras Stara (série de catálogo 6117, presente nos catálogos de modelos como Princesa e Victória). Em listas de reposição aparece como \"bucha cilíndrica poliamida 25x32x25\". A poliamida oferece baixo atrito e alta resistência ao desgaste, dispensando lubrificação constante nas articulações do pantógrafo. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "material": "poliamida (nylon)",
+   "diametro_interno_mm": 25,
+   "diametro_externo_mm": 32,
+   "comprimento_mm": 25,
+   "peso_kg": 0.02,
+   "denominacao_catalogo": "Bucha cilíndrica poliamida 25x32x25"
+  },
+  "compatibilidade": [
+   "Linhas de plantio pantográficas de plantadeiras Stara (série de catálogo 6117 — ex.: Princesa e Victória)"
+  ],
+  "confianca": "media"
+ },
+ "64244005": {
+  "sku": "6424-4005",
+  "funcao": "Peça plástica de acabamento da lateral do reservatório de sementes da plantadeira, protegendo bordas e encaixes do conjunto do reservatório.",
+  "descricao_tecnica": "Acabamento lateral para o reservatório de sementes, aplicável em plantadeiras compatíveis com a linha Stara Estrela (série de catálogo 6424). Peça plástica leve (8 g) com 25 cm de comprimento, no padrão original (OEM), destinada à reposição direta do item de fábrica. Na Estrela, o reservatório central de sementes é pressurizado e produzido em polietileno, e os acabamentos laterais completam a vedação e o aspecto visual do conjunto.",
+  "especificacoes": {
+   "dimensoes_cm": "9.0 x 4.5 x 25.0",
+   "peso_kg": 0.008,
+   "serie_catalogo": "6424 (catálogo da plantadeira Stara Estrela)"
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela (série de catálogo 6424)"
+  ],
+  "confianca": "baixa"
+ },
+ "64244013": {
+  "sku": "6424-4013",
+  "funcao": "Condutor plástico que leva o fertilizante dosado até o fundo do sulco aberto pelo disco duplo de adubo, garantindo deposição uniforme e sem obstrução.",
+  "descricao_tecnica": "Condutor de adubo para linhas com disco duplo, aplicável em plantadeiras compatíveis com a linha Stara Estrela (referência 6424-4013, listada em catálogos do mercado de reposição). Peça plástica alongada (54 cm, 200 g) instalada entre o dosador e o disco duplo, conduzindo o fertilizante de forma protegida até o sulco. Peça no padrão original (OEM), item de reposição frequente por trabalhar em contato direto com fertilizantes corrosivos e abrasivos.",
+  "especificacoes": {
+   "dimensoes_cm": "10.0 x 54.0 x 7.0",
+   "comprimento_cm": 54,
+   "peso_kg": 0.2
+  },
+  "compatibilidade": [
+   "Plantadeiras Stara Estrela (série de catálogo 6424) equipadas com disco duplo de adubo"
+  ],
+  "confianca": "media"
+ },
+ "64244026": {
+  "sku": "6424-4026",
+  "funcao": "Conexão plástica que une as mangueiras de condução pneumática de sementes entre o reservatório central pressurizado e as linhas de plantio.",
+  "descricao_tecnica": "Conexão para mangueira de sementes aplicável em plantadeiras compatíveis com a linha Stara Estrela, listada em catálogo de reposição sob o código 6424-4026. Peça plástica compacta (6,2 x 6,2 x 6,6 cm, 31 g) no padrão original (OEM), que garante a emenda estanque das mangueiras do sistema pneumático — requisito para manter a pressurização e a uniformidade na alimentação das pipoqueiras de sementes.",
+  "especificacoes": {
+   "dimensoes_cm": "6.2 x 6.2 x 6.6",
+   "peso_kg": 0.031
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela (sistema de condução pneumática de sementes do reservatório central às linhas)"
+  ],
+  "confianca": "media"
+ },
+ "64244028": {
+  "sku": "6424-4028",
+  "funcao": "Bocal plástico da pipoqueira — o mini-reservatório de sementes de cada linha de plantio — onde acopla a mangueira que traz as sementes do reservatório central pressurizado.",
+  "descricao_tecnica": "Bocal para pipoqueira compatível com plantadeiras pneumáticas da linha Stara Estrela, cujo reservatório central pressurizado alimenta as pipoqueiras de sementes de cada linha por meio de mangueiras. Em catálogo de reposição, o código 6424-4028 aparece com a denominação \"Bocal 2\". Peça plástica compacta (8,5 x 9,5 x 8,2 cm, 61 g) no padrão original (OEM), que serve de ponto de acoplamento do fluxo pneumático de sementes na linha.",
+  "especificacoes": {
+   "dimensoes_cm": "8.5 x 9.5 x 8.2",
+   "peso_kg": 0.061,
+   "denominacao_catalogo": "Bocal 2 (6424-4028)"
+  },
+  "compatibilidade": [
+   "Plantadeiras pneumáticas Stara Estrela com reservatório central pressurizado e pipoqueiras por linha (ex.: Estrela Top 18/20 e Estrela 22 a 32 linhas)"
+  ],
+  "confianca": "media"
+ },
+ "80314008": {
+  "sku": "8031-4008",
+  "funcao": "Ponteira do bico da plataforma de milho: é a extremidade que desliza rente ao solo entre as fileiras, erguendo plantas e guiando os colmos para dentro da linha de colheita.",
+  "descricao_tecnica": "Ponteira de bico em plástico injetado, aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (referência 8031-4008). Com 23,4 cm e 250 g, é a ponta de sacrifício do bico central — item de desgaste por atrito com solo e palhada, comercializado no mercado de reposição também em kits com várias unidades. No mercado aparece descrita como \"ponteira central injetada\". Peça no padrão original (OEM), de troca rápida para manter o direcionamento correto das plantas na colheita.",
+  "especificacoes": {
+   "dimensoes_cm": "11.5 x 23.4 x 10.0",
+   "peso_kg": 0.25,
+   "material": "plástico injetado",
+   "formato_venda_mercado": "também comercializada em kits (ex.: 5 unidades)"
+  },
+  "compatibilidade": [
+   "Bicos de plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "confianca": "media"
+ },
+ "80314009": {
+  "sku": "8031-4009",
+  "funcao": "Bico/carenagem central da plataforma de milho: cobre o conjunto entre as linhas e direciona as plantas para as correntes recolhedoras durante a colheita.",
+  "descricao_tecnica": "Bico central 45/50 aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (referência 8031-4009, com correspondente 8036-4173 nas versões mais recentes). Peça plástica de grande porte (89,4 cm de comprimento, 4,1 kg) que faz a cobertura central entre linhas com espaçamento de 45/50 cm — nessa linha de plataformas, o ajuste de 45 para 50 cm é feito pela troca das chapas laterais das carenagens centrais. No mercado de reposição o mesmo código também aparece descrito como \"carenagem central 45/50\". Peça no padrão original (OEM).",
+  "especificacoes": {
+   "dimensoes_cm": "39.5 x 89.4 x 25.6",
+   "peso_kg": 4.1,
+   "espacamento_linhas_cm": "45/50",
+   "referencia_cruzada": "8036-4173 (código correspondente nas versões mais recentes da linha)"
+  },
+  "compatibilidade": [
+   "Plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras de grãos de diversas marcas equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "confianca": "media"
+ },
+ "80314010": {
+  "sku": "8031-4010",
+  "funcao": "Carenagem central da plataforma de milho: cobre a estrutura entre os bicos, direcionando plantas e palhada e protegendo os mecanismos recolhedores.",
+  "descricao_tecnica": "Carenagem central aplicável em plataformas de milho compatíveis com a linha Stara Brava/Brava+ (série de catálogo 8031; nas versões mais recentes a peça correspondente é a 8036-4133). Peça plástica de grande porte (84 cm de comprimento, 4,1 kg) que faz a cobertura e o direcionamento do fluxo de plantas entre as linhas de colheita com espaçamento 45/50 cm. Equivalentes de mercado desta carenagem são produzidos em polietileno linear de média densidade com proteção UV, material leve, atóxico e resistente a agentes químicos. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "dimensoes_cm": "24.0 x 84.0 x 35.8",
+   "peso_kg": 4.1,
+   "material": "polietileno (equivalentes de mercado em PE linear de média densidade com proteção UV)",
+   "espacamento_linhas_cm": "45/50",
+   "referencia_relacionada": "8036-4133 (carenagem central 45 das versões mais recentes da linha)"
+  },
+  "compatibilidade": [
+   "Plataformas de milho Stara Brava e Brava+ (espaçamento 45/50 cm)",
+   "Colheitadeiras de grãos de diversas marcas equipadas com plataforma de milho da linha Stara Brava"
+  ],
+  "confianca": "media"
+ },
+ "h102724": {
+  "sku": "H-102724",
+  "funcao": "Dedo retrátil do sem-fim (caracol) da plataforma de corte: avança e recolhe ciclicamente para puxar a massa colhida em direção ao canal alimentador da colheitadeira, evitando embuchamento.",
+  "descricao_tecnica": "Dedo retrátil em nylon com perfil quadrado (aprox. 20 x 20 mm e 265 mm de comprimento), no padrão original (OEM), compatível com o código de referência H102724 e equivalentes CQ70754 / H150050 / H162662. Aplicável no sem-fim das plataformas de corte Séries 200/300 de colheitadeiras compatíveis com John Deere 1165, 1175, 1185, 1450, 1550, 6200, 6300, 7200, 7300, 7500 e 7700, em plataformas de 14 a 25 pés. Item de desgaste de reposição periódica, essencial para alimentação uniforme da colheitadeira.",
+  "especificacoes": {
+   "material": "nylon (poliamida)",
+   "comprimento_mm": 265,
+   "secao_mm": "20 x 20 (perfil quadrado)",
+   "peso_g": 74,
+   "codigos_equivalentes": [
+    "CQ70754",
+    "H150050",
+    "H162662"
+   ],
+   "aplicacao_plataformas_pes": "14, 16, 19, 23 e 25 pés (Séries 200/300)"
+  },
+  "compatibilidade": [
+   "Colheitadeiras John Deere 1165 / 1175 / 1185",
+   "Colheitadeiras John Deere 1450 / 1550",
+   "Colheitadeiras John Deere 6200 / 6300 / 7200 / 7300 / 7500 / 7700",
+   "Plataformas de corte John Deere Séries 200 e 300 (14 a 25 pés)"
+  ],
+  "confianca": "alta"
+ },
+ "h169914": {
+  "sku": "H-169914",
+  "funcao": "Dedo retrátil do sem-fim da plataforma de corte: conduz a cultura cortada até o centro da plataforma e a empurra para o canal alimentador, mantendo o fluxo contínuo e reduzindo embuchamentos.",
+  "descricao_tecnica": "Dedo retrátil no padrão original (OEM) com 280 mm de comprimento e 16 mm de diâmetro, compatível com o código de referência H169914. Aplicável no sem-fim das plataformas de corte Série 600 e modelos correlatos usados em colheitadeiras compatíveis com John Deere 1450/1550 CWS-WTS e nas plataformas 614R a 640X. Projetado para fluxo suave da cultura e menor risco de embuchamento, é item de desgaste com troca recorrente em manutenção de plataforma.",
+  "especificacoes": {
+   "comprimento_mm": 280,
+   "diametro_mm": 16,
+   "peso_g": 84,
+   "encaixe": "sem-fim de plataformas John Deere Série 600"
+  },
+  "compatibilidade": [
+   "Plataformas de corte John Deere Série 600 (614R, 615P/615R, 616R, 618R, 620R/620F, 622R/622X, 625R/625X, 630R/630X, 635R/635X, 640X)",
+   "Plataformas John Deere Série 700 (até 740X, conforme catálogo)",
+   "Colheitadeiras John Deere 1450 CWS/WTS e 1550 CWS/WTS"
+  ],
+  "confianca": "alta"
+ },
+ "h175727": {
+  "sku": "H-175727",
+  "funcao": "Suporte plástico do molinete coletor: apoia e fixa o tubo/cano dos dedos do molinete, mantendo o alinhamento dos dedos recolhedores durante o giro do molinete na plataforma de corte.",
+  "descricao_tecnica": "Suporte do molinete coletor em PEAD, no padrão original (OEM), compatível com o código de referência H175727 e correlatos de mercado (87041572 / 1347084). Aplicável em plataformas de corte compatíveis com John Deere Séries 600 e 900 e em colheitadeiras 1450/1550. Peça leve (aprox. 30 g) que sustenta o cano do molinete e preserva o posicionamento correto dos dedos recolhedores, reduzindo desgaste dos componentes metálicos.",
+  "especificacoes": {
+   "material": "PEAD (polietileno de alta densidade)",
+   "dimensoes_cm": "9,0 x 3,5 x 2,5 (aprox.)",
+   "peso_g": 30,
+   "codigos_relacionados": [
+    "87041572",
+    "1347084",
+    "84469382",
+    "6210519",
+    "9842300"
+   ]
+  },
+  "compatibilidade": [
+   "Plataformas de corte John Deere Série 600 (molinete coletor)",
+   "Plataformas John Deere Série 900",
+   "Colheitadeiras John Deere 1450 / 1550 (suporte do tubo do molinete)"
+  ],
+  "confianca": "alta"
+ },
+ "kk31823": {
+  "sku": "KK31823",
+  "funcao": "Guia plástica de amarração (wrap guide) do módulo enfardador: direciona o filme de envolvimento durante a formação e amarração do fardo redondo de algodão. São usadas 3 unidades do tamanho grande por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho grande em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31823 e com o código anterior N383019. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, sendo utilizadas 3 unidades por máquina. Componente conhecido no campo como dedo/guia do enfardador, essencial para o envolvimento correto do fardo redondo.",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "grande (large)",
+   "dimensoes_embalagem_cm": "33,6 x 38,0 x 4,0",
+   "peso_kg": 4.375,
+   "quantidade_por_maquina": 3,
+   "codigo_substituido": "N383019"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "confianca": "media"
+ },
+ "kk31824": {
+  "sku": "KK31824",
+  "funcao": "Guia plástica de amarração (wrap guide) tamanho médio do módulo enfardador: conduz o filme de envolvimento na formação do fardo redondo de algodão. São usadas 2 unidades do tamanho médio por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho médio em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31824 e com o código anterior N400244. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, com 2 unidades utilizadas por máquina. Trabalha em conjunto com as guias grande (KK31823) e pequena (KK31825) no envolvimento do fardo.",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "médio (medium)",
+   "dimensoes_embalagem_cm": "33,4 x 27,0 x 4,0",
+   "quantidade_por_maquina": 2,
+   "codigo_substituido": "N400244"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "confianca": "media"
+ },
+ "kk31825": {
+  "sku": "KK31825",
+  "funcao": "Guia plástica de amarração (wrap guide) tamanho pequeno do módulo enfardador: orienta o filme de envolvimento durante a amarração do fardo redondo de algodão. São usadas 2 unidades do tamanho pequeno por máquina.",
+  "descricao_tecnica": "Guia de amarração tamanho pequeno em plástico (aprox. 2,4 mm de espessura), no padrão original (OEM), compatível com o código de referência KK31825 e com o código anterior N383021. Aplicável no módulo enfardador (round module builder) de colhedoras de algodão compatíveis com John Deere 7760 e CP690, com 2 unidades por máquina. Completa o jogo de guias de amarração junto aos tamanhos grande (KK31823) e médio (KK31824).",
+  "especificacoes": {
+   "material": "plástico",
+   "espessura_mm": 2.4,
+   "tamanho": "pequeno (small)",
+   "dimensoes_embalagem_cm": "33,0 x 16,2 x 4,0",
+   "quantidade_por_maquina": 2,
+   "codigo_substituido": "N383021"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 7760 (módulo enfardador de fardos redondos)",
+   "Colhedoras de algodão John Deere CP690 (round module builder)"
+  ],
+  "confianca": "media"
+ },
+ "n276747": {
+  "sku": "N276747",
+  "funcao": "Tampa (capa) do bico da coluna umectante do sistema de água da colhedora de algodão: protege e direciona o conjunto de umectação que lubrifica os fusos, evitando acúmulo de fiapos e respingos.",
+  "descricao_tecnica": "Tampa plástica transparente da coluna umectante, no padrão original (OEM), compatível com o código de referência N276747 (substituído pelo código KK65432). Aplicável no sistema umectante de colhedoras de algodão compatíveis com John Deere 9935, 9970, 9976, 9986, 9996, 7260, 7660, 7760 e CP690. Componente leve (aprox. 45 g) que mantém a aspersão de água direcionada aos fusos, contribuindo para a limpeza e a eficiência de colheita.",
+  "especificacoes": {
+   "material": "plástico transparente",
+   "comprimento_mm": 76,
+   "altura_mm": 86,
+   "peso_g": 45,
+   "codigo_substituto": "KK65432"
+  },
+  "compatibilidade": [
+   "Colhedoras de algodão John Deere 9935 / 9970 / 9976 / 9986 / 9996",
+   "Colhedoras de algodão John Deere 7260 / 7660 / 7760",
+   "Colhedoras de algodão John Deere CP690 (sistema umectante)"
+  ],
+  "confianca": "alta"
+ },
+ "a56254": {
+  "sku": "A56254",
+  "funcao": "Anel (aro) roscado que fixa e veda a tampa do reservatório de sementes/adubo da unidade de plantio, garantindo fechamento estanque do tanque contra poeira e umidade.",
+  "descricao_tecnica": "Aro da tampa do reservatório de sementes no padrão original (OEM), com aproximadamente 62 cm de diâmetro, compatível com o código de referência A56254. Aplicável em plantadeiras compatíveis com John Deere Série 2100, Série DB (DB37–DB90), modelos 1690 a 1790 e semeadoras DR12–DR24. Garante o travamento correto da tampa do tanque, protegendo sementes e fertilizante da umidade e de contaminação durante o plantio.",
+  "especificacoes": {
+   "tipo": "anel roscado da tampa do tanque",
+   "diametro_cm": 62,
+   "altura_cm": 4.6,
+   "peso_kg": 0.331
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 2100 (2109 a 2134, linha sul-americana)",
+   "Plantadeiras John Deere 1690 / 1720 / 1725 / 1745 / 1760 / 1770 / 1790",
+   "Plantadeiras John Deere Série DB (DB37 a DB90)",
+   "Semeadoras John Deere DR12 a DR24"
+  ],
+  "confianca": "alta"
+ },
+ "cq59313": {
+  "sku": "CQ59313",
+  "funcao": "Caixa de sementes do mini-hopper: pequeno depósito plástico que recebe as sementes do sistema de abastecimento central e mantém volume constante junto ao dosador a vácuo de cada linha de plantio.",
+  "descricao_tecnica": "Caixa de sementes tipo mini-hopper no padrão original (OEM), compatível com o código de referência CQ59313, aplicável no conjunto dosador a vácuo (VacuMeter) de plantadeiras compatíveis com John Deere de linha sul-americana, como as Séries 1100 e 2100 com abastecimento central. Mantém a coluna de sementes estável sobre o dosador, contribuindo para singulação precisa. Identificação de aplicação por dedução de catálogo — confirmar o modelo da plantadeira antes da compra.",
+  "especificacoes": {
+   "tipo": "caixa (depósito alimentador) do mini-hopper",
+   "dimensoes_embalagem_cm": "11,2 x 20,0 x 13,6",
+   "peso_g": 260
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere a vácuo com mini-hopper (linha sul-americana)",
+   "Plantadeiras John Deere Série 2100 com dosador VacuMeter (2109, 2111, 2113, 2115, 2117, 2122, 2126, 2130)",
+   "Plantadeiras John Deere 1111 / 1113 com abastecimento central"
+  ],
+  "confianca": "baixa"
+ },
+ "cq65827": {
+  "sku": "CQ65827",
+  "funcao": "Extensão maior do condutor de adubo: prolonga o tubo condutor entre o dosador de fertilizante e o sulco, direcionando o adubo até a linha de plantio sem desperdício.",
+  "descricao_tecnica": "Condutor de extensão maior no padrão original (OEM), compatível com o código de referência CQ65827, aplicável na linha de adubo de plantadeiras compatíveis com John Deere de fabricação nacional (linha verde). Fornecedores brasileiros listam o item tanto como condutor de adubo quanto como tubo condutor de semente maior — a aplicação predominante em catálogo é na condução de fertilizante. Peça plástica leve (aprox. 90 g), de reposição simples e baixo custo.",
+  "especificacoes": {
+   "tipo": "condutor de extensão maior (adubo)",
+   "comprimento_cm": 33,
+   "peso_g": 90
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere de linha nacional/sul-americana (Séries 1100 e 2100)"
+  ],
+  "confianca": "media"
+ },
+ "cq54137": {
+  "sku": "CQ54137",
+  "funcao": "Condutor (tubo) de semente em formato \"S\": recebe a semente do dosador e a deposita no sulco de plantio com trajetória controlada, preservando o espaçamento entre sementes.",
+  "descricao_tecnica": "Condutor de semente tipo \"S\" no padrão original (OEM), compatível com o código de referência CQ54137, aplicável em plantadeiras compatíveis com John Deere de fabricação nacional (linha verde). Com aproximadamente 22 cm, direciona a semente dosada até o fundo do sulco com mínima interferência na trajetória, fator determinante para a uniformidade de deposição. Item plástico de desgaste com reposição de baixo custo.",
+  "especificacoes": {
+   "tipo": "condutor de semente formato \"S\"",
+   "comprimento_cm": 22,
+   "peso_g": 75
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere de linha nacional/sul-americana (linha verde)"
+  ],
+  "confianca": "media"
+ },
+ "aa67780": {
+  "sku": "AA67780",
+  "funcao": "Tubo condutor de semente transparente: conduz a semente do dosador ao sulco e, por ser translúcido e ter janela de sensor, permite a leitura do sensor de população/monitor de plantio.",
+  "descricao_tecnica": "Condutor de semente em policarbonato transparente, face lisa (flush face), no padrão original (OEM), compatível com o código de referência AA67780. Possui furo de 3/4\" para sensor de sementes, sendo aplicável em plantadeiras compatíveis com John Deere MaxEmerge 2, MaxEmerge Plus e XP — modelos 7200/7300, Série 1700 (1710 a 1790, incl. NT e CCS), Série DB e semeadoras 1530/1535. A transparência do tubo viabiliza o monitoramento de população em tempo real, e o perfil interno liso garante deposição uniforme da semente no sulco.",
+  "especificacoes": {
+   "material": "policarbonato transparente",
+   "tipo": "tubo condutor de semente face lisa (flush face) com janela para sensor",
+   "furo_sensor_pol": "3/4",
+   "comprimento_cm": 50,
+   "acompanha": "vedação e abraçadeiras (em kits de reposição)"
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere MaxEmerge 2 / MaxEmerge Plus / XP e XP-Pro",
+   "Plantadeiras John Deere 7200 / 7300",
+   "Plantadeiras John Deere Série 1700 (1710, 1720, 1720 CCS, 1730, 1750, 1760, 1760NT, 1770, 1770NT, 1780, 1790)",
+   "Plantadeiras John Deere Série DB (DB44, DB58, DB60, DB66, DB80, DB90)",
+   "Semeadoras John Deere 1530 / 1535"
+  ],
+  "confianca": "alta"
+ },
+ "cq73378": {
+  "sku": "CQ73378",
+  "funcao": "Condutor de 360 mm da linha de plantio: conduz o insumo (adubo/semente, conforme a posição de montagem) do dosador até o sulco, protegendo o fluxo contra vento e respingos.",
+  "descricao_tecnica": "Condutor de plantadeira com 360 mm de comprimento, no padrão original (OEM), compatível com o código de referência CQ73378, aplicável em plantadeiras compatíveis com John Deere das Séries 1100 e 2100 (linha sul-americana). Fornecedores brasileiros listam o item como condutor de semente e também como condutor de adubo, conforme a posição de uso na máquina. Peça plástica de reposição frequente na revisão de pré-plantio.",
+  "especificacoes": {
+   "tipo": "condutor flexível de plantadeira",
+   "comprimento_mm": 360,
+   "peso_embalagem_kg": 4.35
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 1100 (linha sul-americana)",
+   "Plantadeiras John Deere Série 2100 (linha sul-americana)"
+  ],
+  "confianca": "media"
+ },
+ "a75169": {
+  "sku": "A75169",
+  "funcao": "Conexão plástica do medidor de vácuo (popularmente chamada de \"pipoqueira\"): interliga a linha de vácuo ao manômetro/medidor, permitindo o monitoramento da pressão de vácuo do dosador de sementes.",
+  "descricao_tecnica": "Conexão do medidor de vácuo no padrão original (OEM), compatível com o código de referência A75169, aplicável no sistema de vácuo de plantadeiras compatíveis com John Deere equipadas com dosador pneumático. Componente plástico leve (aprox. 45 g) que garante a vedação da tomada de leitura de vácuo, essencial para regulagem correta da singulação de sementes. Confirmar o modelo da plantadeira e o ponto de instalação antes da compra.",
+  "especificacoes": {
+   "tipo": "conexão do medidor de vácuo",
+   "dimensoes_embalagem_cm": "6,0 x 7,0 x 6,0",
+   "peso_g": 45
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere com dosador a vácuo (VacuMeter / MaxEmerge com sistema de vácuo)"
+  ],
+  "confianca": "media"
+ },
+ "a71321": {
+  "sku": "A71321",
+  "funcao": "Engate (conexão) de vácuo: acopla a mangueira da linha de vácuo ao dosador/condutor da unidade de plantio, mantendo a vedação necessária para a sucção que fixa as sementes no disco dosador.",
+  "descricao_tecnica": "Engate de vácuo no padrão original (OEM), com aproximadamente 9,1 x 8,6 x 6,9 cm e 36 g, compatível com o código de referência A71321. Aplicável na linha de vácuo de plantadeiras compatíveis com John Deere 1207–1213, Série 1700 (incl. 1770NT/1775NT/1790/1795), Série DB (DB37–DB120) e semeadoras DR. A vedação correta desta conexão é determinante para a estabilidade do vácuo no dosador e a precisão de singulação.",
+  "especificacoes": {
+   "tipo": "conexão/engate de vácuo do condutor",
+   "dimensoes_cm": "9,1 x 8,6 x 6,9",
+   "peso_kg": 0.036
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere 1207 / 1209 / 1211 / 1213 (linha sul-americana)",
+   "Plantadeiras John Deere Série 1700, 1770NT / 1775NT / 1790 / 1795",
+   "Plantadeiras John Deere Série DB (DB37 a DB120) com MaxEmerge / ExactEmerge",
+   "Semeadoras John Deere DR8T / DR12 / DR16 / DR18 / DR24"
+  ],
+  "confianca": "alta"
+ },
+ "a72758": {
+  "sku": "A72758",
+  "funcao": "Peneira do mini-hopper do conjunto dosador a vácuo: retém impurezas e fragmentos junto ao depósito de sementes, permitindo a passagem do ar e protegendo o dosador contra obstruções.",
+  "descricao_tecnica": "Peneira (tela) do mini-hopper no padrão original (OEM), compatível com o código de referência A72758, aplicável no conjunto de dosagem a vácuo de plantadeiras compatíveis com John Deere, como a 1720 e unidades Pro-Series XP com mini-hopper de abastecimento central. Peça plástica leve (aprox. 19 g) que evita a entrada de detritos no dosador, preservando a precisão de distribuição de sementes.",
+  "especificacoes": {
+   "tipo": "peneira (tela) do mini-hopper do dosador",
+   "dimensoes_embalagem_cm": "7,0 x 10,0 x 1,5",
+   "peso_g": 19
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere 1720 (conjunto dosador a vácuo, até s/n 725100)",
+   "Unidades de plantio John Deere Pro-Series XP com mini-hopper (abastecimento central/CCS)"
+  ],
+  "confianca": "media"
+ },
+ "a78269": {
+  "sku": "A78269",
+  "funcao": "Tampa plástica do reservatório central de sementes: fecha e veda o tanque central (CCS) da plantadeira, protegendo a carga de sementes contra chuva, poeira e umidade entre os abastecimentos.",
+  "descricao_tecnica": "Tampa plástica do reservatório central de sementes no padrão original (OEM), com aproximadamente 81 cm entre extremidades, compatível com o código de referência A78269. Aplicável no tanque central (CCS) de plantadeiras compatíveis com John Deere Série 2100 / linha ADG. Disponível no mercado também em versão reforçada, é item de reposição comum por exposição contínua a sol e intempéries, garantindo vedação e proteção da semente armazenada.",
+  "especificacoes": {
+   "material": "plástico",
+   "tipo": "tampa do reservatório central de sementes (CCS)",
+   "comprimento_entre_extremidades_cm": 81,
+   "diametro_cm": 81.5,
+   "peso_kg": 2.6
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere Série 2100 (linha ADG — Alto Desempenho em Grãos)",
+   "Plantadeiras John Deere com reservatório central de sementes (CCS)"
+  ],
+  "confianca": "alta"
+ },
+ "a74430": {
+  "sku": "A74430",
+  "funcao": "Engate de conexão rápida do sistema do dosador a vácuo com mini-hopper: permite acoplar e desacoplar rapidamente a linha do dosador, agilizando manutenção e troca de unidades sem ferramentas.",
+  "descricao_tecnica": "Engate rápido no padrão original (OEM), compatível com o código de referência A74430, listado em catálogos como quick-connect coupler do dosador a vácuo (vac meter). Aplicável em plantadeiras compatíveis com John Deere equipadas com mini-hopper Pro-Series e abastecimento central (bulk-fill). Facilita a conexão rápida da linha do dosador durante regulagens e limpeza. Código em processo de substituição em catálogo — confirmar aplicação pelo modelo da plantadeira.",
+  "especificacoes": {
+   "tipo": "engate rápido (quick-connect) do dosador a vácuo",
+   "dimensoes_embalagem_cm": "13,0 x 8,0 x 7,0",
+   "peso_g": 97
+  },
+  "compatibilidade": [
+   "Plantadeiras John Deere com mini-hopper Pro-Series e abastecimento central (bulk-fill/CCS)",
+   "Unidades de plantio John Deere com dosador a vácuo (vac meter)"
+  ],
+  "confianca": "media"
+ },
+ "ipcx03009065": {
+  "sku": "IPCX03009065",
+  "funcao": "Peça plástica de articulação (\"giro\") da barra porta-dedos do molinete: serve de apoio em que a barra gira durante o ciclo de rotação do molinete.",
+  "descricao_tecnica": "Giro do molinete (versão 2) aplicável em molinetes de plataformas de corte compatíveis com a linha GTS, comercializado no mercado de reposição sob o código IPCX03009065, par da versão 1 (IPCX03009064). Peça plástica compacta (10 cm, 35 g) que funciona como ponto de articulação/abraçadeira da barra porta-dedos, permitindo o giro suave da barra que comanda a inclinação dos dedos recolhedores. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "dimensoes_cm": "2.6 x 10.0 x 2.3",
+   "peso_kg": 0.035,
+   "denominacao": "Giro molinete 2 (variação da posição/lado do giro molinete 1 — IPCX03009064)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS",
+   "Colheitadeiras de grãos equipadas com plataformas GTS"
+  ],
+  "confianca": "baixa"
+ },
+ "ipcx03009064": {
+  "sku": "IPCX03009064",
+  "funcao": "Peça plástica de articulação (\"giro\") da barra porta-dedos do molinete: serve de apoio em que a barra gira durante o ciclo de rotação do molinete.",
+  "descricao_tecnica": "Giro do molinete (versão 1) aplicável em molinetes de plataformas de corte compatíveis com a linha GTS, listado no mercado de reposição sob o código IPCX03009064 — inclusive em catálogos especializados em peças para plataformas GTS. Em catálogos de reposição, o código aparece associado à abraçadeira do molinete, com as versões 1 e 2 correspondendo a lados/posições distintas da barra porta-dedos. Peça plástica compacta (10 cm, 35 g) que garante o giro suave da barra que comanda os dedos recolhedores. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "dimensoes_cm": "2.6 x 10.0 x 2.3",
+   "peso_kg": 0.035,
+   "denominacao": "Giro molinete 1 (par do giro molinete 2 — IPCX03009065)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS",
+   "Colheitadeiras de grãos equipadas com plataformas GTS"
+  ],
+  "confianca": "media"
+ },
+ "ipcx05009034": {
+  "sku": "IPCX05009034",
+  "funcao": "Rótula (articulação esférica) do conjunto do molinete, que permite o movimento angular entre o braço e os elementos de comando do molinete da plataforma de corte.",
+  "descricao_tecnica": "Rótula de molinete aplicável em plataformas de corte compatíveis com a linha GTS, comercializada sob o código IPCX05009034. Peça plástica compacta (4 x 4 x 5 cm, 60 g) do tipo articulação esférica, categoria de componente usada nos mecanismos de comando e sustentação do molinete para absorver desalinhamentos angulares. Código não localizado em catálogos públicos até o momento — especificações limitadas aos dados dimensionais.",
+  "especificacoes": {
+   "dimensoes_cm": "4.0 x 4.0 x 5.0",
+   "peso_kg": 0.06
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas de corte GTS (aplicação específica a confirmar)"
+  ],
+  "confianca": "baixa"
+ },
+ "ipcx03007010": {
+  "sku": "IPCX03007010",
+  "funcao": "Dedo recolhedor do molinete: conduz as plantas para a barra de corte e as esteiras da plataforma draper, evitando embuchamento e perdas na alimentação da colheitadeira.",
+  "descricao_tecnica": "Kit com 20 dedos recolhedores de molinete em nylon (poliamida), aplicáveis em plataformas draper compatíveis com as linhas GTS e MacDon e em plataformas draper de colheitadeiras Case IH e New Holland (referências cruzadas 87561020 e 84130300). Cada dedo tem aproximadamente 30 cm de comprimento e 75-80 g, com fixação à barra porta-dedos do molinete por parafuso especial. O nylon proporciona alta resistência a impacto e flexibilidade, reduzindo quebras no contato com a cultura. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "material": "nylon (poliamida)",
+   "quantidade_kit": 20,
+   "comprimento_mm": 300,
+   "peso_unitario_g": 75,
+   "fixacao": "parafuso especial de dedo draper (ref. de mercado IPCX03009042)",
+   "referencias_cruzadas": "87561020 (Case IH/New Holland), 84130300 (New Holland), Z3288 (Zotti)"
+  },
+  "compatibilidade": [
+   "Molinetes de plataformas draper GTS (ex.: linha Flexer, de 25 a 62 pés)",
+   "Plataformas draper MacDon",
+   "Plataformas draper/soja de colheitadeiras Case IH e New Holland (refs. 87561020 / 84130300)"
+  ],
+  "confianca": "alta"
+ },
+ "ipcx03006056": {
+  "sku": "IPCX03006056",
+  "funcao": "Mancal do dedo retrátil do caracol: apoia o dedo dentro do tubo do sem-fim e permite sua oscilação de avanço e recolhimento durante a alimentação da colheitadeira.",
+  "descricao_tecnica": "Mancal plástico para dedo retrátil, utilizado no caracol (sem-fim alimentador) de plataformas de corte compatíveis com a linha GTS e aplicável em plataformas de colheitadeiras diversas — o mesmo número base circula no mercado de reposição também como MCL03006056. Peça compacta (8,3 cm, 35 g) que sustenta o dedo retrátil no interior do tubo do caracol, permitindo o movimento cíclico de exposição e recolhimento do dedo. Peça no padrão original (OEM), item de desgaste que evita folga e quebra dos dedos retráteis.",
+  "especificacoes": {
+   "dimensoes_cm": "3.0 x 8.3 x 2.0",
+   "peso_kg": 0.035,
+   "material": "plástico técnico",
+   "referencia_equivalente_mercado": "MCL03006056"
+  },
+  "compatibilidade": [
+   "Caracol (sem-fim alimentador) de plataformas de corte GTS",
+   "Plataformas de corte de colheitadeiras diversas com sistema de dedos retráteis"
+  ],
+  "confianca": "media"
+ },
+ "ipcx03006047": {
+  "sku": "IPCX03006047",
+  "funcao": "Guia que mantém o alinhamento e a estabilidade do dedo retrátil no caracol da plataforma, garantindo o funcionamento suave e preciso do sistema de alimentação.",
+  "descricao_tecnica": "Guia de dedo retrátil aplicável em plataformas de corte compatíveis com a linha GTS, comercializada no mercado de reposição sob o código IPCX03006047. É peça essencial para garantir o alinhamento, a estabilidade e o funcionamento adequado dos dedos retráteis nos sistemas mecânicos de colheita e alimentação. Peça plástica compacta (9,5 cm, 42 g) de encaixe preciso, projetada para trabalho agrícola intensivo; guias equivalentes para plataformas Case circulam sob as referências 1307259C2 e 86632613. Peça no padrão original (OEM).",
+  "especificacoes": {
+   "dimensoes_cm": "4.5 x 9.5 x 1.8",
+   "peso_kg": 0.042,
+   "referencias_relacionadas_mercado": "guias equivalentes para plataformas Case: 1307259C2 / 86632613"
+  },
+  "compatibilidade": [
+   "Caracol (sem-fim alimentador) de plataformas de corte GTS",
+   "Sistemas de dedos retráteis de plataformas de colheitadeiras diversas"
+  ],
+  "confianca": "alta"
+ }
+}

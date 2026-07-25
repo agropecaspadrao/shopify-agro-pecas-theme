@@ -30,6 +30,8 @@
     "brand_iso_cert": "ISO 9001 · ISO 14001 · OHSAS 18001",
     "whatsapp_number": "5541984151085",
     "whatsapp_greeting": "Olá! Estava navegando no catálogo da APP Agro Peças Padrão e tenho interesse na peça",
+    "carol_enabled": true,
+    "carol_backend_url": "https://carol-agropecas.up.railway.app",
     "store_cnpj": "66.316.831/0001-85",
     "store_address": "R. José Benedito Cottolengo, 901 — Casa 19, Cond. Jardim de Monet, Campo Comprido, Curitiba – PR, CEP 81.220-310",
     "store_phone": "(41) 98415-1085",
@@ -78,14 +80,14 @@
         "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
         "disabled": false,
         "settings": {
+          "greeting_message": "",
           "button_color": "#4ccc7a",
           "secondary_color": "#ffffff",
           "ternary_color": "#6a6a6a",
           "button_icon": "chat_bubble",
           "button_text": "chat_with_us",
           "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "higher",
-          "greeting_message": ""
+          "button_vertical_position": "higher"
         }
       }
     }

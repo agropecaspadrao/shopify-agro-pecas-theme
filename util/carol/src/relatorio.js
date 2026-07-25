@@ -111,6 +111,11 @@ export async function enviarRelatorio() {
     port: SMTP_PORT,
     secure: SMTP_PORT === 465,
     auth: { user: SMTP_USER, pass: SMTP_PASS },
+    // Sem timeout, um bloqueio de porta SMTP (ex.: plano Trial do Railway)
+    // deixaria a requisição pendurada para sempre.
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 30000,
   });
   await transporte.sendMail({
     from: `"Carol - Agro Peças Padrão" <${SMTP_USER}>`,

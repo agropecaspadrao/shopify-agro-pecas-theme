@@ -48,6 +48,7 @@ const detalharProdutoTool = betaTool({
 // Sem travessão, sem emoji: garantia final por pós-processamento, além da instrução.
 function sanitizar(texto) {
   return texto
+    .replace(/\*\*(.+?)\*\*/g, '*$1*') // negrito Markdown -> negrito do WhatsApp
     .replace(/\s*[—–]\s*/g, ', ')
     .replace(/\p{Extended_Pictographic}/gu, '')
     .replace(/[\u{1F3FB}-\u{1F3FF}\u{FE0F}\u{200D}]/gu, '')
@@ -170,11 +171,17 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
     'Desculpe, não consegui processar sua mensagem agora. Pode repetir de outro jeito? Se preferir, a Dai retorna no próximo horário comercial, de segunda a sexta das 8h às 18h.';
 
   // Garantia de saudação na primeira resposta da conversa: se o modelo não
-  // começou cumprimentando, o servidor prefixa (espelhando a saudação do cliente).
-  if (historico.length === 0 && !/^(bom dia|boa tarde|boa noite|olá|oi)\b/i.test(resposta)) {
+  // começou cumprimentando, o servidor prefixa; se cumprimentou com a saudação
+  // ERRADA para o horário (e o cliente não usou nenhuma), o servidor corrige.
+  if (historico.length === 0) {
     const doCliente = mensagem.match(/\b(bom dia|boa tarde|boa noite)\b/i);
     const saudacao = doCliente ? doCliente[1].replace(/^./, (c) => c.toUpperCase()) : horario.saudacao;
-    resposta = `${saudacao}! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão, obrigada pelo contato.\n\n${resposta}`;
+    const usada = resposta.match(/^(bom dia|boa tarde|boa noite)/i);
+    if (usada && usada[1].toLowerCase() !== saudacao.toLowerCase()) {
+      resposta = saudacao + resposta.slice(usada[1].length);
+    } else if (!usada && !/^(olá|oi)\b/i.test(resposta)) {
+      resposta = `${saudacao}! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão, obrigada pelo contato.\n\n${resposta}`;
+    }
   }
 
   salvarHistorico(sessaoId, [...mensagens, { role: 'assistant', content: resposta }]);

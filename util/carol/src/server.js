@@ -98,8 +98,19 @@ async function processarWhatsApp(msg) {
     return;
   }
 
+  // Contexto de origem: cliente que chegou por anúncio ou por um produto do
+  // catálogo já chega "falando" da peça, mesmo que o texto seja genérico.
+  let origem = '';
+  if (msg.anuncio) {
+    origem += `[Cliente chegou clicando no anúncio "${msg.anuncio.titulo}"${msg.anuncio.corpo ? `, texto do anúncio: "${msg.anuncio.corpo.slice(0, 200)}"` : ''}. Já procure essa peça no catálogo e atenda com base nela.] `;
+  }
+  if (msg.produtoCatalogo) {
+    origem += `[Cliente consultou o produto de código ${msg.produtoCatalogo} na vitrine do WhatsApp.] `;
+  }
+
   const entrada =
     (msg.nome ? `[Cliente: ${msg.nome}] ` : '') +
+    origem +
     (veioDeAudio ? `[Mensagem de voz do cliente, transcrita automaticamente] ` : '') +
     texto;
   const resposta = await responder(`wa:${msg.de}`, entrada, 'whatsapp');

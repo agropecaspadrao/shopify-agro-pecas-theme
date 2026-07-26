@@ -48,6 +48,16 @@ export function extrairMensagens(body) {
           texto: msg.type === 'text' ? msg.text?.body || '' : '',
           midiaId: msg.audio?.id || null,
           midiaMime: msg.audio?.mime_type || null,
+          // Anúncio click-to-WhatsApp: a Meta manda título/corpo do anúncio
+          anuncio: msg.referral
+            ? {
+                titulo: msg.referral.headline || '',
+                corpo: msg.referral.body || '',
+                url: msg.referral.source_url || '',
+              }
+            : null,
+          // Consulta vinda de um produto do catálogo (vitrine do WhatsApp)
+          produtoCatalogo: msg.context?.referred_product?.product_retailer_id || null,
           timestamp: Number(msg.timestamp || 0) * 1000,
         });
       }

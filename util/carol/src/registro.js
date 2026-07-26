@@ -13,7 +13,7 @@ function arquivoDoDia(data = new Date()) {
   return path.join(DATA_DIR, `registro-${dia}.jsonl`);
 }
 
-export function registrarAtendimento({ canal, sessao, mensagem, resposta }) {
+export function registrarAtendimento({ canal, sessao, mensagem, resposta, uso, custo, modelo }) {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     const linha = JSON.stringify({
@@ -22,6 +22,9 @@ export function registrarAtendimento({ canal, sessao, mensagem, resposta }) {
       sessao,
       mensagem: String(mensagem).slice(0, 2000),
       resposta: String(resposta).slice(0, 2000),
+      ...(uso ? { uso } : {}),
+      ...(typeof custo === 'number' ? { custo } : {}),
+      ...(modelo ? { modelo } : {}),
     });
     fs.appendFileSync(arquivoDoDia(), linha + '\n');
   } catch (e) {

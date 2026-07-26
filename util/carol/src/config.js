@@ -25,6 +25,12 @@ export const config = {
   // Loja
   shopUrl: process.env.CAROL_SHOP_URL || 'https://agropecaspadrao.com.br',
 
+  // Transcrição de áudio do WhatsApp (Groq Whisper, tem camada gratuita)
+  groqApiKey: process.env.GROQ_API_KEY || '',
+
+  // Cotação US$ → R$ usada só para EXIBIÇÃO estimada no dashboard de custos
+  usdBrl: Number(process.env.CAROL_USD_BRL || 5.6),
+
   // CORS do widget do site (separar múltiplas origens por vírgula)
   allowedOrigins: (process.env.CAROL_ALLOWED_ORIGINS ||
     'https://agropecaspadrao.com.br,https://www.agropecaspadrao.com.br,https://agropecaspadrao-2.myshopify.com')

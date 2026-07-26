@@ -75,3 +75,19 @@ Requer App Review da Meta para a permissão `instagram_manage_messages` e conta 
 ## Custos e modelo
 
 Modelo padrão: `claude-opus-4-8` com prompt caching (o catálogo inteiro fica em cache de 1h, ~90% de desconto nos tokens repetidos). Para reduzir custo, é possível trocar por `claude-sonnet-5` via variável `CAROL_MODEL`, com alguma perda de qualidade.
+
+## Áudio no WhatsApp (transcrição via Groq)
+
+Mensagens de voz são baixadas da Cloud API e transcritas pelo Whisper large-v3-turbo da **Groq**, que tem camada gratuita:
+
+1. Crie uma conta gratuita em https://console.groq.com (não pede cartão).
+2. Gere uma API key e defina `GROQ_API_KEY` no Railway (e no `.env` local).
+3. Sem a chave, a Carol responde ao áudio pedindo educadamente uma mensagem de texto.
+
+## Dashboard de custos
+
+Cada resposta grava no registro os tokens reais de todas as chamadas (entrada, saída, cache) e o custo em US$:
+
+- `GET /admin/dashboard?key=CAROL_ADMIN_KEY&dias=7` → página com custo total, custo por dia, custo médio por mensagem, ranking de conversas que mais gastaram e mensagens mais caras (`dias` = 1, 7 ou 30).
+- `GET /admin/custos?key=CAROL_ADMIN_KEY&dias=7` → os mesmos dados em JSON.
+- `CAROL_USD_BRL` (padrão 5.60) ajusta a cotação usada só para exibir o valor estimado em reais.

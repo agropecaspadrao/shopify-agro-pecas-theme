@@ -6,6 +6,7 @@ import { catalogoResumo, carregarCatalogo, buscarProdutosTexto, detalharProduto 
 import { contextoHorario } from './horario.js';
 import { obterHistorico, salvarHistorico } from './sessions.js';
 import { registrarAtendimento } from './registro.js';
+import { custoUSD } from './custos.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -112,7 +113,7 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
     },
   ];
 
-  const final = await client.beta.messages.toolRunner({
+  const runner = client.beta.messages.toolRunner({
     model: config.claudeModel,
     max_tokens: 1024,
     system,
@@ -121,8 +122,23 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
     max_iterations: 6,
   });
 
+  // Itera as rodadas do tool runner acumulando o uso de tokens de CADA
+  // chamada à API (o `usage` da mensagem final cobre só a última rodada).
+  let final = null;
+  const uso = { entrada: 0, saida: 0, cacheLeitura: 0, cacheEscrita: 0, chamadas: 0 };
+  for await (const rodada of runner) {
+    final = rodada;
+    const u = rodada.usage || {};
+    uso.entrada += u.input_tokens || 0;
+    uso.saida += u.output_tokens || 0;
+    uso.cacheLeitura += u.cache_read_input_tokens || 0;
+    uso.cacheEscrita += u.cache_creation_input_tokens || 0;
+    uso.chamadas++;
+  }
+  const custo = custoUSD(uso);
+
   const texto = sanitizar(
-    final.content
+    (final?.content || [])
       .filter((b) => b.type === 'text')
       .map((b) => b.text)
       .join('\n')
@@ -141,6 +157,6 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
   }
 
   salvarHistorico(sessaoId, [...mensagens, { role: 'assistant', content: resposta }]);
-  registrarAtendimento({ canal, sessao: sessaoId, mensagem, resposta });
+  registrarAtendimento({ canal, sessao: sessaoId, mensagem, resposta, uso, custo, modelo: config.claudeModel });
   return resposta;
 }

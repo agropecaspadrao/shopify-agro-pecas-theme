@@ -4,7 +4,10 @@ import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
 import { agendarRelatorioDiario, enviarRelatorio, montarRelatorio } from './relatorio.js';
-import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida } from './whatsapp.js';
+import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
+import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
+import { agregarCustos } from './custos.js';
+import { paginaDashboard } from './dashboard.js';
 
 const NUMERO_LOJA = process.env.WA_BUSINESS_NUMBER || '5541984151085';
 
@@ -71,15 +74,34 @@ async function processarWhatsApp(msg) {
 
   await marcarComoLida(msg.id);
 
-  if (msg.tipo !== 'text' || !msg.texto.trim()) {
-    await enviarTexto(
-      msg.de,
-      'Olá! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão. No momento consigo responder apenas mensagens de texto. Pode me escrever o que precisa? Se preferir enviar áudio ou foto, a Dai responde no próximo horário comercial, de segunda a sexta das 8h às 18h.'
-    );
+  let texto = msg.tipo === 'text' ? msg.texto.trim() : '';
+  let veioDeAudio = false;
+
+  // Mensagem de voz: baixa a mídia da Cloud API e transcreve via Groq
+  if (msg.tipo === 'audio' && msg.midiaId && transcricaoDisponivel()) {
+    try {
+      const { buffer, mime } = await baixarMidia(msg.midiaId);
+      texto = (await transcreverAudio(buffer, mime)) || '';
+      veioDeAudio = Boolean(texto);
+      if (veioDeAudio) console.log(`[whatsapp] áudio de ${msg.de} transcrito (${texto.length} chars)`);
+    } catch (e) {
+      console.error('[whatsapp] falha na transcrição:', e.message);
+    }
+  }
+
+  if (!texto) {
+    const aviso =
+      msg.tipo === 'audio'
+        ? 'Olá! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão. Não consegui ouvir seu áudio agora. Pode me escrever em texto o que precisa? Se preferir, a Dai responde seu áudio no próximo horário comercial, de segunda a sexta das 8h às 18h.'
+        : 'Olá! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão. No momento consigo responder mensagens de texto e áudio. Pode me escrever o que precisa? Se preferir enviar foto ou documento, a Dai responde no próximo horário comercial, de segunda a sexta das 8h às 18h.';
+    await enviarTexto(msg.de, aviso);
     return;
   }
 
-  const entrada = msg.nome ? `[Cliente: ${msg.nome}] ${msg.texto}` : msg.texto;
+  const entrada =
+    (msg.nome ? `[Cliente: ${msg.nome}] ` : '') +
+    (veioDeAudio ? `[Mensagem de voz do cliente, transcrita automaticamente] ` : '') +
+    texto;
   const resposta = await responder(`wa:${msg.de}`, entrada, 'whatsapp');
   await enviarTexto(msg.de, resposta);
   console.log(`[whatsapp] respondi ${msg.de} (${resposta.length} chars)`);
@@ -161,6 +183,34 @@ app.post('/admin/relatorio', async (req, res) => {
     res.json(await enviarRelatorio());
   } catch (e) {
     res.status(500).json({ enviado: false, erro: e.message });
+  }
+});
+
+// Dashboard de custos (protegido pela mesma chave):
+//   GET /admin/dashboard?key=X&dias=7   → página HTML
+//   GET /admin/custos?key=X&dias=7      → mesmos dados em JSON
+function diasDoQuery(req) {
+  const d = Number(req.query.dias || 7);
+  return [1, 7, 30].includes(d) ? d : 7;
+}
+app.get('/admin/dashboard', (req, res) => {
+  if (!autorizado(req)) return res.sendStatus(403);
+  try {
+    const html = paginaDashboard(agregarCustos(diasDoQuery(req))).replaceAll(
+      '__KEY__',
+      encodeURIComponent(String(req.query.key))
+    );
+    res.type('html').send(html);
+  } catch (e) {
+    res.status(500).type('text/plain').send('Erro: ' + e.message);
+  }
+});
+app.get('/admin/custos', (req, res) => {
+  if (!autorizado(req)) return res.sendStatus(403);
+  try {
+    res.json(agregarCustos(diasDoQuery(req)));
+  } catch (e) {
+    res.status(500).json({ erro: e.message });
   }
 });
 

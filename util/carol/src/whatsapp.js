@@ -46,6 +46,8 @@ export function extrairMensagens(body) {
           nome: nomes.get(msg.from) || null,
           tipo: msg.type,
           texto: msg.type === 'text' ? msg.text?.body || '' : '',
+          midiaId: msg.audio?.id || null,
+          midiaMime: msg.audio?.mime_type || null,
           timestamp: Number(msg.timestamp || 0) * 1000,
         });
       }
@@ -78,6 +80,24 @@ export async function enviarTexto(para, corpo) {
     type: 'text',
     text: { preview_url: true, body: corpo.slice(0, 4000) },
   });
+}
+
+/**
+ * Baixa uma mídia recebida (áudio) da Cloud API: primeiro busca a URL
+ * temporária pelo id da mídia, depois baixa o binário autenticado.
+ */
+export async function baixarMidia(midiaId) {
+  const meta = await fetch(`${GRAPH}/${midiaId}`, {
+    headers: { authorization: `Bearer ${config.waAccessToken}` },
+  });
+  if (!meta.ok) throw new Error(`Graph mídia ${meta.status}: ${(await meta.text().catch(() => '')).slice(0, 300)}`);
+  const { url, mime_type: mime } = await meta.json();
+
+  const arquivo = await fetch(url, {
+    headers: { authorization: `Bearer ${config.waAccessToken}` },
+  });
+  if (!arquivo.ok) throw new Error(`download mídia ${arquivo.status}`);
+  return { buffer: Buffer.from(await arquivo.arrayBuffer()), mime: mime || 'audio/ogg' };
 }
 
 export async function marcarComoLida(mensagemId) {

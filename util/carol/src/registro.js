@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = process.env.CAROL_DATA_DIR || path.join(here, '..', 'data');
+export const DATA_DIR = process.env.CAROL_DATA_DIR || path.join(here, '..', 'data');
 
 function arquivoDoDia(data = new Date()) {
   const dia = data.toISOString().slice(0, 10); // YYYY-MM-DD (UTC)

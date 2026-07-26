@@ -122,12 +122,12 @@ Seja fiel às transcrições, não invente dados. Termine com uma linha de estat
   };
 }
 
-export async function enviarRelatorio() {
-  if (!SMTP_USER || !SMTP_PASS) {
-    console.warn('[relatorio] SMTP_USER/SMTP_PASS não configurados; relatório não enviado.');
-    return { enviado: false, motivo: 'SMTP não configurado' };
-  }
-  const { assunto, corpo } = await montarRelatorio();
+/**
+ * Envia um e-mail pela conta SMTP configurada. Lança erro se o SMTP não
+ * estiver configurado ou a conexão falhar (Railway Trial bloqueia SMTP).
+ */
+export async function enviarEmail(assunto, corpo, para = REPORT_TO) {
+  if (!SMTP_USER || !SMTP_PASS) throw new Error('SMTP_USER/SMTP_PASS não configurados');
   // O ambiente do Railway não tem rota IPv6 de saída e o nodemailer resolve
   // AAAA primeiro; conectamos pelo IPv4 explicitamente, validando o TLS pelo
   // hostname via servername.
@@ -147,11 +147,20 @@ export async function enviarRelatorio() {
   });
   await transporte.sendMail({
     from: `"Carol - Agro Peças Padrão" <${SMTP_USER}>`,
-    to: REPORT_TO,
+    to: para,
     subject: assunto,
     text: corpo,
   });
-  console.log(`[relatorio] enviado para ${REPORT_TO}: ${assunto}`);
+  console.log(`[email] enviado para ${para}: ${assunto}`);
+}
+
+export async function enviarRelatorio() {
+  if (!SMTP_USER || !SMTP_PASS) {
+    console.warn('[relatorio] SMTP_USER/SMTP_PASS não configurados; relatório não enviado.');
+    return { enviado: false, motivo: 'SMTP não configurado' };
+  }
+  const { assunto, corpo } = await montarRelatorio();
+  await enviarEmail(assunto, corpo);
   return { enviado: true, assunto };
 }
 

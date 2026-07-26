@@ -36,6 +36,9 @@ export const config = {
   creditoUsd: Number(process.env.CAROL_CREDITO_USD || 0),
   creditoDesde: process.env.CAROL_CREDITO_DESDE || '',
 
+  // Alerta por e-mail quando o saldo estimado ficar abaixo deste valor (US$)
+  alertaSaldoUsd: Number(process.env.CAROL_ALERTA_SALDO_USD || 0.5),
+
   // CORS do widget do site (separar múltiplas origens por vírgula)
   allowedOrigins: (process.env.CAROL_ALLOWED_ORIGINS ||
     'https://agropecaspadrao.com.br,https://www.agropecaspadrao.com.br,https://agropecaspadrao-2.myshopify.com')

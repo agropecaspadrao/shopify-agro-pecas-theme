@@ -7,6 +7,7 @@ import { contextoHorario } from './horario.js';
 import { obterHistorico, salvarHistorico } from './sessions.js';
 import { registrarAtendimento } from './registro.js';
 import { custoUSD } from './custos.js';
+import { verificarSaldoBaixo } from './alerta.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -178,5 +179,6 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
 
   salvarHistorico(sessaoId, [...mensagens, { role: 'assistant', content: resposta }]);
   registrarAtendimento({ canal, sessao: sessaoId, mensagem, resposta, uso, custo, modelo: config.claudeModel });
+  verificarSaldoBaixo().catch((e) => console.warn('[alerta] falha na verificação:', e.message));
   return resposta;
 }

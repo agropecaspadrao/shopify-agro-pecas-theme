@@ -38,7 +38,7 @@ function diaCurto(diaISO) {
 }
 
 export function paginaDashboard(dados) {
-  const { totais, porDia, conversas, mensagensCaras, periodo, modelo, cotacaoBRL, saldo, detalhe } = dados;
+  const { totais, porDia, conversas, mensagensCaras, periodo, modelo, cotacaoBRL, saldo, detalhe, extrato } = dados;
   const maxDia = Math.max(...porDia.map((d) => d.custo), 0.000001);
   const idxMax = porDia.findIndex((d) => d.custo === maxDia && maxDia > 0);
   const maisCara = conversas[0] || null;
@@ -95,6 +95,26 @@ export function paginaDashboard(dados) {
       </tr>`
     )
     .join('');
+
+  // Extrato do crédito: linhas manuais do extrato.json + linha dinâmica do
+  // gasto medido desde a sincronização, com saldo acumulado.
+  let extratoHtml = '';
+  if (saldo && (extrato || []).length) {
+    let acumulado = 0;
+    const linhas = (extrato || []).map((l) => {
+      acumulado += l.valor;
+      return `<tr><td>${diaCurto(l.data)}</td><td class="assunto">${esc(l.descricao)}</td><td class="num">${l.valor >= 0 ? '+' : '-'}${usd(Math.abs(l.valor))}</td><td class="num">${usd(acumulado)}</td></tr>`;
+    });
+    acumulado -= saldo.gasto;
+    linhas.push(
+      `<tr><td>desde ${diaCurto(saldo.desde.slice(0, 10))}</td><td class="assunto">Atendimentos da Carol medidos automaticamente (${dataBR(saldo.desde)} em diante)</td><td class="num">-US$ ${saldo.gasto.toFixed(4).replace('.', ',')}</td><td class="num"><strong>${usd(acumulado)}</strong></td></tr>`
+    );
+    extratoHtml = `<h2>Extrato do crédito</h2>
+<div class="tabela-wrap"><table>
+<thead><tr><th>Quando</th><th>Movimento</th><th class="num">Valor</th><th class="num">Saldo</th></tr></thead>
+<tbody>${linhas.join('')}</tbody>
+</table></div>`;
+  }
 
   const filtros = [1, 7, 30]
     .map((d) => `<a class="filtro${d === periodo.dias ? ' ativo' : ''}" href="?key=__KEY__&dias=${d}">${d === 1 ? 'Hoje' : `${d} dias`}</a>`)
@@ -160,6 +180,8 @@ td.resposta{color:var(--ink3);font-size:12px;max-width:300px}
 <div class="tiles">
 ${tiles.map((t) => `<div class="tile"><div class="rotulo">${t.rotulo}</div><div class="valor">${t.valor}</div><div class="subtile">${t.sub}</div></div>`).join('\n')}
 </div>
+
+${extratoHtml}
 
 <h2>Custo por dia</h2>
 <div class="grafico"><div class="cols">${barras}</div></div>

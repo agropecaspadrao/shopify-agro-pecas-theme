@@ -1,0 +1,6 @@
+[
+  { "data": "2026-07-25", "descricao": "Recarga de créditos na conta Anthropic", "valor": 5.0 },
+  { "data": "2026-07-25", "descricao": "Construção e testes da Carol com o modelo Opus (persona, saudação, preços, relatório), antes da medição de custo existir", "valor": -1.06 },
+  { "data": "2026-07-26", "descricao": "Testes locais de desenvolvimento (1 conversa Opus, testes do Haiku e resumo)", "valor": -0.23 },
+  { "data": "2026-07-26", "descricao": "Teste de validação em produção", "valor": -0.01 }
+]

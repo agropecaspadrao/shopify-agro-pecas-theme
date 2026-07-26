@@ -2,8 +2,19 @@
 // A Carol usa cache de prompt com TTL de 1h: escrita de cache custa 2x a
 // entrada e leitura custa 0,1x. Valores conforme tabela pública da Anthropic.
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { listarPeriodo } from './registro.js';
 import { config } from './config.js';
+
+// Extrato manual do crédito (recargas e gastos anteriores à medição
+// automática) — editar src/extrato.json ao recarregar créditos.
+const here = path.dirname(fileURLToPath(import.meta.url));
+let EXTRATO = [];
+try {
+  EXTRATO = JSON.parse(fs.readFileSync(path.join(here, 'extrato.json'), 'utf8'));
+} catch {}
 
 const PRECOS = {
   'claude-opus-4-8': { entrada: 5, saida: 25, cacheLeitura: 0.5, cacheEscrita: 10 },
@@ -134,23 +145,7 @@ export function agregarCustos(dias = 7) {
       resposta: String(e.resposta || '').slice(0, 220),
     }));
 
-  // Saldo ESTIMADO do crédito Anthropic: crédito informado menos tudo que a
-  // Carol registrou desde a data da recarga. O saldo oficial fica no
-  // console.anthropic.com (a API não expõe saldo com a chave normal).
-  let saldo = null;
-  if (config.creditoUsd > 0) {
-    const desde = config.creditoDesde ? new Date(config.creditoDesde) : inicio;
-    const gasto = listarPeriodo(desde, fim).reduce(
-      (s, e) => s + (typeof e.custo === 'number' ? e.custo : 0),
-      0
-    );
-    saldo = {
-      credito: config.creditoUsd,
-      desde: desde.toISOString(),
-      gasto,
-      restante: Math.max(0, config.creditoUsd - gasto),
-    };
-  }
+  const saldo = saldoEstimado();
 
   const custoAtendimento = totais.custo - totais.custoSistema;
   return {
@@ -167,5 +162,29 @@ export function agregarCustos(dias = 7) {
     conversas: rankingConversas,
     mensagensCaras,
     detalhe,
+    extrato: EXTRATO,
+  };
+}
+
+/**
+ * Saldo ESTIMADO do crédito Anthropic: crédito sincronizado (CAROL_CREDITO_USD
+ * na data CAROL_CREDITO_DESDE) menos tudo que a Carol registrou desde então.
+ * O saldo oficial fica no console.anthropic.com (a API não expõe saldo).
+ */
+export function saldoEstimado() {
+  if (!(config.creditoUsd > 0)) return null;
+  const fim = new Date();
+  const desde = config.creditoDesde
+    ? new Date(config.creditoDesde)
+    : new Date(fim.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const gasto = listarPeriodo(desde, fim).reduce(
+    (s, e) => s + (typeof e.custo === 'number' ? e.custo : 0),
+    0
+  );
+  return {
+    credito: config.creditoUsd,
+    desde: desde.toISOString(),
+    gasto,
+    restante: Math.max(0, config.creditoUsd - gasto),
   };
 }

@@ -5,7 +5,8 @@ import dns from 'node:dns/promises';
 import nodemailer from 'nodemailer';
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from './config.js';
-import { listarPeriodo } from './registro.js';
+import { listarPeriodo, registrarAtendimento } from './registro.js';
+import { custoUSD } from './custos.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -35,7 +36,8 @@ function identificarCliente(sessao) {
 
 export async function montarRelatorio(fim = new Date()) {
   const inicio = new Date(fim.getTime() - 24 * 60 * 60 * 1000);
-  const entradas = listarPeriodo(inicio, fim);
+  // registros de sistema (resumos, custo do próprio relatório) ficam de fora
+  const entradas = listarPeriodo(inicio, fim).filter((e) => e.tipo !== 'sistema');
 
   const periodoTxt = `${formatarBRT(inicio.toISOString())} até ${formatarBRT(fim.toISOString())} (Brasília)`;
 
@@ -86,6 +88,25 @@ Seja fiel às transcrições, não invente dados. Termine com uma linha de estat
       },
     ],
     messages: [{ role: 'user', content: `Período: ${periodoTxt}\n${transcricoes}` }],
+  });
+
+  const u = resposta.usage || {};
+  const usoRelatorio = {
+    entrada: u.input_tokens || 0,
+    saida: u.output_tokens || 0,
+    cacheLeitura: u.cache_read_input_tokens || 0,
+    cacheEscrita: u.cache_creation_input_tokens || 0,
+    chamadas: 1,
+  };
+  registrarAtendimento({
+    canal: 'sistema',
+    sessao: 'sistema:relatorio',
+    tipo: 'sistema',
+    mensagem: 'Geração do relatório diário para a Dai',
+    resposta: `${conversas.size} conversas resumidas`,
+    uso: usoRelatorio,
+    custo: custoUSD(usoRelatorio),
+    modelo: config.claudeModel,
   });
 
   const corpoIA = resposta.content

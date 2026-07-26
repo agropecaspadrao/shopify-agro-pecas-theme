@@ -33,7 +33,15 @@ function diaBRT(iso) {
 function rotuloCliente(sessao) {
   if (sessao.startsWith('wa:')) return `WhatsApp ${sessao.slice(3)}`;
   if (sessao.startsWith('site:')) return `Site ${sessao.slice(5, 17)}`;
+  if (sessao === 'sistema:resumo') return 'Sistema: resumos p/ WhatsApp';
+  if (sessao === 'sistema:relatorio') return 'Sistema: relatório diário';
   return sessao;
+}
+
+// Nome do cliente quando informado no prefixo "[Cliente: Fulano]" da mensagem
+function nomeDoCliente(mensagem) {
+  const m = String(mensagem || '').match(/^\[Cliente: ([^\]]+)\]/);
+  return m ? m[1] : '';
 }
 
 /**
@@ -44,10 +52,12 @@ export function agregarCustos(dias = 7) {
   const fim = new Date();
   const inicio = new Date(fim.getTime() - dias * 24 * 60 * 60 * 1000);
   const entradas = listarPeriodo(inicio, fim);
+  const atendimento = entradas.filter((e) => e.tipo !== 'sistema');
 
   const totais = {
     custo: 0,
-    mensagens: entradas.length,
+    custoSistema: 0,
+    mensagens: atendimento.length,
     semCusto: 0, // registros antigos, gravados antes da medição de custo
     tokens: { entrada: 0, saida: 0, cacheLeitura: 0, cacheEscrita: 0 },
   };
@@ -56,8 +66,9 @@ export function agregarCustos(dias = 7) {
 
   for (const e of entradas) {
     const custo = typeof e.custo === 'number' ? e.custo : 0;
-    if (typeof e.custo !== 'number') totais.semCusto++;
+    if (typeof e.custo !== 'number' && e.tipo !== 'sistema') totais.semCusto++;
     totais.custo += custo;
+    if (e.tipo === 'sistema') totais.custoSistema += custo;
     for (const k of Object.keys(totais.tokens)) totais.tokens[k] += e.uso?.[k] || 0;
 
     const dia = diaBRT(e.ts);
@@ -94,7 +105,7 @@ export function agregarCustos(dias = 7) {
 
   const rankingConversas = [...conversas.values()].sort((a, b) => b.custo - a.custo);
 
-  const mensagensCaras = entradas
+  const mensagensCaras = atendimento
     .filter((e) => typeof e.custo === 'number')
     .sort((a, b) => b.custo - a.custo)
     .slice(0, 10)
@@ -107,17 +118,54 @@ export function agregarCustos(dias = 7) {
       mensagem: String(e.mensagem || '').slice(0, 120),
     }));
 
+  // Lista detalhada, mensagem a mensagem (mais recentes primeiro), para a
+  // tabela com filtros do dashboard.
+  const detalhe = atendimento
+    .slice()
+    .reverse()
+    .slice(0, 1500)
+    .map((e) => ({
+      ts: e.ts,
+      cliente: rotuloCliente(e.sessao),
+      nome: nomeDoCliente(e.mensagem),
+      canal: e.canal,
+      custo: typeof e.custo === 'number' ? e.custo : null,
+      mensagem: String(e.mensagem || '').replace(/^\[Cliente: [^\]]+\] /, '').slice(0, 160),
+      resposta: String(e.resposta || '').slice(0, 220),
+    }));
+
+  // Saldo ESTIMADO do crédito Anthropic: crédito informado menos tudo que a
+  // Carol registrou desde a data da recarga. O saldo oficial fica no
+  // console.anthropic.com (a API não expõe saldo com a chave normal).
+  let saldo = null;
+  if (config.creditoUsd > 0) {
+    const desde = config.creditoDesde ? new Date(config.creditoDesde) : inicio;
+    const gasto = listarPeriodo(desde, fim).reduce(
+      (s, e) => s + (typeof e.custo === 'number' ? e.custo : 0),
+      0
+    );
+    saldo = {
+      credito: config.creditoUsd,
+      desde: desde.toISOString(),
+      gasto,
+      restante: Math.max(0, config.creditoUsd - gasto),
+    };
+  }
+
+  const custoAtendimento = totais.custo - totais.custoSistema;
   return {
     periodo: { inicio: inicio.toISOString(), fim: fim.toISOString(), dias },
     modelo: config.claudeModel,
     cotacaoBRL: config.usdBrl,
+    saldo,
     totais: {
       ...totais,
       conversas: conversas.size,
-      custoMedioMsg: entradas.length ? totais.custo / (entradas.length - totais.semCusto || 1) : 0,
+      custoMedioMsg: totais.mensagens ? custoAtendimento / (totais.mensagens - totais.semCusto || 1) : 0,
     },
     porDia: listaDias,
     conversas: rankingConversas,
     mensagensCaras,
+    detalhe,
   };
 }

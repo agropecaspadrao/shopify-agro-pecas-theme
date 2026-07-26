@@ -81,6 +81,26 @@ export async function resumirConversa(sessaoId) {
   const texto = sanitizar(
     resposta.content.filter((b) => b.type === 'text').map((b) => b.text).join(' ')
   );
+
+  const u = resposta.usage || {};
+  const uso = {
+    entrada: u.input_tokens || 0,
+    saida: u.output_tokens || 0,
+    cacheLeitura: u.cache_read_input_tokens || 0,
+    cacheEscrita: u.cache_creation_input_tokens || 0,
+    chamadas: 1,
+  };
+  registrarAtendimento({
+    canal: 'sistema',
+    sessao: 'sistema:resumo',
+    tipo: 'sistema',
+    mensagem: 'Resumo de conversa para transferência ao WhatsApp',
+    resposta: texto,
+    uso,
+    custo: custoUSD(uso),
+    modelo: config.claudeModel,
+  });
+
   return texto ? texto.split('\n')[0].slice(0, 300) : null;
 }
 

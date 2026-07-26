@@ -13,13 +13,14 @@ function arquivoDoDia(data = new Date()) {
   return path.join(DATA_DIR, `registro-${dia}.jsonl`);
 }
 
-export function registrarAtendimento({ canal, sessao, mensagem, resposta, uso, custo, modelo }) {
+export function registrarAtendimento({ canal, sessao, mensagem, resposta, uso, custo, modelo, tipo }) {
   try {
     fs.mkdirSync(DATA_DIR, { recursive: true });
     const linha = JSON.stringify({
       ts: new Date().toISOString(),
       canal,
       sessao,
+      ...(tipo ? { tipo } : {}),
       mensagem: String(mensagem).slice(0, 2000),
       resposta: String(resposta).slice(0, 2000),
       ...(uso ? { uso } : {}),

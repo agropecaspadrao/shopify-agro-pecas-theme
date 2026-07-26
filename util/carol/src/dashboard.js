@@ -38,14 +38,21 @@ function diaCurto(diaISO) {
 }
 
 export function paginaDashboard(dados) {
-  const { totais, porDia, conversas, mensagensCaras, periodo, modelo, cotacaoBRL } = dados;
+  const { totais, porDia, conversas, mensagensCaras, periodo, modelo, cotacaoBRL, saldo, detalhe } = dados;
   const maxDia = Math.max(...porDia.map((d) => d.custo), 0.000001);
   const idxMax = porDia.findIndex((d) => d.custo === maxDia && maxDia > 0);
   const maisCara = conversas[0] || null;
   const muitosDias = porDia.length > 10;
 
   const tiles = [
-    { rotulo: `Custo total (${periodo.dias} dia${periodo.dias > 1 ? 's' : ''})`, valor: usd(totais.custo), sub: `${brl(totais.custo, cotacaoBRL)} estimado` },
+    ...(saldo
+      ? [{
+          rotulo: 'Saldo estimado do crédito',
+          valor: usd(saldo.restante),
+          sub: `de ${usd(saldo.credito)} carregados · gasto ${usd(saldo.gasto)} desde ${diaCurto(saldo.desde.slice(0, 10))}`,
+        }]
+      : []),
+    { rotulo: `Custo total (${periodo.dias} dia${periodo.dias > 1 ? 's' : ''})`, valor: usd(totais.custo), sub: `${brl(totais.custo, cotacaoBRL)} estimado${totais.custoSistema ? ` · inclui ${usd(totais.custoSistema)} de sistema` : ''}` },
     { rotulo: 'Mensagens processadas', valor: String(totais.mensagens), sub: `${totais.conversas} conversa${totais.conversas === 1 ? '' : 's'}` },
     { rotulo: 'Custo médio por mensagem', valor: usd(totais.custoMedioMsg), sub: `${brl(totais.custoMedioMsg, cotacaoBRL)} estimado` },
     { rotulo: 'Conversa que mais gastou', valor: maisCara ? usd(maisCara.custo) : 'US$ 0,00', sub: maisCara ? esc(maisCara.cliente) : 'sem conversas no período' },
@@ -136,6 +143,13 @@ td.assunto{color:var(--ink2);max-width:340px}
 .share-fill{position:absolute;inset:0 auto 0 0;background:var(--verde);border-radius:4px}
 .share span{position:relative;font-size:11px;padding-left:6px;line-height:20px;color:var(--ink)}
 .nota{font-size:12px;color:var(--ink3);margin-top:18px}
+.filtros-msgs{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.filtros-msgs input,.filtros-msgs select{background:var(--card);border:1px solid var(--borda);border-radius:8px;color:var(--ink);font:inherit;font-size:13px;padding:7px 12px}
+.filtros-msgs input{flex:1;min-width:220px}
+.contagem{font-size:12px;color:var(--ink2);white-space:nowrap}
+.scroll{max-height:440px;overflow-y:auto}
+.scroll th{position:sticky;top:0;background:var(--card);z-index:1}
+td.resposta{color:var(--ink3);font-size:12px;max-width:300px}
 </style>
 </head>
 <body>
@@ -156,6 +170,17 @@ ${tiles.map((t) => `<div class="tile"><div class="rotulo">${t.rotulo}</div><div 
 <tbody>${linhasConversas || '<tr><td colspan="8" style="color:var(--ink3)">Sem conversas no período.</td></tr>'}</tbody>
 </table></div>
 
+<h2>Cada centavo, mensagem a mensagem</h2>
+<div class="filtros-msgs">
+  <input id="busca" type="search" placeholder="Filtrar por número, nome, peça ou palavra (ex: bomba, 4198..., João)">
+  <select id="fcanal"><option value="">Todos os canais</option><option value="whatsapp">WhatsApp</option><option value="site">Site</option></select>
+  <span class="contagem" id="contagem"></span>
+</div>
+<div class="tabela-wrap scroll"><table>
+<thead><tr><th>Quando</th><th>Cliente</th><th>Canal</th><th class="num">Custo</th><th>Cliente disse</th><th>Carol respondeu</th></tr></thead>
+<tbody id="corpo-msgs"></tbody>
+</table></div>
+
 <h2>Mensagens mais caras</h2>
 <div class="tabela-wrap"><table>
 <thead><tr><th>Quando</th><th>Cliente</th><th class="num">Custo</th><th class="num">Tokens (entrada / saída)</th><th>Mensagem do cliente</th></tr></thead>
@@ -165,6 +190,37 @@ ${tiles.map((t) => `<div class="tile"><div class="rotulo">${t.rotulo}</div><div 
 <p class="nota">Custos calculados por mensagem a partir dos tokens reais de cada chamada (entrada, saída e cache de prompt). Não inclui o relatório diário por e-mail nem os resumos de transferência para o WhatsApp, que custam centavos por dia.${totais.semCusto ? ` ${totais.semCusto} registro${totais.semCusto === 1 ? '' : 's'} antigo${totais.semCusto === 1 ? '' : 's'} sem medição de custo aparece${totais.semCusto === 1 ? '' : 'm'} com custo zero.` : ''}</p>
 
 <div id="tip"></div>
+<script type="application/json" id="dados-msgs">${JSON.stringify(detalhe || []).replace(/</g, '\\u003c')}</script>
+<script>
+const MSGS = JSON.parse(document.getElementById('dados-msgs').textContent);
+const fmtUsd = (v) => v == null ? 'n/d' : 'US$ ' + v.toFixed(v < 0.1 ? 4 : 2).replace('.', ',');
+const fmtData = (iso) => new Date(iso).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+const escHtml = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const busca = document.getElementById('busca');
+const fcanal = document.getElementById('fcanal');
+function desenharMsgs() {
+  const termo = busca.value.trim().toLowerCase();
+  const canal = fcanal.value;
+  const filtradas = MSGS.filter((m) => {
+    if (canal && m.canal !== canal) return false;
+    if (!termo) return true;
+    return (m.cliente + ' ' + (m.nome || '') + ' ' + m.mensagem + ' ' + m.resposta).toLowerCase().includes(termo);
+  });
+  const total = filtradas.reduce((s, m) => s + (m.custo || 0), 0);
+  document.getElementById('contagem').textContent = filtradas.length + ' mensagem' + (filtradas.length === 1 ? '' : 's') + ' · ' + fmtUsd(total);
+  document.getElementById('corpo-msgs').innerHTML = filtradas.map((m) => '<tr>'
+    + '<td>' + fmtData(m.ts) + '</td>'
+    + '<td>' + escHtml(m.cliente) + (m.nome ? '<br><span style="color:var(--ink3);font-size:11px">' + escHtml(m.nome) + '</span>' : '') + '</td>'
+    + '<td>' + (m.canal === 'whatsapp' ? 'WhatsApp' : 'Site') + '</td>'
+    + '<td class="num">' + fmtUsd(m.custo) + '</td>'
+    + '<td class="assunto">' + escHtml(m.mensagem) + '</td>'
+    + '<td class="resposta">' + escHtml(m.resposta) + '</td>'
+    + '</tr>').join('') || '<tr><td colspan="6" style="color:var(--ink3)">Nenhuma mensagem com esse filtro.</td></tr>';
+}
+busca.addEventListener('input', desenharMsgs);
+fcanal.addEventListener('change', desenharMsgs);
+desenharMsgs();
+</script>
 <script>
 const tip = document.getElementById('tip');
 document.querySelectorAll('.col').forEach((el) => {

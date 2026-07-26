@@ -31,6 +31,11 @@ export const config = {
   // Cotação US$ → R$ usada só para EXIBIÇÃO estimada no dashboard de custos
   usdBrl: Number(process.env.CAROL_USD_BRL || 5.6),
 
+  // Crédito carregado na conta Anthropic (para o saldo ESTIMADO do dashboard):
+  // valor em US$ e data em que foi carregado (ISO, ex: 2026-07-25)
+  creditoUsd: Number(process.env.CAROL_CREDITO_USD || 0),
+  creditoDesde: process.env.CAROL_CREDITO_DESDE || '',
+
   // CORS do widget do site (separar múltiplas origens por vírgula)
   allowedOrigins: (process.env.CAROL_ALLOWED_ORIGINS ||
     'https://agropecaspadrao.com.br,https://www.agropecaspadrao.com.br,https://agropecaspadrao-2.myshopify.com')

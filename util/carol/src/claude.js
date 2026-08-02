@@ -180,7 +180,7 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
     if (usada && usada[1].toLowerCase() !== saudacao.toLowerCase()) {
       resposta = saudacao + resposta.slice(usada[1].length);
     } else if (!usada && !/^(olá|oi)\b/i.test(resposta)) {
-      resposta = `${saudacao}! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão, obrigada pelo contato.\n\n${resposta}`;
+      resposta = `${saudacao}! Aqui é a Carol, da APP Agro Peças Padrão, obrigada pelo contato.\n\n${resposta}`;
     }
   }
 

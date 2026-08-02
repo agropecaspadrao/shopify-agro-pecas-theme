@@ -6,7 +6,7 @@ import { responder, resumirConversa } from './claude.js';
 import { agendarRelatorioDiario, enviarRelatorio, montarRelatorio } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
 import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
-import { agregarCustos } from './custos.js';
+import { agregarCustos, exportarAtendimentos } from './custos.js';
 import { paginaDashboard } from './dashboard.js';
 
 const NUMERO_LOJA = process.env.WA_BUSINESS_NUMBER || '5541984151085';
@@ -92,8 +92,8 @@ async function processarWhatsApp(msg) {
   if (!texto) {
     const aviso =
       msg.tipo === 'audio'
-        ? 'Olá! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão. Não consegui ouvir seu áudio agora. Pode me escrever em texto o que precisa? Se preferir, a Dai responde seu áudio no próximo horário comercial, de segunda a sexta das 8h às 18h.'
-        : 'Olá! Aqui é a Carol, atendente virtual da APP Agro Peças Padrão. No momento consigo responder mensagens de texto e áudio. Pode me escrever o que precisa? Se preferir enviar foto ou documento, a Dai responde no próximo horário comercial, de segunda a sexta das 8h às 18h.';
+        ? 'Olá! Aqui é a Carol, da APP Agro Peças Padrão. Não consegui ouvir seu áudio agora. Pode me escrever em texto o que precisa? Se preferir, a Dai responde seu áudio no próximo horário comercial, de segunda a sexta das 8h às 18h.'
+        : 'Olá! Aqui é a Carol, da APP Agro Peças Padrão. No momento consigo responder mensagens de texto e áudio. Pode me escrever o que precisa? Se preferir enviar foto ou documento, a Dai responde no próximo horário comercial, de segunda a sexta das 8h às 18h.';
     await enviarTexto(msg.de, aviso);
     return;
   }
@@ -202,7 +202,7 @@ app.post('/admin/relatorio', async (req, res) => {
 //   GET /admin/custos?key=X&dias=7      → mesmos dados em JSON
 function diasDoQuery(req) {
   const d = Number(req.query.dias || 7);
-  return [1, 7, 30].includes(d) ? d : 7;
+  return [1, 7, 30, 90].includes(d) ? d : 7;
 }
 app.get('/admin/dashboard', (req, res) => {
   if (!autorizado(req)) return res.sendStatus(403);
@@ -222,6 +222,22 @@ app.get('/admin/custos', (req, res) => {
     res.json(agregarCustos(diasDoQuery(req)));
   } catch (e) {
     res.status(500).json({ erro: e.message });
+  }
+});
+
+// Exportação das conversas para análise:
+//   GET /admin/exportar?key=X&dias=7&formato=csv|txt|json
+//   csv → planilha (Excel/Numbers) · txt → transcrição por conversa (ideal
+//   para colar numa IA e pedir análise) · json → dados brutos
+app.get('/admin/exportar', (req, res) => {
+  if (!autorizado(req)) return res.sendStatus(403);
+  try {
+    const formato = ['csv', 'txt', 'json'].includes(req.query.formato) ? req.query.formato : 'csv';
+    const { corpo, mime, nomeArquivo } = exportarAtendimentos(diasDoQuery(req), formato);
+    res.setHeader('Content-Disposition', `attachment; filename="${nomeArquivo}"`);
+    res.type(mime).send(corpo);
+  } catch (e) {
+    res.status(500).type('text/plain').send('Erro: ' + e.message);
   }
 });
 

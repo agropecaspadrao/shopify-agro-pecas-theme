@@ -45,7 +45,7 @@
     campo.focus();
     if (!lista.childElementCount) {
       addMsg(
-        'Olá! Aqui é a Carol, atendente virtual da Agro Peças Padrão. Posso ajudar a encontrar uma peça, tirar dúvidas técnicas ou encaminhar um orçamento. O que o senhor ou a senhora procura?',
+        'Olá! Aqui é a Carol, da Agro Peças Padrão. Posso ajudar a encontrar uma peça, tirar dúvidas técnicas ou encaminhar um orçamento. O que o senhor ou a senhora procura?',
         'carol'
       );
     }

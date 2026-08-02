@@ -2,13 +2,15 @@
   GA4 — Google Analytics 4
   Measurement ID: G-R0SEJRX1B0
 
-  Eventos implementados:
-    - Todas as páginas : page_view (automático)
-    - Produto          : view_item
-    - Coleção          : view_item_list
-    - Busca            : search
-    - Carrinho add     : add_to_cart  (via JS no body)
-    - Contato WhatsApp : generate_lead (via whatsapp.js)
+  FONTE ÚNICA DE E-COMMERCE: canal "Google & YouTube" do Shopify (web pixel).
+  Ele envia page_view, view_item, view_item_list, search, view_cart,
+  add_to_cart, begin_checkout, add_payment_info, add_shipping_info e purchase
+  com item_id no formato do feed do Merchant Center (shopify_BR_...).
+  NÃO reintroduzir esses eventos aqui — causa contagem duplicada.
+
+  O tema envia apenas o que o canal não cobre:
+    - generate_lead (clique WhatsApp, via whatsapp.js)
+  send_page_view: false — o page_view vem do canal.
 {% endcomment %}
 
 <!-- Google tag (gtag.js) -->
@@ -19,7 +21,7 @@
   gtag('js', new Date());
 
   gtag('config', 'G-R0SEJRX1B0', {
-    send_page_view: true,
+    send_page_view: false,
     {% if template == 'product' %}
     content_group: 'Produto',
     {% elsif template == 'collection' %}
@@ -34,68 +36,4 @@
     content_group: '{{ template | capitalize }}',
     {% endif %}
   });
-
-  {% comment %}── view_item (página de produto) ───────────────────────────{% endcomment %}
-  {% if template == 'product' %}
-  gtag('event', 'view_item', {
-    currency: {{ shop.currency | json }},
-    value: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
-    items: [{
-      item_id:       {{ product.variants.first.sku | json }},
-      item_name:     {{ product.title | json }},
-      item_brand:    {{ product.vendor | json }},
-      item_category: {{ product.type | json }},
-      price:         {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
-      quantity:      1,
-    }],
-  });
-  {% endif %}
-
-  {% comment %}── view_item_list (página de coleção) ─────────────────────{% endcomment %}
-  {% if template == 'collection' %}
-  gtag('event', 'view_item_list', {
-    item_list_id:   {{ collection.handle | json }},
-    item_list_name: {{ collection.title | json }},
-    items: [
-      {% for product in collection.products limit: 20 %}
-      {
-        item_id:       {{ product.variants.first.sku | json }},
-        item_name:     {{ product.title | json }},
-        item_brand:    {{ product.vendor | json }},
-        item_category: {{ product.type | json }},
-        index:         {{ forloop.index }},
-        price:         {{ product.selected_or_first_available_variant.price | divided_by: 100.0 }},
-      },
-      {% endfor %}
-    ],
-  });
-  {% endif %}
-
-  {% comment %}── search (página de busca) ────────────────────────────────{% endcomment %}
-  {% if template == 'search' and search.performed %}
-  gtag('event', 'search', {
-    search_term: {{ search.terms | json }},
-  });
-  {% endif %}
-
-  {% comment %}── view_cart (página de carrinho) ─────────────────────────{% endcomment %}
-  {% if template contains 'cart' %}
-  gtag('event', 'view_cart', {
-    currency: {{ cart.currency.iso_code | json }},
-    value: {{ cart.total_price | divided_by: 100.0 }},
-    items: [
-      {% for item in cart.items %}
-      {
-        item_id:       {{ item.sku | json }},
-        item_name:     {{ item.product.title | json }},
-        item_brand:    {{ item.vendor | json }},
-        item_category: {{ item.product.type | json }},
-        price:         {{ item.final_price | divided_by: 100.0 }},
-        quantity:      {{ item.quantity }},
-        index:         {{ forloop.index0 }},
-      },
-      {% endfor %}
-    ],
-  });
-  {% endif %}
 </script>

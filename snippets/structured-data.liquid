@@ -1,0 +1,105 @@
+{% comment %}
+  structured-data.liquid — JSON-LD para Google (rich results + Merchant Center)
+
+  - Produto: Product + Offer (preço/estoque validados pelo crawler do Google,
+    habilita "atualizações automáticas de itens" no Merchant Center).
+    NÃO emitimos gtin — os EANs internos (prefixo 29) não são GTINs válidos;
+    identificação vai por brand + mpn + sku.
+  - Coleção/Produto: BreadcrumbList.
+  - Home: Organization + WebSite (SearchAction).
+{% endcomment %}
+
+{%- if template == 'product' and product -%}
+  {%- assign v = product.selected_or_first_available_variant -%}
+  {%- assign mpn = product.metafields.agro.part_number | default: product.metafields.agro.sku_oem | default: v.sku -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ request.origin | append: product.url | json }},
+  "description": {{ product.description | strip_html | truncate: 500 | json }},
+  "sku": {{ v.sku | json }},
+  "mpn": {{ mpn | json }},
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  {%- if product.images.size > 0 -%}
+  "image": [
+    {%- for image in product.images limit: 3 -%}
+    {{ image | image_url: width: 1200 | prepend: "https:" | json }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  {%- endif -%}
+  "offers": {
+    "@type": "Offer",
+    "url": {{ request.origin | append: product.url | json }},
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "price": {{ v.price | divided_by: 100.0 | json }},
+    "itemCondition": "https://schema.org/NewCondition",
+    "availability": {% if product.available and v.inventory_quantity > 0 %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
+    "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ request.origin | append: "/" | json }} },
+    {%- if collection -%}
+    { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} },
+    { "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
+    {%- else -%}
+    { "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
+    {%- endif -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- if template == 'collection' and collection -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ request.origin | append: "/" | json }} },
+    { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
+  ]
+}
+</script>
+{%- endif -%}
+
+{%- if template == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | json }},
+  {%- if settings.logo -%}
+  "logo": {{ settings.logo | image_url: width: 640 | prepend: "https:" | json }},
+  {%- endif -%}
+  "email": {{ settings.store_email | default: 'comercial@agropecaspadrao.com.br' | json }},
+  "telephone": {{ settings.store_phone | json }},
+  "taxID": {{ settings.store_cnpj | json }},
+  "sameAs": []
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ shop.name | json }},
+  "url": {{ request.origin | json }},
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": {{ request.origin | append: "/search?q={search_term_string}" | json }}
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{%- endif -%}

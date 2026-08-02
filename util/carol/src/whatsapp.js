@@ -19,7 +19,11 @@ function jaProcessada(id) {
 }
 
 export function verificarAssinatura(rawBody, assinatura) {
-  if (!config.metaAppSecret) return true; // sem secret configurado, não bloqueia (logar no setup)
+  if (!config.metaAppSecret) {
+    // Fail-closed: sem o app secret não há como validar a origem — rejeita tudo
+    console.error('[whatsapp] META_APP_SECRET ausente — webhook rejeitado (fail-closed)');
+    return false;
+  }
   if (!assinatura || !assinatura.startsWith('sha256=')) return false;
   const esperada = crypto.createHmac('sha256', config.metaAppSecret).update(rawBody).digest('hex');
   const recebida = assinatura.slice('sha256='.length);

@@ -17,7 +17,6 @@ REL_DIR    = BASE_DIR / "relatorios"
 API_VERSION = "2025-01"
 TINY_BASE   = "https://api.tiny.com.br/api2"
 FRENET_URL  = "https://api.frenet.com.br/shipping/quote"
-FRENET_TOKEN = "6780AD79R0CB6R435DR9AAER1CEB4D2C6582"
 
 CEP_DESTINO = "81220310"          # estoque APP — Rua José Benedito Cottolengo 901, Curitiba/PR
 TAXA_MP     = 0.2082              # 5% cartão + parcelado 12x 16,82% — decisão 21/07/2026
@@ -89,6 +88,8 @@ def load_env():
             k, v = line.split("=", 1)
             env[k.strip()] = v.split("#")[0].strip().strip('"').strip("'") if k.strip() != "CLIENT_SCREDT_GCP_ADS" else v
     return env
+
+FRENET_TOKEN = load_env().get("FRENET_TOKEN", "")
 
 def colmap(ws):
     """chave lógica -> índice de coluna (1-based), por matching de cabeçalho da linha 5."""

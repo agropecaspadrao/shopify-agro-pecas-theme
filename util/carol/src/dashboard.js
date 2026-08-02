@@ -230,7 +230,7 @@ export function paginaDashboard(dados) {
   }
 
   const filtros = [1, 7, 30, 90]
-    .map((d) => `<a class="filtro${d === periodo.dias ? ' ativo' : ''}" href="?key=__KEY__&dias=${d}">${d === 1 ? 'Hoje' : `${d} dias`}</a>`)
+    .map((d) => `<a class="filtro${d === periodo.dias ? ' ativo' : ''}" href="?dias=${d}">${d === 1 ? 'Hoje' : `${d} dias`}</a>`)
     .join('');
 
   const exportar = [
@@ -240,7 +240,7 @@ export function paginaDashboard(dados) {
   ]
     .map(
       ([f, nome, titulo]) =>
-        `<a class="botao" title="${titulo}" href="/admin/exportar?key=__KEY__&dias=${periodo.dias}&formato=${f}">${nome}</a>`
+        `<a class="botao" title="${titulo}" href="/admin/exportar?dias=${periodo.dias}&formato=${f}">${nome}</a>`
     )
     .join('');
 

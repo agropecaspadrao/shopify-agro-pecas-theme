@@ -339,7 +339,11 @@ function dataHoraBRT(iso) {
 }
 
 function campoCSV(v) {
-  return '"' + String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
+  let s = String(v ?? '').replace(/\r?\n/g, ' ');
+  // Anti CSV-injection: célula começando com = + - @ ou TAB viraria fórmula
+  // ao abrir no Excel/Numbers — prefixa apóstrofo para forçar texto.
+  if (/^[=+\-@\t]/.test(s)) s = "'" + s;
+  return '"' + s.replace(/"/g, '""') + '"';
 }
 
 /**

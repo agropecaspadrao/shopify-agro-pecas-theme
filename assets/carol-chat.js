@@ -9,15 +9,28 @@
   if (!backend) return;
 
   // ── Sessão persistente por navegador ──────────────────────────────────
+  // ID criptográfico (128 bits): impossível de adivinhar — protege o resumo
+  // da conversa e o rate limit por sessão. IDs antigos (curtos) são trocados.
+  function novoSessionId() {
+    var bytes = new Uint8Array(16);
+    if (window.crypto && window.crypto.getRandomValues) {
+      window.crypto.getRandomValues(bytes);
+    } else {
+      for (var i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    var hex = '';
+    for (var j = 0; j < 16; j++) hex += ('0' + bytes[j].toString(16)).slice(-2);
+    return 'w' + hex;
+  }
   var sessionId;
   try {
     sessionId = localStorage.getItem('carolSessionId');
-    if (!sessionId) {
-      sessionId = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    if (!sessionId || sessionId.length < 24) {
+      sessionId = novoSessionId();
       localStorage.setItem('carolSessionId', sessionId);
     }
   } catch (e) {
-    sessionId = 'w' + Date.now().toString(36);
+    sessionId = novoSessionId();
   }
 
   var root = document.getElementById('carol-widget');

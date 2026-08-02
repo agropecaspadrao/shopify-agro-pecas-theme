@@ -13,7 +13,7 @@
     {%- elsif template == 'collection' -%}
       {{ collection.title }} | {{ shop.name }}
     {%- elsif template == 'search' -%}
-      Busca: {{ search.terms }} | {{ shop.name }}
+      Busca: {{ search.terms | escape }} | {{ shop.name }}
     {%- else -%}
       {{ page_title }} | {{ shop.name }}
     {%- endif -%}

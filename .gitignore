@@ -12,6 +12,9 @@ criar-colecoes.js
 
 # Gerados / locais
 .DS_Store
+__pycache__/
+*.pyc
+~$*
 .claude/
 util/Posts/node_modules/
 util/Posts/app_posts*.html

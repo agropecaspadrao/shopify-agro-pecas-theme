@@ -332,7 +332,6 @@
 
             {%- comment -%} Shopify contact form (fallback no-JS) {%- endcomment -%}
             {%- form 'contact', id: 'QfContactForm' -%}
-              <input type="hidden" name="contact[to]" value="comercial@agropecaspadrao.com.br">
 
               {%- if form.posted_successfully? -%}
                 <script>
@@ -355,7 +354,7 @@
                 <div class="qf-row-2">
                   <div class="qf-field">
                     <label for="QfName">Nome completo *</label>
-                    <input type="text" id="QfName" name="contact[name]" required placeholder="João da Silva" value="{{ form.name | default: '' }}">
+                    <input type="text" id="QfName" name="contact[name]" required placeholder="João da Silva" value="{{ form.name | default: '' | escape }}">
                   </div>
                   <div class="qf-field">
                     <label for="QfCompany">Empresa *</label>
@@ -371,7 +370,7 @@
                   </div>
                   <div class="qf-field span-2">
                     <label for="QfEmail">E-mail *</label>
-                    <input type="email" id="QfEmail" name="contact[email]" required placeholder="joao@fazenda.com.br" value="{{ form.email | default: '' }}">
+                    <input type="email" id="QfEmail" name="contact[email]" required placeholder="joao@fazenda.com.br" value="{{ form.email | default: '' | escape }}">
                   </div>
                 </div>
               </div>
@@ -385,14 +384,12 @@
                   <div class="qf-field span-2">
                     <label for="QfProduct">Nome do produto ou SKU *</label>
                     <input type="text" id="QfProduct" name="contact[product]" required
-                      placeholder="Ex: Bomba Hidráulica John Deere ou 5.1305.0565071"
-                      value="{{ request.param.product | default: '' }}">
+                      placeholder="Ex: Bomba Hidráulica John Deere ou 5.1305.0565071">
                   </div>
                   <div class="qf-field">
                     <label for="QfSku">SKU / Part Number</label>
                     <input type="text" id="QfSku" name="contact[sku]"
-                      placeholder="Ex: RE73947"
-                      value="{{ request.param.sku | default: '' }}">
+                      placeholder="Ex: RE73947">
                   </div>
                   <div class="qf-field">
                     <label for="QfQty">Quantidade desejada *</label>
@@ -413,7 +410,7 @@
                 <div class="qf-field">
                   <label for="QfNotes">Observações técnicas</label>
                   <textarea id="QfNotes" name="contact[body]"
-                    placeholder="Descreva especificações adicionais, modelo da máquina, condições de uso...">{{ form.body | default: '' }}</textarea>
+                    placeholder="Descreva especificações adicionais, modelo da máquina, condições de uso...">{{ form.body | default: '' | escape }}</textarea>
                 </div>
 
                 <div class="qf-upload-wrap">

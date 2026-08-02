@@ -145,6 +145,13 @@
   /* Exposto p/ a página de busca (fallback de 0 resultados) */
   window.appSuggestAprox = suggestAprox;
 
+  /* Escapa HTML antes de montar innerHTML — título/SKU vêm do catálogo
+     (sincronizado automaticamente) e o termo vem do teclado do usuário. */
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function renderResults(products, termoAprox) {
     if (!searchResults) return;
     if (!products || products.length === 0) {
@@ -153,18 +160,18 @@
       return;
     }
     var html = products.slice(0, 5).map(function(p) {
-      var img = p.image ? '<img src="' + p.image + '" class="predictive-result__img" alt="" width="48" height="48">' : '';
+      var img = p.image ? '<img src="' + escHtml(p.image) + '" class="predictive-result__img" alt="" width="48" height="48">' : '';
       var sku = (p.variants && p.variants[0] && p.variants[0].sku) ? p.variants[0].sku : '';
-      return '<a href="' + p.url + '" class="predictive-result">' +
+      return '<a href="' + escHtml(p.url) + '" class="predictive-result">' +
         img +
         '<div class="predictive-result__info">' +
-          '<div class="predictive-result__title">' + p.title + '</div>' +
-          (sku ? '<div class="predictive-result__sku">' + sku + '</div>' : '') +
+          '<div class="predictive-result__title">' + escHtml(p.title) + '</div>' +
+          (sku ? '<div class="predictive-result__sku">' + escHtml(sku) + '</div>' : '') +
         '</div>' +
         '</a>';
     }).join('');
     if (termoAprox) {
-      html = '<p class="predictive-aprox">Resultados aproximados para "' + termoAprox + '"</p>' + html;
+      html = '<p class="predictive-aprox">Resultados aproximados para "' + escHtml(termoAprox) + '"</p>' + html;
     }
     searchResults.innerHTML = html;
     searchResults.hidden = false;

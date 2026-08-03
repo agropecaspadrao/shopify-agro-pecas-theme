@@ -96,7 +96,7 @@
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": {{ request.origin | append: "/search?q={search_term_string}" | json }}
+      "urlTemplate": "{{ request.origin }}/search?q={search_term_string}"
     },
     "query-input": "required name=search_term_string"
   }

@@ -30,8 +30,13 @@ for v in ANTHROPIC_API_KEY META_SYSTEM_USER_TOKEN META_APP_SECRET WA_PHONE_NUMBE
   if [ -z "${!v}" ]; then echo "Variável $v não encontrada nos .env" >&2; exit 1; fi
 done
 
+# O serviço no Railway chama "shopify-agro-pecas-theme" e tem root directory
+# util/carol: o `railway up` DEVE subir a partir da raiz do repositório, senão
+# o builder não encontra util/carol dentro do pacote e o build falha na hora.
+SERVICO="shopify-agro-pecas-theme"
+
 echo "== Configurando variáveis no Railway (valores não exibidos)"
-npx -y @railway/cli variables \
+npx -y @railway/cli variables --service "$SERVICO" \
   --set "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY" \
   --set "WA_PHONE_NUMBER_ID=$WA_PHONE_NUMBER_ID" \
   --set "WA_ACCESS_TOKEN=$META_SYSTEM_USER_TOKEN" \
@@ -41,10 +46,10 @@ npx -y @railway/cli variables \
   --set "GRAPH_VERSION=v21.0" \
   --skip-deploys
 
-echo "== Subindo o código (railway up)"
-npx -y @railway/cli up --detach
+echo "== Subindo o código (railway up, a partir da raiz do repositório)"
+(cd ../.. && npx -y @railway/cli up --detach --service "$SERVICO")
 
 echo "== Gerando/obtendo domínio público"
-npx -y @railway/cli domain || true
+npx -y @railway/cli domain --service "$SERVICO" || true
 
-echo "== Pronto. Teste: curl https://SEU-DOMINIO/health"
+echo "== Pronto. Teste: curl https://shopify-agro-pecas-theme-production.up.railway.app/health"

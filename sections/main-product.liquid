@@ -40,6 +40,15 @@
               height="800"
               loading="eager"
             >
+          {%- elsif product.type contains 'Bomba' or product.title contains 'Bomba' -%}
+            <img
+              src="{{ 'bomba_generica.png' | asset_url }}"
+              alt="Imagem meramente ilustrativa — {{ product.title | escape }}"
+              id="GalleryMainImg"
+              width="800"
+              height="533"
+              loading="eager"
+            >
           {%- else -%}
             <div class="pdp-gallery__placeholder">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">

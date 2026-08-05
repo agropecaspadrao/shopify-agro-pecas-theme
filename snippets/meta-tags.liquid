@@ -10,6 +10,10 @@
   <meta property="og:image" content="{{ product.featured_image | image_url: width: 1200 }}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="1200">
+{%- elsif template == 'product' and product.title contains 'Bomba' -%}
+  <meta property="og:image" content="{{ 'bomba_generica.png' | asset_url }}">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="853">
 {%- elsif settings.og_default_image != blank -%}
   <meta property="og:image" content="{{ settings.og_default_image | image_url: width: 1200 }}">
 {%- endif -%}

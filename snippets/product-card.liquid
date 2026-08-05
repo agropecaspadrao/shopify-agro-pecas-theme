@@ -21,6 +21,13 @@
           width="400" height="400" loading="lazy"
           class="product-card__img"
         >
+      {%- elsif product.type contains 'Bomba' or product.title contains 'Bomba' -%}
+        <img
+          src="{{ 'bomba_generica.png' | asset_url }}"
+          alt="Imagem meramente ilustrativa — {{ product.title | escape }}"
+          width="400" height="267" loading="lazy"
+          class="product-card__img"
+        >
       {%- else -%}
         <div class="product-card__img-placeholder">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">

@@ -88,6 +88,12 @@ export async function carregarCatalogo({ forcar = false } = {}) {
     const specs = buscarSpecs(skus);
 
     const item = {
+      variantes: variantes.map((v) => ({
+        id: v.id,
+        sku: v.sku || '',
+        disponivel: v.available !== false,
+        preco: Number(v.price),
+      })),
       handle: p.handle,
       titulo: p.title,
       url: `${config.shopUrl}/products/${p.handle}`,
@@ -162,7 +168,7 @@ export function detalharProduto(consulta) {
   // fallback: melhor correspondência por título
   const resultados = buscarProdutos(consulta, 1);
   if (resultados.length) return detalheParaTexto(resultados[0]);
-  return 'Nenhum produto encontrado com esse código ou nome. Peça ao cliente mais detalhes (código da peça, máquina/modelo ou foto) e ofereça encaminhar para a equipe confirmar.';
+  return 'Nenhum produto encontrado com esse código ou nome. Se o cliente já passou um código, foto ou modelo de máquina que você não reconhece, avise que vai encaminhar ao setor técnico e que a Dai entra em contato o mais rápido possível no horário comercial. Senão, peça código da peça ou foto, sem narrar a busca.';
 }
 
 export function buscarProdutos(termos, limite = 5) {
@@ -192,10 +198,76 @@ export function buscarProdutos(termos, limite = 5) {
   return pontuados.map((r) => r.i);
 }
 
+/**
+ * Monta o link de carrinho pré-carregado do Shopify (/cart/{variant_id}:{qtd},...)
+ * a partir de códigos/nomes de produto e quantidades. Retorna texto pronto para
+ * a Carol usar: link quando possível, avisos quando algum item não entrar.
+ */
+export function montarLinkCarrinho(itens) {
+  if (!Array.isArray(itens) || !itens.length) {
+    return 'Nenhum item informado. Informe pelo menos um produto (código ou nome) e a quantidade.';
+  }
+
+  const pares = [];
+  const incluidos = [];
+  const problemas = [];
+
+  for (const pedido of itens) {
+    const consulta = String(pedido?.codigo || '').trim();
+    const qtd = Math.max(1, Math.floor(Number(pedido?.quantidade) || 1));
+    if (!consulta) continue;
+
+    const chave = normalizarCodigo(consulta);
+    let produto = chave ? porCodigo.get(chave) : null;
+    if (!produto) {
+      // Fallback por nome, mas só com correspondência forte: todos os termos
+      // precisam aparecer no título. Produto errado no carrinho é pior que
+      // pedir o código de novo.
+      const candidato = buscarProdutos(consulta, 1)[0];
+      if (candidato) {
+        const titulo = normalizar(candidato.titulo).replace(/\s+/g, '');
+        const tokens = normalizar(consulta).split(' ').filter(Boolean);
+        if (tokens.length && tokens.every((t) => titulo.includes(t))) produto = candidato;
+      }
+    }
+    if (!produto) {
+      problemas.push(`- "${consulta}": não encontrado no catálogo. Confirme o código com o cliente antes de montar o link.`);
+      continue;
+    }
+
+    // Prioriza a variante cujo SKU bate com o código pedido; senão, a primeira disponível.
+    const porSku = produto.variantes.find((v) => normalizarCodigo(v.sku) === chave && v.disponivel);
+    const variante = porSku || produto.variantes.find((v) => v.disponivel);
+    if (!variante) {
+      problemas.push(`- ${produto.titulo} (${produto.skus[0] || produto.handle}): Sob Consulta, não pode entrar no link de compra. Ofereça encaminhar orçamento com a equipe.`);
+      continue;
+    }
+
+    pares.push(`${variante.id}:${qtd}`);
+    const preco = precoBRL(variante.preco);
+    incluidos.push(`- ${qtd}x ${produto.titulo} | SKU: ${variante.sku || produto.skus[0] || produto.handle}${preco ? ` | ${preco} cada` : ''}`);
+  }
+
+  if (!pares.length) {
+    return ['Não foi possível montar o link de carrinho:', ...problemas].join('\n');
+  }
+
+  const linhas = [
+    `Link do carrinho pronto (leva o cliente direto ao carrinho com os itens já adicionados, é só finalizar a compra): ${config.shopUrl}/cart/${pares.join(',')}`,
+    'Itens incluídos:',
+    ...incluidos,
+  ];
+  if (problemas.length) {
+    linhas.push('Itens que NÃO entraram no link:', ...problemas);
+  }
+  linhas.push('Lembre o cliente de informar o CEP no site para calcular o frete.');
+  return linhas.join('\n');
+}
+
 export function buscarProdutosTexto(termos, limite = 5) {
   const achados = buscarProdutos(termos, limite);
   if (!achados.length) {
-    return 'Nenhum produto do catálogo corresponde a essa busca. Peça mais detalhes (código da peça, máquina, modelo, implemento) antes de concluir que não trabalhamos com o item.';
+    return 'Nenhum produto do catálogo corresponde a essa busca. O cliente pode estar usando um nome regional ou gíria para a peça. NÃO narre a busca ("a busca retornou...") nem conclua que não trabalhamos com o item: diga que verificou o catálogo e os sistemas e não encontrou uma peça com essa descrição, e peça o código da peça ou uma foto para encaminhar à equipe técnica verificar a compatibilidade.';
   }
   return achados
     .map((i) => {

@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { betaTool } from '@anthropic-ai/sdk/helpers/beta/json-schema';
 import { config } from './config.js';
 import { montarSystem } from './persona.js';
-import { catalogoResumo, carregarCatalogo, buscarProdutosTexto, detalharProduto } from './catalogo.js';
+import { catalogoResumo, carregarCatalogo, buscarProdutosTexto, detalharProduto, montarLinkCarrinho } from './catalogo.js';
 import { contextoHorario } from './horario.js';
 import { obterHistorico, salvarHistorico } from './sessions.js';
 import { registrarAtendimento } from './registro.js';
@@ -43,6 +43,37 @@ const detalharProdutoTool = betaTool({
     required: ['codigo_ou_nome'],
   },
   run: async ({ codigo_ou_nome }) => detalharProduto(codigo_ou_nome),
+});
+
+const montarLinkCarrinhoTool = betaTool({
+  name: 'montar_link_carrinho',
+  description:
+    'Monta o link de carrinho do site com os produtos e quantidades já adicionados, pronto para o cliente finalizar a compra. Use quando o cliente pedir o link para comprar, disser que quer fechar o pedido ou confirmar os itens e quantidades. Só funciona para produtos em estoque; itens Sob Consulta seguem pelo orçamento com a equipe.',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      itens: {
+        type: 'array',
+        description: 'Produtos que o cliente quer comprar, com quantidade.',
+        items: {
+          type: 'object',
+          properties: {
+            codigo: {
+              type: 'string',
+              description: 'SKU, código equivalente ou nome do produto. Ex: "H-102724".',
+            },
+            quantidade: {
+              type: 'integer',
+              description: 'Quantidade desejada (padrão 1).',
+            },
+          },
+          required: ['codigo'],
+        },
+      },
+    },
+    required: ['itens'],
+  },
+  run: async ({ itens }) => montarLinkCarrinho(itens),
 });
 
 // Sem travessão, sem emoji: garantia final por pós-processamento, além da instrução.
@@ -139,7 +170,7 @@ export async function responder(sessaoId, mensagem, canal = 'whatsapp') {
     model: config.claudeModel,
     max_tokens: 1024,
     system,
-    tools: [buscarProdutosTool, detalharProdutoTool],
+    tools: [buscarProdutosTool, detalharProdutoTool, montarLinkCarrinhoTool],
     messages: mensagens,
     max_iterations: 6,
   });

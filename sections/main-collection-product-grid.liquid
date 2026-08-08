@@ -65,12 +65,12 @@
             </ul>
           </div>
 
-          <!-- Marca do Trator -->
+          <!-- Marca do Maquinário -->
           <div class="filter-group">
-            <h3 class="filter-group__title">Marca do Trator</h3>
+            <h3 class="filter-group__title">Marca do Maquinário</h3>
             <ul class="filter-list">
-              {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,case' | split: ',' -%}
-              {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH' | split: ',' -%}
+              {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,case,agco,stara,gts,gps-app' | split: ',' -%}
+              {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH,AGCO,Stara,GTS,GPS APP' | split: ',' -%}
               {%- for brand in brands -%}
                 <li>
                   <a href="{{ collection.url }}/{{ brand }}"

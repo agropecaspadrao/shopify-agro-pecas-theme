@@ -2487,3 +2487,42 @@ input, select, textarea { font: inherit; color: inherit; }
   .hero-banner__content { padding: 40px var(--page-gutter); }
   .btn--lg { padding: 13px 24px; font-size: 15px; }
 }
+
+/* ── PDP: preço e condições de pagamento ─────────────────────────────── */
+.pdp-price-box {
+  margin: 18px 0 6px;
+  padding: 18px 20px;
+  background: #fbfaf7;
+  border: 1px solid #e7e2d8;
+  border-left: 3px solid var(--color-accent, #D4AF37);
+  border-radius: 10px;
+}
+.pdp-price-main { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.pdp-price-compare { font-size: 16px; color: #9ca3af; }
+.pdp-price-value {
+  font-family: var(--font-heading, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-primary, #1B4332);
+}
+.pdp-price-installments { margin: 8px 0 0; font-size: 15px; color: #374151; }
+.pdp-price-installments strong { color: var(--color-primary, #1B4332); }
+.pdp-price-pix { margin: 4px 0 0; font-size: 14px; color: #374151; display: flex; align-items: center; gap: 6px; }
+.pdp-price-pix strong { color: #32BCAD; }
+.pdp-payments { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #e5e0d5; }
+.pdp-payments__label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+.pay-icons { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.pay-icon { width: 48px; height: 30px; }
+.pay-icon svg { width: 100%; height: 100%; display: block; border-radius: 4px; }
+@media (max-width: 600px) {
+  .pdp-price-value { font-size: 32px; }
+}

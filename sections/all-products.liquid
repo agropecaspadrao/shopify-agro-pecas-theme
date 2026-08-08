@@ -557,21 +557,19 @@
       </ul>
     </div>
 
-    {%- comment -%} Marca do Trator {%- endcomment -%}
+    {%- comment -%} Marca do Maquinário {%- endcomment -%}
     <div class="ap-filter-group">
-      <p class="ap-filter-group__title">Marca do Trator</p>
-      {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,valmet,case' | split: ',' -%}
-      {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH' | split: ',' -%}
+      <p class="ap-filter-group__title">Marca do Maquinário</p>
+      {%- assign brands       = 'john-deere,new-holland,massey-ferguson,valtra,case,agco,stara,gts,gps-app' | split: ',' -%}
+      {%- assign brand_labels = 'John Deere,New Holland,Massey Ferguson,Valtra / Valmet,Case IH,AGCO,Stara,GTS,GPS APP' | split: ',' -%}
       <ul class="ap-filter-list">
         {%- for brand in brands -%}
-          {%- unless brand == 'valmet' -%}
-            <li>
-              <a href="{{ filter_base }}/{{ brand }}"
-                 class="ap-filter-link {% if current_tags contains brand %}is-active{% endif %}">
-                {{ brand_labels[forloop.index0] }}
-              </a>
-            </li>
-          {%- endunless -%}
+          <li>
+            <a href="{{ filter_base }}/{{ brand }}"
+               class="ap-filter-link {% if current_tags contains brand %}is-active{% endif %}">
+              {{ brand_labels[forloop.index0] }}
+            </a>
+          </li>
         {%- endfor -%}
       </ul>
     </div>

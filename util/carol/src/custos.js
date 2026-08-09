@@ -61,6 +61,13 @@ function anuncioDaMensagem(mensagem) {
   return m ? m[1] : '';
 }
 
+// Remove os marcadores internos de contexto para exibir só o que o cliente disse
+function limparMarcadores(mensagem) {
+  return String(mensagem || '')
+    .replace(/\[(Cliente:|Cliente chegou clicando no anúncio|Cliente consultou o produto|Mensagem de voz do cliente)[^\]]*\]\s*/gi, '')
+    .trim();
+}
+
 function horaBRT(iso) {
   const h = new Intl.DateTimeFormat('en-GB', {
     timeZone: config.timezone,
@@ -209,6 +216,57 @@ export function agregarCustos(dias = 7) {
       resposta: String(e.resposta || '').slice(0, 220),
     }));
 
+  // ── Conversas completas para a aba "Conversas" do dashboard ──────────────
+  // Cada registro é um par cliente+Carol. Os sinais de possível perda de
+  // contexto espelham as regras do sessions.js: TTL de 12h e janela de 30
+  // mensagens (15 pares). Reapresentação no meio da conversa indica histórico
+  // vazio na hora da resposta (reinício do serviço ou sessão expirada).
+  const TTL_SESSAO_MS = 12 * 60 * 60 * 1000;
+  const LIMITE_PARES = 15;
+  const porSessaoCompleta = new Map();
+  for (const e of atendimento) {
+    if (!porSessaoCompleta.has(e.sessao)) porSessaoCompleta.set(e.sessao, []);
+    porSessaoCompleta.get(e.sessao).push(e);
+  }
+  let conversasCompletas = [...porSessaoCompleta.entries()]
+    .map(([sessao, msgs]) => {
+      let resets = 0;
+      const itens = msgs.map((e, i) => {
+        const flags = [];
+        if (i > 0 && new Date(e.ts) - new Date(msgs[i - 1].ts) > TTL_SESSAO_MS) flags.push('sessao_expirada');
+        if (i > 0 && /(aqui é a carol|sou a carol)/i.test(String(e.resposta || '').slice(0, 160))) flags.push('reapresentacao');
+        if (i === LIMITE_PARES) flags.push('janela_cheia');
+        if (String(e.mensagem || '').includes('[Mensagem de voz do cliente')) flags.push('audio');
+        if (String(e.resposta || '').startsWith('Desculpe, não consegui processar')) flags.push('falha');
+        if (flags.includes('sessao_expirada') || flags.includes('reapresentacao')) resets++;
+        return {
+          ts: e.ts,
+          mensagem: limparMarcadores(e.mensagem),
+          resposta: String(e.resposta || ''),
+          custo: typeof e.custo === 'number' ? e.custo : null,
+          flags,
+        };
+      });
+      const agg = conversas.get(sessao);
+      return {
+        sessao,
+        cliente: rotuloCliente(sessao),
+        canal: msgs[0].canal,
+        nome: agg?.nome || '',
+        origemAnuncio: agg?.origemAnuncio || '',
+        custo: agg?.custo || 0,
+        primeiraTs: msgs[0].ts,
+        ultimaTs: msgs[msgs.length - 1].ts,
+        sinais: { resets, janelaCheia: msgs.length > LIMITE_PARES },
+        msgs: itens,
+      };
+    })
+    .sort((a, b) => b.ultimaTs.localeCompare(a.ultimaTs));
+  // Limite de payload da página: mantém as conversas mais recentes até ~1500 pares
+  const totalConversas = conversasCompletas.length;
+  let paresAcumulados = 0;
+  conversasCompletas = conversasCompletas.filter((c) => (paresAcumulados += c.msgs.length) <= 1500);
+
   const saldo = saldoEstimado();
 
   const custoAtendimento = totais.custo - totais.custoSistema;
@@ -242,6 +300,8 @@ export function agregarCustos(dias = 7) {
     conversas: rankingConversas,
     mensagensCaras,
     detalhe,
+    conversasCompletas,
+    totalConversas,
     extrato: EXTRATO,
   };
   dados.resumoExecutivo = montarResumoExecutivo(dados);

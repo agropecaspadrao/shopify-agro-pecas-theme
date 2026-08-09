@@ -60,10 +60,15 @@ export function paginaDashboard(dados) {
   const {
     totais, porDia, porHora, porCanal, anuncios, acompanhar, projecao,
     conversas, mensagensCaras, periodo, modelo, cotacaoBRL, saldo, detalhe,
-    extrato, resumoExecutivo,
+    extrato, resumoExecutivo, conversasCompletas = [], totalConversas = 0,
   } = dados;
   const totalLeads = (anuncios || []).reduce((s, a) => s + a.leads, 0);
   const runway = projecao?.runwayDias;
+
+  // Métricas da aba "Conversas": sinais de possível perda de contexto
+  const totalResets = conversasCompletas.reduce((s, c) => s + c.sinais.resets, 0);
+  const convsComReset = conversasCompletas.filter((c) => c.sinais.resets > 0).length;
+  const convsJanela = conversasCompletas.filter((c) => c.sinais.janelaCheia).length;
 
   // ── Tiles ────────────────────────────────────────────────────────────────
   const tilesOperacao = [
@@ -170,7 +175,7 @@ export function paginaDashboard(dados) {
         .slice(0, 12)
         .map(
           (c) => `<tr>
-        <td>${esc(c.cliente)}${c.nome ? `<br><span class="mini">${esc(c.nome)}</span>` : ''}${c.origemAnuncio ? `<br><span class="mini">via anúncio: ${esc(c.origemAnuncio)}</span>` : ''}</td>
+        <td>${esc(c.cliente)}${c.nome ? `<br><span class="mini">${esc(c.nome)}</span>` : ''}${c.origemAnuncio ? `<br><span class="mini">via anúncio: ${esc(c.origemAnuncio)}</span>` : ''}<br><a class="ver-conv mini" href="#conversas" data-sessao="${esc(c.sessao)}">ver conversa</a></td>
         <td>${c.canal === 'whatsapp' ? 'WhatsApp' : 'Site'}</td>
         <td class="num">${c.mensagens}</td>
         <td>${dataBR(c.ultimaTs)}</td>
@@ -185,7 +190,7 @@ export function paginaDashboard(dados) {
     .map((c) => {
       const pct = totais.custo > 0 ? (c.custo / totais.custo) * 100 : 0;
       return `<tr>
-        <td>${esc(c.cliente)}${c.nome ? `<br><span class="mini">${esc(c.nome)}</span>` : ''}${c.origemAnuncio ? `<br><span class="mini">via anúncio: ${esc(c.origemAnuncio)}</span>` : ''}</td>
+        <td>${esc(c.cliente)}${c.nome ? `<br><span class="mini">${esc(c.nome)}</span>` : ''}${c.origemAnuncio ? `<br><span class="mini">via anúncio: ${esc(c.origemAnuncio)}</span>` : ''}${c.canal !== 'sistema' ? `<br><a class="ver-conv mini" href="#conversas" data-sessao="${esc(c.sessao)}">ver conversa</a>` : ''}</td>
         <td>${c.canal === 'whatsapp' ? 'WhatsApp' : c.canal === 'site' ? 'Site' : 'Sistema'}</td>
         <td class="num">${c.mensagens}</td>
         <td class="num">${c.tokens.toLocaleString('pt-BR')}</td>
@@ -305,6 +310,34 @@ td.assunto{color:var(--ink2);max-width:340px}
 .scroll{max-height:440px;overflow-y:auto}
 .scroll th{position:sticky;top:0;background:var(--card);z-index:1}
 td.resposta{color:var(--ink3);font-size:12px;max-width:300px}
+.abas{display:flex;gap:6px;border-bottom:1px solid var(--borda);margin:4px 0 18px}
+.aba{appearance:none;background:none;border:none;border-bottom:2px solid transparent;padding:8px 14px;font:inherit;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer}
+.aba.ativa{color:var(--verde);border-bottom-color:var(--verde)}
+.aba .pill{background:var(--verde-claro);color:var(--verde);border-radius:999px;font-size:11px;padding:1px 8px;margin-left:4px}
+.conv{background:var(--card);border:1px solid var(--borda);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.conv-cab{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;width:100%;text-align:left;background:none;border:none;font:inherit;color:var(--ink);padding:12px 16px;cursor:pointer}
+.conv-cab:hover{background:var(--verde-claro)}
+.conv-quem{font-weight:600}
+.conv-meta{color:var(--ink3);font-size:12px}
+.badge{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.badge.alerta{background:#fef3c7;color:#92400e}
+.badge.erro{background:#fee2e2;color:#991b1b}
+.badge.info{background:var(--verde-claro);color:var(--verde)}
+.conv-corpo{border-top:1px solid var(--borda);padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-height:560px;overflow-y:auto}
+.conv-corpo[hidden]{display:none}
+.balao{max-width:78%;border-radius:12px;padding:8px 12px;font-size:13.5px;white-space:pre-wrap;overflow-wrap:break-word}
+.balao.cliente{align-self:flex-start;background:var(--verde-claro)}
+.balao.carol{align-self:flex-end;background:var(--fundo);border:1px solid var(--borda)}
+.balao .meta{display:block;font-size:11px;color:var(--ink3);margin-top:4px;white-space:normal}
+.aviso-contexto{align-self:stretch;text-align:center;font-size:12px;border-radius:8px;padding:6px 10px;background:#fef3c7;color:#92400e}
+.aviso-contexto.erro{background:#fee2e2;color:#991b1b}
+.aviso-contexto.info{background:var(--verde-claro);color:var(--verde)}
+@media (prefers-color-scheme: dark){
+.badge.alerta,.aviso-contexto{background:#452c07;color:#fcd34d}
+.badge.erro,.aviso-contexto.erro{background:#450a0a;color:#fca5a5}
+.aviso-contexto.info{background:var(--verde-claro);color:var(--verde)}
+}
+.ver-conv{color:var(--verde)}
 </style>
 </head>
 <body>
@@ -312,6 +345,12 @@ td.resposta{color:var(--ink3);font-size:12px;max-width:300px}
 <p class="sub">Modelo ${esc(modelo)} · período: ${dataBR(periodo.inicio)} até ${dataBR(periodo.fim)} (Brasília) · cotação exibida: US$ 1 = R$ ${cotacaoBRL.toFixed(2).replace('.', ',')}</p>
 <div class="barra-acoes">${filtros}<span class="sep"></span>${exportar}</div>
 
+<nav class="abas">
+<button class="aba ativa" data-aba="geral" type="button">Visão geral</button>
+<button class="aba" data-aba="conversas" type="button">Conversas <span class="pill">${conversasCompletas.length}</span></button>
+</nav>
+
+<section id="aba-geral">
 <div class="resumo">
   <div class="titulo">Resumo executivo</div>
   <ul>${(resumoExecutivo || []).map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
@@ -358,6 +397,24 @@ ${extratoHtml}
 <thead><tr><th>Quando</th><th>Cliente</th><th class="num">Custo</th><th class="num">Tokens (entrada / saída)</th><th>Mensagem do cliente</th></tr></thead>
 <tbody>${linhasMsgs || '<tr><td colspan="5" style="color:var(--ink3)">Sem mensagens com custo medido no período.</td></tr>'}</tbody>
 </table></div>
+</section>
+
+<section id="aba-conversas" hidden>
+<h3>Conversas do período</h3>
+<div class="tiles">
+  <div class="tile"><div class="rotulo">Conversas agrupadas</div><div class="valor">${totalConversas}</div><div class="subtile">${conversasCompletas.length < totalConversas ? `mostrando as ${conversasCompletas.length} mais recentes` : 'todas as conversas do período'}</div></div>
+  <div class="tile"><div class="rotulo">Possíveis perdas de contexto</div><div class="valor">${totalResets}</div><div class="subtile">${totalResets ? `em ${convsComReset} conversa${convsComReset === 1 ? '' : 's'} · sessão expirada ou reapresentação` : 'nenhum sinal no período'}</div></div>
+  <div class="tile"><div class="rotulo">Conversas além da janela</div><div class="valor">${convsJanela}</div><div class="subtile">passaram de 30 mensagens; as antigas saem do contexto</div></div>
+</div>
+<p class="sub" style="margin-top:14px">Clique numa conversa para abrir a interação completa. Os avisos coloridos marcam os pontos onde a Carol pode ter perdido o contexto: sessão expirada (mais de 12h parada), reapresentação no meio da conversa (histórico vazio por reinício do serviço) e janela de 30 mensagens cheia.</p>
+<div class="filtros-msgs">
+  <input id="busca-conv" type="search" placeholder="Filtrar por número, nome, peça ou palavra">
+  <select id="fcanal-conv"><option value="">Todos os canais</option><option value="whatsapp">WhatsApp</option><option value="site">Site</option></select>
+  <select id="fsinal"><option value="">Todas as conversas</option><option value="sinais">Só com sinais de perda de contexto</option></select>
+  <span class="contagem" id="contagem-conv"></span>
+</div>
+<div id="lista-conversas"></div>
+</section>
 
 <p class="nota">Custos calculados por mensagem a partir dos tokens reais de cada chamada (entrada, saída e cache de prompt). Projeções e runway do saldo usam o ritmo médio do período selecionado. Saldo oficial: console.anthropic.com.${totais.semCusto ? ` ${totais.semCusto} registro${totais.semCusto === 1 ? '' : 's'} antigo${totais.semCusto === 1 ? '' : 's'} sem medição de custo aparece${totais.semCusto === 1 ? '' : 'm'} com custo zero.` : ''}</p>
 
@@ -392,6 +449,104 @@ function desenharMsgs() {
 busca.addEventListener('input', desenharMsgs);
 fcanal.addEventListener('change', desenharMsgs);
 desenharMsgs();
+</script>
+<script type="application/json" id="dados-conversas">${JSON.stringify(conversasCompletas).replace(/</g, '\\u003c')}</script>
+<script>
+// ── Aba Conversas: lista agrupada + transcrição completa ao clicar ─────────
+const CONVS = JSON.parse(document.getElementById('dados-conversas').textContent);
+const AVISOS = {
+  sessao_expirada: ['alerta', 'Mais de 12h desde a mensagem anterior: a sessão expirou e a Carol respondeu SEM memória do que veio antes.'],
+  reapresentacao: ['erro', 'A Carol se reapresentou no meio da conversa: o histórico estava vazio nesta resposta (reinício do serviço ou sessão expirada).'],
+  janela_cheia: ['info', 'A partir daqui a janela de 30 mensagens está cheia: as mensagens mais antigas vão saindo do contexto da Carol.'],
+  falha: ['erro', 'Resposta de contingência: a chamada à API falhou ou veio vazia.'],
+};
+const temSinais = (c) => c.sinais.resets > 0 || c.sinais.janelaCheia || c.msgs.some((m) => m.flags.includes('falha'));
+const buscaConv = document.getElementById('busca-conv');
+const fcanalConv = document.getElementById('fcanal-conv');
+const fsinal = document.getElementById('fsinal');
+const listaConv = document.getElementById('lista-conversas');
+
+function corpoConversa(c) {
+  return c.msgs.map((m) => {
+    const avisos = m.flags.filter((f) => AVISOS[f]).map((f) => '<div class="aviso-contexto ' + AVISOS[f][0] + '">' + AVISOS[f][1] + '</div>').join('');
+    const voz = m.flags.includes('audio') ? ' · mensagem de voz transcrita' : '';
+    return avisos
+      + '<div class="balao cliente">' + escHtml(m.mensagem) + '<span class="meta">' + fmtData(m.ts) + voz + '</span></div>'
+      + '<div class="balao carol">' + escHtml(m.resposta) + '<span class="meta">Carol · ' + fmtUsd(m.custo) + '</span></div>';
+  }).join('');
+}
+
+function cabConversa(c) {
+  const badges = []
+    .concat(c.sinais.resets ? ['<span class="badge erro">' + c.sinais.resets + ' perda' + (c.sinais.resets === 1 ? '' : 's') + ' de contexto</span>'] : [])
+    .concat(c.sinais.janelaCheia ? ['<span class="badge alerta">janela de 30 msgs cheia</span>'] : [])
+    .concat(c.msgs.some((m) => m.flags.includes('falha')) ? ['<span class="badge erro">falha de API</span>'] : [])
+    .concat(c.origemAnuncio ? ['<span class="badge info">anúncio</span>'] : [])
+    .join(' ');
+  return '<span class="conv-quem">' + escHtml(c.cliente) + (c.nome ? ' · ' + escHtml(c.nome) : '') + '</span> ' + badges
+    + '<span class="conv-meta">' + (c.canal === 'whatsapp' ? 'WhatsApp' : 'Site') + ' · ' + c.msgs.length + ' interaç' + (c.msgs.length === 1 ? 'ão' : 'ões') + ' · ' + fmtUsd(c.custo) + ' · ' + fmtData(c.primeiraTs) + ' até ' + fmtData(c.ultimaTs) + '</span>';
+}
+
+function desenharConversas() {
+  const termo = buscaConv.value.trim().toLowerCase();
+  const canal = fcanalConv.value;
+  const soSinais = fsinal.value === 'sinais';
+  const visiveis = CONVS.filter((c) => {
+    if (canal && c.canal !== canal) return false;
+    if (soSinais && !temSinais(c)) return false;
+    if (!termo) return true;
+    return (c.cliente + ' ' + c.nome + ' ' + c.msgs.map((m) => m.mensagem + ' ' + m.resposta).join(' ')).toLowerCase().includes(termo);
+  });
+  const pares = visiveis.reduce((s, c) => s + c.msgs.length, 0);
+  document.getElementById('contagem-conv').textContent = visiveis.length + ' de ' + CONVS.length + ' conversas · ' + pares + ' interaç' + (pares === 1 ? 'ão' : 'ões');
+  listaConv.innerHTML = visiveis.map((c) => {
+    const i = CONVS.indexOf(c);
+    return '<div class="conv" data-sessao="' + escHtml(c.sessao) + '">'
+      + '<button class="conv-cab" type="button" data-i="' + i + '">' + cabConversa(c) + '</button>'
+      + '<div class="conv-corpo" hidden></div></div>';
+  }).join('') || '<p class="sub">Nenhuma conversa com esse filtro.</p>';
+}
+
+listaConv.addEventListener('click', (ev) => {
+  const cab = ev.target.closest('.conv-cab');
+  if (!cab) return;
+  const corpo = cab.nextElementSibling;
+  if (corpo.hidden && !corpo.innerHTML) corpo.innerHTML = corpoConversa(CONVS[Number(cab.dataset.i)]);
+  corpo.hidden = !corpo.hidden;
+});
+
+buscaConv.addEventListener('input', desenharConversas);
+fcanalConv.addEventListener('change', desenharConversas);
+fsinal.addEventListener('change', desenharConversas);
+desenharConversas();
+
+// ── Troca de abas (persistida no hash da URL) ──────────────────────────────
+function ativarAba(nome) {
+  document.querySelectorAll('.aba').forEach((b) => b.classList.toggle('ativa', b.dataset.aba === nome));
+  document.getElementById('aba-geral').hidden = nome !== 'geral';
+  document.getElementById('aba-conversas').hidden = nome !== 'conversas';
+  history.replaceState(null, '', nome === 'conversas' ? '#conversas' : location.pathname + location.search);
+  // filtros de período preservam a aba ativa
+  document.querySelectorAll('.filtro').forEach((a) => { a.href = a.href.split('#')[0] + (nome === 'conversas' ? '#conversas' : ''); });
+}
+document.querySelectorAll('.aba').forEach((b) => b.addEventListener('click', () => ativarAba(b.dataset.aba)));
+if (location.hash === '#conversas') ativarAba('conversas');
+
+// Links "ver conversa" das tabelas da visão geral abrem a conversa na aba
+document.querySelectorAll('.ver-conv').forEach((a) => a.addEventListener('click', (ev) => {
+  ev.preventDefault();
+  buscaConv.value = ''; fcanalConv.value = ''; fsinal.value = '';
+  desenharConversas();
+  ativarAba('conversas');
+  const alvo = listaConv.querySelector('.conv[data-sessao="' + CSS.escape(a.dataset.sessao) + '"]');
+  if (alvo) {
+    const cab = alvo.querySelector('.conv-cab');
+    const corpo = cab.nextElementSibling;
+    if (corpo.hidden && !corpo.innerHTML) corpo.innerHTML = corpoConversa(CONVS[Number(cab.dataset.i)]);
+    corpo.hidden = false;
+    alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}));
 </script>
 <script>
 const tip = document.getElementById('tip');

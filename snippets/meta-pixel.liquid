@@ -1,0 +1,21 @@
+{% comment %}
+  Meta Pixel 858621853964199 — base code no documento principal.
+
+  O canal "Facebook & Instagram" do Shopify injeta o pixel via web pixel
+  em SANDBOX (iframe): os eventos de e-commerce saem de lá, mas o `fbq`
+  não existe no documento principal — por isso o evento Lead do
+  whatsapp.js nunca disparava.
+
+  Este snippet carrega o fbq no documento principal APENAS para eventos
+  de lead (clique WhatsApp → whatsapp.js). NÃO enviar PageView nem
+  eventos de e-commerce aqui: o canal já envia e causaria contagem
+  duplicada no Events Manager.
+{% endcomment %}
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+  document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '858621853964199');
+</script>

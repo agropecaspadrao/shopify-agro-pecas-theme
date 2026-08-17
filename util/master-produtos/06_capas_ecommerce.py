@@ -49,6 +49,11 @@ SKIP_SKUS = {"5.1305.0565032.0", "5.0220.0547207", "5.0220.0548817", "5.0209.054
 # fonte manual: SKU -> arquivo em assets (quando o matching automático não serve)
 SOURCE_OVERRIDES = {
     "GR140990-20M": "greco_GR140990-30M_ecommerce.png",  # asset branco do 20M foi apagado; peça é a mesma
+    # sensores de fluxo: a foto do site tem sombra de chão, que a remoção de fundo
+    # deixaria como manchas claras sobre o creme — a capa usa a versão sem sombra
+    "APP142226": "app_sensor_fluxo_capa_src.png",
+    "APP142227": "app_sensor_fluxo_capa_src.png",
+    "APP142228": "app_sensor_fluxo_capa_src.png",
 }
 
 MARCAS = ["Ford New Holland", "Case/New Holland", "Massey Ferguson", "Valtra-Valmet",

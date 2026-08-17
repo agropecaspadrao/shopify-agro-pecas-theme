@@ -10,7 +10,13 @@
   de lead (clique WhatsApp → whatsapp.js). NÃO enviar PageView nem
   eventos de e-commerce aqui: o canal já envia e causaria contagem
   duplicada no Events Manager.
+
+  Desligado por "Ativar as tags do tema" (interruptor geral) ou por
+  "Carregar o Pixel Meta no documento principal". Com o pixel desligado o
+  fbq deixa de existir no documento e o evento Lead do WhatsApp para de
+  sair do tema — whatsapp.js só dispara se `typeof fbq === 'function'`.
 {% endcomment %}
+{%- if settings.tracking_theme_enabled and settings.meta_pixel_enabled != false -%}
 <script>
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -19,3 +25,4 @@
   document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '858621853964199');
 </script>
+{%- endif -%}

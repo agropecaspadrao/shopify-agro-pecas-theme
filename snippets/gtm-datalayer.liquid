@@ -1,0 +1,173 @@
+{%- comment -%}
+  dataLayer — camada de dados do Google Tag Manager.
+
+  Renderizar SEMPRE ANTES do snippet 'gtm' (o container precisa encontrar o
+  dataLayer já populado no primeiro tick).
+
+  O que sai daqui (renderizado no servidor, por Liquid):
+    • objeto de contexto da página (page_type, template, moeda, carrinho, user_data)
+    • view_item  → template product
+    • view_cart  → template cart (com itens)
+    • search     → template search com busca realizada
+
+  O que sai do assets/gtm-events.js (interação, no cliente):
+    • view_item_list / select_item / add_to_cart / remove_from_cart
+    • begin_checkout / generate_lead (formulário de cotação)
+
+  generate_lead do WhatsApp sai do assets/whatsapp.js (listener único e delegado).
+
+  purchase NÃO sai do tema — o checkout e a página de obrigado não são
+  renderizados por ele. Ver docs/GTM_SETUP.md § Purchase.
+
+  PII: e-mail/telefone do cliente logado saem apenas com hash SHA-256
+  (formato de Enhanced Conversions do Google Ads / Advanced Matching da Meta).
+  Nada em texto puro.
+
+  O interruptor geral "Ativar as tags do tema" (Customizar → Configurações do
+  tema → Marketing & Integrações) desliga todo este snippet — nem o dataLayer
+  é criado.
+{%- endcomment -%}
+
+{%- if settings.tracking_theme_enabled -%}
+
+{%- liquid
+  assign gtm_ecom = settings.gtm_datalayer_ecommerce
+  assign gtm_currency = cart.currency.iso_code | default: shop.currency
+
+  case template.name
+    when 'index'
+      assign gtm_page_type = 'home'
+    when 'product'
+      assign gtm_page_type = 'product'
+    when 'collection'
+      assign gtm_page_type = 'collection'
+    when 'search'
+      assign gtm_page_type = 'search'
+    when 'cart'
+      assign gtm_page_type = 'cart'
+    when 'list-collections'
+      assign gtm_page_type = 'collection_list'
+    when '404'
+      assign gtm_page_type = 'not_found'
+    when 'page'
+      assign gtm_page_type = 'page'
+    when 'blog'
+      assign gtm_page_type = 'blog'
+    when 'article'
+      assign gtm_page_type = 'article'
+    else
+      assign gtm_page_type = template.name
+  endcase
+
+  comment
+    user_data — só existe para cliente logado. Telefone normalizado para E.164
+    (assume BR quando não vier com DDI) antes do hash, como o Google exige.
+  endcomment
+  assign gtm_email = ''
+  assign gtm_phone = ''
+  if customer
+    assign gtm_email = customer.email | downcase | strip
+    assign gtm_phone = customer.phone | default: customer.default_address.phone
+    if gtm_phone != blank
+      assign gtm_phone = gtm_phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' | remove: '.'
+      unless gtm_phone contains '+'
+        assign gtm_phone = '+55' | append: gtm_phone
+      endunless
+    endif
+  endif
+-%}
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  window.APP_GTM = {
+    pageType: {{ gtm_page_type | json }},
+    currency: {{ gtm_currency | json }},
+    ecommerce: {% if gtm_ecom %}true{% else %}false{% endif %}
+  };
+
+  window.dataLayer.push({
+    page_type: {{ gtm_page_type | json }},
+    page_template: {{ template.name | json }},
+    page_title: {{ page_title | default: shop.name | json }},
+    shop_currency: {{ gtm_currency | json }},
+    shop_name: {{ shop.name | json }},
+    cart_total_value: {{ cart.total_price | divided_by: 100.0 }},
+    cart_item_count: {{ cart.item_count | default: 0 }},
+    customer_logged_in: {% if customer %}true{% else %}false{% endif %}{% if customer %},
+    customer_id: {{ customer.id | json }},
+    customer_orders_count: {{ customer.orders_count | default: 0 }},
+    customer_total_spent: {{ customer.total_spent | default: 0 | divided_by: 100.0 }},
+    user_data: {
+      {%- if gtm_email != blank -%}
+      sha256_email_address: {{ gtm_email | sha256 | json }},
+      {%- endif -%}
+      {%- if gtm_phone != blank -%}
+      sha256_phone_number: {{ gtm_phone | sha256 | json }},
+      {%- endif -%}
+      address: {
+        {%- if customer.first_name != blank -%}
+        sha256_first_name: {{ customer.first_name | downcase | strip | sha256 | json }},
+        {%- endif -%}
+        {%- if customer.last_name != blank -%}
+        sha256_last_name: {{ customer.last_name | downcase | strip | sha256 | json }},
+        {%- endif -%}
+        city: {{ customer.default_address.city | default: '' | json }},
+        region: {{ customer.default_address.province_code | default: '' | json }},
+        postal_code: {{ customer.default_address.zip | default: '' | json }},
+        country: {{ customer.default_address.country_code | default: 'BR' | json }}
+      }
+    }{% endif %}
+  });
+
+  {%- if gtm_ecom -%}
+
+    {%- comment -%}────────── PDP: view_item ──────────{%- endcomment -%}
+    {%- if template.name == 'product' and product != blank -%}
+      {%- capture gtm_pdp_item -%}{%- render 'gtm-item', product: product -%}{%- endcapture -%}
+      {%- assign gtm_pdp_price = product.selected_or_first_available_variant.price | default: product.price | default: 0 -%}
+  window.APP_GTM.item = {{ gtm_pdp_item }};
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: 'view_item',
+    ecommerce: {
+      currency: {{ gtm_currency | json }},
+      value: {{ gtm_pdp_price | divided_by: 100.0 }},
+      items: [ window.APP_GTM.item ]
+    }
+  });
+    {%- endif -%}
+
+    {%- comment -%}────────── Carrinho: view_cart (+ base do begin_checkout) ──────────{%- endcomment -%}
+    {%- if template.name == 'cart' and cart.item_count > 0 -%}
+      {%- capture gtm_cart_items -%}
+        {%- for item in cart.items -%}
+          {%- unless forloop.first -%},{%- endunless -%}
+          {%- render 'gtm-item', product: item.product, variant: item.variant, quantity: item.quantity, price: item.final_price, index: forloop.index -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+  window.APP_GTM.cart = {
+    currency: {{ gtm_currency | json }},
+    value: {{ cart.total_price | divided_by: 100.0 }},
+    items: [{{ gtm_cart_items }}]
+  };
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: 'view_cart',
+    ecommerce: window.APP_GTM.cart
+  });
+    {%- endif -%}
+
+    {%- comment -%}────────── Busca ──────────{%- endcomment -%}
+    {%- if template.name == 'search' and search.performed -%}
+  window.dataLayer.push({
+    event: 'search',
+    search_term: {{ search.terms | json }},
+    search_results_count: {{ search.results_count | default: 0 }}
+  });
+    {%- endif -%}
+
+  {%- endif -%}
+</script>
+
+{%- endif -%}

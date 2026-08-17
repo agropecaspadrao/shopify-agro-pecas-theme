@@ -1,0 +1,27 @@
+{%- comment -%}
+  Google Tag Manager — container loader.
+
+  Precisa vir DEPOIS de 'gtm-datalayer' (o dataLayer tem que existir e já
+  conter o contexto da página antes do container carregar) e o mais alto
+  possível no <head>.
+
+  ID configurável em Customizar → Configurações do tema → Marketing & Integrações.
+  Em branco = GTM desativado no site. O interruptor geral "Ativar as tags do
+  tema" desliga este snippet independentemente do ID preenchido.
+{%- endcomment -%}
+{%- liquid
+  assign gtm_id = settings.gtm_container_id
+  unless settings.tracking_theme_enabled
+    assign gtm_id = ''
+  endunless
+  assign gtm_host = settings.gtm_loader_url | default: 'https://www.googletagmanager.com'
+-%}
+{%- if gtm_id != blank -%}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'{{ gtm_host }}/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+<!-- End Google Tag Manager -->
+{%- endif -%}

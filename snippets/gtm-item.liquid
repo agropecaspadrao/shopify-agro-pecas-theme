@@ -1,0 +1,72 @@
+{%- comment -%}
+  gtm-item — monta UM objeto de item no schema GA4 (ecommerce.items[]).
+
+  Uso:
+    {%- render 'gtm-item', product: product -%}
+    {%- render 'gtm-item', product: item.product, variant: item.variant, quantity: item.quantity, price: item.final_price -%}
+    {%- render 'gtm-item', product: product, list_name: 'Bombas Hidráulicas', index: forloop.index -%}
+
+  Parâmetros:
+    product    (obrigatório) objeto product
+    variant    (opcional) variante específica; default = primeira/selecionada
+    quantity   (opcional) default 1
+    price      (opcional) preço unitário EM CENTAVOS; sobrescreve o preço da variante
+    index      (opcional) posição na lista (1-based)
+    list_name  (opcional) nome da lista de origem
+    list_id    (opcional) id da lista de origem
+
+  Saída: JSON de um objeto (sem vírgula final). Preços em REAIS (float).
+
+  Campos extras além do padrão GA4 (para o gestor mapear no GTM):
+    product_id / variant_id / sku  → IDs brutos do Shopify
+    feed_id                        → shopify_BR_<product>_<variant>, mesmo ID do feed
+                                     do Merchant Center e do canal Google & YouTube.
+                                     Use ESTE campo em remarketing dinâmico do Google Ads.
+    google_business_vertical       → exigido pelo remarketing dinâmico do Google Ads
+{%- endcomment -%}
+{%- liquid
+  assign gi_variant = variant
+  if gi_variant == blank
+    assign gi_variant = product.selected_or_first_available_variant
+  endif
+  if gi_variant == blank
+    assign gi_variant = product.variants.first
+  endif
+
+  assign gi_price = gi_variant.price
+  if gi_price == blank
+    assign gi_price = product.price
+  endif
+  if price != blank
+    assign gi_price = price
+  endif
+
+  assign gi_compare = gi_variant.compare_at_price
+  if gi_compare == blank
+    assign gi_compare = product.compare_at_price
+  endif
+
+  assign gi_discount = 0
+  if gi_compare > gi_price
+    assign gi_discount = gi_compare | minus: gi_price
+  endif
+
+  assign gi_sku = product.metafields.agro.sku_oem.value
+  if gi_sku == blank
+    assign gi_sku = gi_variant.sku
+  endif
+  if gi_sku == blank
+    assign gi_sku = product.id
+  endif
+
+  assign gi_qty = quantity | default: 1
+
+  assign gi_variant_name = gi_variant.title
+  if gi_variant_name == 'Default Title'
+    assign gi_variant_name = ''
+  endif
+
+  assign gi_feed = 'shopify_BR_' | append: product.id | append: '_' | append: gi_variant.id
+  assign gi_currency = cart.currency.iso_code | default: shop.currency
+-%}
+{"item_id":{{ gi_sku | json }},"item_name":{{ product.title | json }},"affiliation":{{ shop.name | json }},"item_brand":{{ product.vendor | default: '' | json }},"item_category":{{ product.type | default: '' | json }}{% if product.collections.first.title != blank %},"item_category2":{{ product.collections.first.title | json }}{% endif %}{% if gi_variant_name != blank %},"item_variant":{{ gi_variant_name | json }}{% endif %},"price":{{ gi_price | divided_by: 100.0 }},"discount":{{ gi_discount | divided_by: 100.0 }},"currency":{{ gi_currency | json }},"quantity":{{ gi_qty }}{% if index != blank %},"index":{{ index }}{% endif %}{% if list_name != blank %},"item_list_name":{{ list_name | json }}{% endif %}{% if list_id != blank %},"item_list_id":{{ list_id | json }}{% endif %},"product_id":{{ product.id | json }},"variant_id":{{ gi_variant.id | json }},"sku":{{ gi_variant.sku | default: '' | json }},"feed_id":{{ gi_feed | json }},"google_business_vertical":"retail","in_stock":{% if product.available %}true{% else %}false{% endif %}}

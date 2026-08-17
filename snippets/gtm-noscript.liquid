@@ -1,0 +1,16 @@
+{%- comment -%}
+  Google Tag Manager (noscript) — deve ser o PRIMEIRO elemento dentro de <body>.
+{%- endcomment -%}
+{%- liquid
+  assign gtm_id = settings.gtm_container_id
+  unless settings.tracking_theme_enabled
+    assign gtm_id = ''
+  endunless
+  assign gtm_host = settings.gtm_loader_url | default: 'https://www.googletagmanager.com'
+-%}
+{%- if gtm_id != blank -%}
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="{{ gtm_host }}/ns.html?id={{ gtm_id }}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+{%- endif -%}

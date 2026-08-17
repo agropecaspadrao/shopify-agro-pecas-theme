@@ -300,7 +300,8 @@
         {%- form 'cart', cart -%}
           <div class="cart-items">
             {%- for item in cart.items -%}
-              <div class="cart-item">
+              {%- capture gtm_line_item -%}{%- render 'gtm-item', product: item.product, variant: item.variant, quantity: item.quantity, price: item.final_price, index: forloop.index -%}{%- endcapture -%}
+              <div class="cart-item" data-gtm-item="{{ gtm_line_item | escape }}">
                 <a href="{{ item.url }}" class="cart-item__img">
                   {%- if item.image -%}
                     <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title }}" width="160" height="160" loading="lazy">
@@ -392,6 +393,9 @@
 <script>
 (function () {
   // GA4: begin_checkout é enviado pelo canal Google & YouTube (web pixel) — não duplicar aqui.
+  // O dataLayer do GTM recebe view_cart / begin_checkout / remove_from_cart pelo
+  // gtm-datalayer.liquid + gtm-events.js. Ver docs/GTM_SETUP.md antes de criar
+  // tags GA4 de e-commerce no container (risco de contagem dupla com o canal).
 
   document.addEventListener('click', function (e) {
     var removeBtn = e.target.closest('.cart-item__remove');

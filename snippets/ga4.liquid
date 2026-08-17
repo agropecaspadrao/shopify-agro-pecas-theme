@@ -11,7 +11,16 @@
   O tema envia apenas o que o canal não cobre:
     - generate_lead (clique WhatsApp, via whatsapp.js)
   send_page_view: false — o page_view vem do canal.
+
+  MIGRAÇÃO PARA O GTM: quando a tag do GA4 for criada dentro do contêiner
+  GTM, desmarque "Carregar o gtag.js do GA4 direto no tema" em Customizar →
+  Configurações do tema → Marketing & Integrações. Sem isso o GA4 carrega
+  duas vezes e o generate_lead conta em dobro. Ver docs/GTM_SETUP.md.
+
+  O interruptor geral "Ativar as tags do tema" desliga este snippet junto com
+  todas as outras tags do tema.
 {% endcomment %}
+{%- if settings.tracking_theme_enabled and settings.ga4_gtag_enabled != false -%}
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0SEJRX1B0"></script>
@@ -37,3 +46,4 @@
     {% endif %}
   });
 </script>
+{%- endif -%}

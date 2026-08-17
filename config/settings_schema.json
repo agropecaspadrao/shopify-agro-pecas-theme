@@ -201,6 +201,17 @@
     "settings": [
       {
         "type": "header",
+        "content": "Rastreamento pelo tema"
+      },
+      {
+        "type": "checkbox",
+        "id": "tracking_theme_enabled",
+        "label": "Ativar as tags do tema",
+        "default": true,
+        "info": "Interruptor geral. Desmarcado, o tema não injeta NADA: sem GTM, sem dataLayer, sem gtag do GA4 e sem Pixel Meta. Sobram apenas os canais de venda do Shopify (Google & YouTube, Facebook & Instagram), que se desligam no Admin. Use para entregar o site limpo a quem for montar o rastreamento por fora (ex.: server-side GTM na stape.io)."
+      },
+      {
+        "type": "header",
         "content": "Meta (Facebook / Instagram)"
       },
       {
@@ -208,6 +219,48 @@
         "id": "meta_domain_verification",
         "label": "Verificação de domínio",
         "info": "Business Manager → Segurança da marca → Domínios. Cole apenas o código (o valor 'content' da meta-tag facebook-domain-verification)."
+      },
+      {
+        "type": "checkbox",
+        "id": "meta_pixel_enabled",
+        "label": "Carregar o Pixel Meta no documento principal",
+        "default": true,
+        "info": "O canal Facebook & Instagram injeta o pixel em sandbox, onde o fbq não é visível para o tema. Marcado, o tema carrega o fbq no documento principal SÓ para o evento Lead do WhatsApp — nenhum PageView ou evento de e-commerce. Desmarque se outra ferramenta passar a ser dona do pixel."
+      },
+      {
+        "type": "header",
+        "content": "Google Tag Manager"
+      },
+      {
+        "type": "text",
+        "id": "gtm_container_id",
+        "label": "ID do contêiner",
+        "default": "GTM-TK3GX7XD",
+        "info": "Formato GTM-XXXXXXX. Em branco desativa o contêiner no site (o dataLayer continua sendo publicado). Para desligar o dataLayer junto, use o interruptor geral acima."
+      },
+      {
+        "type": "text",
+        "id": "gtm_loader_url",
+        "label": "Servidor do contêiner (server-side)",
+        "info": "Em branco carrega do Google (https://www.googletagmanager.com). Para apontar ao GTM Server (stape.io), cole aqui a URL do servidor SEM barra no final — ex.: https://sgtm.agropecaspadrao.com.br. Vale para o script do <head> e para o <noscript>."
+      },
+      {
+        "type": "checkbox",
+        "id": "gtm_datalayer_ecommerce",
+        "label": "Publicar eventos de e-commerce no dataLayer",
+        "default": true,
+        "info": "view_item, view_item_list, select_item, add_to_cart, remove_from_cart, view_cart, begin_checkout, search e generate_lead. Desmarque para subir só o contêiner, sem eventos."
+      },
+      {
+        "type": "header",
+        "content": "Google Analytics 4"
+      },
+      {
+        "type": "checkbox",
+        "id": "ga4_gtag_enabled",
+        "label": "Carregar o gtag.js do GA4 direto no tema",
+        "default": true,
+        "info": "Deixe MARCADO enquanto o GA4 não estiver dentro do GTM. Depois de criar a tag GA4 no contêiner, desmarque — senão o generate_lead conta duas vezes."
       }
     ]
   },

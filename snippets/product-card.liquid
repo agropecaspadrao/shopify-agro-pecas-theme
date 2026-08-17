@@ -9,9 +9,29 @@
   endif
   # Pedido mínimo de R$200 é validado pelo TOTAL do carrinho (gate em main-cart) — aqui adiciona 1 un.
   assign min_qty = 1
--%}
 
-<article class="product-card">
+  # ── dataLayer / GTM ──
+  # Nome da lista: passe `list_name:` no render para sobrescrever; sem isso é
+  # deduzido do template. O gtm-events.js agrupa view_item_list por este valor.
+  assign gtm_list = list_name
+  if gtm_list == blank
+    case template.name
+      when 'collection'
+        assign gtm_list = collection.title | default: 'Coleção'
+      when 'search'
+        assign gtm_list = 'Busca'
+      when 'index'
+        assign gtm_list = 'Home'
+      when 'product'
+        assign gtm_list = 'Produtos Relacionados'
+      else
+        assign gtm_list = page_title | default: 'Catálogo'
+    endcase
+  endif
+-%}
+{%- capture gtm_card_item -%}{%- render 'gtm-item', product: product, list_name: gtm_list -%}{%- endcapture -%}
+
+<article class="product-card" data-gtm-item="{{ gtm_card_item | escape }}" data-gtm-list="{{ gtm_list | escape }}">
   <a href="{{ product.url }}" class="product-card__img-link" tabindex="-1" aria-hidden="true">
     <div class="product-card__img-wrap">
       {%- if product.featured_image -%}
@@ -80,7 +100,7 @@
     <!-- CTAs -->
     <div class="product-card__ctas">
       {%- if has_stock -%}
-        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="product-card__cart-form">
+        <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" class="product-card__cart-form" data-gtm-atc="card">
           <input type="hidden" name="id" value="{{ product.variants.first.id }}">
           <input type="hidden" name="quantity" value="{{ min_qty }}">
           <button type="submit" class="product-card__cart-btn" aria-label="Adicionar {{ product.title | escape }} ao carrinho">

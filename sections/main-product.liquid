@@ -164,7 +164,8 @@
 
         <!-- CTAs -->
         {%- if has_stock -%}
-          {%- form 'product', product, id: 'PdpForm' -%}
+          {%- comment -%} data-gtm-atc: o gtm-events.js publica add_to_cart no submit (item vem de window.APP_GTM.item) {%- endcomment -%}
+          {%- form 'product', product, id: 'PdpForm', data-gtm-atc: 'pdp' -%}
             <input type="hidden" name="id" value="{{ product.variants.first.id }}">
             {%- comment -%} Pedido mínimo de R$200 é validado pelo TOTAL do carrinho (gate em main-cart) {%- endcomment -%}
             {%- assign pdp_min_qty = 1 -%}

@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+  {%- comment -%}
+    GTM o mais alto possível no <head>. A ordem importa: o dataLayer precisa
+    estar populado antes do container carregar. Ver docs/GTM_SETUP.md.
+  {%- endcomment -%}
+  {%- render 'gtm-datalayer' -%}
+  {%- render 'gtm' -%}
+
   <title>
     {%- if template == 'index' -%}
       {{ shop.name }} — Bombas Hidráulicas, Sensores e Componentes Plásticos para o Agro
@@ -83,6 +90,8 @@
 
 <body class="template-{{ template | replace: '.', '-' }}">
 
+  {%- render 'gtm-noscript' -%}
+
   {%- section 'header' -%}
 
   <main id="MainContent" role="main" tabindex="-1">
@@ -112,6 +121,9 @@
 
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
   <script src="{{ 'whatsapp.js' | asset_url }}" defer></script>
+  {%- if settings.tracking_theme_enabled -%}
+  <script src="{{ 'gtm-events.js' | asset_url }}" defer></script>
+  {%- endif -%}
 
 </body>
 </html>

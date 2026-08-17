@@ -255,7 +255,27 @@
     if (!link) return;
     var source = waSource(link);
 
-    // GA4 — evento generate_lead (marque como Evento-chave/conversão no GA4)
+    // GTM — dataLayer (fonte para as tags GA4 / Google Ads / Meta do container)
+    var ctx = window.APP_GTM || {};
+    var dlLead = {
+      event: 'generate_lead',
+      lead_method: 'whatsapp',
+      lead_source: source,
+      page_type: ctx.pageType || '',
+      page_path: window.location.pathname
+    };
+    if (ctx.item) {
+      dlLead.lead_sku = ctx.item.item_id;
+      dlLead.lead_product = ctx.item.item_name;
+      dlLead.lead_value = ctx.item.price;
+      dlLead.currency = ctx.item.currency;
+    }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(dlLead);
+
+    // GA4 via gtag.js direto do tema — só existe enquanto o snippet ga4.liquid
+    // estiver ativo. Ao migrar o GA4 para dentro do GTM, desligue-o nas
+    // configurações do tema para não contar generate_lead duas vezes.
     if (typeof gtag === 'function') {
       gtag('event', 'generate_lead', {
         method: 'whatsapp',

@@ -2,7 +2,7 @@
 
 **Contêiner:** `GTM-TK3GX7XD`
 **Loja:** agropecaspadrao.com.br (Shopify OS 2.0, tema custom neste repositório)
-**Implementado no tema em:** 16/08/2026
+**Última revisão:** 18/08/2026
 
 Este documento é a especificação do que o tema publica no `dataLayer` e o roteiro
 para montar o contêiner. Quem monta as tags é o gestor de tráfego; quem publica
@@ -10,63 +10,94 @@ os dados é o tema.
 
 ---
 
-## 1. O que já está no ar (lado do tema)
+## 0. Conformidade com a tabela de eventos
+
+Mapeamento direto da planilha de requisitos. Coluna "Onde" = quem dispara.
+
+| Evento pedido | GA4 | Parâmetros obrigatórios | Meta Ads | Onde dispara | Status |
+|---|---|---|---|---|---|
+| `view_item_list` | `view_item_list` | items, **item_list_id**, item_list_name | — | tema (`gtm-events.js`) | ✅ |
+| `productClick` | `select_item` | items, item_list_id, item_list_name | — | tema (`gtm-events.js`) | ✅ |
+| `view_item` | `view_item` | currency, value, items | `ViewContent` | tema (`gtm-datalayer.liquid`) | ✅ |
+| `add_to_cart` | `add_to_cart` | currency, value, items | `AddToCart` | tema (`gtm-events.js`) | ✅ |
+| `remove_from_cart` | `remove_from_cart` | currency, value, items | — | tema (`gtm-events.js`) | ✅ |
+| `view_cart` | `view_cart` | currency, value, items | — | tema (`gtm-datalayer.liquid`) | ✅ |
+| `begin_checkout` | `begin_checkout` | currency, value, **coupon**, items | `InitiateCheckout` | tema (`gtm-events.js`) | ✅ |
+| `add_shipping_info` | `add_shipping_info` | currency, value, coupon, **shipping_tier**, items | — | **pixel de checkout** | ✅ |
+| `add_payment_info` | `add_payment_info` | currency, value, coupon, **payment_type**, items | `AddPaymentInfo` | **pixel de checkout** | ✅ |
+| `orderPlaced` | `purchase` | currency, value, **transaction_id**, coupon, shipping, tax, items | `Purchase` | **pixel de checkout** | ✅ |
+| — | `search` | search_term, search_results_count | — | tema (`gtm-datalayer.liquid`) | ✅ extra |
+| — | `generate_lead` | lead_method, lead_source, lead_sku… | — | tema (`whatsapp.js` / `gtm-events.js`) | ✅ extra |
+
+**Os parâmetros da Meta já vêm prontos no dataLayer.** Cada evento carrega dois
+objetos no mesmo push: `ecommerce` (schema GA4) e `meta` (schema Meta Ads, com
+`content_ids`, `content_type`, `contents`, `currency`, `value`, `num_items`).
+Não é preciso escrever variável de JavaScript personalizado no GTM — ver §3.4.
+
+`add_shipping_info`, `add_payment_info` e `purchase` **não podem** sair do tema:
+acontecem dentro do checkout, que a Shopify não deixa o tema renderizar. Saem do
+pixel de Eventos do Cliente — instalação em 2 minutos, §6.
+
+---
+
+## 1. Onde cada evento dispara (leia antes de dizer que não está funcionando)
+
+O erro mais comum no Preview é olhar só a Home. **Na Home só existe
+`view_item_list`** — não há PDP para `view_item`, nem carrinho para `view_cart`.
+Roteiro para ver a lista inteira:
+
+| Passo | O que fazer | Eventos que aparecem |
+|---|---|---|
+| 1 | Abrir a Home | `Mensagem` (contexto) + `view_item_list` (Home) |
+| 2 | Abrir `/collections/all` | `view_item_list` (nome = título da coleção) |
+| 3 | Clicar num card | `select_item` → na página seguinte, `view_item` |
+| 4 | Na PDP, "Adicionar ao Carrinho" | `add_to_cart` |
+| 5 | Abrir `/cart` | `view_cart` |
+| 6 | Clicar "Remover" num item | `remove_from_cart` |
+| 7 | Clicar "Finalizar Compra" | `begin_checkout` |
+| 8 | Preencher endereço no checkout | `add_shipping_info` * |
+| 9 | Escolher forma de pagamento | `add_payment_info` * |
+| 10 | Concluir o pedido | `purchase` * |
+| 11 | Buscar por "sensor" | `search` |
+| 12 | Clicar em qualquer botão de WhatsApp | `generate_lead` |
+
+\* passos 8–10 dependem do pixel de checkout instalado (§6) e aparecem em outra
+aba do Preview, porque rodam no sandbox do checkout.
+
+⚠️ **Ligue "Preserve log"** (Preservar registro) no Tag Assistant. `select_item`,
+`add_to_cart` e `begin_checkout` disparam no clique que troca de página — sem
+preservar o log eles somem da tela antes de você ler.
+
+⚠️ **O pedido mínimo da loja é R$ 200 por carrinho.** Abaixo disso o botão
+"Finalizar Compra" fica desabilitado de propósito e `begin_checkout` **não**
+dispara — não é bug. Monte um carrinho acima de R$ 200 para testar.
+
+---
+
+## 2. O que já está no ar (lado do tema)
 
 | Arquivo | Papel |
 |---------|-------|
 | `snippets/gtm.liquid` | Carrega o contêiner no `<head>` |
 | `snippets/gtm-noscript.liquid` | `<noscript>` como primeiro elemento do `<body>` |
-| `snippets/gtm-datalayer.liquid` | Contexto da página + `view_item`, `view_cart`, `search` (renderizado no servidor) |
+| `snippets/gtm-datalayer.liquid` | Contexto da página + `view_item`, `view_cart`, `search` + tradutor GA4→Meta |
 | `snippets/gtm-item.liquid` | Monta um item no schema GA4 — fonte única de verdade dos campos |
 | `assets/gtm-events.js` | `view_item_list`, `select_item`, `add_to_cart`, `remove_from_cart`, `begin_checkout`, `generate_lead` (formulário) |
 | `assets/whatsapp.js` | `generate_lead` do WhatsApp (listener delegado, pega qualquer link `wa.me` do site) |
+| `docs/gtm-custom-pixel-checkout.js` | `add_shipping_info`, `add_payment_info`, `purchase` |
 
 **Ordem no `<head>`:** `dataLayer` → contêiner. Não inverter — o GTM precisa achar
 o `dataLayer` já populado no primeiro tick.
 
-**Onde mudar o ID:** Customizar → Configurações do tema → **Marketing & Integrações**
-→ *Google Tag Manager* → *ID do contêiner*. Em branco desativa o GTM no site.
+**Configurações** (Customizar → Configurações do tema → **Marketing & Integrações**):
 
-**Kill-switch dos eventos:** no mesmo painel, *Publicar eventos de e-commerce no dataLayer*.
-
----
-
-## 2. Regra de ouro — quem já mede o quê
-
-A loja **já tinha** dois medidores antes do GTM. Se as tags do contêiner repetirem
-o que eles enviam, tudo conta em dobro — receita, conversão e ROAS ficam inflados.
-
-| Evento | Canal Google & YouTube (web pixel) | Canal Facebook & Instagram | Tema (gtag direto) | dataLayer do GTM |
-|--------|:---:|:---:|:---:|:---:|
-| `page_view` | ✅ envia | ✅ PageView | ❌ (`send_page_view: false`) | — |
-| `view_item` / `view_item_list` / `select_item` | ✅ envia | ✅ ViewContent | ❌ | ✅ publica |
-| `add_to_cart` / `view_cart` / `remove_from_cart` | ✅ envia | ✅ AddToCart | ❌ | ✅ publica |
-| `begin_checkout` / `add_payment_info` | ✅ envia | ✅ InitiateCheckout | ❌ | ✅ publica (`begin_checkout`) |
-| `purchase` | ✅ envia | ✅ Purchase | ❌ | ❌ **não sai do tema** (ver §6) |
-| `search` | ✅ envia | — | ❌ | ✅ publica |
-| `generate_lead` (WhatsApp) | ❌ | ❌ | ✅ envia | ✅ publica |
-
-### O que CRIAR no contêiner
-
-- ✅ **Google Ads** — conversão de `generate_lead` (é a conversão principal da conta).
-- ✅ **Google Ads** — remarketing dinâmico (usa `feed_id` + `google_business_vertical`).
-- ✅ **Enhanced Conversions** do Google Ads via `user_data` (já vem com hash SHA-256).
-- ✅ Qualquer pixel novo (Clarity, LinkedIn, TikTok, RD Station…).
-
-### O que NÃO criar (contagem dupla garantida)
-
-- ❌ Tag GA4 de e-commerce (`view_item`, `add_to_cart`, `purchase`…) enquanto o canal
-  **Google & YouTube** estiver ativo em Shopify Admin → Vendas → Google & YouTube.
-- ❌ Meta Pixel base / `PageView` / eventos de e-commerce — o canal **Facebook &
-  Instagram** já injeta tudo, e o `snippets/meta-pixel.liquid` já carrega o `fbq`
-  no documento principal para o evento `Lead`.
-- ❌ Tag GA4 `generate_lead` **enquanto** *Carregar o gtag.js do GA4 direto no tema*
-  estiver marcado nas configurações. Ver §7 (migração).
-
-> Se o gestor quiser o GA4 inteiro dentro do GTM, o caminho é **desconectar o
-> GA4 do canal Google & YouTube primeiro** — mas aí se perde o `purchase`, que o
-> tema não consegue medir (§6). Recomendação: manter o canal como fonte de
-> e-commerce e usar o GTM para mídia paga e leads.
+| Campo | Efeito |
+|---|---|
+| *Ativar as tags do tema* | Interruptor geral. Desmarcado, o tema não injeta nada — nem GTM, nem dataLayer, nem gtag, nem Pixel Meta |
+| *ID do contêiner* | `GTM-TK3GX7XD`. Em branco desativa só o contêiner |
+| *Servidor do contêiner (server-side)* | Em branco = Google. Para stape.io, cole a URL do servidor sem barra final |
+| *Publicar eventos de e-commerce no dataLayer* | Kill-switch dos eventos de e-commerce (lead continua) |
+| *Carregar o gtag.js do GA4 direto no tema* | Ver §7 (migração) |
 
 ---
 
@@ -82,7 +113,7 @@ Presente em **todas** as páginas, antes do contêiner carregar:
   page_template: 'index',
   page_title: 'Bomba Hidráulica ...',
   shop_currency: 'BRL',
-  shop_name: 'APP Agro Peças Padrão',
+  shop_name: 'Agro Peças Padrão',
   cart_total_value: 0.0,          // reais, não centavos
   cart_item_count: 0,
   customer_logged_in: false,
@@ -112,53 +143,96 @@ Todo evento de e-commerce usa este formato:
 
 ```js
 {
-  item_id: '5.1301.0565008',      // metafield agro.sku_oem > SKU da variante > id do produto
-  item_name: 'Bomba Hidráulica - LIVENZA 5.1301.0565008 | Valtra BH180',
-  affiliation: 'APP Agro Peças Padrão',
-  item_brand: 'LIVENZA',          // vendor
-  item_category: 'Bomba Hidráulica',  // type
-  item_category2: 'Bombas Hidráulicas', // 1ª coleção (quando existe)
+  item_id: 'APP142226',           // metafield agro.sku_oem > SKU da variante > id do produto
+  item_name: 'Sensor de Fluxo 25,4mm - APP | Precision Planting PM400',
+  affiliation: 'Agro Peças Padrão',
+  item_brand: 'APP Agro Peças Padrão',   // vendor
+  item_category: 'Sensores Agrícolas',   // type
+  item_category2: 'Sensores Agrícolas',  // 1ª coleção (quando existe)
   item_variant: 'Kit 3 un.',      // omitido quando é "Default Title"
-  price: 1899.9,                  // REAIS, unitário
-  discount: 200.0,                // reais (compare_at − price), 0 se não houver
+  price: 457.26,                  // REAIS, unitário
+  discount: 0,                    // reais (compare_at − price)
   currency: 'BRL',
   quantity: 1,
-  index: 3,                       // posição na lista (eventos de lista)
-  item_list_name: 'Bombas Hidráulicas',
+  index: 16,                      // posição na lista
+  item_list_id: 'home',           // slug da lista
+  item_list_name: 'Home',
 
   // extras fora do padrão GA4, para mapeamento no GTM:
-  product_id: 8123456789,
-  variant_id: 44987654321,
-  sku: 'GR140990-20M',
-  feed_id: 'shopify_BR_8123456789_44987654321',
+  product_id: 11046876938513,
+  variant_id: 53518646542609,
+  sku: 'APP142226',
+  feed_id: 'shopify_BR_11046876938513_53518646542609',
   google_business_vertical: 'retail',
   in_stock: true
 }
 ```
 
 > **`item_id` vs `feed_id`:** o GA4 do canal Google & YouTube usa o padrão
-> `shopify_BR_<produto>_<variante>`. Para o **remarketing dinâmico do Google Ads**
-> e para casar com o Merchant Center, use **`feed_id`**, não `item_id`.
+> `shopify_BR_<produto>_<variante>`. Para **remarketing dinâmico do Google Ads**
+> e para casar com o Merchant Center / catálogo da Meta, use **`feed_id`**.
 > Para relatório humano no GA4, `item_id` (o SKU) é o mais legível.
+
+**Valores de `item_list_id` / `item_list_name`:**
+
+| Página | `item_list_id` | `item_list_name` |
+|---|---|---|
+| Home | `home` | `Home` |
+| Coleção | handle da coleção | título da coleção |
+| Busca | `search_results` | `Busca` |
+| Relacionados na PDP | `related_products` | `Produtos Relacionados` |
 
 ### 3.3 Eventos
 
-| `event` | Quando | Payload adicional |
-|---------|--------|-------------------|
-| `view_item` | PDP carregada | `ecommerce.value`, `ecommerce.currency`, `items[1]` |
-| `view_item_list` | Uma vez por grade renderizada (home, coleção, busca, relacionados) | `ecommerce.item_list_name`, `items[≤30]` |
-| `select_item` | Clique num card da grade | `ecommerce.item_list_name`, `items[1]` |
-| `add_to_cart` | Submit do form do card ou da PDP | `ecommerce.value` (preço × qtd), `items[1]` |
-| `remove_from_cart` | Botão "Remover" no carrinho | `ecommerce.value`, `items[1]` |
-| `view_cart` | Página do carrinho com itens | `ecommerce.value` = total, `items[n]` |
-| `begin_checkout` | Clique em "Finalizar Compra" | `ecommerce.value` = total, `items[n]` |
-| `search` | Página de busca com termo | `search_term`, `search_results_count` |
-| `generate_lead` | Clique em qualquer link `wa.me` **ou** envio da cotação formal | ver abaixo |
+| `event` | Quando | `ecommerce` |
+|---------|--------|-------------|
+| `view_item` | PDP carregada | `currency`, `value`, `items[1]` |
+| `view_item_list` | Uma vez por grade renderizada | `item_list_id`, `item_list_name`, `items[≤30]` |
+| `select_item` | Clique num card da grade | `item_list_id`, `item_list_name`, `items[1]` |
+| `add_to_cart` | Submit do form do card ou da PDP | `currency`, `value` (preço × qtd), `items[1]` |
+| `remove_from_cart` | Botão "Remover" no carrinho | `currency`, `value`, `items[1]` |
+| `view_cart` | Página do carrinho com itens | `currency`, `value`, `coupon`, `items[n]` |
+| `begin_checkout` | Clique em "Finalizar Compra" | `currency`, `value`, `coupon`, `items[n]` |
+| `add_shipping_info` | Endereço enviado no checkout | `currency`, `value`, `coupon`, `shipping_tier`, `items[n]` |
+| `add_payment_info` | Pagamento escolhido no checkout | `currency`, `value`, `coupon`, `payment_type`, `items[n]` |
+| `purchase` | Pedido concluído | `transaction_id`, `currency`, `value`, `tax`, `shipping`, `subtotal`, `coupon`, `items[n]` |
+| `search` | Página de busca com termo | (fora de `ecommerce`) `search_term`, `search_results_count` |
+| `generate_lead` | Clique em `wa.me` **ou** envio da cotação | ver 3.5 |
 
 Todo evento de e-commerce é precedido de `dataLayer.push({ ecommerce: null })` —
 o reset exigido pelo GA4 via GTM para o objeto anterior não vazar.
 
-#### `generate_lead`
+### 3.4 Parâmetros da Meta Ads (objeto `meta`)
+
+No **mesmo push** do evento, ao lado de `ecommerce`:
+
+```js
+{
+  event: 'add_to_cart',
+  ecommerce: { currency: 'BRL', value: 457.26, items: [ … ] },
+  meta: {
+    content_type: 'product',
+    content_ids: ['shopify_BR_11046876938513_53518646542609'],
+    contents: [{ id: 'shopify_BR_11046876938513_53518646542609', quantity: 1, item_price: 457.26 }],
+    currency: 'BRL',
+    value: 457.26,
+    num_items: 1,
+    content_name: 'Sensor de Fluxo 25,4mm - APP | …',   // só quando é 1 item
+    content_category: 'Sensores Agrícolas'              // só quando é 1 item
+  }
+}
+```
+
+Mapeamento na tag da Meta: `ViewContent` ← `view_item`, `AddToCart` ←
+`add_to_cart`, `InitiateCheckout` ← `begin_checkout`, `AddPaymentInfo` ←
+`add_payment_info`, `Purchase` ← `purchase`.
+
+`content_ids` usa o `feed_id`, que é o `retailer_id` do catálogo criado pelo
+canal Facebook & Instagram. Se o catálogo da Meta for alimentado por SKU, use
+`{{DLV - ecom items}}` e troque para `sku` — ou, no pixel do checkout, mude
+`META_ID_SOURCE` para `'sku'`.
+
+### 3.5 `generate_lead`
 
 Fonte principal de conversão da conta. Dois sabores:
 
@@ -167,13 +241,13 @@ Fonte principal de conversão da conta. Dois sabores:
 {
   event: 'generate_lead',
   lead_method: 'whatsapp',
-  lead_source: 'float' | 'card' | 'pdp' | 'collection' | 'cart' | 'search' | 'home' | 'footer' | …,
+  lead_source: 'float' | 'card' | 'pdp' | 'collection' | 'cart' | 'search' | 'home' | …,
   page_type: 'product',
-  page_path: '/products/bomba-hidraulica-...',
+  page_path: '/products/sensor-de-fluxo-…',
   // só quando o clique acontece numa PDP:
-  lead_sku: '5.1301.0565008',
-  lead_product: 'Bomba Hidráulica - LIVENZA …',
-  lead_value: 1899.9,
+  lead_sku: 'APP142226',
+  lead_product: 'Sensor de Fluxo 25,4mm - APP …',
+  lead_value: 457.26,
   currency: 'BRL'
 }
 
@@ -184,22 +258,59 @@ Fonte principal de conversão da conta. Dois sabores:
   lead_source: 'cotacao_formal',
   page_type: 'page',
   page_path: '/pages/contato',
-  lead_sku: '…',        // quando o campo veio preenchido
+  lead_sku: '…',
   lead_product: '…'
 }
 ```
 
 `lead_source` separa botão flutuante de card e de PDP — é o que permite otimizar
-criativo por posição. **Não** existe `value` no lead do WhatsApp fora da PDP: se a
-conta precisar de valor de conversão, defina um valor fixo na tag do Google Ads.
+criativo por posição.
 
 ---
 
-## 4. Montagem do contêiner
+## 4. Regra de ouro — quem já mede o quê
 
-### 4.1 Variáveis (Variável da camada de dados)
+A loja **já tinha** dois medidores antes do GTM. Se as tags do contêiner repetirem
+o que eles enviam, tudo conta em dobro — receita, conversão e ROAS inflados.
 
-Nome sugerido → *Nome da variável da camada de dados*:
+| Evento | Canal Google & YouTube | Canal Facebook & Instagram | Tema (gtag direto) | dataLayer do GTM |
+|--------|:---:|:---:|:---:|:---:|
+| `page_view` | ✅ envia | ✅ PageView | ❌ (`send_page_view: false`) | — |
+| `view_item` / `view_item_list` / `select_item` | ✅ envia | ✅ ViewContent | ❌ | ✅ publica |
+| `add_to_cart` / `view_cart` / `remove_from_cart` | ✅ envia | ✅ AddToCart | ❌ | ✅ publica |
+| `begin_checkout` / `add_shipping_info` / `add_payment_info` | ✅ envia | ✅ InitiateCheckout | ❌ | ✅ publica |
+| `purchase` | ✅ envia | ✅ Purchase | ❌ | ✅ publica (via pixel, §6) |
+| `search` | ✅ envia | — | ❌ | ✅ publica |
+| `generate_lead` (WhatsApp) | ❌ | ❌ | ✅ envia | ✅ publica |
+
+### O que CRIAR no contêiner
+
+- ✅ **Google Ads** — conversão de `generate_lead` (é a conversão principal da conta).
+- ✅ **Google Ads** — conversão de `purchase` (se não preferir importar do GA4).
+- ✅ **Google Ads** — remarketing dinâmico (usa `feed_id` + `google_business_vertical`).
+- ✅ **Enhanced Conversions** via `user_data` (já vem com hash no storefront).
+- ✅ Qualquer pixel novo (Clarity, LinkedIn, TikTok, RD Station…).
+
+### O que NÃO criar sem antes desligar a fonte atual
+
+- ⛔ Tag **GA4 de e-commerce** enquanto o canal **Google & YouTube** estiver ativo
+  (Admin → Vendas → Google & YouTube). É ele quem alimenta o GA4 hoje.
+- ⛔ **Meta Pixel base / PageView / e-commerce** — o canal **Facebook & Instagram**
+  já injeta tudo. O `snippets/meta-pixel.liquid` carrega o `fbq` no documento
+  principal **só** para o evento `Lead`.
+- ⛔ Tag GA4 `generate_lead` enquanto *Carregar o gtag.js do GA4 direto no tema*
+  estiver marcado. Ver §7.
+
+> Se o gestor quiser o GA4 inteiro dentro do GTM: desconecte o GA4 do canal
+> Google & YouTube **primeiro**, instale o pixel do checkout (§6) e só então
+> construa as tags. O dataLayer já cobre o funil completo, incluindo `purchase`.
+> Mesma lógica para a Meta: desligue o canal antes de assumir o pixel no GTM.
+
+---
+
+## 5. Montagem do contêiner
+
+### 5.1 Variáveis (Variável da camada de dados, Versão 2)
 
 | Nome no GTM | Caminho |
 |-------------|---------|
@@ -214,6 +325,17 @@ Nome sugerido → *Nome da variável da camada de dados*:
 | `DLV - ecom value` | `ecommerce.value` |
 | `DLV - ecom currency` | `ecommerce.currency` |
 | `DLV - ecom items` | `ecommerce.items` |
+| `DLV - ecom coupon` | `ecommerce.coupon` |
+| `DLV - ecom transaction_id` | `ecommerce.transaction_id` |
+| `DLV - ecom tax` | `ecommerce.tax` |
+| `DLV - ecom shipping` | `ecommerce.shipping` |
+| `DLV - ecom list_id` | `ecommerce.item_list_id` |
+| `DLV - ecom list_name` | `ecommerce.item_list_name` |
+| `DLV - meta content_ids` | `meta.content_ids` |
+| `DLV - meta contents` | `meta.contents` |
+| `DLV - meta content_type` | `meta.content_type` |
+| `DLV - meta num_items` | `meta.num_items` |
+| `DLV - meta value` | `meta.value` |
 | `DLV - customer_id` | `customer_id` |
 | `DLV - cart_total_value` | `cart_total_value` |
 | `DLV - ud email` | `user_data.sha256_email_address` |
@@ -222,11 +344,9 @@ Nome sugerido → *Nome da variável da camada de dados*:
 | `DLV - ud region` | `user_data.address.region` |
 | `DLV - ud zip` | `user_data.address.postal_code` |
 | `DLV - ud country` | `user_data.address.country` |
+| `DLV - page_location` | `page_location` (só existe nos eventos do checkout) |
 
-Versão da camada de dados: **Versão 2** em todas.
-
-Variável extra útil — **feed_id do primeiro item**, para o remarketing:
-tipo *JavaScript personalizado*
+Variável para **remarketing dinâmico do Google Ads** — JavaScript personalizado:
 
 ```js
 function () {
@@ -235,159 +355,162 @@ function () {
 }
 ```
 
-### 4.2 Gatilhos (Evento personalizado)
+### 5.2 Gatilhos (Evento personalizado)
 
 Um para cada: `view_item`, `view_item_list`, `select_item`, `add_to_cart`,
-`remove_from_cart`, `view_cart`, `begin_checkout`, `search`, `generate_lead`.
+`remove_from_cart`, `view_cart`, `begin_checkout`, `add_shipping_info`,
+`add_payment_info`, `purchase`, `search`, `generate_lead`.
 
-Gatilho mais granular que vale a pena: `generate_lead` **+ condição**
+Gatilho granular que vale a pena: `generate_lead` **+ condição**
 `DLV - lead_method` igual a `whatsapp` — separa lead de WhatsApp de lead de
 formulário na conta de Ads.
 
-### 4.3 Tags — o mínimo que entrega valor
+### 5.3 Tags — o mínimo que entrega valor
 
 **A. Google Ads — Conversão "Lead WhatsApp"**
-- Tipo: Rastreamento de conversões do Google Ads
 - Gatilho: `generate_lead` (+ `lead_method = whatsapp`)
-- Valor da conversão: `{{DLV - lead_value}}` com fallback fixo, ou valor fixo da conta
-- Dados fornecidos pelo usuário (Enhanced Conversions): ligar em `{{DLV - ud email}}`
-  e `{{DLV - ud phone}}` — já chegam com hash, marcar o campo como "já criptografado"
+- Valor: `{{DLV - lead_value}}` com fallback fixo, ou valor fixo da conta
+- Enhanced Conversions: `{{DLV - ud email}}` / `{{DLV - ud phone}}` — já chegam
+  com hash, marcar como "já criptografado"
 
-**B. Google Ads — Conversão "Cotação Formal"**
-- Mesmo modelo, gatilho `generate_lead` + `lead_method = formulario`
+**B. Google Ads — Conversão "Cotação Formal"** — igual, com `lead_method = formulario`
 
-**C. Google Ads — Remarketing dinâmico**
-- Tipo: Remarketing do Google Ads
-- Gatilho: `view_item`, `view_item_list`, `add_to_cart`, `begin_checkout`
-- `Enviar dados de comércio eletrônico` → *Camada de dados*, ou parâmetros manuais
-  usando a variável de `feed_id` da §4.1 (é o que casa com o Merchant Center)
+**C. Google Ads — Conversão "Compra"**
+- Gatilho: `purchase`
+- Valor `{{DLV - ecom value}}`, moeda `{{DLV - ecom currency}}`,
+  ID da transação `{{DLV - ecom transaction_id}}`
+- No checkout o `user_data` vai **sem hash** — marcar como "não criptografado"
 
-**D. Google Ads — Tag do Google (linker / conversion linker)**
-- Tipo: Vinculador de conversões, gatilho *Todas as páginas*. Sem ela o GCLID
-  não persiste e a atribuição de Ads quebra.
+**D. Google Ads — Remarketing dinâmico**
+- Gatilho: `view_item`, `view_item_list`, `add_to_cart`, `begin_checkout`, `purchase`
+- Itens: a variável de JS da §5.1
 
-**E. (opcional) GA4 — apenas eventos que o canal não cobre**
-- `generate_lead` — **somente depois** de desligar o gtag do tema (§7)
+**E. Vinculador de conversões** — gatilho *Todas as páginas*. Sem ela o GCLID não
+persiste e a atribuição de Ads quebra.
 
-### 4.4 Consentimento / LGPD
+**F. GA4 / Meta** — só depois de desligar a fonte atual (§4).
 
-O site hoje **não** tem CMP (banner de consentimento). Consequência prática:
-não configurar Consent Mode com padrão `denied`, senão a medição para de subir.
-Se um banner for instalado depois, o caminho é ativar o Consent Mode v2 no GTM e
-disparar `gtag('consent','update',…)` a partir do CMP — nada disso está no tema.
+### 5.4 Consentimento / LGPD
 
----
-
-## 5. Sobre o script que veio do gestor
-
-O trecho enviado tem três problemas — dois de digitação e um estrutural:
-
-1. **ID placeholder.** A última linha do loader estava com `'GTM-xxxxx'` em vez de
-   `GTM-TK3GX7XD`. Corrigido em `snippets/gtm.liquid`.
-2. **Faltava o `<noscript>`** que vai como primeiro elemento do `<body>`.
-   Adicionado em `snippets/gtm-noscript.liquid`.
-3. **O bloco do `purchase` não roda em lugar nenhum deste tema.** Ele usa objetos
-   `checkout.*` e `first_time_accessed`, que só existem no `checkout.liquid` /
-   *Additional scripts* da página de status do pedido. Ver §6.
-
-Detalhes menores do bloco original, para referência: `'transaction_id'` estava com
-`| json` dentro de aspas (viraria `"\"1001\""`), `'phone'` aparecia duas vezes na
-mesma chave, `'discount'` dentro do loop de itens referenciava a variável `discount`
-do loop de descontos — que já tinha saído de escopo — e `line_item.product.price`
-pega o preço do produto, não o da linha vendida. Nenhum desses foi reaproveitado:
-o `purchase` foi remontado do zero em `docs/gtm-custom-pixel-checkout.js`.
+O site hoje **não** tem CMP. Não configure Consent Mode com padrão `denied`,
+senão a medição para de subir. Se um banner for instalado, ative o Consent Mode
+v2 no GTM e dispare `gtag('consent','update',…)` a partir do CMP — nada disso
+está no tema.
 
 ---
 
-## 6. Purchase e o funil de checkout
+## 6. Checkout: `add_shipping_info`, `add_payment_info`, `purchase`
 
-**O tema não renderiza o checkout nem a página de obrigado.** Desde **28/08/2025**
+O tema **não** renderiza o checkout nem a página de obrigado. Desde **28/08/2025**
 a caixa *Additional scripts* da página de status do pedido é somente leitura, e em
-**janeiro/2026** a Shopify removeu automaticamente o que ainda estava lá. O
+**janeiro/2026** a Shopify removeu automaticamente o que ainda estava lá — por isso
+script de `purchase` em Liquid com objetos `checkout.*` não funciona mais. O
 substituto oficial é **Customer Events (pixels)**.
 
-### Opção 1 — recomendada: não medir purchase pelo GTM
-
-- `purchase` no GA4 → já vem do canal **Google & YouTube**.
-- `Purchase` na Meta → já vem do canal **Facebook & Instagram**.
-- Conversão de compra no Google Ads → **importar do GA4** (Ads → Objetivos →
-  Conversões → Importar → Google Analytics 4). Zero código, zero duplicação.
-
-Como a conversão principal da operação é lead de WhatsApp e não compra no site,
-esta opção cobre 100% da necessidade de mídia.
-
-### Opção 2 — GTM dono do purchase
-
-Se houver motivo real para o `purchase` sair do contêiner (ex.: pixel de terceiro
-que só existe no GTM), use o pixel pronto em **`docs/gtm-custom-pixel-checkout.js`**:
+### Instalação (2 minutos)
 
 1. Shopify Admin → **Configurações → Eventos do cliente → Adicionar pixel personalizado**
 2. Nome: `GTM - Checkout`
-3. Cole o conteúdo do arquivo, salve e **Conectar**
-4. Permissões: *Dados do cliente* → conforme a política de privacidade da loja
+3. Colar o conteúdo de **`docs/gtm-custom-pixel-checkout.js`**
+4. Permissões: *Dados do cliente* conforme a política de privacidade da loja
+5. **Salvar** e **Conectar**
 
-Cuidados desse caminho:
+Entrega `add_shipping_info`, `add_payment_info` e `purchase` com todos os
+parâmetros da tabela do §0, nos dois schemas (`ecommerce` + `meta`).
 
-- O pixel roda em **iframe sandbox**: é um `dataLayer` **separado** do site. As
-  tags que dependem de variáveis do storefront não enxergam nada ali.
-- `page_location` precisa ser sobrescrito na tag pelo valor que o pixel envia
-  (`page_location` do push) — senão o GA4 registra a URL do sandbox.
-- O pixel assina **só** `checkout_completed`. Não assine `page_viewed`,
-  `product_viewed` nem `cart_viewed`: o tema já publica esses e sairia em dobro.
-- Se ligar a tag GA4 `purchase` aqui, **desconecte o GA4 do canal Google & YouTube**
-  antes — senão são duas compras por pedido.
+### Cuidados
+
+- O pixel roda em **iframe sandbox**: é um `dataLayer` **separado** do site.
+  No Preview do GTM ele aparece como outro contêiner/aba.
+- `page_location` precisa ser sobrescrito na tag pelo valor que o pixel envia —
+  senão o GA4 registra a URL do sandbox.
+- O pixel **não** assina `page_viewed`, `product_viewed` nem `cart_viewed`: o tema
+  já publica esses e sairia em dobro.
+- `begin_checkout` sai do **tema** (clique em "Finalizar Compra"). No pixel ele
+  está desligado por padrão (`SEND_BEGIN_CHECKOUT: false`). Ligue apenas se
+  remover o do tema.
+- Se ligar tag GA4/Meta de `purchase` aqui, **desconecte antes** o canal
+  correspondente — senão são duas compras por pedido.
+
+### Alternativa sem código
+
+Conversão de compra no Google Ads → **importar do GA4** (Ads → Objetivos →
+Conversões → Importar → Google Analytics 4). O canal Google & YouTube já entrega
+o `purchase` ao GA4. Zero código, zero duplicação.
 
 ---
 
-## 7. Migração do GA4 para dentro do GTM (opcional, futuro)
+## 7. Migração do GA4 para dentro do GTM (opcional)
 
 Hoje o tema carrega `gtag.js` direto (`snippets/ga4.liquid`, `G-R0SEJRX1B0`) só
 para o `generate_lead`. Para mover isso ao contêiner:
 
-1. Criar no GTM a tag do Google (`G-R0SEJRX1B0`) com **`send_page_view` desligado**
-   (o `page_view` continua vindo do canal).
-2. Criar a tag de evento GA4 `generate_lead` com os parâmetros da §3.3.
-3. Publicar o contêiner e conferir no **DebugView** que o evento chega **uma vez**.
-4. Só então: Customizar → Configurações do tema → Marketing & Integrações →
-   **desmarcar** *Carregar o gtag.js do GA4 direto no tema*.
+1. Criar no GTM a tag do Google (`G-R0SEJRX1B0`) com **`send_page_view` desligado**.
+2. Criar a tag de evento GA4 `generate_lead` com os parâmetros da §3.5.
+3. Publicar e conferir no **DebugView** que o evento chega **uma vez**.
+4. Só então: Configurações do tema → Marketing & Integrações → **desmarcar**
+   *Carregar o gtag.js do GA4 direto no tema*.
 
 O passo 4 é o que evita contagem dupla. Enquanto ele não acontecer, **não crie**
 a tag GA4 `generate_lead` no GTM.
 
-Efeito colateral do passo 4: o parâmetro `content_group` (Home / Produto / Coleção /
-Busca / Carrinho) sai do ar. Para recuperá-lo, mapeie `{{DLV - page_type}}` como
+Efeito colateral: o parâmetro `content_group` (Home / Produto / Coleção / Busca /
+Carrinho) sai do ar. Para recuperá-lo, mapeie `{{DLV - page_type}}` como
 `content_group` na tag do Google dentro do GTM.
 
 ---
 
-## 8. QA — checklist antes de publicar o contêiner
+## 8. Server-side (stape.io) — quando for a hora
 
-1. **Modo Visualizar do GTM** apontando para `agropecaspadrao.com.br`.
-2. Percorrer: home → coleção → PDP → adicionar ao carrinho → carrinho → finalizar.
-   Conferir a sequência `view_item_list` → `select_item` → `view_item` →
-   `add_to_cart` → `view_cart` → `begin_checkout`.
-3. Em cada evento, abrir a aba **Data Layer** e confirmar que `ecommerce.items[0]`
-   tem `item_id`, `price` **em reais** (não centavos) e `feed_id` preenchido.
-4. Clicar no botão flutuante do WhatsApp e num "Consultar via WhatsApp" de card:
-   dois `generate_lead` com `lead_source` diferente (`float` e `card`).
-5. Buscar por um SKU: evento `search` com `search_term`.
-6. **Tag Assistant** → confirmar que **não** existem duas tags do GA4 na página
-   (uma do tema + uma do GTM) e que o Meta Pixel aparece uma única vez.
-7. **GA4 DebugView** → nenhum evento chegando duplicado.
-8. Console do navegador limpo — `window.APP_GTM` e `window.dataLayer` definidos.
+O tema já está preparado: Configurações do tema → Marketing & Integrações →
+**Servidor do contêiner (server-side)**. Cole a URL do GTM Server sem barra final
+(ex.: `https://sgtm.agropecaspadrao.com.br`) e tanto o script do `<head>` quanto o
+`<noscript>` passam a carregar de lá. No pixel do checkout, ajuste `GTM_HOST` no
+bloco `CONFIG`.
+
+---
+
+## 9. QA — checklist antes de publicar o contêiner
+
+1. **Modo Visualizar do GTM** apontando para `agropecaspadrao.com.br`, com
+   **Preserve log** ligado.
+2. Percorrer o roteiro do §1 inteiro — não julgue pela Home.
+3. Em cada evento, abrir a aba **Data Layer** e confirmar:
+   - `ecommerce.items[0].price` em **reais** (não centavos)
+   - `ecommerce.items[0].feed_id` preenchido
+   - `ecommerce.item_list_id` presente em `view_item_list` / `select_item`
+   - `meta.content_ids` e `meta.contents` preenchidos
+4. Dois `generate_lead` com `lead_source` diferente (botão flutuante = `float`,
+   card = `card`).
+5. **Tag Assistant** → não pode existir duas tags GA4 na página (uma do tema +
+   uma do GTM), e o Meta Pixel aparece uma única vez.
+6. **GA4 DebugView** → nenhum evento duplicado.
+7. Console limpo — `window.APP_GTM` e `window.dataLayer` definidos.
 
 Teste rápido no console de qualquer página:
 
 ```js
-window.dataLayer.filter(function (e) { return e.event; }).map(function (e) { return e.event; });
+// lista os eventos que já entraram no dataLayer
+dataLayer.filter(e => e && e.event).map(e => e.event);
+
+// inspeciona o último evento de e-commerce
+dataLayer.filter(e => e && e.ecommerce).pop();
 ```
+
+> **Nota sobre ferramentas headless:** navegadores anti-detecção (patchright,
+> alguns crawlers) rodam `evaluate` em contexto isolado e enxergam
+> `window.dataLayer` vazio mesmo com tudo funcionando. Confirme sempre no
+> Chrome real, com o Tag Assistant.
 
 ---
 
-## 9. Deploy
+## 10. Deploy
 
 Tudo neste repositório sobe sozinho: commit em `main` → push → tema ativo da loja.
-Alterar o ID do contêiner **não exige deploy** — é campo de configuração do tema.
+Alterar ID do contêiner, URL do servidor ou os interruptores **não exige deploy** —
+são campos de configuração do tema.
+
+O pixel do checkout (§6) é colado no Admin, **não** sobe pelo repositório.
 
 Fontes sobre o fim dos *additional scripts*:
 [Shopify Help Center — Non-Plus upgrade guide](https://help.shopify.com/en/manual/checkout-settings/customize-checkout-configurations/upgrade-thank-you-order-status/upgrade-guide) ·

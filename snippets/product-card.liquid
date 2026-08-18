@@ -14,24 +14,33 @@
   # Nome da lista: passe `list_name:` no render para sobrescrever; sem isso é
   # deduzido do template. O gtm-events.js agrupa view_item_list por este valor.
   assign gtm_list = list_name
+  assign gtm_list_id = list_id
   if gtm_list == blank
     case template.name
       when 'collection'
         assign gtm_list = collection.title | default: 'Coleção'
+        assign gtm_list_id = collection.handle | default: 'collection'
       when 'search'
         assign gtm_list = 'Busca'
+        assign gtm_list_id = 'search_results'
       when 'index'
         assign gtm_list = 'Home'
+        assign gtm_list_id = 'home'
       when 'product'
         assign gtm_list = 'Produtos Relacionados'
+        assign gtm_list_id = 'related_products'
       else
         assign gtm_list = page_title | default: 'Catálogo'
+        assign gtm_list_id = template.name | default: 'catalog'
     endcase
   endif
+  if gtm_list_id == blank
+    assign gtm_list_id = gtm_list | handleize
+  endif
 -%}
-{%- capture gtm_card_item -%}{%- render 'gtm-item', product: product, list_name: gtm_list -%}{%- endcapture -%}
+{%- capture gtm_card_item -%}{%- render 'gtm-item', product: product, list_name: gtm_list, list_id: gtm_list_id -%}{%- endcapture -%}
 
-<article class="product-card" data-gtm-item="{{ gtm_card_item | escape }}" data-gtm-list="{{ gtm_list | escape }}">
+<article class="product-card" data-gtm-item="{{ gtm_card_item | escape }}" data-gtm-list="{{ gtm_list | escape }}" data-gtm-list-id="{{ gtm_list_id | escape }}">
   <a href="{{ product.url }}" class="product-card__img-link" tabindex="-1" aria-hidden="true">
     <div class="product-card__img-wrap">
       {%- if product.featured_image -%}

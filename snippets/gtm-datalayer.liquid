@@ -16,8 +16,15 @@
 
   generate_lead do WhatsApp sai do assets/whatsapp.js (listener único e delegado).
 
-  purchase NÃO sai do tema — o checkout e a página de obrigado não são
-  renderizados por ele. Ver docs/GTM_SETUP.md § Purchase.
+  add_shipping_info, add_payment_info e purchase NÃO saem do tema — acontecem
+  dentro do checkout, que o tema não renderiza. Saem do pixel de Eventos do
+  Cliente: docs/gtm-custom-pixel-checkout.js. Ver docs/GTM_SETUP.md § Checkout.
+
+  Todo evento de e-commerce carrega DOIS formatos no mesmo push:
+    ecommerce → schema GA4 (items[], currency, value, coupon…)
+    meta      → schema Meta Ads (content_ids, content_type, contents,
+                currency, value, num_items) — pronto para a tag, sem
+                variável de JavaScript personalizado no GTM.
 
   PII: e-mail/telefone do cliente logado saem apenas com hash SHA-256
   (formato de Enhanced Conversions do Google Ads / Advanced Matching da Meta).
@@ -60,6 +67,18 @@
   endcase
 
   comment
+    Cupom do carrinho — parâmetro obrigatório de begin_checkout no GA4.
+    O title de um discount_application com código é o próprio código.
+  endcomment
+  assign gtm_coupon = ''
+  for d in cart.cart_level_discount_applications
+    unless gtm_coupon == ''
+      assign gtm_coupon = gtm_coupon | append: ','
+    endunless
+    assign gtm_coupon = gtm_coupon | append: d.title
+  endfor
+
+  comment
     user_data — só existe para cliente logado. Telefone normalizado para E.164
     (assume BR quando não vier com DDI) antes do hash, como o Google exige.
   endcomment
@@ -78,12 +97,53 @@
 -%}
 
 <script>
+(function () {
   window.dataLayer = window.dataLayer || [];
 
   window.APP_GTM = {
     pageType: {{ gtm_page_type | json }},
     currency: {{ gtm_currency | json }},
+    coupon: {{ gtm_coupon | json }},
     ecommerce: {% if gtm_ecom %}true{% else %}false{% endif %}
+  };
+
+  /* Traduz um objeto ecommerce (GA4) para os parâmetros da Meta Ads.
+     Fonte única: o gtm-events.js reusa esta mesma função, então GA4 e Meta
+     nunca divergem. content_ids usa o feed_id (shopify_BR_<prod>_<var>), que
+     é o retailer_id do catálogo criado pelo canal Facebook & Instagram. */
+  window.APP_GTM.meta = function (ecom) {
+    var items = (ecom && ecom.items) || [];
+    var ids = [], contents = [], num = 0, sum = 0;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i] || {};
+      var q = Number(it.quantity) || 1;
+      var p = Number(it.price) || 0;
+      var id = it.feed_id || it.item_id;
+      num += q;
+      sum += p * q;
+      ids.push(id);
+      contents.push({ id: id, quantity: q, item_price: p });
+    }
+    var out = {
+      content_type: 'product',
+      content_ids: ids,
+      contents: contents,
+      currency: (ecom && ecom.currency) || {{ gtm_currency | json }},
+      value: (ecom && typeof ecom.value === 'number') ? ecom.value : Math.round(sum * 100) / 100,
+      num_items: num
+    };
+    if (items.length === 1) {
+      out.content_name = items[0].item_name;
+      out.content_category = items[0].item_category;
+    }
+    return out;
+  };
+
+  window.APP_GTM.push = function (event, ecom, extra) {
+    window.dataLayer.push({ ecommerce: null });
+    var payload = { event: event, ecommerce: ecom, meta: window.APP_GTM.meta(ecom) };
+    if (extra) { for (var k in extra) { if (Object.prototype.hasOwnProperty.call(extra, k)) payload[k] = extra[k]; } }
+    window.dataLayer.push(payload);
   };
 
   window.dataLayer.push({
@@ -127,14 +187,10 @@
       {%- capture gtm_pdp_item -%}{%- render 'gtm-item', product: product -%}{%- endcapture -%}
       {%- assign gtm_pdp_price = product.selected_or_first_available_variant.price | default: product.price | default: 0 -%}
   window.APP_GTM.item = {{ gtm_pdp_item }};
-  window.dataLayer.push({ ecommerce: null });
-  window.dataLayer.push({
-    event: 'view_item',
-    ecommerce: {
-      currency: {{ gtm_currency | json }},
-      value: {{ gtm_pdp_price | divided_by: 100.0 }},
-      items: [ window.APP_GTM.item ]
-    }
+  window.APP_GTM.push('view_item', {
+    currency: {{ gtm_currency | json }},
+    value: {{ gtm_pdp_price | divided_by: 100.0 }},
+    items: [ window.APP_GTM.item ]
   });
     {%- endif -%}
 
@@ -149,13 +205,10 @@
   window.APP_GTM.cart = {
     currency: {{ gtm_currency | json }},
     value: {{ cart.total_price | divided_by: 100.0 }},
+    coupon: {{ gtm_coupon | json }},
     items: [{{ gtm_cart_items }}]
   };
-  window.dataLayer.push({ ecommerce: null });
-  window.dataLayer.push({
-    event: 'view_cart',
-    ecommerce: window.APP_GTM.cart
-  });
+  window.APP_GTM.push('view_cart', window.APP_GTM.cart);
     {%- endif -%}
 
     {%- comment -%}────────── Busca ──────────{%- endcomment -%}
@@ -168,6 +221,7 @@
     {%- endif -%}
 
   {%- endif -%}
+})();
 </script>
 
 {%- endif -%}

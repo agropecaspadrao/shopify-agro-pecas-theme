@@ -78,7 +78,10 @@ shopify theme dev --store agropecaspadrao.myshopify.com
 | `product-card.liquid` | Card de produto reutilizado em todas as PLPs |
 | `stock-badge.liquid` | Badge de estoque baseado em `product.metafields.agro.stock_status` |
 | `meta-tags.liquid` | Open Graph e metadados SEO |
-| `ga4.liquid` | Tag do Google Analytics 4 |
+| `ga4.liquid` | Tag do Google Analytics 4 (desligável por `settings.ga4_gtag_enabled`) |
+| `gtm.liquid` / `gtm-noscript.liquid` | Contêiner do Google Tag Manager (`GTM-TK3GX7XD`) |
+| `gtm-datalayer.liquid` | `dataLayer`: contexto da página + `view_item`, `view_cart`, `search` |
+| `gtm-item.liquid` | Monta um item no schema GA4 — fonte única dos campos de produto |
 
 ### Lógica de estoque
 
@@ -106,6 +109,18 @@ O número e a saudação vêm de `settings.whatsapp_number` e `settings.whatsapp
 - **Rodapé / botão flutuante:** `Olá! Preciso de atendimento do SAC da Agro Peças Padrão.`
 
 O `whatsapp.js` também implementa o **predictive search** (debounce 250ms, `/search/suggest.json`, máx. 5 resultados) e o **mobile menu** (toggle por `is-open`/`is-visible`).
+
+---
+
+## Tracking (GTM / GA4 / Meta)
+
+Contêiner **GTM-TK3GX7XD** carregado no `<head>` — `gtm-datalayer.liquid` **sempre antes** de `gtm.liquid`. O `assets/gtm-events.js` publica os eventos de interação (`view_item_list`, `select_item`, `add_to_cart`, `remove_from_cart`, `begin_checkout`) e o `whatsapp.js` publica `generate_lead`.
+
+⚠️ **Regra crítica anti-duplicação:** o canal *Google & YouTube* já envia todo o e-commerce para o GA4 e o canal *Facebook & Instagram* já envia todos os eventos da Meta. **Não criar tags GA4 de e-commerce nem o Meta Pixel dentro do GTM.** O contêiner serve para Google Ads (conversões de lead + remarketing dinâmico via `feed_id`) e pixels novos.
+
+Cada evento carrega **dois schemas no mesmo push**: `ecommerce` (GA4) e `meta` (Meta Ads: `content_ids`, `content_type`, `contents`, `currency`, `value`, `num_items`). A tradução vive em `window.APP_GTM.meta()` — fonte única, para GA4 e Meta nunca divergirem.
+
+`add_shipping_info`, `add_payment_info` e `purchase` **não saem do tema** (acontecem no checkout, que o tema não renderiza). Saem do pixel de Eventos do Cliente em `docs/gtm-custom-pixel-checkout.js`, colado no Admin → Configurações → Eventos do cliente. Roteiro completo de QA e montagem do contêiner em `docs/GTM_SETUP.md`.
 
 ---
 
@@ -137,6 +152,7 @@ Editáveis em **Shopify Admin → Online Store → Themes → Customize → Them
 - **Tipografia:** `font_heading` (barlow-condensed | system), `font_size_base`
 - **Marca:** `brand_tagline`, `brand_tagline_footer`, `brand_distributor`, `brand_iso_cert`
 - **WhatsApp:** `whatsapp_number` (com DDI, ex: `5541984151085`), `whatsapp_greeting`
+- **Marketing:** `gtm_container_id` (default `GTM-TK3GX7XD`; em branco desativa), `gtm_datalayer_ecommerce`, `ga4_gtag_enabled`, `meta_domain_verification`
 - **Loja:** `store_cnpj`, `store_address`, `store_phone`, `store_email`
 - **Rodapé:** `footer_tagline`
 

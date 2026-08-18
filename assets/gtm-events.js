@@ -1,17 +1,25 @@
 /* ==========================================================================
-   gtm-events.js — eventos de interação para o dataLayer do GTM (schema GA4)
+   gtm-events.js — eventos de interação para o dataLayer do GTM
 
    Complementa o snippets/gtm-datalayer.liquid, que já publica no servidor o
    contexto da página + view_item, view_cart e search.
 
    Aqui saem os eventos que dependem do DOM / do clique do usuário:
      view_item_list    — toda grade de produtos renderizada na página
-     select_item       — clique em um card da grade
+     select_item       — clique em um card da grade (o "productClick")
      add_to_cart       — submit de qualquer form[data-gtm-atc]
      remove_from_cart  — botão "Remover" no carrinho
      begin_checkout    — clique em "Finalizar Compra"
      generate_lead     — envio do formulário de cotação formal
                          (o generate_lead do WhatsApp sai do whatsapp.js)
+
+   add_shipping_info, add_payment_info e purchase acontecem DENTRO do checkout,
+   que o tema não renderiza — saem do pixel de Eventos do Cliente
+   (docs/gtm-custom-pixel-checkout.js).
+
+   Cada push carrega os dois schemas: `ecommerce` (GA4) e `meta` (Meta Ads).
+   A tradução vive em window.APP_GTM.meta(), no gtm-datalayer.liquid, para
+   GA4 e Meta nunca divergirem.
 
    Fonte dos dados: atributo data-gtm-item nos elementos (JSON gerado pelo
    snippet gtm-item.liquid) e window.APP_GTM (contexto da página).
@@ -36,11 +44,36 @@
     window.dataLayer.push(obj);
   }
 
+  // Fallback: se o gtm-datalayer não rodou (interruptor geral desligado),
+  // ainda assim mantemos o formato dos pushes coerente.
+  function metaOf(ecom) {
+    if (CFG.meta) return CFG.meta(ecom);
+    var items = (ecom && ecom.items) || [];
+    var ids = [], contents = [], num = 0, sum = 0;
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i] || {};
+      var q = Number(it.quantity) || 1;
+      var p = Number(it.price) || 0;
+      var id = it.feed_id || it.item_id;
+      num += q; sum += p * q;
+      ids.push(id);
+      contents.push({ id: id, quantity: q, item_price: p });
+    }
+    return {
+      content_type: 'product',
+      content_ids: ids,
+      contents: contents,
+      currency: (ecom && ecom.currency) || CURRENCY,
+      value: (ecom && typeof ecom.value === 'number') ? ecom.value : Math.round(sum * 100) / 100,
+      num_items: num
+    };
+  }
+
   // O reset (ecommerce: null) evita que o objeto do evento anterior vaze
   // para o próximo — exigência do GA4 via GTM.
   function pushEcom(event, ecommerce, extra) {
     push({ ecommerce: null });
-    var payload = { event: event, ecommerce: ecommerce };
+    var payload = { event: event, ecommerce: ecommerce, meta: metaOf(ecommerce) };
     if (extra) {
       for (var k in extra) {
         if (Object.prototype.hasOwnProperty.call(extra, k)) payload[k] = extra[k];
@@ -58,8 +91,7 @@
       go();
     }
     if (!window.google_tag_manager) {
-      push({ ecommerce: null });
-      push({ event: event, ecommerce: ecommerce });
+      pushEcom(event, ecommerce);
       release();
       return;
     }
@@ -67,6 +99,7 @@
     push({
       event: event,
       ecommerce: ecommerce,
+      meta: metaOf(ecommerce),
       eventCallback: release,
       eventTimeout: NAV_TIMEOUT
     });
@@ -146,6 +179,7 @@
     if (!cards.length) return;
 
     var groups = {};
+    var ids = {};
     var order = [];
 
     Array.prototype.forEach.call(cards, function (el) {
@@ -153,9 +187,11 @@
       var item = parseItem(el);
       if (!item) return;
       var list = el.getAttribute('data-gtm-list') || 'Catálogo';
+      var listId = el.getAttribute('data-gtm-list-id') || item.item_list_id || 'catalog';
 
       listCounters[list] = (listCounters[list] || 0) + 1;
       item.item_list_name = list;
+      item.item_list_id = listId;
       item.index = listCounters[list];
       item.quantity = 1;
 
@@ -164,6 +200,7 @@
 
       if (!groups[list]) {
         groups[list] = [];
+        ids[list] = listId;
         order.push(list);
       }
       groups[list].push(item);
@@ -171,6 +208,7 @@
 
     order.forEach(function (list) {
       pushEcom('view_item_list', {
+        item_list_id: ids[list],
         item_list_name: list,
         items: groups[list].slice(0, LIST_MAX)
       });
@@ -190,13 +228,19 @@
     if (!item) return;
 
     var list = card.getAttribute('data-gtm-list') || '';
+    var listId = card.getAttribute('data-gtm-list-id') || item.item_list_id || '';
     var idx = parseInt(card.getAttribute('data-gtm-index'), 10);
 
     item.item_list_name = list;
+    item.item_list_id = listId;
     if (idx) item.index = idx;
     item.quantity = 1;
 
-    pushEcom('select_item', { item_list_name: list, items: [item] });
+    pushEcom('select_item', {
+      item_list_id: listId,
+      item_list_name: list,
+      items: [item]
+    });
   });
 
   /* ---------- add_to_cart ---------- */
@@ -217,6 +261,7 @@
     var card = form.closest('[data-gtm-list]');
     if (card) {
       item.item_list_name = card.getAttribute('data-gtm-list');
+      item.item_list_id = card.getAttribute('data-gtm-list-id') || item.item_list_id;
       var idx = parseInt(card.getAttribute('data-gtm-index'), 10);
       if (idx) item.index = idx;
     }
@@ -262,6 +307,7 @@
     var ecommerce = {
       currency: cart.currency || CURRENCY,
       value: cart.value,
+      coupon: cart.coupon || '',
       items: cart.items
     };
 

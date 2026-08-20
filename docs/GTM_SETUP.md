@@ -432,6 +432,51 @@ parâmetros da tabela do §0, nos dois schemas (`ecommerce` + `meta`).
 - Se ligar tag GA4/Meta de `purchase` aqui, **desconecte antes** o canal
   correspondente — senão são duas compras por pedido.
 
+### Por que o Preview do GTM desconecta no checkout
+
+**É esperado, e não tem conserto.** Ao entrar no checkout o Tag Assistant mostra
+"Sem conexão" / "A janela de depuração foi fechada". Motivo: o Preview espera o
+container no **documento principal**, e no checkout o container vive dentro do
+**iframe sandbox** do pixel. A Shopify documenta que o *Troubleshoot tag* do Tag
+Assistant "não é compatível com custom pixels e não detecta nenhuma tag do Google"
+dentro deles.
+
+Desconectado **não** quer dizer que parou de medir. Verificação feita em
+19/08/2026 na página de checkout real:
+
+```
+✓ iframe   /web-pixels@…/custom/web-pixel-205226257@1/sandbox
+✓ request  googletagmanager.com/gtm.js?id=GTM-TK3GX7XD
+✓ request  analytics.google.com/g/collect?tid=G-R0SEJRX1B0
+✓ request  google.com/ccm/collect?tid=AW-18304054226
+✓ request  doubleclick.net/pagead/viewthroughconversion/18304054226
+```
+
+**Como auditar o checkout (três caminhos que funcionam):**
+
+| Ferramenta | Como |
+|---|---|
+| Console do navegador | Ligue `DEBUG: true` no bloco `CONFIG` do pixel. Cada push sai como `[GTM-CHECKOUT] add_payment_info {…}`. Desligue depois do teste. |
+| GA4 DebugView | Ligue `debug_mode: true` na tag do GA4 no GTM. Os eventos do checkout aparecem lá em tempo real. |
+| Shopify Pixel Helper | Extensão oficial da Shopify — é a que enxerga custom pixel; o Tag Assistant não. |
+| Aba Network | Filtre por `collect`. Cada hit do GA4 traz o nome do evento em `en=`. |
+
+### ⚠️ Tags de "Todas as páginas" disparam dentro do checkout
+
+Como o container carrega no sandbox, **toda tag com gatilho *Todas as páginas* /
+*Container carregado* dispara lá também** — page_view, remarketing, Meta Pixel.
+Somado ao canal Google & YouTube, que já mede o checkout, isso infla a contagem.
+
+O pixel publica um marcador **antes** de o container carregar:
+
+```js
+{ shopify_pixel: true, pixel_name: 'GTM - Checkout', page_context: 'checkout_sandbox' }
+```
+
+Crie a variável `DLV - shopify_pixel` (caminho `shopify_pixel`) e use-a como
+**exceção** nos gatilhos de todas as tags que não devem rodar no checkout —
+principalmente `00 | GA4 - Page View` e o Meta Pixel base.
+
 ### Alternativa sem código
 
 Conversão de compra no Google Ads → **importar do GA4** (Ads → Objetivos →

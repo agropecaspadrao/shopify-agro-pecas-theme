@@ -31,6 +31,14 @@
        cada pedido vira duas compras.
      • Na tag do GTM, sobrescreva page_location com o parâmetro `page_location`
        enviado abaixo — senão o GA4 registra a URL do sandbox.
+     • O PREVIEW DO GTM NÃO CONECTA AQUI, e não há como fazer conectar: ele
+       espera o container no documento principal, e no checkout o container
+       vive dentro deste iframe. A própria Shopify documenta que o
+       "Troubleshoot tag" do Tag Assistant não detecta tags em custom pixel.
+       Para auditar: ligue DEBUG abaixo e leia o console, use o GA4 DebugView,
+       ou o Shopify Pixel Helper. Ver docs/GTM_SETUP.md §6.
+     • Toda tag de "Todas as páginas" do container dispara TAMBÉM aqui dentro.
+       Crie exceção por {{DLV - shopify_pixel}} = true nos gatilhos.
 
    Cada push carrega os dois schemas, igual ao tema:
      ecommerce → GA4    (items[], currency, value, coupon, tax, shipping…)
@@ -54,18 +62,48 @@
     // ID usado em meta.content_ids. 'feed' = shopify_BR_<produto>_<variante>
     // (retailer_id do catálogo criado pelo canal Facebook & Instagram).
     // Troque para 'sku' se o catálogo da Meta for alimentado por SKU.
-    META_ID_SOURCE: 'feed'
+    META_ID_SOURCE: 'feed',
+
+    // true = imprime cada push no console do navegador com o prefixo
+    // [GTM-CHECKOUT]. É o único jeito de auditar este pixel: o Preview do
+    // GTM e o Tag Assistant NÃO enxergam nada dentro do sandbox. Ligue para
+    // testar um pedido, confira no console e desligue depois.
+    DEBUG: false
   };
   /* ------------------------------------------------------------------ */
 
-  // Carrega o contêiner dentro do sandbox do pixel.
+  function log() {
+    if (!CONFIG.DEBUG) return;
+    try { console.log.apply(console, ['[GTM-CHECKOUT]'].concat([].slice.call(arguments))); }
+    catch (e) { /* console indisponível no sandbox */ }
+  }
+
   window.dataLayer = window.dataLayer || [];
+
+  // Marcador de contexto — publicado ANTES do container carregar.
+  // O checkout roda dentro deste sandbox, então TODA tag de "Todas as
+  // páginas" / "Container carregado" do GTM dispara aqui também. Use
+  // {{DLV - shopify_pixel}} = true como EXCEÇÃO nesses gatilhos, senão
+  // page_view, remarketing e afins contam a mais no checkout.
+  window.dataLayer.push({
+    shopify_pixel: true,
+    pixel_name: 'GTM - Checkout',
+    page_context: 'checkout_sandbox'
+  });
+
   window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
 
+  // Carrega o contêiner dentro do sandbox. O sandbox nem sempre tem <head>
+  // ou uma <script> anterior — por isso as três tentativas.
   var s = document.createElement('script');
   s.async = true;
   s.src = CONFIG.GTM_HOST + '/gtm.js?id=' + CONFIG.GTM_ID;
-  document.head.appendChild(s);
+  s.onload = function () { log('container carregado:', CONFIG.GTM_ID); };
+  s.onerror = function () { log('FALHA ao carregar o container', CONFIG.GTM_ID); };
+
+  var first = document.getElementsByTagName('script')[0];
+  if (first && first.parentNode) first.parentNode.insertBefore(s, first);
+  else (document.head || document.documentElement).appendChild(s);
 
   function num(v) {
     return Math.round((Number(v) || 0) * 100) / 100;
@@ -143,6 +181,7 @@
     if (extra) { for (var j in extra) payload[j] = extra[j]; }
     window.dataLayer.push({ ecommerce: null });
     window.dataLayer.push(payload);
+    log(name, payload);
   }
 
   /* ---------- begin_checkout (opcional — ver CONFIG) ---------- */

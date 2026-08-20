@@ -86,8 +86,6 @@
           "background_color": "#FFFFFF",
           "font_color": "#000000",
           "button_color": "#4ccc7a",
-          "secondary_color": "#ffffff",
-          "ternary_color": "#6a6a6a",
           "button_icon": "chat_bubble",
           "button_text": "chat_with_us",
           "button_horizontal_position": "bottom_right",
@@ -96,6 +94,11 @@
           "agent_font": "system_ui_n4",
           "agent_border_radius": 16
         }
+      },
+      "6251270934270006384": {
+        "type": "shopify://apps/stape-conversion-tracking/blocks/gtm/7e13c847-7971-409d-8fe0-29ec14d5f048",
+        "disabled": false,
+        "settings": {}
       }
     }
   },

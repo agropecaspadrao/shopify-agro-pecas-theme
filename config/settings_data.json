@@ -37,6 +37,7 @@
     "store_phone": "(41) 98415-1085",
     "store_email": "comercial@agropecaspadrao.com.br",
     "footer_tagline": "Peças no padrão OEM. Entrega ágil. Confiança de verdade. Atendemos todo o Brasil.",
+    "gtm_loader_url": "https://gtmserver.agropecaspadrao.com.br",
     "sections": {
       "header": {
         "type": "header",

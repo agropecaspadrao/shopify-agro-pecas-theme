@@ -1,0 +1,46 @@
+{%- comment -%}
+  Redirects de busca — manda termos curados direto para a coleção certa.
+
+  Existe porque a busca nativa não entende sinônimo: quem procura "piloto
+  automático" recebia uma peça aleatória em vez da linha de Agricultura de
+  Precisão. Códigos OEM escritos de outro jeito (sem ponto, com zero à esquerda)
+  NÃO precisam entrar aqui — isso é resolvido por tag de alias no produto
+  (util/master-produtos/15_aliases_busca.py).
+
+  Roda no <body>, depois do push `search` do dataLayer que acontece no <head> —
+  o termo continua sendo registrado no GA4 antes do redirect.
+
+  Parâmetros:
+    regras — texto com uma regra por linha, no formato `termo => /caminho`
+    termo  — search.terms
+{%- endcomment -%}
+
+{%- liquid
+  assign termo_norm = termo | downcase | strip
+  assign destino = ''
+
+  if termo_norm != blank and regras != blank
+    assign linhas = regras | newline_to_br | split: '<br />'
+    for linha in linhas
+      assign par = linha | split: '=>'
+      if par.size < 2
+        continue
+      endif
+      assign chave = par[0] | downcase | strip
+      if chave != blank and chave == termo_norm
+        assign destino = par[1] | strip
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if destino != blank -%}
+  <script>window.location.replace({{ destino | json }});</script>
+  <noscript>
+    <p class="search-redirect-note">
+      Procurando "{{ termo | escape }}"?
+      <a href="{{ destino | escape }}">Ver a linha completa &rarr;</a>
+    </p>
+  </noscript>
+{%- endif -%}

@@ -2,7 +2,9 @@
   "sections": {
     "main": {
       "type": "main-search",
-      "settings": {}
+      "settings": {
+        "search_redirects": "piloto automatico => /collections/agricultura-de-precisao\npiloto automático => /collections/agricultura-de-precisao\nauto piloto => /collections/agricultura-de-precisao\nautopilot => /collections/agricultura-de-precisao\ndirecao automatica => /collections/agricultura-de-precisao\ndireção automática => /collections/agricultura-de-precisao\nbarra de luz => /collections/agricultura-de-precisao\ngps => /collections/agricultura-de-precisao\ngps agricola => /collections/agricultura-de-precisao\ngps agrícola => /collections/agricultura-de-precisao\nagricultura de precisao => /collections/agricultura-de-precisao\nagricultura de precisão => /collections/agricultura-de-precisao\nkit de sensores => /collections/sensores-agricolas\nkit sensores => /collections/sensores-agricolas\nmonitor de plantio => /collections/sensores-agricolas\nsensor de plantadeira => /collections/sensores-agricolas"
+      }
     }
   },
   "order": ["main"]

@@ -27,6 +27,8 @@
     </div>
 
     {%- if search.performed -%}
+      {%- render 'search-redirects', regras: section.settings.search_redirects, termo: search.terms -%}
+
       {%- comment -%} Busca por aproximação (window.appLocalSearch em whatsapp.js):
       roda SEMPRE. Correspondência forte de código aparece acima dos resultados
       nativos; com 0 resultados nativos, mostra aproximados e esconde o vazio. {%- endcomment -%}
@@ -158,6 +160,14 @@
 {% schema %}
 {
   "name": "Página de Busca",
-  "settings": []
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "search_redirects",
+      "label": "Redirects de busca",
+      "info": "Uma regra por linha, no formato `termo => /caminho`. O termo precisa ser digitado exatamente igual (sem diferenciar maiúscula), por isso vale repetir a linha com e sem acento. Só para sinônimos — variação de código OEM já é resolvida por tag no produto.",
+      "default": "piloto automatico => /collections/agricultura-de-precisao\npiloto automático => /collections/agricultura-de-precisao\nauto piloto => /collections/agricultura-de-precisao\nautopilot => /collections/agricultura-de-precisao\ndirecao automatica => /collections/agricultura-de-precisao\ndireção automática => /collections/agricultura-de-precisao\nbarra de luz => /collections/agricultura-de-precisao\ngps => /collections/agricultura-de-precisao\ngps agricola => /collections/agricultura-de-precisao\ngps agrícola => /collections/agricultura-de-precisao\nagricultura de precisao => /collections/agricultura-de-precisao\nagricultura de precisão => /collections/agricultura-de-precisao\nkit de sensores => /collections/sensores-agricolas\nkit sensores => /collections/sensores-agricolas\nmonitor de plantio => /collections/sensores-agricolas\nsensor de plantadeira => /collections/sensores-agricolas"
+    }
+  ]
 }
 {% endschema %}

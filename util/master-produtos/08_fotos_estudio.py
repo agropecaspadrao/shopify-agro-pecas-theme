@@ -85,6 +85,42 @@ CONFIG = {
         "aplicacao": [("APP00001_2", "roda compactadora montada na linha da plantadeira"),
                       ("APP00001_3", "plantadeira em operação com as rodas compactadoras")],
     },
+    # ── SOHIPREN/Livenza — renders 3D do catálogo do fornecedor, Drive
+    #    "APP/PRODUTO & CATÁLOGO/Fotos de produtos/SOHIPREN (HIDRÁULICOS)"
+    #    (id 1Gryhz9HJFpG4EIvM18RA_Dn_errJ3aZI). Sufixo -D/-E do arquivo é
+    #    ÂNGULO de vista (direita/esquerda), NÃO giro da bomba — conferido
+    #    visualmente em L026819 (mesma peça, perspectiva espelhada).
+    #    São renders limpos em fundo branco: 560–723 px, upscale ~2x aguenta.
+    "5.0220.L026997.0": {
+        "prefixo": "livenza_L026997",
+        "avulsas": ["L026997-D.jpeg", "L026997-E.jpeg"],
+        "legendas": ["vista do flange e eixo estriado", "vista do lado oposto"],
+    },
+    "5.5211.L026234.0": {
+        "prefixo": "livenza_L026234",
+        "avulsas": ["L026234-E.jpeg", "L026234-D.jpeg"],
+        "legendas": ["vista lateral", "vista do flange"],
+    },
+    "5.5210.L011190.0": {
+        "prefixo": "livenza_L011190",
+        "avulsas": ["L01119-E.jpeg", "L01119-D.jpeg"],
+        "legendas": ["vista lateral", "vista do flange"],
+    },
+    "5.0211.L026819.0": {
+        "prefixo": "livenza_L026819",
+        "avulsas": ["L026819-D.jpeg", "L026819-E.jpeg"],
+        "legendas": ["vista do flange e eixo estriado", "vista do lado oposto"],
+    },
+    "5.0211.L026849.0": {
+        "prefixo": "livenza_L026849",
+        "avulsas": ["L026849-D.jpeg", "L026849-E.jpeg"],
+        "legendas": ["vista do flange e eixo estriado", "vista do lado oposto"],
+    },
+    "5.0211.L027018.0": {
+        "prefixo": "livenza_L027018",
+        "avulsas": ["L027018-E (1).jpeg", "L027018-E (2).jpeg"],
+        "legendas": ["vista lateral", "vista em perspectiva"],
+    },
     # ── AGCO (fotos de estúdio do fornecedor, Drive AGCO/ACX2865730 —
     #    id da subpasta 1tg84puRw73oM4OjtEQuIAONPRb1oSt_G). Peça preta fechada,
     #    sem vazado: o Vision resolve sozinho contra o fundo claro.

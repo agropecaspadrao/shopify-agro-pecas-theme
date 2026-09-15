@@ -23,7 +23,7 @@ export function provedoresDisponiveis(cfg = config.email) {
   if (cfg.googleServiceAccountJson && cfg.gmailSender) lista.push('gmail');
   if (cfg.resendApiKey) lista.push('resend');
   if (cfg.brevoApiKey) lista.push('brevo');
-  if (cfg.smtpUser && cfg.smtpPass) lista.push('smtp');
+  if (cfg.smtpUser && cfg.smtpPass && !cfg.smtpBloqueado) lista.push('smtp');
   return lista;
 }
 

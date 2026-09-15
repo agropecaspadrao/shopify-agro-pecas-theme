@@ -13,6 +13,7 @@ test('provedoresDisponiveis segue a ordem Gmail, Resend, Brevo, SMTP conforme as
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, brevoApiKey: 'b' }), ['brevo']);
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}' }), [], 'Gmail exige também o remetente');
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}', gmailSender: 'carol@x.com', resendApiKey: 'r', brevoApiKey: 'b', smtpUser: 'u', smtpPass: 'p' }), ['gmail', 'resend', 'brevo', 'smtp']);
+  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, smtpUser: 'u', smtpPass: 'p', smtpBloqueado: true }), [], 'no Railway o SMTP é pulado');
 });
 
 test('Gmail: assina JWT com sub (impersonação), envia MIME base64url e devolve o id', async () => {

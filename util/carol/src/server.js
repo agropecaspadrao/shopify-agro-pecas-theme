@@ -434,7 +434,7 @@ if (config.waPhoneNumberId && !config.metaAppSecret) {
 }
 {
   const r = recursosConfigurados();
-  if (!r.emailHttp) console.warn('[config] nenhum provedor de e-mail HTTP (RESEND_API_KEY ou BREVO_API_KEY). No Railway o SMTP é bloqueado: relatórios e alertas por e-mail NÃO vão sair.');
+  if (!r.emailHttp) console.warn('[config] nenhum provedor de e-mail HTTP (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY ou BREVO_API_KEY). No Railway o SMTP é bloqueado: e-mails NÃO vão sair; relatórios e palavra-chave caem para o WhatsApp dos admins.');
   if (!r.admins) console.warn('[config] CAROL_ADMINS vazio: comandos /carol desativados e alertas por WhatsApp sem destinatário.');
   if (!r.tokenReservaWhatsApp) console.warn('[config] WA_ACCESS_TOKEN_FALLBACK vazio: sem auto-recovery de token do WhatsApp.');
   console.log(`[config] recursos: e-mail HTTP=${r.emailHttp} admins=${r.admins} tokenReserva=${r.tokenReservaWhatsApp} metaAds=${r.metaAds} googleAds=${r.googleAds} masterDrive=${r.masterDrive}`);
@@ -475,7 +475,7 @@ async function boot() {
   if (precisaRotacionar()) {
     try {
       const r = await rotacionarEEnviar();
-      console.log(`[chave] palavra-chave inicial enviada para ${r.enviadaPara.join(', ')}`);
+      console.log(`[chave] palavra-chave inicial enviada por ${r.canal}${r.canal === 'email' ? ` para ${r.enviadaPara.join(', ')}` : ` para ${config.admins.length} administrador(es) (contingência)`}`);
     } catch (e) {
       console.warn('[chave] não consegui enviar a palavra-chave inicial:', e.message);
     }

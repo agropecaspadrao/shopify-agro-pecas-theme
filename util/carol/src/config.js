@@ -66,6 +66,9 @@ export const config = {
     smtpPort: Number(process.env.SMTP_PORT || 465),
     smtpUser: process.env.SMTP_USER || '',
     smtpPass: process.env.SMTP_PASS || '',
+    // No Railway o SMTP de saída é bloqueado em qualquer plano: pular evita
+    // 20 s de timeout a cada tentativa de e-mail.
+    smtpBloqueado: Boolean(process.env.RAILWAY_ENVIRONMENT) && process.env.SMTP_FORCAR !== '1',
   },
 
   // Destinatários. Relatório operacional (Dai), relatório executivo (sócios)

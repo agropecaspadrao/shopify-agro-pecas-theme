@@ -13,16 +13,50 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
 import { DATA_DIR } from '../registro.js';
+import { lerContaServico, tokenContaServico } from '../google/auth.js';
 
 const ARQUIVO_MARCA = path.join(DATA_DIR, 'email-ultimo.json');
 
 /** Lista de provedores disponíveis, na ordem de tentativa. */
 export function provedoresDisponiveis(cfg = config.email) {
   const lista = [];
+  if (cfg.googleServiceAccountJson && cfg.gmailSender) lista.push('gmail');
   if (cfg.resendApiKey) lista.push('resend');
   if (cfg.brevoApiKey) lista.push('brevo');
   if (cfg.smtpUser && cfg.smtpPass) lista.push('smtp');
   return lista;
+}
+
+const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
+const b64url = (s) => b64(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+/**
+ * Gmail API com conta de serviço impersonando o remetente (delegação em todo
+ * o domínio do Workspace, escopo gmail.send). Sai pelo Google da empresa:
+ * SPF/DKIM já valem, sem provedor terceiro.
+ */
+async function viaGmail({ para, assunto, texto }, cfg, fetchFn) {
+  const sa = lerContaServico(cfg.googleServiceAccountJson);
+  const token = await tokenContaServico(sa, 'https://www.googleapis.com/auth/gmail.send', { fetchFn, sub: cfg.gmailSender });
+  const mime = [
+    `From: =?UTF-8?B?${b64(cfg.nomeDe)}?= <${cfg.gmailSender}>`,
+    `To: ${para.join(', ')}`,
+    `Subject: =?UTF-8?B?${b64(assunto)}?=`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64(texto),
+  ].join('\r\n');
+  const res = await fetchFn('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ raw: b64url(mime) }),
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!res.ok) throw new Error(`Gmail ${res.status}: ${(await res.text().catch(() => '')).slice(0, 300)}`);
+  const corpo = await res.json().catch(() => ({}));
+  return { provedor: 'gmail', id: corpo.id || null };
 }
 
 async function viaResend({ para, assunto, texto }, cfg, fetchFn) {
@@ -80,7 +114,7 @@ async function viaSmtp({ para, assunto, texto }, cfg) {
   return { provedor: 'smtp', id: info.messageId || null };
 }
 
-const PROVEDORES = { resend: viaResend, brevo: viaBrevo, smtp: viaSmtp };
+const PROVEDORES = { gmail: viaGmail, resend: viaResend, brevo: viaBrevo, smtp: viaSmtp };
 
 function normalizarDestinatarios(para) {
   const lista = (Array.isArray(para) ? para : String(para || '').split(','))
@@ -102,7 +136,7 @@ export async function enviar(msg, deps = {}) {
   if (!msg.assunto || !msg.texto) throw new Error('e-mail sem assunto ou corpo');
 
   const ordem = deps.provedores || provedoresDisponiveis(cfg);
-  if (!ordem.length) throw new Error('nenhum provedor de e-mail configurado (RESEND_API_KEY, BREVO_API_KEY ou SMTP_USER/SMTP_PASS)');
+  if (!ordem.length) throw new Error('nenhum provedor de e-mail configurado (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY, BREVO_API_KEY ou SMTP_USER/SMTP_PASS)');
 
   const falhas = [];
   for (const nome of ordem) {

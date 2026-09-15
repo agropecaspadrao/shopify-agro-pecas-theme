@@ -8,10 +8,53 @@ const { enviar, provedoresDisponiveis, ultimoEnvio } = await import('../src/emai
 const cfgBase = { de: 'carol@x.com', nomeDe: 'Carol', smtpHost: 'smtp.x', smtpPort: 465 };
 const msg = { para: ['a@x.com', 'a@x.com', 'invalido'], assunto: 'Teste', texto: 'corpo' };
 
-test('provedoresDisponiveis segue a ordem Resend, Brevo, SMTP conforme as chaves', () => {
+test('provedoresDisponiveis segue a ordem Gmail, Resend, Brevo, SMTP conforme as chaves', () => {
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase }), []);
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, brevoApiKey: 'b' }), ['brevo']);
-  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, resendApiKey: 'r', brevoApiKey: 'b', smtpUser: 'u', smtpPass: 'p' }), ['resend', 'brevo', 'smtp']);
+  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}' }), [], 'Gmail exige também o remetente');
+  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}', gmailSender: 'carol@x.com', resendApiKey: 'r', brevoApiKey: 'b', smtpUser: 'u', smtpPass: 'p' }), ['gmail', 'resend', 'brevo', 'smtp']);
+});
+
+test('Gmail: assina JWT com sub (impersonação), envia MIME base64url e devolve o id', async () => {
+  const { generateKeyPairSync } = await import('node:crypto');
+  const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+  const sa = { client_email: 'carol-monitor@proj.iam.gserviceaccount.com', private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }) };
+  const f = fetchFalso({
+    'oauth2.googleapis.com/token': (url, opts) => {
+      const jwt = new URLSearchParams(opts.body.toString()).get('assertion');
+      const claims = JSON.parse(Buffer.from(jwt.split('.')[1], 'base64url').toString());
+      assert.equal(claims.iss, sa.client_email);
+      assert.equal(claims.sub, 'carol@x.com');
+      assert.match(claims.scope, /gmail\.send/);
+      return { corpo: { access_token: 'tok', expires_in: 3600 } };
+    },
+    'gmail.googleapis.com': (url, opts) => {
+      assert.equal(opts.headers.authorization, 'Bearer tok');
+      const raw = Buffer.from(JSON.parse(opts.body).raw, 'base64url').toString();
+      assert.match(raw, /^From: =\?UTF-8\?B\?.+\?= <carol@x\.com>\r\nTo: a@x\.com\r\nSubject: =\?UTF-8\?B\?/);
+      assert.match(raw, /Content-Type: text\/plain; charset=UTF-8/);
+      const corpoB64 = raw.split('\r\n\r\n')[1];
+      assert.equal(Buffer.from(corpoB64, 'base64').toString(), 'corpo');
+      return { corpo: { id: 'gm-1' } };
+    },
+  });
+  const cfg = { ...cfgBase, googleServiceAccountJson: Buffer.from(JSON.stringify(sa)).toString('base64'), gmailSender: 'carol@x.com' };
+  const r = await enviar(msg, { cfg, fetchFn: f });
+  assert.deepEqual(r, { provedor: 'gmail', id: 'gm-1' });
+});
+
+test('Gmail sem delegação (403) → cai para o próximo provedor', async () => {
+  const { generateKeyPairSync } = await import('node:crypto');
+  const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+  const sa = { client_email: 'x@p.iam.gserviceaccount.com', private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }) };
+  const { limparCacheTokens } = await import('../src/google/auth.js');
+  limparCacheTokens();
+  const f = fetchFalso({
+    'oauth2.googleapis.com/token': { status: 401, corpo: { error: 'unauthorized_client', error_description: 'Client is unauthorized to retrieve access tokens using this method' } },
+    'api.resend.com': { corpo: { id: 'r1' } },
+  });
+  const r = await enviar(msg, { cfg: { ...cfgBase, googleServiceAccountJson: JSON.stringify(sa), gmailSender: 'c@x.com', resendApiKey: 'r' }, fetchFn: f });
+  assert.equal(r.provedor, 'resend');
 });
 
 test('sem provedor configurado lança erro claro', async () => {

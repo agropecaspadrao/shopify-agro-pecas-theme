@@ -6,6 +6,7 @@ import { config } from './config.js';
 import { listarPeriodo, registrarAtendimento } from './registro.js';
 import { custoUSD } from './custos.js';
 import { enviar as enviarViaTransporte } from './email/transporte.js';
+import { enviarOuContingencia } from './email/contingencia.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
@@ -132,9 +133,13 @@ export async function enviarEmail(assunto, corpo, para = config.destinatarios.da
   return enviarViaTransporte({ para, assunto, texto: corpo });
 }
 
-/** Relatório operacional diário para a Dai. Agendado em agenda.js (server.js). */
-export async function enviarRelatorio() {
+/**
+ * Relatório operacional diário para a Dai. Agendado em agenda.js (server.js).
+ * Se o e-mail falhar, vai pelo WhatsApp dos administradores (contingência).
+ */
+export async function enviarRelatorio(deps = {}) {
   const { assunto, corpo } = await montarRelatorio();
-  await enviarEmail(assunto, corpo);
-  return { enviado: true, assunto, resumo: assunto };
+  const r = await enviarOuContingencia({ para: config.destinatarios.dai, assunto, texto: corpo }, deps);
+  if (r.canal === 'nenhum') throw new Error(`relatório não entregue: ${r.erroEmail || 'sem canal'}`);
+  return { enviado: true, canal: r.canal, assunto, resumo: `${assunto} (${r.canal})` };
 }

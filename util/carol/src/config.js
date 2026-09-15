@@ -54,6 +54,10 @@ export const config = {
   // ── E-mail (transporte HTTP; SMTP fica só de reserva porque o Railway
   //    bloqueia portas SMTP de saída em qualquer plano) ─────────────────────
   email: {
+    // Gmail API via conta de serviço com delegação no Workspace (preferido:
+    // sai pelo Google da própria empresa, sem terceiro e sem DNS novo)
+    googleServiceAccountJson: process.env.GOOGLE_SERVICE_ACCOUNT_JSON || '',
+    gmailSender: process.env.GMAIL_SENDER || '',
     resendApiKey: process.env.RESEND_API_KEY || '',
     brevoApiKey: process.env.BREVO_API_KEY || '',
     de: process.env.EMAIL_FROM || process.env.SMTP_USER || 'carol@agropecaspadrao.com.br',
@@ -126,7 +130,7 @@ export function definirTokenWhatsApp(token) {
 /** Quais recursos opcionais estão configurados — usado no boot e no /admin/saude. */
 export function recursosConfigurados() {
   return {
-    emailHttp: Boolean(config.email.resendApiKey || config.email.brevoApiKey),
+    emailHttp: Boolean((config.email.googleServiceAccountJson && config.email.gmailSender) || config.email.resendApiKey || config.email.brevoApiKey),
     emailSmtp: Boolean(config.email.smtpUser && config.email.smtpPass),
     admins: config.admins.length,
     tokenReservaWhatsApp: Boolean(config.waAccessTokenFallback),

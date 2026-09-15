@@ -12,7 +12,7 @@ import { resumoAnomalias, TIPOS } from '../alertas/anomalias.js';
 import { ultimoEstado, textoSaude, verificarTudo } from '../saude/supervisor.js';
 import { resumoCampanhasMeta, textoCampanhas } from './campanhas.js';
 import { listar as listarAgenda } from '../agenda.js';
-import { enviar as enviarEmailPadrao } from '../email/transporte.js';
+import { enviarOuContingencia } from '../email/contingencia.js';
 
 const usd = (v) => 'US$ ' + Number(v || 0).toFixed(2).replace('.', ',');
 const brl = (v) => 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
@@ -131,9 +131,9 @@ export async function montarRelatorioSocios({ fetchFn, agora = Date.now } = {}) 
 }
 
 export async function enviarRelatorioSocios(deps = {}) {
-  const enviarEmail = deps.enviarEmail || enviarEmailPadrao;
   const para = deps.destinatarios || config.destinatarios.socios;
   const { assunto, corpo, status } = await montarRelatorioSocios(deps);
-  await enviarEmail({ para, assunto, texto: corpo });
-  return { enviado: true, assunto, status, enviadoPara: para };
+  const r = await enviarOuContingencia({ para, assunto, texto: corpo }, deps);
+  if (r.canal === 'nenhum') throw new Error(`relatório dos sócios não entregue: ${r.erroEmail || 'sem canal'}`);
+  return { enviado: true, canal: r.canal, assunto, status, enviadoPara: para, resumo: `${assunto} (${r.canal})` };
 }

@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
 import { DATA_DIR } from '../registro.js';
-import { enviar as enviarEmailPadrao } from '../email/transporte.js';
+import { enviarOuContingencia } from '../email/contingencia.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'chave-semanal.json');
 const VALIDADE_MS = 7 * 24 * 3600 * 1000;
@@ -130,11 +130,15 @@ export function textoEmailChave(palavra, validaAte) {
   ].join('\n');
 }
 
-/** Rotaciona e envia por e-mail aos sócios e administradores. */
+/**
+ * Rotaciona e envia por e-mail aos sócios e administradores. Se o e-mail
+ * estiver indisponível, cai para o WhatsApp dos administradores (contingência:
+ * sem isso os comandos ficariam mortos até o e-mail voltar).
+ */
 export async function rotacionarEEnviar(deps = {}) {
   const { palavra, validaAte } = rotacionar(deps);
-  const enviarEmail = deps.enviarEmail || enviarEmailPadrao;
   const para = deps.destinatarios || config.destinatarios.socios;
-  await enviarEmail({ para, assunto: 'Carol: palavra-chave da semana', texto: textoEmailChave(palavra, validaAte) });
-  return { validaAte, enviadaPara: para };
+  const r = await enviarOuContingencia({ para, assunto: 'Carol: palavra-chave da semana', texto: textoEmailChave(palavra, validaAte) }, deps);
+  if (r.canal === 'nenhum') throw new Error(`palavra-chave gerada mas não entregue: ${r.erroEmail || 'sem canal'}`);
+  return { validaAte, enviadaPara: para, canal: r.canal };
 }

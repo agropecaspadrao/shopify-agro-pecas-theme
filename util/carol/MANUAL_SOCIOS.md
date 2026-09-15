@@ -73,7 +73,9 @@ Assunto: **`Carol: palavra-chave da semana`**
 por exemplo `agro-trator-42`. Vale por 7 dias; a da semana anterior continua
 aceita por 24 horas na virada, para ninguém ficar travado na segunda de manhã.
 
-**Por segurança, a palavra nova só é enviada por e-mail. Nunca pelo WhatsApp.**
+**Por segurança, a palavra nova vai por e-mail.** Só cai para o WhatsApp dos
+administradores se o e-mail estiver fora do ar (a mensagem vem marcada como
+"contingência") — do contrário os comandos ficariam mortos até o e-mail voltar.
 
 ---
 
@@ -165,26 +167,41 @@ normalmente.
 
 | Variável | Para quê | Sem ela |
 |---|---|---|
-| `RESEND_API_KEY` ou `BREVO_API_KEY` | Todo e-mail: relatórios, alertas, palavra-chave | **Nenhum e-mail sai** (o Railway bloqueia SMTP) |
-| `CAROL_ADMINS` | Números que podem usar `/carol` e recebem alertas por WhatsApp | Comandos desligados; alertas só por e-mail |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` + `GMAIL_SENDER` | Todo e-mail pela Gmail API da empresa **e** "quem editou a planilha master" | **Nenhum e-mail sai** (o Railway bloqueia SMTP). Relatórios e palavra-chave caem para o WhatsApp dos administradores (contingência) |
+| `RESEND_API_KEY` ou `BREVO_API_KEY` | Alternativa de e-mail por terceiro | Opcional se o Gmail estiver ligado |
+| `CAROL_ADMINS` | Números que podem usar `/carol` e recebem alertas e contingências por WhatsApp | Comandos desligados; sem contingência |
 | `WA_ACCESS_TOKEN_FALLBACK` | Token reserva do WhatsApp | Sem auto-recovery de token; só alerta |
 | `META_ACCESS_TOKEN` + `META_AD_ACCOUNT_ID` | Bloco de campanhas e validade da Meta | Seção 3 do relatório diz "não configurado" |
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | Quem editou a planilha master | Linha da planilha diz "não configurado" |
 
-### Como criar a conta de e-mail (Resend, 5 minutos)
+### E-mail pela própria empresa (Gmail API + conta de serviço) — caminho preferido
 
-1. Criar conta em resend.com com o e-mail admin@agropecaspadrao.com.br
-2. **Domains → Add domain → agropecaspadrao.com.br** e adicionar os registros DNS que ele mostra (SPF e DKIM) no painel do domínio
-3. **API Keys → Create** → copiar a chave para `RESEND_API_KEY` no Railway
-4. Definir `EMAIL_FROM=carol@agropecaspadrao.com.br`
-5. Testar com `POST /admin/anomalias/teste` — deve chegar um e-mail em admin@ e socios@
+Sai pelo Google Workspace da APP, sem provedor terceiro e sem mexer em DNS. A
+mesma chave também lê a planilha master. Estado em 15/09/2026:
 
-### Como criar a conta de serviço do Google (para "quem editou a master")
+| Passo | Status |
+|---|---|
+| Conta de serviço `carol-monitor@gen-lang-client-0608451405.iam.gserviceaccount.com` criada, Gmail API e Drive API habilitadas | feito |
+| Planilha master compartilhada com a conta de serviço como Leitor | feito |
+| **Gerar a chave JSON** (só o dono do projeto pode): `gcloud iam service-accounts keys create ~/carol-monitor-key.json --iam-account carol-monitor@gen-lang-client-0608451405.iam.gserviceaccount.com --project gen-lang-client-0608451405` | **você** |
+| **Autorizar a delegação no Workspace**: admin.google.com → Segurança → Controle de acesso e dados → Controles de API → **Delegação em todo o domínio** → Adicionar novo → ID do cliente `102179036680809640401` → escopo `https://www.googleapis.com/auth/gmail.send` → Autorizar | **você** (1 minuto) |
+| Colar o JSON da chave em `GOOGLE_SERVICE_ACCOUNT_JSON` no Railway (ou me passar o caminho do arquivo que eu subo) | você ou eu |
+| `GMAIL_SENDER=admin@agropecaspadrao.com.br` (o remetente precisa ser um usuário real do Workspace; o nome exibido é "Carol - Agro Peças Padrão") | feito |
+| Testar: `POST /admin/anomalias/teste` → e-mail em admin@ e socios@ | depois dos passos acima |
 
-1. Google Cloud Console → IAM → Contas de serviço → Criar (nome: `carol-monitor`)
-2. Criar chave JSON e baixar
-3. Abrir a planilha master no Drive → Compartilhar → colar o e-mail da conta de serviço (termina em `.iam.gserviceaccount.com`) como **Leitor**
-4. Colar o conteúdo do JSON em `GOOGLE_SERVICE_ACCOUNT_JSON` no Railway (pode ser em base64)
+### Alternativa: Resend (terceiro, 5 minutos)
+
+1. Criar conta em resend.com com admin@agropecaspadrao.com.br
+2. **Domains → Add domain → agropecaspadrao.com.br** e adicionar os registros DNS (SPF e DKIM) na Cloudflare
+3. **API Keys → Create** → `RESEND_API_KEY` no Railway e `EMAIL_FROM=carol@agropecaspadrao.com.br`
+
+### Token reserva do WhatsApp (auto-recovery)
+
+Meta Business → Configurações da empresa → Usuários → **Usuários do sistema** →
+Adicionar (nome `carol-reserva`, função Administrador) → Atribuir ativos:
+o app da Carol e a conta do WhatsApp → **Gerar token** com
+`whatsapp_business_messaging` e `whatsapp_business_management`, validade
+**Nunca**. Colar em `WA_ACCESS_TOKEN_FALLBACK` no Railway. Precisa ser
+diferente do token principal.
 
 ---
 

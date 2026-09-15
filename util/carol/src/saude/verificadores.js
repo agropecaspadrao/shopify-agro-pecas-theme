@@ -9,8 +9,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import crypto from 'node:crypto';
 import { config, recursosConfigurados } from '../config.js';
+import { lerContaServico as lerSA, tokenContaServico } from '../google/auth.js';
 import { DATA_DIR } from '../registro.js';
 import { estadoCatalogo } from '../catalogo.js';
 import { ultimoEnvio } from '../email/transporte.js';
@@ -167,38 +167,11 @@ export async function verificarInventario({ fetchFn = fetch, agora = Date.now } 
 }
 
 // ── Planilha master no Drive: quem editou por último ──────────────────────
-function lerContaServico() {
-  const bruto = config.saude.googleServiceAccountJson;
-  if (!bruto) return null;
-  const txt = bruto.trim().startsWith('{') ? bruto : Buffer.from(bruto, 'base64').toString('utf8');
-  return JSON.parse(txt);
-}
-
-function b64url(buf) {
-  return Buffer.from(buf).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-}
-
-/** Access token de conta de serviço (JWT RS256 assinado com node:crypto, sem SDK). */
-export async function tokenContaServico(sa, escopo, { fetchFn = fetch, agora = Date.now } = {}) {
-  const iat = Math.floor(agora() / 1000);
-  const header = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const claims = b64url(JSON.stringify({ iss: sa.client_email, scope: escopo, aud: 'https://oauth2.googleapis.com/token', iat, exp: iat + 3600 }));
-  const assinatura = crypto.sign('RSA-SHA256', Buffer.from(`${header}.${claims}`), sa.private_key);
-  const jwt = `${header}.${claims}.${b64url(assinatura)}`;
-  const r = await getJson(fetchFn, 'https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: jwt }),
-  });
-  if (!r.ok) throw new Error(`Google OAuth ${r.status}: ${r.corpo?.error_description || r.corpo?.error || ''}`);
-  return r.corpo.access_token;
-}
-
 export async function verificarMaster({ fetchFn = fetch, agora = Date.now } = {}) {
   const nome = 'master';
   let sa;
   try {
-    sa = lerContaServico();
+    sa = lerSA(config.saude.googleServiceAccountJson);
   } catch (e) {
     return { nome, estado: 'falha', resumo: 'GOOGLE_SERVICE_ACCOUNT_JSON inválido', detalhe: e.message };
   }

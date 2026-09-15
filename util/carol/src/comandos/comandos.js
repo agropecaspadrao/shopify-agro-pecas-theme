@@ -16,12 +16,14 @@ import { DATA_DIR } from '../registro.js';
 import { validar as validarChavePadrao, rotacionarEEnviar as rotacionarPadrao, estadoChave } from './chave.js';
 import { reportarAnomalia as reportarPadrao } from '../alertas/anomalias.js';
 
+import { fatiar } from '../util/texto.js';
+export { fatiar };
+
 const PENDENTE_MS = 5 * 60 * 1000;
 const AUTENTICADO_MS = 15 * 60 * 1000;
 const JANELA_FALHAS_MS = 60 * 60 * 1000;
 const MAX_FALHAS = 3;
 const BLOQUEIO_MS = 60 * 60 * 1000;
-const LIMITE_WHATSAPP = 3500;
 
 const SUBCOMANDOS = ['relatorio', 'saude', 'socios', 'chave', 'ajuda', 'status'];
 const estados = new Map(); // numero -> { pendente, pendenteAte, autenticadoAte, falhas: [], bloqueadoAte }
@@ -52,20 +54,6 @@ function estadoDe(numero) {
   return e;
 }
 
-/** Divide um texto longo em mensagens de WhatsApp, cortando em quebras de linha. */
-export function fatiar(texto, limite = LIMITE_WHATSAPP) {
-  const partes = [];
-  let resto = String(texto || '');
-  while (resto.length > limite) {
-    let corte = resto.lastIndexOf('\n', limite);
-    if (corte < limite * 0.5) corte = limite;
-    partes.push(resto.slice(0, corte).trimEnd());
-    resto = resto.slice(corte).trimStart();
-  }
-  if (resto) partes.push(resto);
-  return partes.map((p, i) => (partes.length > 1 ? `(${i + 1}/${partes.length})\n${p}` : p));
-}
-
 const AJUDA = [
   'Comandos da Carol:',
   '/carol - resumo dos atendimentos das ultimas 24h',
@@ -88,12 +76,15 @@ async function executar(sub, numero, deps) {
     }
     case 'socios': {
       const r = await deps.enviarRelatorioSocios();
-      return [`Relatorio executivo enviado por e-mail para ${(r.enviadoPara || config.destinatarios.socios).join(', ')}.`];
+      const via = r.canal === 'whatsapp' ? 'WhatsApp dos administradores (contingencia: e-mail indisponivel)' : `e-mail para ${(r.enviadoPara || config.destinatarios.socios).join(', ')}`;
+      return [`Relatorio executivo enviado por ${via}.`];
     }
     case 'chave': {
       const r = await deps.rotacionarChave();
-      // Por desenho, a palavra nova nunca sai pelo WhatsApp.
-      return [`Nova palavra-chave gerada e enviada por e-mail para ${r.enviadaPara.join(', ')}. A anterior vale por mais 24 horas.`];
+      // Por desenho a palavra nova sai por e-mail; só cai para o WhatsApp dos
+      // administradores se o e-mail estiver indisponível (contingência).
+      const via = r.canal === 'whatsapp' ? 'WhatsApp dos administradores (contingencia: e-mail indisponivel)' : `e-mail para ${r.enviadaPara.join(', ')}`;
+      return [`Nova palavra-chave gerada e enviada por ${via}. A anterior vale por mais 24 horas.`];
     }
     case 'status': {
       const c = estadoChave({ agora });

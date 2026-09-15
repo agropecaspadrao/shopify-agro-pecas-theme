@@ -15,7 +15,9 @@ extraído em serviço próprio quando (e se) fizer sentido:
 
 ```
 src/
-  email/transporte.js       cadeia de provedores (Resend → Brevo → SMTP)
+  email/transporte.js       cadeia de provedores (Gmail API → Resend → Brevo → SMTP)
+  email/contingencia.js     e-mail falhou → mesmo conteúdo no WhatsApp dos admins
+  google/auth.js            JWT de conta de serviço (com sub para delegação)
   alertas/anomalias.js      central de anomalias: classificação, dedup, multicanal, histórico
   saude/verificadores.js    workers: cada um examina uma dependência
   saude/recuperacao.js      ações seguras de auto-recovery
@@ -88,7 +90,7 @@ máximo, sem estoque), planilha master (Drive API via conta de serviço:
 |---|---|---|
 | WhatsApp 401 | troca `config.waAccessToken` pelo `WA_ACCESS_TOKEN_FALLBACK` e repete a chamada uma vez | `whatsapp.js` (imediato) e `recuperacao.js` (supervisor) |
 | Catálogo não carrega | 3 tentativas com espera 2s/4s/6s; mantém última cópia boa | `recuperacao.js` |
-| E-mail falha | próximo provedor da cadeia; se todos, WhatsApp | `transporte.js`, `anomalias.js` |
+| E-mail falha | próximo provedor da cadeia; se todos, WhatsApp dos admins (alertas, relatórios e palavra-chave) | `transporte.js`, `contingencia.js`, `anomalias.js` |
 | Serviço fora no horário da tarefa | catch-up no boot se atraso < 6h + anomalia informativa | `agenda.js` |
 
 Regra: só recuperar o que é **seguro e reversível**. Trocar por um token já
@@ -107,8 +109,10 @@ mensagem de texto no webhook
 ```
 
 Subcomandos: `relatorio` (padrão), `saude`, `socios`, `chave`, `status`, `ajuda`.
-Respostas > 3500 chars são fatiadas em partes numeradas. A palavra nova **nunca**
-sai pelo WhatsApp.
+Respostas > 3500 chars são fatiadas em partes numeradas. A palavra nova sai por
+e-mail; só cai para o WhatsApp dos administradores em **contingência** (todos os
+provedores de e-mail falharam), com cabeçalho dizendo isso — senão os comandos
+ficariam mortos até o e-mail voltar.
 
 ### 2.5 Palavra-chave
 
@@ -143,7 +147,7 @@ executa agora. Tarefas: `relatorio_dai` 8h00, `relatorio_socios` 8h05,
 
 ## 4. Testes
 
-`npm test` — 42 testes, `node --test`, sem dependências, sem rede: `fetch`
+`npm test` — 48 testes, `node --test`, sem dependências, sem rede: `fetch`
 falso, relógio controlável, diretório de dados temporário por processo.
 
 | Arquivo | Cobre |
@@ -151,7 +155,8 @@ falso, relógio controlável, diretório de dados temporário por processo.
 | `chave.test.js` | formato, validação, transição 24h, expiração 7d, normalização, e-mail |
 | `anomalias.test.js` | canais, assunto por severidade, dedup/janela, forcar, fallback e-mail→WhatsApp, classificação de erros |
 | `comandos.test.js` | parse, não-admin silencioso, fluxo pendente→palavra→execução, autenticação 15 min, lockout, expiração da pendência, subcomandos, fatiar |
-| `transporte.test.js` | ordem de provedores, erros claros, Resend ok, fallback Brevo, agregação de falhas |
+| `transporte.test.js` | ordem de provedores, erros claros, Gmail (JWT com sub, MIME), fallback Gmail→Resend→Brevo, agregação de falhas |
+| `contingencia.test.js` | e-mail ok, queda para WhatsApp fatiado com anomalia, sem admins, desligada |
 | `agenda.test.js` | cálculo de ocorrências (diária e semanal, BRT), catch-up dentro/fora da janela, idempotência no mesmo dia, falha registrada |
 | `saude.test.js` | cada verificador com respostas reais simuladas, recuperações, supervisor (consolidação, recuperação, "resolvido") |
 
@@ -160,9 +165,9 @@ falso, relógio controlável, diretório de dados temporário por processo.
 - **Deploy**: `railway up --detach --service shopify-agro-pecas-theme` da raiz
   do repositório (auto-deploy GitHub→Railway não dispara).
 - **Variáveis novas**: ver `.env.example`, bloco "Monitoramento".
-- **Primeiro boot** gera e envia a palavra-chave; sem provedor de e-mail
-  configurado, a palavra fica gerada em disco mas ninguém a recebe — rotacione
-  por `POST /admin/chave/rotacionar` depois de configurar o e-mail.
+- **Primeiro boot** gera e envia a palavra-chave por e-mail; sem e-mail
+  funcionando ela vai pelo WhatsApp dos `CAROL_ADMINS` (contingência). Depois
+  de ligar o e-mail, `POST /admin/chave/rotacionar` manda uma nova pelo canal certo.
 - **Testar os alertas**: `POST /admin/anomalias/teste`.
 - **Logs**: prefixos `[anomalias]`, `[saude]`, `[recuperacao]`, `[comandos]`,
   `[agenda]`, `[email]`, `[chave]`.

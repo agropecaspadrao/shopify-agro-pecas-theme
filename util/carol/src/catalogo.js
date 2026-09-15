@@ -133,6 +133,11 @@ export function catalogoResumo() {
   return indiceTexto;
 }
 
+/** Estado do catálogo em memória (para o supervisor de saúde). */
+export function estadoCatalogo() {
+  return { produtos: produtos.length, specs: specsPorSku.size, ultimaCarga };
+}
+
 function detalheParaTexto(i) {
   const linhas = [
     `Produto: ${i.titulo}`,

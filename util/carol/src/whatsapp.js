@@ -70,7 +70,9 @@ export function extrairMensagens(body) {
   return saida;
 }
 
-async function graphPost(caminho, payload) {
+let reservaTentada = false;
+
+async function graphPost(caminho, payload, { tentativa = 1 } = {}) {
   const res = await fetch(`${GRAPH}/${caminho}`, {
     method: 'POST',
     headers: {
@@ -81,7 +83,26 @@ async function graphPost(caminho, payload) {
   });
   if (!res.ok) {
     const erro = await res.text().catch(() => '');
-    throw new Error(`Graph API ${res.status}: ${erro.slice(0, 500)}`);
+    // Auto-recovery no primeiro 401: se há token reserva e ainda não foi
+    // usado, troca em tempo de execução e repete uma vez. O supervisor de
+    // saúde faz o mesmo a cada meia hora; aqui é para não perder a mensagem
+    // que está na mão.
+    if (res.status === 401 && tentativa === 1 && !reservaTentada && config.waAccessTokenFallback && config.waAccessTokenFallback !== config.waAccessToken) {
+      reservaTentada = true;
+      const { definirTokenWhatsApp } = await import('./config.js');
+      definirTokenWhatsApp(config.waAccessTokenFallback);
+      console.warn('[whatsapp] 401 no token principal; tentando o token reserva');
+      const r = await graphPost(caminho, payload, { tentativa: 2 });
+      import('./alertas/anomalias.js')
+        .then(({ reportarAnomalia }) =>
+          reportarAnomalia({ tipo: 'recuperacao_automatica', titulo: 'Recuperação automática: WhatsApp', detalhe: 'Token principal recusado (401). A Carol ativou o token reserva e a mensagem foi entregue. Atualize WA_ACCESS_TOKEN no Railway.' })
+        )
+        .catch(() => {});
+      return r;
+    }
+    const e = new Error(`Graph API ${res.status}: ${erro.slice(0, 500)}`);
+    e.status = res.status;
+    throw e;
   }
   return res.json();
 }

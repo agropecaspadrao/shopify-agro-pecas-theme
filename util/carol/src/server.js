@@ -1,14 +1,20 @@
 import crypto from 'node:crypto';
 import express from 'express';
-import { config, validarConfig } from './config.js';
+import { config, validarConfig, recursosConfigurados } from './config.js';
 import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
-import { agendarRelatorioDiario, enviarRelatorio, montarRelatorio } from './relatorio.js';
+import { enviarRelatorio, montarRelatorio } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
 import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
 import { agregarCustos, exportarAtendimentos } from './custos.js';
 import { paginaDashboard } from './dashboard.js';
+import { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias } from './alertas/anomalias.js';
+import { verificarTudo, ultimoEstado, textoSaude, agendarSupervisor } from './saude/supervisor.js';
+import { tratarMensagemAdmin } from './comandos/comandos.js';
+import { rotacionarEEnviar, estadoChave, precisaRotacionar } from './comandos/chave.js';
+import { montarRelatorioSocios, enviarRelatorioSocios } from './relatorios/socios.js';
+import * as agenda from './agenda.js';
 
 const NUMERO_LOJA = process.env.WA_BUSINESS_NUMBER || '5541984151085';
 
@@ -36,7 +42,8 @@ app.use((req, res, next) => {
 });
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, horarioComercial: horarioComercial() });
+  const saude = ultimoEstado();
+  res.json({ ok: true, horarioComercial: horarioComercial(), saude: saude?.geral || 'desconhecida', verificadoEm: saude?.ts || null });
 });
 
 // ── Webhook Meta: verificação (GET) ───────────────────────────────────────
@@ -60,13 +67,37 @@ app.post('/webhook', (req, res) => {
 
   const mensagens = extrairMensagens(req.body);
   for (const msg of mensagens) {
-    processarWhatsApp(msg).catch((e) => console.error('[webhook] erro ao processar:', e));
+    processarWhatsApp(msg).catch((e) => {
+      console.error('[webhook] erro ao processar:', e);
+      reportarAnomalia(classificarErro(e, 'webhook')).catch(() => {});
+    });
   }
 });
+
+// Dependências dos comandos "/carol" (injetadas para os testes poderem trocar)
+const depsComandos = {
+  montarRelatorio,
+  verificarTudo,
+  textoSaude,
+  enviarRelatorioSocios,
+  rotacionarChave: rotacionarEEnviar,
+};
 
 async function processarWhatsApp(msg) {
   // Ecos / mensagens do próprio número da loja (modo coexistência): ignorar
   if (!msg.de || msg.de === NUMERO_LOJA) return;
+
+  // Comandos de administrador ("/carol ...") valem a qualquer hora, inclusive
+  // no horário comercial, e nunca passam pela IA.
+  if (msg.tipo === 'text' && msg.texto) {
+    const cmd = await tratarMensagemAdmin({ de: msg.de, texto: msg.texto.trim() }, depsComandos);
+    if (cmd.tratado) {
+      await marcarComoLida(msg.id);
+      for (const r of cmd.respostas) await enviarTexto(msg.de, r);
+      if (cmd.respostas.length) console.log(`[comandos] respondi ${msg.de} (${cmd.respostas.length} msg)`);
+      return;
+    }
+  }
 
   // Horário comercial: a Dai atende pelo aplicativo, a Carol fica em silêncio
   if (horarioComercial()) {
@@ -153,6 +184,7 @@ const limiteResumoIp = criarLimite(10, 10 * 60 * 1000);
 const limiteSiteDiaGlobal = criarLimite(Number(process.env.CAROL_MAX_MSGS_SITE_DIA || 400), DIA_MS);
 const limiteWaTelefoneDia = criarLimite(Number(process.env.CAROL_MAX_MSGS_WA_TEL_DIA || 40), DIA_MS);
 const limiteWaDiaGlobal = criarLimite(Number(process.env.CAROL_MAX_MSGS_WA_DIA || 300), DIA_MS);
+const limiteAdminIp = criarLimite(60, 10 * 60 * 1000);
 
 const SESSAO_RE = /^[A-Za-z0-9_-]{16,64}$/;
 
@@ -195,6 +227,7 @@ app.post('/api/chat', async (req, res) => {
     res.json({ reply });
   } catch (e) {
     console.error('[api/chat] erro:', e);
+    reportarAnomalia(classificarErro(e, 'site')).catch(() => {});
     res.status(500).json({
       reply:
         'Tivemos uma instabilidade agora. Tente novamente em instantes ou chame no WhatsApp (41) 98415-1085.',
@@ -220,12 +253,10 @@ app.post('/api/resumo', async (req, res) => {
   }
 });
 
-// Disparo manual do relatório diário (protegido por chave):
-//   GET  /admin/relatorio?key=X            → mostra o relatório sem enviar
-//   POST /admin/relatorio?key=X            → envia o e-mail agora
-const ADMIN_KEY = process.env.CAROL_ADMIN_KEY || '';
+// ── Área administrativa (chave CAROL_ADMIN_KEY) ───────────────────────────
 // A chave pode vir por header (Authorization: Bearer), cookie (setado no
 // primeiro acesso ao dashboard) ou query string (compatibilidade/curl).
+const ADMIN_KEY = process.env.CAROL_ADMIN_KEY || '';
 function chaveDe(req) {
   const auth = req.headers.authorization || '';
   if (auth.startsWith('Bearer ')) return auth.slice(7);
@@ -245,12 +276,23 @@ function autorizado(req) {
   const esperada = Buffer.from(ADMIN_KEY);
   return recebida.length === esperada.length && crypto.timingSafeEqual(recebida, esperada);
 }
+// Middleware: autenticação + limite por IP para toda a área /admin
+app.use('/admin', (req, res, next) => {
+  if (!limiteAdminIp(req.ip || 'sem-ip')) return res.status(429).json({ erro: 'muitas requisições' });
+  if (!autorizado(req)) return res.sendStatus(403);
+  next();
+});
 function erroInterno(res, contexto, e) {
   console.error(`[${contexto}] erro:`, e);
   return res.status(500).type('text/plain').send('Erro interno');
 }
+function erroJson(res, contexto, e) {
+  console.error(`[${contexto}] erro:`, e);
+  return res.status(500).json({ erro: 'erro interno', detalhe: String(e?.message || '').slice(0, 200) });
+}
+
+// Relatório da Dai:  GET mostra sem enviar · POST envia agora
 app.get('/admin/relatorio', async (req, res) => {
-  if (!autorizado(req)) return res.sendStatus(403);
   try {
     const { assunto, corpo } = await montarRelatorio();
     res.type('text/plain').send(`ASSUNTO: ${assunto}\n\n${corpo}`);
@@ -259,16 +301,83 @@ app.get('/admin/relatorio', async (req, res) => {
   }
 });
 app.post('/admin/relatorio', async (req, res) => {
-  if (!autorizado(req)) return res.sendStatus(403);
   try {
     res.json(await enviarRelatorio());
   } catch (e) {
-    console.error('[admin/relatorio] erro:', e);
-    res.status(500).json({ enviado: false, erro: 'erro interno' });
+    erroJson(res, 'admin/relatorio', e);
   }
 });
 
-// Dashboard de custos (protegido pela mesma chave):
+// Relatório executivo dos sócios:  GET prévia · POST envia agora
+app.get('/admin/relatorio-socios', async (req, res) => {
+  try {
+    const { assunto, corpo } = await montarRelatorioSocios();
+    res.type('text/plain').send(`ASSUNTO: ${assunto}\n\n${corpo}`);
+  } catch (e) {
+    erroInterno(res, 'admin/relatorio-socios', e);
+  }
+});
+app.post('/admin/relatorio-socios', async (req, res) => {
+  try {
+    res.json(await enviarRelatorioSocios());
+  } catch (e) {
+    erroJson(res, 'admin/relatorio-socios', e);
+  }
+});
+
+// Saúde:  GET último quadro · POST roda os verificadores agora
+app.get('/admin/saude', (req, res) => {
+  const estado = ultimoEstado();
+  if (req.query.formato === 'txt') return res.type('text/plain').send(textoSaude(estado));
+  res.json({ ...(estado || { geral: 'desconhecida', resultados: [] }), recursos: recursosConfigurados(), agenda: agenda.listar() });
+});
+app.post('/admin/saude', async (req, res) => {
+  try {
+    res.json(await verificarTudo());
+  } catch (e) {
+    erroJson(res, 'admin/saude', e);
+  }
+});
+
+// Anomalias:  GET histórico (?horas=24) · POST /teste dispara uma de teste
+app.get('/admin/anomalias', (req, res) => {
+  const horas = Math.min(Math.max(Number(req.query.horas || 24), 1), 24 * 30);
+  res.json({ resumo: resumoAnomalias(horas), lista: listarAnomalias(horas) });
+});
+app.post('/admin/anomalias/teste', async (req, res) => {
+  try {
+    const r = await reportarAnomalia({ tipo: 'saude_falha', titulo: 'Teste do canal de alertas', detalhe: 'Disparo manual pelo /admin/anomalias/teste. Se você recebeu este e-mail ou WhatsApp, os alertas estão funcionando.', severidade: 'media', forcar: true });
+    res.json(r);
+  } catch (e) {
+    erroJson(res, 'admin/anomalias/teste', e);
+  }
+});
+
+// Palavra-chave:  GET estado · POST /rotacionar gera nova e envia por e-mail
+app.get('/admin/chave', (_req, res) => {
+  res.json(estadoChave());
+});
+app.post('/admin/chave/rotacionar', async (req, res) => {
+  try {
+    res.json(await rotacionarEEnviar());
+  } catch (e) {
+    erroJson(res, 'admin/chave/rotacionar', e);
+  }
+});
+
+// Agenda:  GET tarefas · POST /executar/:nome roda uma agora
+app.get('/admin/agenda', (_req, res) => {
+  res.json(agenda.listar());
+});
+app.post('/admin/agenda/executar/:nome', async (req, res) => {
+  try {
+    res.json(await agenda.executarAgora(req.params.nome));
+  } catch (e) {
+    res.status(404).json({ erro: e.message });
+  }
+});
+
+// Dashboard de custos:
 //   GET /admin/dashboard?key=X&dias=7   → página HTML
 //   GET /admin/custos?key=X&dias=7      → mesmos dados em JSON
 function diasDoQuery(req) {
@@ -276,7 +385,6 @@ function diasDoQuery(req) {
   return [1, 7, 30, 90].includes(d) ? d : 7;
 }
 app.get('/admin/dashboard', (req, res) => {
-  if (!autorizado(req)) return res.sendStatus(403);
   try {
     // Se a chave veio pela URL, migra para cookie HttpOnly e some com ela da
     // barra de endereço (query string vaza em logs de proxy e histórico).
@@ -293,21 +401,16 @@ app.get('/admin/dashboard', (req, res) => {
   }
 });
 app.get('/admin/custos', (req, res) => {
-  if (!autorizado(req)) return res.sendStatus(403);
   try {
     res.json(agregarCustos(diasDoQuery(req)));
   } catch (e) {
-    console.error('[admin/custos] erro:', e);
-    res.status(500).json({ erro: 'erro interno' });
+    erroJson(res, 'admin/custos', e);
   }
 });
 
 // Exportação das conversas para análise:
 //   GET /admin/exportar?key=X&dias=7&formato=csv|txt|json
-//   csv → planilha (Excel/Numbers) · txt → transcrição por conversa (ideal
-//   para colar numa IA e pedir análise) · json → dados brutos
 app.get('/admin/exportar', (req, res) => {
-  if (!autorizado(req)) return res.sendStatus(403);
   try {
     const formato = ['csv', 'txt', 'json'].includes(req.query.formato) ? req.query.formato : 'csv';
     const { corpo, mime, nomeArquivo } = exportarAtendimentos(diasDoQuery(req), formato);
@@ -329,12 +432,67 @@ if (!config.waPhoneNumberId || !config.waVerifyToken) {
 if (config.waPhoneNumberId && !config.metaAppSecret) {
   console.error('[config] META_APP_SECRET ausente com WhatsApp configurado — o webhook rejeitará TODAS as entregas (fail-closed). Configure a variável no Railway.');
 }
+{
+  const r = recursosConfigurados();
+  if (!r.emailHttp) console.warn('[config] nenhum provedor de e-mail HTTP (RESEND_API_KEY ou BREVO_API_KEY). No Railway o SMTP é bloqueado: relatórios e alertas por e-mail NÃO vão sair.');
+  if (!r.admins) console.warn('[config] CAROL_ADMINS vazio: comandos /carol desativados e alertas por WhatsApp sem destinatário.');
+  if (!r.tokenReservaWhatsApp) console.warn('[config] WA_ACCESS_TOKEN_FALLBACK vazio: sem auto-recovery de token do WhatsApp.');
+  console.log(`[config] recursos: e-mail HTTP=${r.emailHttp} admins=${r.admins} tokenReserva=${r.tokenReservaWhatsApp} metaAds=${r.metaAds} googleAds=${r.googleAds} masterDrive=${r.masterDrive}`);
+}
 
-carregarCatalogo()
-  .catch((e) => console.error('[catalogo] falha na carga inicial:', e.message))
-  .finally(() => {
-    agendarRelatorioDiario();
-    app.listen(config.port, () => {
-      console.log(`Carol no ar na porta ${config.port} (horário comercial agora: ${horarioComercial()})`);
-    });
+// Rotinas automáticas (horários em Brasília)
+agenda.registrarTarefa({
+  nome: 'relatorio_dai',
+  descricao: 'Resumo operacional das últimas 24h para a Dai',
+  quando: { hora: config.agenda.relatorioDaiHora, minuto: 0 },
+  executar: enviarRelatorio,
+});
+agenda.registrarTarefa({
+  nome: 'relatorio_socios',
+  descricao: 'Relatório executivo diário para os sócios',
+  quando: { hora: config.agenda.relatorioSociosHora, minuto: config.agenda.relatorioSociosMinuto },
+  executar: enviarRelatorioSocios,
+});
+agenda.registrarTarefa({
+  nome: 'chave_semanal',
+  descricao: 'Rotação da palavra-chave dos comandos, enviada por e-mail',
+  quando: { diaSemana: config.agenda.chaveDiaSemana, hora: config.agenda.chaveHora, minuto: config.agenda.chaveMinuto },
+  executar: async () => {
+    const r = await rotacionarEEnviar();
+    return `enviada para ${r.enviadaPara.join(', ')}`;
+  },
+});
+
+async function boot() {
+  try {
+    await carregarCatalogo();
+  } catch (e) {
+    console.error('[catalogo] falha na carga inicial:', e.message);
+    reportarAnomalia({ tipo: 'catalogo_falha', detalhe: `Carga inicial falhou: ${e.message}` }).catch(() => {});
+  }
+
+  // Primeira palavra-chave (ou expirada): gera e manda agora, sem esperar segunda-feira
+  if (precisaRotacionar()) {
+    try {
+      const r = await rotacionarEEnviar();
+      console.log(`[chave] palavra-chave inicial enviada para ${r.enviadaPara.join(', ')}`);
+    } catch (e) {
+      console.warn('[chave] não consegui enviar a palavra-chave inicial:', e.message);
+    }
+  }
+
+  try {
+    const recuperadas = await agenda.iniciar({ reportarAnomalia });
+    if (recuperadas.length) console.warn(`[agenda] ${recuperadas.length} tarefa(s) recuperada(s) no boot`);
+  } catch (e) {
+    console.error('[agenda] falha ao iniciar:', e.message);
+  }
+
+  agendarSupervisor();
+
+  app.listen(config.port, () => {
+    console.log(`Carol no ar na porta ${config.port} (horário comercial agora: ${horarioComercial()})`);
   });
+}
+
+boot();

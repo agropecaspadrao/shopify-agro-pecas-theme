@@ -10,7 +10,9 @@
   "scripts": {
     "start": "node src/server.js",
     "conversar": "node scripts/conversar.js",
-    "conhecimento": "node scripts/gerar_conhecimento.js"
+    "conhecimento": "node scripts/gerar_conhecimento.js",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "test:watch": "node --test --watch \"tests/**/*.test.js\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

@@ -1,23 +1,18 @@
 // Relatório diário da Carol: resume os atendimentos das últimas 24h e envia
 // por e-mail para a equipe (Dai) todo dia às 8h de Brasília.
 
-import dns from 'node:dns/promises';
-import nodemailer from 'nodemailer';
 import Anthropic from '@anthropic-ai/sdk';
 import { config } from './config.js';
 import { listarPeriodo, registrarAtendimento } from './registro.js';
 import { custoUSD } from './custos.js';
+import { enviar as enviarViaTransporte } from './email/transporte.js';
 
 const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
-const REPORT_TO = process.env.REPORT_TO || 'comercial@agropecaspadrao.com.br';
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
-const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
-const SMTP_USER = process.env.SMTP_USER || '';
-const SMTP_PASS = process.env.SMTP_PASS || '';
-
-// 8h de Brasília = 11h UTC (o Brasil não tem mais horário de verão)
-const HORA_RELATORIO_UTC = 11;
+// O relatório da Dai e o dos sócios usam o mesmo resumo de atendimentos; a
+// memo evita pagar a IA duas vezes na mesma manhã.
+const MEMO_MS = 20 * 60 * 1000;
+let memo = { ts: 0, valor: null };
 
 function formatarBRT(iso) {
   return new Date(iso).toLocaleString('pt-BR', {
@@ -35,6 +30,13 @@ function identificarCliente(sessao) {
 }
 
 export async function montarRelatorio(fim = new Date()) {
+  if (memo.valor && Date.now() - memo.ts < MEMO_MS) return memo.valor;
+  const valor = await montarRelatorioSemMemo(fim);
+  memo = { ts: Date.now(), valor };
+  return valor;
+}
+
+async function montarRelatorioSemMemo(fim) {
   const inicio = new Date(fim.getTime() - 24 * 60 * 60 * 1000);
   // registros de sistema (resumos, custo do próprio relatório) ficam de fora
   const entradas = listarPeriodo(inicio, fim).filter((e) => e.tipo !== 'sistema');
@@ -123,66 +125,16 @@ Seja fiel às transcrições, não invente dados. Termine com uma linha de estat
 }
 
 /**
- * Envia um e-mail pela conta SMTP configurada. Lança erro se o SMTP não
- * estiver configurado ou a conexão falhar (Railway Trial bloqueia SMTP).
+ * Envia um e-mail pela cadeia de provedores (Resend → Brevo → SMTP).
+ * Mantém a assinatura antiga (assunto, corpo, para) por compatibilidade.
  */
-export async function enviarEmail(assunto, corpo, para = REPORT_TO) {
-  if (!SMTP_USER || !SMTP_PASS) throw new Error('SMTP_USER/SMTP_PASS não configurados');
-  // O ambiente do Railway não tem rota IPv6 de saída e o nodemailer resolve
-  // AAAA primeiro; conectamos pelo IPv4 explicitamente, validando o TLS pelo
-  // hostname via servername.
-  let hostConexao = SMTP_HOST;
-  try {
-    [hostConexao] = await dns.resolve4(SMTP_HOST);
-  } catch {}
-  const transporte = nodemailer.createTransport({
-    host: hostConexao,
-    port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-    tls: { servername: SMTP_HOST },
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 30000,
-  });
-  await transporte.sendMail({
-    from: `"Carol - Agro Peças Padrão" <${SMTP_USER}>`,
-    to: para,
-    subject: assunto,
-    text: corpo,
-  });
-  console.log(`[email] enviado para ${para}: ${assunto}`);
+export async function enviarEmail(assunto, corpo, para = config.destinatarios.dai) {
+  return enviarViaTransporte({ para, assunto, texto: corpo });
 }
 
+/** Relatório operacional diário para a Dai. Agendado em agenda.js (server.js). */
 export async function enviarRelatorio() {
-  if (!SMTP_USER || !SMTP_PASS) {
-    console.warn('[relatorio] SMTP_USER/SMTP_PASS não configurados; relatório não enviado.');
-    return { enviado: false, motivo: 'SMTP não configurado' };
-  }
   const { assunto, corpo } = await montarRelatorio();
   await enviarEmail(assunto, corpo);
-  return { enviado: true, assunto };
-}
-
-/** Agenda o envio diário às 8h de Brasília (11h UTC). */
-export function agendarRelatorioDiario() {
-  const proximo = () => {
-    const agora = new Date();
-    const alvo = new Date(Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate(), HORA_RELATORIO_UTC, 0, 0));
-    if (alvo <= agora) alvo.setUTCDate(alvo.getUTCDate() + 1);
-    return alvo.getTime() - agora.getTime();
-  };
-  const marcar = () => {
-    const ms = proximo();
-    console.log(`[relatorio] próximo envio em ${(ms / 3600000).toFixed(1)}h`);
-    setTimeout(async () => {
-      try {
-        await enviarRelatorio();
-      } catch (e) {
-        console.error('[relatorio] falha no envio:', e.message);
-      }
-      marcar();
-    }, ms).unref();
-  };
-  marcar();
+  return { enviado: true, assunto, resumo: assunto };
 }

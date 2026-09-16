@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { dataDirTemporario, relogio } from './_setup.js';
 
 dataDirTemporario();
-const { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias, limparAnomalias, JANELA_MS } = await import('../src/alertas/anomalias.js');
+const { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias, limparAnomalias, canaisPara, JANELA_MS } = await import('../src/alertas/anomalias.js');
 
 function canais() {
   const emails = [];
@@ -34,10 +34,39 @@ test('anomalia crítica vai por e-mail com "Urgente Carol" e por WhatsApp para o
   assert.match(c.zaps[0].t, /Urgente Carol/);
 });
 
-test('severidade média usa assunto "Carol: atenção"', async () => {
+test('severidade média não avisa na hora: fica no histórico para o relatório executivo', async () => {
   const c = canais();
-  await reportarAnomalia({ tipo: 'email_falha', detalhe: 'x' }, c.deps);
-  assert.match(c.emails[0].assunto, /^Carol: atenção: /);
+  const r = await reportarAnomalia({ tipo: 'email_falha', detalhe: 'x' }, c.deps);
+  assert.equal(r.enviada, false);
+  assert.equal(r.suprimida, false);
+  assert.equal(r.registro.canais.relatorio, true);
+  assert.equal(c.emails.length, 0);
+  assert.equal(c.zaps.length, 0);
+  assert.equal(listarAnomalias(1).length, 1, 'registrada para o relatório das 8h05');
+});
+
+test('severidade alta vai só por e-mail, sem WhatsApp', async () => {
+  const c = canais();
+  const r = await reportarAnomalia({ tipo: 'catalogo_falha', detalhe: 'x' }, c.deps);
+  assert.equal(r.enviada, true);
+  assert.equal(c.emails.length, 1);
+  assert.match(c.emails[0].assunto, /^Urgente Carol: /);
+  assert.equal(c.zaps.length, 0);
+});
+
+test('"Resolvido:" (recuperado) vai só por e-mail, mesmo forçado', async () => {
+  const c = canais();
+  await reportarAnomalia({ tipo: 'catalogo_falha', titulo: 'Resolvido: catálogo voltou', severidade: 'media', recuperado: true, forcar: true }, c.deps);
+  assert.equal(c.emails.length, 1);
+  assert.match(c.emails[0].texto, /Boa notícia/);
+  assert.equal(c.zaps.length, 0);
+});
+
+test('canaisPara: crítica = e-mail + WhatsApp, alta = e-mail, média = nada', () => {
+  assert.deepEqual(canaisPara('critica'), { email: true, whatsapp: true });
+  assert.deepEqual(canaisPara('alta'), { email: true, whatsapp: false });
+  assert.deepEqual(canaisPara('media'), { email: false, whatsapp: false });
+  assert.deepEqual(canaisPara('media', true), { email: true, whatsapp: false });
 });
 
 test('deduplica pelo tipo dentro da janela e volta a avisar depois', async () => {
@@ -81,7 +110,7 @@ test('token do WhatsApp inválido não tenta avisar pelo próprio WhatsApp', asy
 
 test('resumo agrupa por tipo e conta severidades', async () => {
   const c = canais();
-  const agora = relogio();
+  const agora = relogio(Date.now()); // resumoAnomalias corta pelas últimas 24h reais
   const deps = { ...c.deps, agora };
   await reportarAnomalia({ tipo: 'anthropic_credito', detalhe: '1' }, deps);
   await reportarAnomalia({ tipo: 'anthropic_credito', detalhe: '2' }, deps);

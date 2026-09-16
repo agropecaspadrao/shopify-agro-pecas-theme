@@ -2,8 +2,11 @@
 //
 // Ordem de leitura: o que exige atenção primeiro (críticos e anomalias), depois
 // o que aconteceu (atendimentos, campanhas), depois o que custa e o estado
-// dos sistemas. O bloco de atendimentos reaproveita o resumo já gerado para a
-// Dai (memoizado em relatorio.js), sem pagar a IA duas vezes.
+// dos sistemas. O bloco de atendimentos reaproveita o resumo estruturado já
+// gerado para a Dai (memoizado em relatorio.js), sem pagar a IA duas vezes, e
+// mostra uma linha por conversa: quem quiser as mensagens usa /carol detalhe N.
+// É o único e-mail diário dos sócios: os avisos de severidade média não saem
+// na hora, ficam centralizados aqui (seção 1).
 
 import { config } from '../config.js';
 import { montarRelatorio } from '../relatorio.js';
@@ -12,6 +15,7 @@ import { resumoAnomalias, TIPOS } from '../alertas/anomalias.js';
 import { ultimoEstado, textoSaude, verificarTudo } from '../saude/supervisor.js';
 import { resumoCampanhasMeta, textoCampanhas } from './campanhas.js';
 import { listar as listarAgenda } from '../agenda.js';
+import { textoLinhas } from './atendimentos.js';
 import { enviarOuContingencia } from '../email/contingencia.js';
 
 const usd = (v) => 'US$ ' + Number(v || 0).toFixed(2).replace('.', ',');
@@ -19,10 +23,11 @@ const brl = (v) => 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
 const dataBRT = (ts, comHora = true) =>
   new Date(ts).toLocaleString('pt-BR', { timeZone: config.timezone, day: '2-digit', month: '2-digit', ...(comHora ? { hour: '2-digit', minute: '2-digit' } : {}) });
 
-function blocoCriticos(anom, saude) {
+export function blocoCriticos(anom, saude) {
   const abertos = anom.tipos.filter((t) => !t.recuperado && t.severidade !== 'media');
+  const avisos = anom.tipos.filter((t) => !t.recuperado && t.severidade === 'media');
+  const resolvidos = anom.tipos.filter((t) => t.recuperado);
   const falhas = (saude?.resultados || []).filter((r) => r.estado === 'falha');
-  if (!abertos.length && !falhas.length) return 'Nenhum assunto crítico nas últimas 24 horas.';
   const linhas = [];
   for (const t of abertos) {
     const info = TIPOS[t.tipo] || {};
@@ -32,17 +37,39 @@ function blocoCriticos(anom, saude) {
   for (const f of falhas) {
     if (!abertos.some((t) => t.tipo === f.tipoAnomalia)) linhas.push(`- [FALHA AGORA] ${f.nome}: ${f.resumo}`);
   }
+  if (!linhas.length) linhas.push('Nenhum assunto crítico nas últimas 24 horas.');
+  if (avisos.length) {
+    linhas.push('', 'Avisos menores (não geram e-mail na hora, só aparecem aqui):');
+    for (const t of avisos) {
+      const info = TIPOS[t.tipo] || {};
+      linhas.push(`- ${t.titulo} (${t.ocorrencias}x, última ${dataBRT(t.ultima)})${info.acao ? `. ${info.acao}` : ''}`);
+    }
+  }
+  if (resolvidos.length) {
+    linhas.push('', 'Resolvidos nas últimas 24h:');
+    for (const t of resolvidos) linhas.push(`- ${t.titulo}`);
+  }
   return linhas.join('\n');
 }
 
-function blocoAtendimentos(custos1d, relatorioDai) {
+export function blocoAtendimentos(custos1d, relatorioDai) {
   const conversas = custos1d.conversas || [];
   const leadsAnuncio = conversas.filter((c) => c.origemAnuncio).length;
   const wa = conversas.filter((c) => c.canal === 'whatsapp').length;
   const site = conversas.length - wa;
   const cab = `${conversas.length} conversas (${wa} WhatsApp, ${site} site), ${custos1d.totais.mensagens} mensagens, ${leadsAnuncio} vindas de anúncio.`;
-  const corpo = relatorioDai?.corpo ? relatorioDai.corpo.replace(/^Bom dia, Dai!\s*/i, '').replace(/\s*Bom trabalho!\s*Carol, atendente virtual\s*$/i, '').trim() : '';
-  return corpo ? `${cab}\n\n${corpo}` : cab;
+  const resumo = relatorioDai?.resumo;
+  if (!resumo) return relatorioDai?.corpo ? `${cab}\n\n${relatorioDai.corpo}` : cab;
+  const linhas = [cab, ''];
+  if (resumo.textoLivre) {
+    linhas.push(resumo.textoLivre);
+  } else {
+    linhas.push('Pendências para a Dai hoje:');
+    linhas.push(...(resumo.pendencias.length ? resumo.pendencias.map((p) => `- ${p}`) : ['- nenhuma']));
+    linhas.push('', 'Conversas (mensagens completas: /carol detalhe <número> pelo WhatsApp):');
+    linhas.push(textoLinhas(resumo));
+  }
+  return linhas.join('\n');
 }
 
 function blocoCustos(c1, c7) {
@@ -122,7 +149,7 @@ export async function montarRelatorioSocios({ fetchFn, agora = Date.now } = {}) 
     '',
     secao('7. Rotinas automáticas', blocoAgenda()),
     '',
-    'Comandos pelo WhatsApp da loja (só administradores, com a palavra-chave da semana): /carol, /carol saude, /carol socios, /carol chave.',
+    'Comandos pelo WhatsApp da loja (só administradores, com a palavra-chave da semana): /carol, /carol detalhe <número>, /carol saude, /carol socios, /carol chave.',
     '',
     'Carol, agente de monitoramento',
   ].join('\n');

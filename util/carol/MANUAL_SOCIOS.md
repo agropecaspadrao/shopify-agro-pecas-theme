@@ -15,8 +15,8 @@ operação** da loja. Isso significa quatro coisas:
 |---|---|---|
 | **Vigia os sistemas** | Testa WhatsApp, IA, e-mail, catálogo, loja, planilha, Meta e Google | A cada 30 minutos, 24h por dia |
 | **Se recupera sozinha** | Troca token do WhatsApp por um reserva, recarrega o catálogo, refaz uma tarefa perdida | No momento em que detecta |
-| **Avisa quando algo dá errado** | E-mail "Urgente Carol" + WhatsApp dos administradores | Na hora, sem repetir o mesmo aviso a cada minuto |
-| **Reporta todo dia** | Relatório executivo por e-mail, com atendimentos, campanhas, custos e saúde | 8h05 da manhã, de segunda a domingo |
+| **Avisa quando algo dá errado** | E-mail "Urgente Carol"; WhatsApp dos administradores só no que é crítico | Na hora, sem repetir o mesmo aviso a cada minuto |
+| **Reporta todo dia** | Um único e-mail: o relatório executivo, com atendimentos, avisos menores, campanhas, custos e saúde | 8h05 da manhã, de segunda a domingo |
 
 Nada disso usa inteligência artificial para decidir. As verificações, os alertas
 e os comandos são regras fixas e testadas: a IA entra só para resumir as
@@ -25,6 +25,12 @@ conversas dos clientes em português legível.
 ---
 
 ## 2. Os e-mails que você vai receber
+
+Regra geral, pedida pelos sócios em 16/09/2026: **pouca mensagem**. Um e-mail
+por dia com tudo; alerta na hora só para o que precisa de ação; WhatsApp só
+para o crítico. O resumo da Dai (atendimentos) vai dentro do executivo, uma
+linha por conversa. Quem quiser ler as mensagens de uma conversa usa
+`/carol detalhe <número>` pelo WhatsApp (seção 3).
 
 ### 2.1 Relatório executivo diário — 8h05
 
@@ -35,8 +41,8 @@ Se estiver **ATENÇÃO** ou **FALHA**, a primeira seção diz exatamente o quê.
 
 Seções, na ordem de importância:
 
-1. **Assuntos críticos** — o que exige ação hoje, com a instrução do que fazer
-2. **Atendimentos das últimas 24h** — quantas conversas, quantas vieram de anúncio, e o resumo de cada uma (cliente, peça, onde parou, ação para a Dai)
+1. **Assuntos críticos** — o que exige ação hoje, com a instrução do que fazer; embaixo, os **avisos menores** das últimas 24h (que não geram e-mail na hora) e o que foi **resolvido**
+2. **Atendimentos das últimas 24h** — quantas conversas, quantas vieram de anúncio, as pendências da Dai e **uma linha por conversa** (cliente, peça, onde parou, ação). As mensagens completas ficam no `/carol detalhe <número>`
 3. **Campanhas** — investimento, cliques, conversas de WhatsApp e leads de ontem e da semana, campanha por campanha
 4. **Custos da Carol** — quanto gastou de IA, projeção do mês, saldo restante e para quantos dias dá
 5. **Inventário e planilha** — quantos produtos publicados, quantos sem estoque, quando foi a última edição na loja e **quem editou a planilha master por último**
@@ -47,7 +53,9 @@ Seções, na ordem de importância:
 
 Assunto: **`Urgente Carol: <o que aconteceu>`**
 
-Chega **na hora** em que a Carol detecta um problema grave. Cada e-mail traz:
+Chega **na hora** em que a Carol detecta um problema grave (gravidade crítica ou
+alta). Só as **críticas** (WhatsApp mudo, IA sem crédito, disco cheio) também
+vão pelo WhatsApp dos administradores. Cada e-mail traz:
 
 - **O que aconteceu** — em português, sem jargão
 - **Gravidade** — crítica ou alta
@@ -62,8 +70,8 @@ Quando o problema se resolve, chega um e-mail com assunto começando por
 **"Resolvido:"**, para ninguém ficar procurando.
 
 Avisos de menor gravidade (por exemplo, "e-mail falhou uma vez", "planilha sem
-edição há 30 dias") chegam com o assunto **`Carol: atenção: ...`** e se repetem
-no máximo uma vez por dia.
+edição há 30 dias", "saldo baixo") **não chegam na hora**: ficam registrados e
+aparecem na seção 1 do relatório executivo do dia seguinte.
 
 ### 2.3 Palavra-chave da semana — toda segunda, 7h55
 
@@ -90,7 +98,8 @@ horário comercial:
 
 | Comando | O que acontece |
 |---|---|
-| `/carol` | Envia o resumo dos atendimentos das últimas 24 horas |
+| `/carol` | Lista dos atendimentos das últimas 24 horas, uma linha por conversa (numerada) |
+| `/carol detalhe 3` | Todas as mensagens da conversa número 3 da lista. Também aceita o telefone: `/carol detalhe 5541999990001` |
 | `/carol saude` | Situação de cada sistema (WhatsApp, IA, e-mail, loja, planilha, Meta, Google) |
 | `/carol socios` | Dispara o relatório executivo por e-mail agora, sem esperar as 8h05 |
 | `/carol chave` | Gera uma palavra-chave nova e envia por e-mail (use se suspeitar que vazou) |
@@ -103,7 +112,15 @@ horário comercial:
 Você:   /carol
 Carol:  Qual e a palavra-chave desta semana?
 Você:   agro-trator-42
-Carol:  Carol: resumo dos atendimentos, 14/09/2026 (4 conversas)
+Carol:  Atendimentos das ultimas 24h (16/09/2026)
+        4 conversas, 11 mensagens.
+        1. João (WhatsApp 5541999990001), via anúncio: bomba Valtra BH180. Aguarda orçamento. Ação: enviar orçamento
+        2. WhatsApp 5554999990002: dedo de plataforma. Perguntou o modelo.
+        ...
+Você:   /carol detalhe 1
+Carol:  Conversa 1: WhatsApp 5541999990001
+        [09:00] Cliente: quero uma bomba
+        Carol: Qual máquina?
         ...
 ```
 
@@ -113,7 +130,7 @@ próximos comandos não pedem a palavra de novo.
 ### Proteções
 
 - **Três erros em uma hora bloqueiam o número por uma hora** e disparam um
-  alerta "Urgente Carol: tentativas repetidas" para todos. Se você errou por
+  alerta "Urgente Carol: tentativas repetidas" por e-mail. Se você errou por
   distração, é só esperar. Se não foi você, rotacione a palavra pelo painel.
 - A palavra digitada aceita maiúsculas, espaços e acento por engano
   (`Agro Trator 42` funciona), mas não aceita errado.
@@ -128,12 +145,12 @@ próximos comandos não pedem a palavra de novo.
 | **WhatsApp parou de responder (token inválido)** | A senha de acesso ao WhatsApp expirou. Clientes escrevem e ninguém responde | Se houver token reserva, a Carol já trocou sozinha e o e-mail diz "Recuperação automática". Se não, gerar token permanente no Meta Business e atualizar `WA_ACCESS_TOKEN` no Railway |
 | **Token do WhatsApp expira em breve** | Vai expirar em menos de 7 dias | Trocar antes. Prefira token permanente (Usuário do Sistema) |
 | **Crédito da Anthropic acabou** | A IA parou. Carol não responde ninguém | Recarregar em console.anthropic.com > Plans & Billing. Depois atualizar `CAROL_CREDITO_USD` e `CAROL_CREDITO_DESDE` |
-| **Saldo de créditos baixo** | Falta menos de US$ 0,50 | Recarregar antes que zere |
+| **Saldo de créditos baixo** (só no relatório) | Falta menos de US$ 0,50 | Recarregar antes que zere. O saldo é estimado pelo uso registrado desde `CAROL_CREDITO_DESDE`; depois de recarregar, atualizar `CAROL_CREDITO_USD` com o saldo do console e `CAROL_CREDITO_DESDE` com a data, senão o aviso fica errado |
 | **Chave da API da Anthropic recusada** | A senha da IA está errada ou foi revogada | Conferir `ANTHROPIC_API_KEY` no Railway |
 | **Catálogo da loja não carregou** | O site não respondeu. A Carol segue com a última cópia | Conferir se agropecaspadrao.com.br está no ar |
 | **Token da Meta inválido** | Campanhas e validade da Meta não podem ser lidas | Gerar novo token no Meta Business |
 | **Acesso ao Google Ads expirou** | O refresh token foi revogado | Refazer a autorização OAuth do Google Ads |
-| **Envio de e-mail falhou** | O provedor de e-mail recusou | Conferir a chave do Resend/Brevo e o remetente verificado |
+| **Envio de e-mail falhou** (só no relatório) | O Google recusou o envio | Conferir a delegação da conta de serviço em admin.google.com (escopo gmail.send) |
 | **Tentativas repetidas com palavra errada** | Alguém errou 3 vezes | Se não foi um sócio, rotacionar a palavra |
 | **Tarefa agendada rodou com atraso** | O serviço estava fora do ar no horário; a Carol rodou assim que voltou | Nada. É informativo |
 | **A Carol se recuperou sozinha** | Um problema aconteceu e ela resolveu | Ler o detalhe e corrigir a causa em definitivo (ex.: trocar o token principal) |

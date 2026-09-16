@@ -210,13 +210,25 @@ export async function verificarDisco() {
 }
 
 // ── E-mail: provedor configurado e último envio ───────────────────────────
-export async function verificarEmail() {
+export async function verificarEmail({ fetchFn = fetch } = {}) {
   const nome = 'email';
   const rec = recursosConfigurados();
-  if (!rec.emailHttp && !rec.emailSmtp) return { nome, estado: 'falha', tipoAnomalia: 'email_falha', resumo: 'nenhum provedor de e-mail configurado (RESEND_API_KEY ou BREVO_API_KEY)' };
-  if (!rec.emailHttp) return { nome, estado: 'aviso', resumo: 'só SMTP configurado; no Railway o SMTP é bloqueado. Configure RESEND_API_KEY ou BREVO_API_KEY' };
+  if (!rec.emailHttp && !rec.emailSmtp) return { nome, estado: 'falha', tipoAnomalia: 'email_falha', resumo: 'nenhum provedor de e-mail configurado (Gmail API, RESEND_API_KEY ou BREVO_API_KEY)' };
+  if (!rec.emailHttp) return { nome, estado: 'aviso', resumo: 'só SMTP configurado; no Railway o SMTP é bloqueado. Configure a Gmail API, RESEND_API_KEY ou BREVO_API_KEY' };
+  // Gmail API: obtém de verdade o token de envio (impersonando o remetente).
+  // É o mesmo passo que falha quando falta a delegação no Workspace; só
+  // conferir configuração deixava "ok" enquanto nenhum e-mail saía.
+  const e = config.email;
+  if (e.googleServiceAccountJson && e.gmailSender) {
+    try {
+      const sa = lerSA(e.googleServiceAccountJson);
+      await tokenContaServico(sa, 'https://www.googleapis.com/auth/gmail.send', { fetchFn, sub: e.gmailSender });
+    } catch (err) {
+      return { nome, estado: 'falha', tipoAnomalia: 'email_falha', resumo: `Gmail API recusou o token de envio para ${e.gmailSender}`, detalhe: `${err.message}. Conferir a delegação em todo o domínio (client id da conta de serviço + escopo gmail.send) em admin.google.com.` };
+    }
+  }
   const u = ultimoEnvio();
-  return { nome, estado: 'ok', resumo: u ? `último e-mail via ${u.provedor} em ${fmtData(u.ts)}` : 'provedor configurado, nenhum envio ainda' };
+  return { nome, estado: 'ok', resumo: u ? `último e-mail via ${u.provedor} em ${fmtData(u.ts)}` : 'provedor validado, nenhum envio ainda' };
 }
 
 /** Todos os verificadores, na ordem de exibição. */

@@ -24,6 +24,7 @@ src/
   saude/supervisor.js       orquestrador: roda, consolida, recupera, reporta, persiste
   comandos/chave.js         palavra-chave semanal (scrypt + sal, transição 24h)
   comandos/comandos.js      máquina de estados dos comandos /carol
+  relatorios/atendimentos.js resumo estruturado das conversas (JSON da IA → e-mail da Dai, linhas do executivo, /carol e /carol detalhe)
   relatorios/campanhas.js   Meta Ads insights
   relatorios/socios.js      relatório executivo
   agenda.js                 scheduler persistente com catch-up
@@ -57,6 +58,7 @@ erro em qualquer ponto
   → classificarErro(e)            Graph 401 → whatsapp_token_invalido; SDK Anthropic 400 credit → anthropic_credito; …
   → reportarAnomalia({tipo})
       ├─ deduplicação por tipo     janela por severidade: crítica 1h · alta 6h · média 24h (persistida em disco)
+      ├─ canais por severidade     crítica → e-mail + WhatsApp admins · alta → e-mail · média → só histórico/relatório · "Resolvido:" → e-mail (canaisPara)
       ├─ histórico (300 últimos)   inclusive suprimidas — alimenta /admin/anomalias e o relatório dos sócios
       ├─ e-mail                    "Urgente Carol: …" (crítica/alta) · "Carol: atenção: …" (média)
       └─ WhatsApp dos admins       exceto quando a falha É o WhatsApp
@@ -153,7 +155,8 @@ falso, relógio controlável, diretório de dados temporário por processo.
 | Arquivo | Cobre |
 |---|---|
 | `chave.test.js` | formato, validação, transição 24h, expiração 7d, normalização, e-mail |
-| `anomalias.test.js` | canais, assunto por severidade, dedup/janela, forcar, fallback e-mail→WhatsApp, classificação de erros |
+| `anomalias.test.js` | canais por severidade (canaisPara), dedup/janela, forcar, fallback e-mail→WhatsApp, classificação de erros |
+| `atendimentos.test.js` | agrupamento/numeração das conversas, parse do JSON da IA (com fallback), textos compacto/e-mail/detalhe, busca por número ou telefone |
 | `comandos.test.js` | parse, não-admin silencioso, fluxo pendente→palavra→execução, autenticação 15 min, lockout, expiração da pendência, subcomandos, fatiar |
 | `transporte.test.js` | ordem de provedores, erros claros, Gmail (JWT com sub, MIME), fallback Gmail→Resend→Brevo, agregação de falhas |
 | `contingencia.test.js` | e-mail ok, queda para WhatsApp fatiado com anomalia, sem admins, desligada |

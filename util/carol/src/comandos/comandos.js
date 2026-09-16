@@ -25,7 +25,7 @@ const JANELA_FALHAS_MS = 60 * 60 * 1000;
 const MAX_FALHAS = 3;
 const BLOQUEIO_MS = 60 * 60 * 1000;
 
-const SUBCOMANDOS = ['relatorio', 'saude', 'socios', 'chave', 'ajuda', 'status'];
+const SUBCOMANDOS = ['relatorio', 'detalhe', 'saude', 'socios', 'chave', 'ajuda', 'status'];
 const estados = new Map(); // numero -> { pendente, pendenteAte, autenticadoAte, falhas: [], bloqueadoAte }
 
 export function ehComando(texto) {
@@ -33,9 +33,15 @@ export function ehComando(texto) {
 }
 
 export function interpretar(texto) {
-  const m = String(texto || '').trim().match(/^\/carol\s*(\S+)?/i);
+  const m = String(texto || '').trim().match(/^\/carol\s*(\S+)?\s*(.*)$/i);
   const sub = (m?.[1] || 'relatorio').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   return SUBCOMANDOS.includes(sub) ? sub : 'ajuda';
+}
+
+/** Argumento depois do subcomando ("/carol detalhe 3" → "3"). */
+export function argumento(texto) {
+  const m = String(texto || '').trim().match(/^\/carol\s*\S*\s*(.*)$/i);
+  return (m?.[1] || '').trim();
 }
 
 function auditar(evento) {
@@ -56,19 +62,23 @@ function estadoDe(numero) {
 
 const AJUDA = [
   'Comandos da Carol:',
-  '/carol - resumo dos atendimentos das ultimas 24h',
+  '/carol - lista dos atendimentos das ultimas 24h (uma linha por conversa)',
+  '/carol detalhe 3 - mensagens da conversa numero 3 da lista (ou o telefone)',
   '/carol saude - situacao dos sistemas (WhatsApp, IA, e-mail, loja, planilha)',
   '/carol socios - envia agora o relatorio executivo por e-mail',
   '/carol chave - gera nova palavra-chave e envia por e-mail',
   '/carol status - quando a palavra-chave vence e quem esta autenticado',
 ].join('\n');
 
-async function executar(sub, numero, deps) {
+async function executar(sub, arg, deps) {
   const agora = deps.agora || Date.now;
   switch (sub) {
     case 'relatorio': {
-      const { corpo, assunto } = await deps.montarRelatorio();
-      return fatiar(`${assunto}\n\n${corpo}`);
+      return fatiar(await deps.resumoCompacto());
+    }
+    case 'detalhe': {
+      if (!arg) return ['Qual conversa? Mande /carol detalhe <numero da lista> ou /carol detalhe <telefone>.'];
+      return fatiar(await deps.detalheConversa(arg));
     }
     case 'saude': {
       const estado = await deps.verificarTudo();
@@ -132,12 +142,13 @@ export async function tratarMensagemAdmin({ de, texto }, deps = {}) {
 
   if (ehComando(texto)) {
     const sub = interpretar(texto);
+    const arg = argumento(texto);
     auditar({ evento: 'comando', de, sub });
     if (sub === 'ajuda') return { tratado: true, respostas: [AJUDA] };
     if (e.autenticadoAte > t) {
-      return { tratado: true, respostas: await executar(sub, de, execDeps) };
+      return { tratado: true, respostas: await executar(sub, arg, execDeps) };
     }
-    e.pendente = sub;
+    e.pendente = { sub, arg };
     e.pendenteAte = t + PENDENTE_MS;
     return { tratado: true, respostas: ['Qual e a palavra-chave desta semana?'] };
   }
@@ -146,14 +157,14 @@ export async function tratarMensagemAdmin({ de, texto }, deps = {}) {
     const ok = validarChave(texto);
     e.falhas = e.falhas.filter((f) => t - f < JANELA_FALHAS_MS);
     if (ok) {
-      const sub = e.pendente;
+      const { sub, arg } = e.pendente;
       e.pendente = null;
       e.autenticadoAte = t + AUTENTICADO_MS;
       e.falhas = [];
       auditar({ evento: 'chave_ok', de, sub });
       let respostas;
       try {
-        respostas = await executar(sub, de, execDeps);
+        respostas = await executar(sub, arg, execDeps);
       } catch (err) {
         console.error('[comandos] falha ao executar', sub, err);
         respostas = [`Nao consegui executar "${sub}" agora: ${String(err.message).slice(0, 200)}`];

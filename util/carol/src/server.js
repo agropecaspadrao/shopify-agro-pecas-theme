@@ -4,7 +4,7 @@ import { config, validarConfig, recursosConfigurados } from './config.js';
 import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
-import { enviarRelatorio, montarRelatorio } from './relatorio.js';
+import { enviarRelatorio, montarRelatorio, resumoCompacto, detalheConversa } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
 import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
 import { agregarCustos, exportarAtendimentos } from './custos.js';
@@ -77,6 +77,8 @@ app.post('/webhook', (req, res) => {
 // Dependências dos comandos "/carol" (injetadas para os testes poderem trocar)
 const depsComandos = {
   montarRelatorio,
+  resumoCompacto,
+  detalheConversa,
   verificarTudo,
   textoSaude,
   enviarRelatorioSocios,
@@ -340,13 +342,15 @@ app.post('/admin/saude', async (req, res) => {
 });
 
 // Anomalias:  GET histórico (?horas=24) · POST /teste dispara uma de teste
+// (severidade alta = só e-mail; ?canal=whatsapp usa crítica = e-mail + WhatsApp)
 app.get('/admin/anomalias', (req, res) => {
   const horas = Math.min(Math.max(Number(req.query.horas || 24), 1), 24 * 30);
   res.json({ resumo: resumoAnomalias(horas), lista: listarAnomalias(horas) });
 });
 app.post('/admin/anomalias/teste', async (req, res) => {
   try {
-    const r = await reportarAnomalia({ tipo: 'saude_falha', titulo: 'Teste do canal de alertas', detalhe: 'Disparo manual pelo /admin/anomalias/teste. Se você recebeu este e-mail ou WhatsApp, os alertas estão funcionando.', severidade: 'media', forcar: true });
+    const severidade = req.query.canal === 'whatsapp' ? 'critica' : 'alta';
+    const r = await reportarAnomalia({ tipo: 'saude_falha', titulo: 'Teste do canal de alertas', detalhe: 'Disparo manual pelo /admin/anomalias/teste. Se você recebeu este e-mail ou WhatsApp, os alertas estão funcionando.', severidade, forcar: true });
     res.json(r);
   } catch (e) {
     erroJson(res, 'admin/anomalias/teste', e);

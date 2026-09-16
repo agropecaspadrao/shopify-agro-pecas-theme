@@ -5,10 +5,13 @@
 // WhatsApp dos administradores de reserva; (3) tudo fica registrado em disco,
 // mesmo o que foi suprimido, para o relatório dos sócios e o painel /admin.
 //
-// Severidade define o assunto e a janela de deduplicação:
-//   critica → "Urgente Carol: ..."  (repete no máximo a cada 1h)
-//   alta    → "Urgente Carol: ..."  (a cada 6h)
-//   media   → "Carol: atenção: ..." (a cada 24h)
+// Severidade define os canais, o assunto e a janela de deduplicação:
+//   critica → e-mail "Urgente Carol: ..." + WhatsApp dos admins (repete no máximo a cada 1h)
+//   alta    → e-mail "Urgente Carol: ..." (a cada 6h)
+//   media   → só o histórico: aparece no relatório executivo das 8h05 (dedup 24h)
+//   "Resolvido:" (recuperado) → só e-mail
+// Os sócios pediram menos mensagem: o WhatsApp fica para o que precisa de ação
+// na hora; o resto vai centralizado no relatório diário.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -214,9 +217,17 @@ function textoWhatsApp({ titulo, severidade, detalhe, tipo }) {
   ).slice(0, 3900);
 }
 
+/** Canais de envio imediato por severidade. Média não avisa na hora. */
+export function canaisPara(severidade, recuperado = false) {
+  if (recuperado) return { email: true, whatsapp: false };
+  if (severidade === 'critica') return { email: true, whatsapp: true };
+  if (severidade === 'alta') return { email: true, whatsapp: false };
+  return { email: false, whatsapp: false };
+}
+
 /**
  * Reporta uma anomalia. Deduplica por tipo dentro da janela da severidade,
- * grava no histórico e envia por e-mail e WhatsApp.
+ * grava no histórico e envia pelos canais da severidade (canaisPara).
  * @param {{tipo:string, titulo?:string, detalhe?:string, severidade?:'critica'|'alta'|'media', forcar?:boolean, recuperado?:boolean}} ev
  * @param {{enviarEmail?:Function, enviarWhatsApp?:Function, agora?:()=>number}} deps injeção para testes
  */
@@ -254,20 +265,32 @@ export async function reportarAnomalia(ev, deps = {}) {
   const admins = deps.admins || config.admins;
 
   const payload = { tipo: ev.tipo, titulo, detalhe, severidade, quando: agora, recuperado: ev.recuperado };
+  const canais = deps.canais || canaisPara(severidade, Boolean(ev.recuperado));
 
-  try {
-    if (!destinatariosEmail.length) throw new Error('sem destinatários de alerta');
-    await enviarEmail({ para: destinatariosEmail, assunto: assuntoPara(severidade, titulo), texto: corpoEmail(payload) });
-    registro.canais.email = true;
-  } catch (e) {
-    registro.canais.email = false;
-    registro.canais.emailErro = e.message.slice(0, 300);
-    console.warn('[anomalias] e-mail de alerta falhou:', e.message);
+  if (!canais.email && !canais.whatsapp) {
+    // Média: fica no histórico e vai no relatório executivo das 8h05.
+    registro.canais.relatorio = true;
+    salvar(estado);
+    return { enviada: false, suprimida: false, registro };
   }
 
-  // WhatsApp para os administradores. Se o próprio WhatsApp é a falha, isto
-  // também vai falhar; o histórico fica com o registro e o e-mail já foi.
-  if (admins.length && ev.tipo !== 'whatsapp_token_invalido') {
+  if (canais.email) {
+    try {
+      if (!destinatariosEmail.length) throw new Error('sem destinatários de alerta');
+      await enviarEmail({ para: destinatariosEmail, assunto: assuntoPara(severidade, titulo), texto: corpoEmail(payload) });
+      registro.canais.email = true;
+    } catch (e) {
+      registro.canais.email = false;
+      registro.canais.emailErro = e.message.slice(0, 300);
+      console.warn('[anomalias] e-mail de alerta falhou:', e.message);
+    }
+  }
+
+  // WhatsApp para os administradores (só crítica, ou se o e-mail da crítica/alta
+  // falhou). Se o próprio WhatsApp é a falha, isto também vai falhar; o
+  // histórico fica com o registro.
+  const precisaWhatsApp = canais.whatsapp || (canais.email && registro.canais.email === false);
+  if (precisaWhatsApp && admins.length && ev.tipo !== 'whatsapp_token_invalido') {
     let ok = 0;
     for (const numero of admins) {
       try {

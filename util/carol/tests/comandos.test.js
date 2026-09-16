@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { dataDirTemporario, relogio } from './_setup.js';
 
 dataDirTemporario();
-const { tratarMensagemAdmin, ehComando, interpretar, fatiar, limparEstados } = await import('../src/comandos/comandos.js');
+const { tratarMensagemAdmin, ehComando, interpretar, argumento, fatiar, limparEstados } = await import('../src/comandos/comandos.js');
 
 const ADMIN = '5541999990000';
 const CLIENTE = '5541888880000';
@@ -17,7 +17,8 @@ function deps(extra = {}) {
       agora: relogio(),
       validarChave: (t) => t === 'agro-trator-42',
       reportarAnomalia: async (a) => anomalias.push(a),
-      montarRelatorio: async () => ({ assunto: 'Carol: resumo', corpo: 'Cliente X pediu bomba.' }),
+      resumoCompacto: async () => '*Atendimentos das ultimas 24h*\n1. WhatsApp 5541999990001: pediu bomba. Aguarda orcamento.',
+      detalheConversa: (ref) => `*Conversa ${ref}*\n[10:00] Cliente: quero uma bomba\nCarol: qual modelo?`,
       verificarTudo: async () => ({ geral: 'ok', ts: new Date().toISOString(), resultados: [] }),
       textoSaude: (e) => `Saude geral: ${e.geral}`,
       enviarRelatorioSocios: async () => ({ enviadoPara: ['socios@x.com'] }),
@@ -54,8 +55,9 @@ test('admin: pede a palavra-chave, valida e entrega o relatório; depois não pe
   assert.match(r1.respostas[0], /palavra-chave/i);
   const r2 = await tratarMensagemAdmin({ de: ADMIN, texto: 'agro-trator-42' }, d.deps);
   assert.equal(r2.tratado, true);
-  assert.match(r2.respostas[0], /Carol: resumo/);
+  assert.match(r2.respostas[0], /Atendimentos das ultimas 24h/);
   assert.match(r2.respostas[0], /bomba/);
+  assert.equal(r2.respostas.length, 1, 'lista compacta cabe em uma mensagem');
   const r3 = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol saude' }, d.deps);
   assert.match(r3.respostas[0], /Saude geral: ok/, 'já autenticado, executa direto');
   d.deps.agora.avancar(16 * 60 * 1000);
@@ -87,6 +89,21 @@ test('três palavras erradas em uma hora bloqueiam e geram anomalia de seguranç
   assert.match(volta.respostas[0], /palavra-chave/i, 'após 1h volta a aceitar');
 });
 
+test('/carol detalhe N mostra as mensagens da conversa; sem número, pergunta qual', async () => {
+  const d = deps();
+  assert.equal(interpretar('/carol detalhe 2'), 'detalhe');
+  assert.equal(argumento('/carol detalhe 2'), '2');
+  assert.equal(argumento('/carol'), '');
+  await tratarMensagemAdmin({ de: ADMIN, texto: '/carol detalhe 2' }, d.deps);
+  const r = await tratarMensagemAdmin({ de: ADMIN, texto: 'agro-trator-42' }, d.deps);
+  assert.match(r.respostas[0], /Conversa 2/, 'o argumento sobrevive à pergunta da palavra-chave');
+  assert.match(r.respostas[0], /quero uma bomba/);
+  const sem = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol detalhe' }, d.deps);
+  assert.match(sem.respostas[0], /Qual conversa/);
+  const ajuda = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol ajuda' }, d.deps);
+  assert.match(ajuda.respostas[0], /\/carol detalhe/);
+});
+
 test('pendência expira em 5 minutos', async () => {
   const d = deps();
   await tratarMensagemAdmin({ de: ADMIN, texto: '/carol' }, d.deps);
@@ -108,7 +125,7 @@ test('subcomandos socios, chave e ajuda; a palavra nova nunca vai pelo WhatsApp'
 });
 
 test('falha na execução vira mensagem amigável, não exceção', async () => {
-  const d = deps({ montarRelatorio: async () => { throw new Error('IA fora do ar'); } });
+  const d = deps({ resumoCompacto: async () => { throw new Error('IA fora do ar'); } });
   await tratarMensagemAdmin({ de: ADMIN, texto: '/carol' }, d.deps);
   const r = await tratarMensagemAdmin({ de: ADMIN, texto: 'agro-trator-42' }, d.deps);
   assert.match(r.respostas[0], /IA fora do ar/);

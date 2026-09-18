@@ -1,6 +1,10 @@
 import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import express from 'express';
 import { config, validarConfig, recursosConfigurados } from './config.js';
+import { DATA_DIR } from './registro.js';
+import { estadoPausa, pausar, retomar, horasDe } from './comandos/pausa.js';
 import { horarioComercial } from './horario.js';
 import { carregarCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
@@ -11,7 +15,7 @@ import { agregarCustos, exportarAtendimentos } from './custos.js';
 import { paginaDashboard } from './dashboard.js';
 import { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias } from './alertas/anomalias.js';
 import { verificarTudo, ultimoEstado, textoSaude, agendarSupervisor } from './saude/supervisor.js';
-import { tratarMensagemAdmin } from './comandos/comandos.js';
+import { tratarMensagemAdmin, avisoSilencioAdmin } from './comandos/comandos.js';
 import { rotacionarEEnviar, estadoChave, precisaRotacionar } from './comandos/chave.js';
 import { montarRelatorioSocios, enviarRelatorioSocios } from './relatorios/socios.js';
 import * as agenda from './agenda.js';
@@ -43,7 +47,8 @@ app.use((req, res, next) => {
 
 app.get('/health', (_req, res) => {
   const saude = ultimoEstado();
-  res.json({ ok: true, horarioComercial: horarioComercial(), saude: saude?.geral || 'desconhecida', verificadoEm: saude?.ts || null });
+  const pausa = estadoPausa();
+  res.json({ ok: true, horarioComercial: horarioComercial(), pausada: pausa.ativa, pausaAte: pausa.ate || null, saude: saude?.geral || 'desconhecida', verificadoEm: saude?.ts || null });
 });
 
 // ── Webhook Meta: verificação (GET) ───────────────────────────────────────
@@ -85,6 +90,19 @@ const depsComandos = {
   rotacionarChave: rotacionarEEnviar,
 };
 
+// Sócio que escreve texto comum enquanto a Carol está em silêncio recebe um
+// aviso curto (no máximo um a cada 12h), para não achar que ela quebrou.
+async function avisarSilencioAdmin(de, motivo) {
+  const aviso = avisoSilencioAdmin(de, motivo);
+  if (!aviso) return;
+  try {
+    await enviarTexto(de, aviso);
+    console.log(`[comandos] avisei o administrador ${de} do silêncio (${motivo})`);
+  } catch (e) {
+    console.warn(`[comandos] aviso de silêncio para ${de} falhou: ${e.message}`);
+  }
+}
+
 async function processarWhatsApp(msg) {
   // Ecos / mensagens do próprio número da loja (modo coexistência): ignorar
   if (!msg.de || msg.de === NUMERO_LOJA) return;
@@ -101,9 +119,18 @@ async function processarWhatsApp(msg) {
     }
   }
 
+  // Pausa manual ("/carol pausar"): um sócio assumiu o WhatsApp por um tempo
+  const pausa = estadoPausa();
+  if (pausa.ativa) {
+    console.log(`[whatsapp] ${msg.de}: Carol pausada ate ${pausa.ate}, deixando para a equipe`);
+    await avisarSilencioAdmin(msg.de, 'pausa');
+    return;
+  }
+
   // Horário comercial: a Dai atende pelo aplicativo, a Carol fica em silêncio
   if (horarioComercial()) {
     console.log(`[whatsapp] ${msg.de}: horário comercial, deixando para a Dai`);
+    await avisarSilencioAdmin(msg.de, 'horario');
     return;
   }
 
@@ -366,6 +393,41 @@ app.post('/admin/chave/rotacionar', async (req, res) => {
     res.json(await rotacionarEEnviar());
   } catch (e) {
     erroJson(res, 'admin/chave/rotacionar', e);
+  }
+});
+
+// Pausa manual:  GET estado · POST pausa (?horas=2) · DELETE encerra
+app.get('/admin/pausa', (_req, res) => {
+  res.json(estadoPausa());
+});
+app.post('/admin/pausa', (req, res) => {
+  res.json(pausar({ horas: horasDe(req.query.horas), por: 'painel' }));
+});
+app.delete('/admin/pausa', (_req, res) => {
+  res.json({ antes: retomar(), agora: estadoPausa() });
+});
+
+// Auditoria dos comandos /carol (últimas N linhas, mais recentes primeiro)
+app.get('/admin/auditoria', (req, res) => {
+  try {
+    const n = Math.min(Math.max(Number(req.query.linhas || 100), 1), 1000);
+    let linhas = [];
+    try {
+      linhas = fs.readFileSync(path.join(DATA_DIR, 'auditoria.jsonl'), 'utf8').trim().split('\n').filter(Boolean);
+    } catch {}
+    const eventos = linhas
+      .slice(-n)
+      .reverse()
+      .map((l) => {
+        try {
+          return JSON.parse(l);
+        } catch {
+          return { bruto: l };
+        }
+      });
+    res.json({ total: linhas.length, eventos });
+  } catch (e) {
+    erroJson(res, 'admin/auditoria', e);
   }
 });
 

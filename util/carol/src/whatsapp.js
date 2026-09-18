@@ -107,14 +107,46 @@ async function graphPost(caminho, payload, { tentativa = 1 } = {}) {
   return res.json();
 }
 
+// Espaçamento por destinatário. A Meta recusa rajadas de mensagens para o
+// mesmo telefone (erro 131056, "pair rate limit hit"): aconteceu com clientes
+// que mandam muitas mensagens seguidas e com relatórios fatiados para os
+// administradores. Cada número tem uma "vez" reservada em sequência; se
+// mesmo assim a Meta recusar, espera e repete uma única vez.
+const ESPACO_MS = Number(process.env.WA_ESPACO_MS || 2000);
+const ESPERA_LIMITE_MS = Number(process.env.WA_ESPERA_LIMITE_MS || 6000);
+const proximaVez = new Map(); // numero -> timestamp em que o próximo envio pode sair
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function aguardarVez(para) {
+  const agora = Date.now();
+  const vez = Math.max(proximaVez.get(para) || 0, agora);
+  proximaVez.set(para, vez + ESPACO_MS);
+  if (proximaVez.size > 5000) proximaVez.clear();
+  if (vez > agora) await dormir(vez - agora);
+}
+
+export function ehLimiteDeRajada(erro) {
+  return /131056/.test(String(erro?.message || erro || ''));
+}
+
 export async function enviarTexto(para, corpo) {
-  return graphPost(`${config.waPhoneNumberId}/messages`, {
+  const payload = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
     to: para,
     type: 'text',
     text: { preview_url: true, body: corpo.slice(0, 4000) },
-  });
+  };
+  await aguardarVez(para);
+  try {
+    return await graphPost(`${config.waPhoneNumberId}/messages`, payload);
+  } catch (e) {
+    if (!ehLimiteDeRajada(e)) throw e;
+    console.warn(`[whatsapp] limite de rajada da Meta para ${para} (131056); repetindo em ${ESPERA_LIMITE_MS / 1000}s`);
+    await dormir(ESPERA_LIMITE_MS);
+    proximaVez.set(para, Date.now() + ESPACO_MS);
+    return graphPost(`${config.waPhoneNumberId}/messages`, payload);
+  }
 }
 
 /**

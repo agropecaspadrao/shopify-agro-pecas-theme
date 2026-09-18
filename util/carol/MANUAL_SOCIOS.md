@@ -103,8 +103,35 @@ horário comercial:
 | `/carol saude` | Situação de cada sistema (WhatsApp, IA, e-mail, loja, planilha, Meta, Google) |
 | `/carol socios` | Dispara o relatório executivo por e-mail agora, sem esperar as 8h05 |
 | `/carol chave` | Gera uma palavra-chave nova e envia por e-mail (use se suspeitar que vazou) |
-| `/carol status` | Até quando vale a palavra atual e quem está autenticado |
+| `/carol status` | Até quando vale a palavra atual, quem está autenticado e se há pausa ativa |
+| `/carol pausar` | A Carol **para de responder clientes no WhatsApp por 2 horas** e volta sozinha. `/carol pausar 4` = 4 horas (mínimo 30 min, máximo 12 h). Mandar de novo renova o prazo |
+| `/carol voltar` | Encerra a pausa antes da hora |
 | `/carol ajuda` | Esta lista |
+
+### Pausar a Carol para atender pessoalmente
+
+Quando um sócio quer assumir o WhatsApp fora do horário comercial (ou a Dai
+fica até mais tarde), manda `/carol pausar`. Durante a pausa:
+
+- A Carol **não responde nenhum cliente** no WhatsApp. Quem escrever fica
+  esperando a equipe pelo aplicativo, como no horário comercial.
+- Os comandos `/carol` continuam funcionando (inclusive `/carol voltar`).
+- O chat do site continua normal (lá não há atendente humano).
+- A pausa sobrevive a reinício do serviço e vale para todos os sócios: quem
+  pausou aparece no `/carol status`.
+- Passado o prazo, ela volta sozinha. Ninguém precisa lembrar de religar.
+
+```
+Você:   /carol pausar
+Carol:  Qual e a palavra-chave desta semana?
+Você:   agro-trator-42
+Carol:  Carol pausada no WhatsApp ate as 20:30 (2 horas).
+        Ate la ela nao responde clientes no WhatsApp: quem escrever fica esperando a equipe no aplicativo. O chat do site continua normal.
+        Ela volta sozinha no horario. Para voltar antes, mande /carol voltar.
+...
+Você:   /carol voltar
+Carol:  Carol de volta ao atendimento no WhatsApp.
+```
 
 ### Como funciona a conversa
 
@@ -168,11 +195,14 @@ Com a chave de administrador (`CAROL_ADMIN_KEY`), no endereço do serviço:
 | `/admin/anomalias?horas=24` | Histórico de anomalias, incluindo as suprimidas por deduplicação |
 | `/admin/agenda` | Cada rotina, última execução e próxima prevista |
 | `/admin/chave` | Até quando vale a palavra-chave atual |
+| `/admin/pausa` | Se a Carol está pausada, até quando e por quem |
+| `/admin/auditoria?linhas=100` | Quem mandou quais comandos `/carol` (inclusive tentativas de números não cadastrados) |
 | `/admin/relatorio-socios` | Prévia do relatório executivo sem enviar |
 
 E ações (POST): `/admin/saude` (verificar agora), `/admin/anomalias/teste`
 (testa se os alertas chegam), `/admin/chave/rotacionar`, `/admin/relatorio-socios`
-(enviar agora), `/admin/agenda/executar/<nome>`.
+(enviar agora), `/admin/agenda/executar/<nome>`, `/admin/pausa?horas=2` (pausar;
+`DELETE /admin/pausa` encerra).
 
 ---
 
@@ -244,6 +274,14 @@ Sim: `/carol` + palavra-chave. Ele vem em partes numeradas se for longo.
 Ela só existe em texto claro no e-mail. No servidor fica um hash (não dá para
 recuperar a palavra a partir dele). Três erros bloqueiam. E ela troca toda
 semana sozinha.
+
+**Mandei `/carol` e a Carol me respondeu como se eu fosse cliente. Por quê?**
+Até 16/09/2026, números de celular antigos (cadastrados no WhatsApp antes do
+nono dígito) chegavam para a Carol com 12 dígitos, e o cadastro de
+administradores tem 13. Ela não reconhecia o sócio e o atendia como cliente.
+Corrigido: agora os dois formatos valem. Se ainda acontecer, o número não está
+em `CAROL_ADMINS` (ou está com um dígito errado): confira em `/admin/auditoria`,
+que mostra o número exato que tentou o comando.
 
 **Quem vê as conversas dos clientes?**
 Só quem tem a chave de administrador (painel) ou é administrador cadastrado no

@@ -71,7 +71,7 @@ test('canaisPara: crítica = e-mail + WhatsApp, alta = e-mail, média = nada', (
 
 test('deduplica pelo tipo dentro da janela e volta a avisar depois', async () => {
   const c = canais();
-  const agora = relogio();
+  const agora = relogio(Date.now()); // listarAnomalias corta pelas últimas 48h reais
   const deps = { ...c.deps, agora };
   assert.equal((await reportarAnomalia({ tipo: 'webhook_erro', detalhe: '1' }, deps)).enviada, true);
   assert.equal((await reportarAnomalia({ tipo: 'webhook_erro', detalhe: '2' }, deps)).suprimida, true);

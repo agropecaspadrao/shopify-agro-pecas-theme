@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { dataDirTemporario, relogio } from './_setup.js';
 
 dataDirTemporario();
-const { tratarMensagemAdmin, ehComando, interpretar, argumento, fatiar, limparEstados } = await import('../src/comandos/comandos.js');
+const { tratarMensagemAdmin, ehComando, interpretar, argumento, fatiar, limparEstados, normalizarNumero, mesmoNumero, avisoSilencioAdmin } = await import('../src/comandos/comandos.js');
+const { pausada, retomar, estadoPausa } = await import('../src/comandos/pausa.js');
 
 const ADMIN = '5541999990000';
+const ADMIN_SEM_NONO_DIGITO = '554199990000'; // como chega no webhook para números antigos
 const CLIENTE = '5541888880000';
 
 function deps(extra = {}) {
@@ -28,7 +30,10 @@ function deps(extra = {}) {
   };
 }
 
-beforeEach(() => limparEstados());
+beforeEach(() => {
+  limparEstados();
+  retomar();
+});
 
 test('ehComando e interpretar', () => {
   assert.equal(ehComando('/carol'), true);
@@ -38,6 +43,60 @@ test('ehComando e interpretar', () => {
   assert.equal(interpretar('/carol'), 'relatorio');
   assert.equal(interpretar('/carol SAÚDE'), 'saude');
   assert.equal(interpretar('/carol qualquer'), 'ajuda');
+  assert.equal(interpretar('/carol pausar'), 'pausar');
+  assert.equal(interpretar('/carol Pausa 4'), 'pausar', 'apelido');
+  assert.equal(interpretar('/carol voltar'), 'voltar');
+  assert.equal(interpretar('/carol retomar'), 'voltar', 'apelido');
+});
+
+test('nono dígito: número antigo (12 dígitos) é reconhecido como o mesmo administrador', async () => {
+  assert.equal(normalizarNumero('5541999990000'), '554199990000');
+  assert.equal(normalizarNumero('554199990000'), '554199990000');
+  assert.equal(normalizarNumero('5541 99999-0000'), '554199990000');
+  assert.equal(mesmoNumero('5541999990000', '554199990000'), true);
+  assert.equal(mesmoNumero('5541999990000', '5541999990001'), false);
+  assert.equal(normalizarNumero('5554991133403'), '555491133403');
+  assert.equal(mesmoNumero('5554991133403', '555491139380'), false, 'número parecido mas diferente não passa');
+  const d = deps();
+  const r = await tratarMensagemAdmin({ de: ADMIN_SEM_NONO_DIGITO, texto: '/carol' }, d.deps);
+  assert.equal(r.tratado, true);
+  assert.match(r.respostas[0], /palavra-chave/i, 'pede a palavra em vez de ignorar como cliente');
+});
+
+test('/carol pausar: 2 horas por padrão, número de horas opcional, e /carol voltar encerra', async () => {
+  const d = deps();
+  await tratarMensagemAdmin({ de: ADMIN, texto: '/carol pausar' }, d.deps);
+  const r = await tratarMensagemAdmin({ de: ADMIN, texto: 'agro-trator-42' }, d.deps);
+  assert.match(r.respostas[0], /Carol pausada no WhatsApp ate as \d{2}:\d{2} \(2 horas\)/);
+  assert.match(r.respostas[0], /\/carol voltar/);
+  assert.equal(pausada({ agora: d.deps.agora }), true);
+  assert.equal(estadoPausa({ agora: d.deps.agora }).por, ADMIN, 'registra quem pausou');
+
+  const s = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol status' }, d.deps);
+  assert.match(s.respostas[0], /Pausa manual: ATIVA/);
+
+  const r4 = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol pausar 4' }, d.deps);
+  assert.match(r4.respostas[0], /Pausa renovada ate as \d{2}:\d{2} \(4 horas\)/);
+  assert.equal(estadoPausa({ agora: d.deps.agora }).restanteMin, 240);
+
+  const v = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol voltar' }, d.deps);
+  assert.match(v.respostas[0], /de volta ao atendimento/);
+  assert.equal(pausada({ agora: d.deps.agora }), false);
+
+  const v2 = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol voltar' }, d.deps);
+  assert.match(v2.respostas[0], /nao estava pausada/);
+
+  const c = await tratarMensagemAdmin({ de: CLIENTE, texto: '/carol pausar' }, d.deps);
+  assert.deepEqual(c.respostas, [], 'cliente não pausa nada');
+  assert.equal(pausada({ agora: d.deps.agora }), false);
+});
+
+test('pausa expira sozinha depois do prazo', async () => {
+  const d = deps();
+  await tratarMensagemAdmin({ de: ADMIN, texto: '/carol pausar' }, d.deps);
+  await tratarMensagemAdmin({ de: ADMIN, texto: 'agro-trator-42' }, d.deps);
+  d.deps.agora.avancar(2 * 60 * 60 * 1000 + 1000);
+  assert.equal(pausada({ agora: d.deps.agora }), false);
 });
 
 test('cliente comum: /carol é ignorado em silêncio; texto normal segue para a Carol', async () => {
@@ -139,4 +198,17 @@ test('fatiar respeita o limite e numera as partes', () => {
   assert.match(partes[0], /^\(1\/\d+\)/);
   assert.equal(fatiar('curto', 1000).length, 1);
   assert.equal(fatiar('curto', 1000)[0], 'curto');
+});
+
+test('aviso de silêncio: só para administrador, reconhece sem o nono dígito, no máximo um a cada 12h', () => {
+  limparEstados();
+  const agora = relogio();
+  const admins = ['5554996874757'];
+  assert.equal(avisoSilencioAdmin('5541900001111', 'horario', { agora, admins }), null, 'cliente comum não recebe aviso');
+  const a = avisoSilencioAdmin('555496874757', 'horario', { agora, admins });
+  assert.match(a, /horario comercial/);
+  assert.match(a, /\/carol/);
+  assert.equal(avisoSilencioAdmin('5554996874757', 'horario', { agora, admins }), null, 'mesmo número (com o 9) dentro das 12h não repete');
+  agora.avancar(12 * 60 * 60 * 1000 + 1000);
+  assert.match(avisoSilencioAdmin('555496874757', 'pausa', { agora, admins }), /pausada/);
 });

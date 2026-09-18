@@ -24,6 +24,7 @@ src/
   saude/supervisor.js       orquestrador: roda, consolida, recupera, reporta, persiste
   comandos/chave.js         palavra-chave semanal (scrypt + sal, transição 24h)
   comandos/comandos.js      máquina de estados dos comandos /carol
+  comandos/pausa.js         pausa manual da Carol no WhatsApp (/carol pausar, estado em disco)
   relatorios/atendimentos.js resumo estruturado das conversas (JSON da IA → e-mail da Dai, linhas do executivo, /carol e /carol detalhe)
   relatorios/campanhas.js   Meta Ads insights
   relatorios/socios.js      relatório executivo
@@ -110,8 +111,31 @@ mensagem de texto no webhook
                                    erro → 3 em 1h → bloqueio 1h + anomalia seguranca_tentativas
 ```
 
-Subcomandos: `relatorio` (padrão), `saude`, `socios`, `chave`, `status`, `ajuda`.
-Respostas > 3500 chars são fatiadas em partes numeradas. A palavra nova sai por
+Subcomandos: `relatorio` (padrão), `detalhe`, `saude`, `socios`, `chave`, `status`,
+`pausar`, `voltar`, `ajuda`. Respostas > 3500 chars são fatiadas em partes numeradas.
+
+Números são comparados por `mesmoNumero()`: celular brasileiro com 13 dígitos
+(55+DDD+9+8) e o mesmo com 12 (sem o nono dígito, como o WhatsApp entrega para
+contas antigas) contam como o mesmo administrador. Sem isso, `/carol` de um
+sócio com número antigo era ignorado e a mensagem caía na IA.
+
+### 2.4.1 Pausa manual (`pausa.js`)
+
+`/carol pausar [horas]` grava `pausa.json` (`desde`, `ate`, `horas`, `por`) em
+`DATA_DIR`; `processarWhatsApp` consulta `estadoPausa()` **depois** dos comandos
+de administrador e **antes** da regra de horário comercial, então durante a
+pausa a Carol ignora clientes no WhatsApp mas continua aceitando `/carol`. O
+site (`/api/chat`) não é afetado. Padrão 2 h, mínimo 30 min, máximo 12 h;
+repetir o comando renova a partir de agora; `/carol voltar` apaga o arquivo.
+Exposto em `/health` (`pausada`, `pausaAte`) e em `/admin/pausa` (GET/POST/DELETE).
+
+### 2.4.2 Rajadas no WhatsApp (`whatsapp.js`)
+
+A Meta recusa muitas mensagens seguidas para o mesmo telefone (erro **131056**,
+"pair rate limit hit"; visto com clientes que mandam dezenas de mensagens e com
+relatórios fatiados). `enviarTexto` reserva uma "vez" por destinatário com
+intervalo mínimo `WA_ESPACO_MS` (2 s) e, se ainda assim receber 131056, espera
+`WA_ESPERA_LIMITE_MS` (6 s) e repete uma única vez. A palavra nova sai por
 e-mail; só cai para o WhatsApp dos administradores em **contingência** (todos os
 provedores de e-mail falharam), com cabeçalho dizendo isso — senão os comandos
 ficariam mortos até o e-mail voltar.

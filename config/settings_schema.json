@@ -173,7 +173,7 @@
         "type": "text",
         "id": "brand_iso_cert",
         "label": "Certificações ISO",
-        "default": "ISO 9001 · ISO 14001 · ISO 18001",
+        "default": "ISO 9001 · ISO 14001 · OHSAS 18001",
         "info": "Certificações exibidas em selos de confiança na PDP."
       }
     ]
@@ -318,7 +318,7 @@
         "type": "text",
         "id": "footer_tagline",
         "label": "Slogan do Rodapé",
-        "default": "Peças hidráulicas e sensores agrícolas com certificação ISO para máquinas do campo."
+        "default": "Peças hidráulicas e sensores agrícolas de fornecedores com certificação ISO para máquinas do campo."
       }
     ]
   }

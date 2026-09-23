@@ -15,7 +15,7 @@
         "bg_image": "shopify://shop_images/banner-agro.png",
         "overlay_opacity": 0,
         "full_height": false,
-        "eyebrow": "As melhores peças  • Certificação ISO 9001",
+        "eyebrow": "Peças no padrão OEM • Fornecedores com ISO 9001",
         "title": "Soluções em Bombas Hidráulicas, Sensores e Componentes Plásticos para o Agro",
         "subtitle": "Peças no padrão OEM para John Deere, New Holland, Massey Ferguson, Valtra e Valmet. Estoque pronto entrega, envio para todo o Brasil.",
         "cta_primary_label": "Ver Catálogo Completo",
@@ -37,7 +37,7 @@
             "asset_image": "",
             "image": "shopify://shop_images/Livenza_5.0220.0548836-CT_REV._0_p1_7cafb8f5-57ba-40d5-9e52-4520e86f9bc1.png",
             "title": "Bombas Hidráulicas",
-            "description": "Bombas para John Deere, New Holland, Massey Ferguson, Valtra e Valmet com certificação ISO.",
+            "description": "Bombas compatíveis com John Deere, New Holland, Massey Ferguson, Valtra e Valmet, de fornecedores com certificação ISO.",
             "cta_label": "Ver Bombas",
             "custom_url": "/collections/bombas-hidraulicas"
           }
@@ -99,8 +99,8 @@
           "type": "column",
           "settings": {
             "icon_key": "iso",
-            "title": "ISO 9001 / 14001 / 18001",
-            "text": "Trabalhamos com peças no padrão OEM, produzidas sob rigorosas certificações internacionais de qualidade e gestão ambiental."
+            "title": "Fornecedores Certificados ISO",
+            "text": "Trabalhamos com peças no padrão OEM, produzidas por fornecedores sob rigorosas certificações internacionais de qualidade e gestão ambiental (ISO 9001, 14001 e OHSAS 18001)."
           }
         },
         "col2": {

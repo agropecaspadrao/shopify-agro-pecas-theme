@@ -11,7 +11,7 @@ import { responder, resumirConversa } from './claude.js';
 import { enviarRelatorio, montarRelatorio, resumoCompacto, detalheConversa } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
 import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
-import { agregarCustos, exportarAtendimentos } from './custos.js';
+import { agregarCustos, exportarAtendimentos, definirSaldo, saldoEstimado } from './custos.js';
 import { paginaDashboard } from './dashboard.js';
 import { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias } from './alertas/anomalias.js';
 import { verificarTudo, ultimoEstado, textoSaude, agendarSupervisor } from './saude/supervisor.js';
@@ -405,6 +405,19 @@ app.post('/admin/pausa', (req, res) => {
 });
 app.delete('/admin/pausa', (_req, res) => {
   res.json({ antes: retomar(), agora: estadoPausa() });
+});
+
+// Saldo Anthropic: GET estimado · POST ?usd=25 informa o saldo do console
+app.get('/admin/saldo', (_req, res) => {
+  res.json(saldoEstimado());
+});
+app.post('/admin/saldo', (req, res) => {
+  try {
+    definirSaldo(req.query.usd, { por: 'painel' });
+    res.json(saldoEstimado());
+  } catch (e) {
+    erroJson(res, 'admin/saldo', e);
+  }
 });
 
 // Auditoria dos comandos /carol (últimas N linhas, mais recentes primeiro)

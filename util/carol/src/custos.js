@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listarPeriodo } from './registro.js';
+import { listarPeriodo, DATA_DIR } from './registro.js';
 import { config } from './config.js';
 
 // Extrato manual do crédito (recargas e gastos anteriores à medição
@@ -362,26 +362,55 @@ function montarResumoExecutivo(d) {
   return b;
 }
 
+const ARQ_SALDO = path.join(DATA_DIR, 'saldo.json');
+
+/** Saldo informado à mão (volume de dados). Tem prioridade sobre as variáveis de ambiente. */
+function lerSaldoManual() {
+  try {
+    const j = JSON.parse(fs.readFileSync(ARQ_SALDO, 'utf8'));
+    return j.usd >= 0 && j.desde ? j : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Saldo ESTIMADO do crédito Anthropic: crédito sincronizado (CAROL_CREDITO_USD
- * na data CAROL_CREDITO_DESDE) menos tudo que a Carol registrou desde então.
- * O saldo oficial fica no console.anthropic.com (a API não expõe saldo).
+ * Registra o saldo atual do console.anthropic.com. O gasto passa a ser
+ * contado a partir de agora. Não precisa de deploy nem de mexer no Railway.
+ */
+export function definirSaldo(usd, { por = null, agora = Date.now } = {}) {
+  const v = Number(String(usd).replace(',', '.'));
+  if (!Number.isFinite(v) || v < 0 || v > 100000) throw new Error('valor de saldo inválido');
+  const reg = { usd: v, desde: new Date(agora()).toISOString(), por };
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(ARQ_SALDO, JSON.stringify(reg, null, 2));
+  return reg;
+}
+
+/**
+ * Saldo ESTIMADO do crédito Anthropic: crédito sincronizado (saldo.json, ou
+ * CAROL_CREDITO_USD na data CAROL_CREDITO_DESDE) menos tudo que a Carol
+ * registrou desde então. O saldo oficial fica no console.anthropic.com (a API
+ * não expõe saldo) — atualize com `/carol saldo <valor>`.
  */
 export function saldoEstimado() {
-  if (!(config.creditoUsd > 0)) return null;
+  const manual = lerSaldoManual();
+  const credito = manual ? manual.usd : config.creditoUsd;
+  const desdeStr = manual ? manual.desde : config.creditoDesde;
+  if (!(credito > 0)) return null;
   const fim = new Date();
-  const desde = config.creditoDesde
-    ? new Date(config.creditoDesde)
+  const desde = desdeStr
+    ? new Date(desdeStr)
     : new Date(fim.getTime() - 30 * 24 * 60 * 60 * 1000);
   const gasto = listarPeriodo(desde, fim).reduce(
     (s, e) => s + (typeof e.custo === 'number' ? e.custo : 0),
     0
   );
   return {
-    credito: config.creditoUsd,
+    credito,
     desde: desde.toISOString(),
     gasto,
-    restante: Math.max(0, config.creditoUsd - gasto),
+    restante: Math.max(0, credito - gasto),
   };
 }
 

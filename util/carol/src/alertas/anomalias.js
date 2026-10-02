@@ -53,7 +53,7 @@ export const TIPOS = {
   anthropic_credito: {
     severidade: 'critica',
     titulo: 'Crédito da Anthropic acabou',
-    acao: 'Recarregar em console.anthropic.com > Plans & Billing e atualizar CAROL_CREDITO_USD e CAROL_CREDITO_DESDE.',
+    acao: 'Recarregar em console.anthropic.com > Plans & Billing e mandar /carol saldo <valor do console> no WhatsApp.',
   },
   anthropic_api: {
     severidade: 'alta',
@@ -61,9 +61,9 @@ export const TIPOS = {
     acao: 'Normalmente passa sozinho. Se persistir por mais de 1h, ver status.anthropic.com.',
   },
   anthropic_saldo_baixo: {
-    severidade: 'media',
+    severidade: 'alta',
     titulo: 'Saldo de créditos da Anthropic baixo',
-    acao: 'Recarregar em console.anthropic.com > Plans & Billing antes que zere. Depois atualizar CAROL_CREDITO_USD e CAROL_CREDITO_DESDE no Railway.',
+    acao: 'Recarregar em console.anthropic.com > Plans & Billing antes que zere. Depois mandar /carol saldo <valor do console> no WhatsApp (ou POST /admin/saldo?usd=<valor>).',
   },
   meta_token_invalido: {
     severidade: 'alta',

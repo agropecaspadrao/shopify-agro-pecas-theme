@@ -17,6 +17,7 @@ import { validar as validarChavePadrao, rotacionarEEnviar as rotacionarPadrao, e
 import { pausar, retomar, estadoPausa, horasDe, horaBRT, textoPausa } from './pausa.js';
 import { reportarAnomalia as reportarPadrao } from '../alertas/anomalias.js';
 
+import { definirSaldo, saldoEstimado } from '../custos.js';
 import { fatiar } from '../util/texto.js';
 export { fatiar };
 
@@ -26,7 +27,7 @@ const JANELA_FALHAS_MS = 60 * 60 * 1000;
 const MAX_FALHAS = 3;
 const BLOQUEIO_MS = 60 * 60 * 1000;
 
-const SUBCOMANDOS = ['relatorio', 'detalhe', 'saude', 'socios', 'chave', 'ajuda', 'status', 'pausar', 'voltar'];
+const SUBCOMANDOS = ['relatorio', 'detalhe', 'saude', 'socios', 'chave', 'ajuda', 'status', 'pausar', 'voltar', 'saldo'];
 // Formas alternativas que os sócios tendem a escrever
 const APELIDOS = { pausa: 'pausar', parar: 'pausar', pause: 'pausar', retomar: 'voltar', ativar: 'voltar', religar: 'voltar', despausar: 'voltar' };
 const estados = new Map(); // numero -> { pendente, pendenteAte, autenticadoAte, falhas: [], bloqueadoAte }
@@ -117,6 +118,7 @@ const AJUDA = [
   '/carol socios - envia agora o relatorio executivo por e-mail',
   '/carol chave - gera nova palavra-chave e envia por e-mail',
   '/carol status - quando a palavra-chave vence, quem esta autenticado e se ha pausa',
+  '/carol saldo - mostra o saldo estimado da Anthropic; /carol saldo 25 = depois de recarregar, informa o saldo do console (US$)',
   '/carol pausar - a Carol para de responder clientes no WhatsApp por 2 horas (ex.: /carol pausar 4 = 4 horas)',
   '/carol voltar - encerra a pausa antes da hora',
 ].join('\n');
@@ -135,6 +137,17 @@ async function executar(sub, arg, deps, de = null) {
           'Ate la ela nao responde clientes no WhatsApp: quem escrever fica esperando a equipe no aplicativo. O chat do site continua normal.\n' +
           'Ela volta sozinha no horario. Para voltar antes, mande /carol voltar.',
       ];
+    }
+    case 'saldo': {
+      if (arg) {
+        let r;
+        try { r = definirSaldo(arg, { por: de, agora }); } catch { return ['Valor invalido. Mande /carol saldo 25 (saldo em US$ que aparece em console.anthropic.com > Plans & Billing).']; }
+        auditar({ evento: 'saldo', de, usd: r.usd });
+      }
+      const s = saldoEstimado();
+      if (!s) return ['Saldo nao sincronizado. Mande /carol saldo <valor em US$> com o saldo do console.anthropic.com.'];
+      const f = (v) => 'US$ ' + v.toFixed(2).replace('.', ',');
+      return [`${arg ? 'Saldo atualizado. ' : ''}Saldo estimado da Anthropic: ${f(s.restante)} (base ${f(s.credito)} em ${new Date(s.desde).toLocaleDateString('pt-BR', { timeZone: config.timezone })}, gasto desde entao ${f(s.gasto)}).`];
     }
     case 'voltar': {
       const antes = retomar({ agora });

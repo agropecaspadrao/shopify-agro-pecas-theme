@@ -6,7 +6,8 @@ import { config } from './config.js';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SPECS_PATH = path.join(here, '..', 'knowledge', 'specs.json');
 
-const REFRESH_MS = 30 * 60 * 1000; // 30 min, mesmo TTL do índice de busca do site
+// Recarga só pela agenda (3x/dia: 6h, 12h e 18h BRT); sob demanda apenas se a memória estiver vazia
+const REFRESH_MS = Infinity;
 
 let produtos = [];        // itens normalizados
 let porCodigo = new Map(); // código normalizado -> produto

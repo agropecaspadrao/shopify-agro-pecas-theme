@@ -140,7 +140,7 @@ export async function verificarCatalogo({ agora = Date.now } = {}) {
   const e = estadoCatalogo();
   if (!e.produtos) return { nome, estado: 'falha', tipoAnomalia: 'catalogo_falha', resumo: 'catálogo vazio em memória' };
   const idadeMin = (agora() - e.ultimaCarga) / 60000;
-  if (idadeMin > 120) return { nome, estado: 'aviso', tipoAnomalia: 'catalogo_falha', resumo: `catálogo sem atualizar há ${Math.round(idadeMin)} min (${e.produtos} produtos)`, dados: e };
+  if (idadeMin > 13 * 60) return { nome, estado: 'aviso', tipoAnomalia: 'catalogo_falha', resumo: `catálogo sem atualizar há ${Math.round(idadeMin)} min (${e.produtos} produtos)`, dados: e };
   return { nome, estado: 'ok', resumo: `${e.produtos} produtos, ${e.specs} com ficha técnica, atualizado há ${Math.round(idadeMin)} min`, dados: e };
 }
 

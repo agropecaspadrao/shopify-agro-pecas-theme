@@ -6,7 +6,7 @@ import { config, validarConfig, recursosConfigurados } from './config.js';
 import { DATA_DIR } from './registro.js';
 import { estadoPausa, pausar, retomar, horasDe } from './comandos/pausa.js';
 import { horarioComercial } from './horario.js';
-import { carregarCatalogo } from './catalogo.js';
+import { carregarCatalogo, estadoCatalogo } from './catalogo.js';
 import { responder, resumirConversa } from './claude.js';
 import { enviarRelatorio, montarRelatorio, resumoCompacto, detalheConversa } from './relatorio.js';
 import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, baixarMidia } from './whatsapp.js';
@@ -541,6 +541,19 @@ agenda.registrarTarefa({
     return `enviada para ${r.enviadaPara.join(', ')}`;
   },
 });
+
+// Catálogo da loja: 3x ao dia (a maior pausa é 18h→6h, por isso o aviso de saúde só após 13h)
+for (const hora of [6, 12, 18]) {
+  agenda.registrarTarefa({
+    nome: `catalogo_${String(hora).padStart(2, '0')}h`,
+    descricao: `Recarga do catálogo da loja (${hora}h)`,
+    quando: { hora, minuto: 0 },
+    executar: async () => {
+      await carregarCatalogo({ forcar: true });
+      return `catálogo recarregado: ${estadoCatalogo().produtos} produtos`;
+    },
+  });
+}
 
 async function boot() {
   try {

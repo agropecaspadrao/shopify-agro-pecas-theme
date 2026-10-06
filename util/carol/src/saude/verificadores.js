@@ -96,10 +96,10 @@ export async function verificarAnthropic({ fetchFn = fetch } = {}) {
 
   const saldo = saldoEstimado();
   const dados = { modelo: config.claudeModel, saldo };
-  if (saldo && saldo.restante < config.alertaSaldoUsd) {
+  if (saldo && !saldo.desatualizado && saldo.restante < config.alertaSaldoUsd) {
     return { nome, estado: 'aviso', resumo: `chave ok, saldo estimado baixo (US$ ${saldo.restante.toFixed(2)})`, dados };
   }
-  return { nome, estado: 'ok', resumo: `chave ok (${config.claudeModel})${saldo ? `, saldo estimado US$ ${saldo.restante.toFixed(2)}` : ', saldo não sincronizado'}`, dados };
+  return { nome, estado: 'ok', resumo: `chave ok (${config.claudeModel})${!saldo ? ', saldo não sincronizado' : saldo.desatualizado ? ', recarga feita (saldo exato só no console)' : `, saldo estimado US$ ${saldo.restante.toFixed(2)}`}`, dados };
 }
 
 // ── Meta (token de Ads/páginas) ───────────────────────────────────────────

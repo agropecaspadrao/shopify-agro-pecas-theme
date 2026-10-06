@@ -62,7 +62,7 @@ BOMBA_KINDS = ["Bomba Hidráulica", "Bomba de Aplicação", "Bomba de Direção"
                "Motor Hidráulico", "Motor de Aplicação", "Bomba", "Motor"]
 
 DESC_OVERRIDES = {
-    "5.1305.0565115.0": "Bomba de Aplicação John Deere",  # título usa "JD"
+    "5.1305.0565115.0": "Bomba de Aplicação p/ John Deere",  # título usa "JD"
 }
 
 def descricao_curta(title, sku):
@@ -76,11 +76,16 @@ def descricao_curta(title, sku):
     if low.startswith(("bomba", "motor")):
         kind = next((k for k in BOMBA_KINDS if low.startswith(k.lower())), "Bomba Hidráulica")
         marca = next((m for m in MARCAS if m.lower() in low), None)
-        return f"{kind} {marca}" if marca else kind
+        return f"{kind} {_compat(marca)}" if marca else kind
     left = t.split(" - ")[0].strip()
     resto = t[len(left):]
     marca = next((m for m in MARCAS if m.lower() in resto.lower()), None)
-    return f"{left} - {marca}" if marca else left
+    return f"{left} {_compat(marca)}" if marca else left
+
+def _compat(marca):
+    """Marca de terceiro só em contexto de compatibilidade ('p/ John Deere');
+    a marca própria APP fica como está (regra de conformidade do CLAUDE.md)."""
+    return "- APP" if marca == "APP" else f"p/ {marca}"
 
 # ── infra ────────────────────────────────────────────────────────────────────
 
@@ -122,6 +127,19 @@ def remove_white_bg(im, thresh=238):
         for ny, nx in ((y-1, x), (y+1, x), (y, x-1), (y, x+1)):
             if 0 <= ny < h and 0 <= nx < w and near_white[ny, nx] and not bg[ny, nx]:
                 bg[ny, nx] = True; dq.append((ny, nx))
+    # furo passante: o branco DENTRO da silhueta não é alcançado pela inundação da
+    # borda e ficaria como um retângulo branco sobre o fundo creme da capa. Só as
+    # manchas grandes viram furo — brilho especular na peça é pequeno e permanece.
+    interno = near_white & ~bg
+    if interno.any():
+        r = max(9, (int(min(h, w) * 0.025)) | 1)
+        def _m(mask, k, f):
+            return np.array(Image.fromarray((mask * 255).astype(np.uint8), "L")
+                            .filter(f(k))) > 127
+        nucleo = _m(interno, r, ImageFilter.MinFilter)
+        if nucleo.any():
+            bg |= _m(nucleo, r + 4, ImageFilter.MaxFilter) & interno
+
     a = Image.fromarray(np.where(bg, 0, 255).astype(np.uint8))
     a = a.filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.8))
     out = im.convert("RGBA")

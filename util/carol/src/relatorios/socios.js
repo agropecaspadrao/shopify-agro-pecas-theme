@@ -15,7 +15,7 @@ import { resumoAnomalias, TIPOS } from '../alertas/anomalias.js';
 import { ultimoEstado, textoSaude, verificarTudo } from '../saude/supervisor.js';
 import { resumoCampanhasMeta, textoCampanhas } from './campanhas.js';
 import { listar as listarAgenda } from '../agenda.js';
-import { textoLinhas } from './atendimentos.js';
+import { textoLinhas, textoPerfis } from './atendimentos.js';
 import { enviarOuContingencia } from '../email/contingencia.js';
 
 const usd = (v) => 'US$ ' + Number(v || 0).toFixed(2).replace('.', ',');
@@ -68,6 +68,8 @@ export function blocoAtendimentos(custos1d, relatorioDai) {
     linhas.push(...(resumo.pendencias.length ? resumo.pendencias.map((p) => `- ${p}`) : ['- nenhuma']));
     linhas.push('', 'Conversas (mensagens completas: /carol detalhe <número> pelo WhatsApp):');
     linhas.push(textoLinhas(resumo));
+    const perfis = textoPerfis(resumo);
+    if (perfis) linhas.push(perfis);
   }
   return linhas.join('\n');
 }

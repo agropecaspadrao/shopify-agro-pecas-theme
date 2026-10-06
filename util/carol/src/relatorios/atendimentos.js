@@ -80,7 +80,8 @@ Responda SOMENTE com um JSON válido, sem comentários nem texto fora do JSON, n
       "cliente": "nome se informado; senão deixe vazio",
       "assunto": "peça, código ou máquina tratados, em até 12 palavras",
       "ondeParou": "última situação da conversa, em uma frase",
-      "acao": "o que a Dai deve fazer, ou 'nenhuma'"
+      "acao": "o que a Dai deve fazer, ou 'nenhuma'",
+      "perfil": "produtor, revenda ou oficina, conforme a conversa deixou claro; vazio se não deu para saber"
     }
   ]
 }
@@ -117,6 +118,7 @@ export function interpretarRespostaIA(texto, conversas) {
       assunto: limpar(ia.assunto),
       ondeParou: limpar(ia.ondeParou),
       acao: limpar(ia.acao),
+      perfil: normalizarPerfil(ia.perfil),
       mensagens: c.mensagens.length,
       inicio: c.inicio,
       fim: c.fim,
@@ -130,6 +132,24 @@ export function interpretarRespostaIA(texto, conversas) {
   };
 }
 
+const PERFIS = ['produtor', 'revenda', 'oficina'];
+
+export function normalizarPerfil(v) {
+  const t = String(v ?? '').toLowerCase();
+  return PERFIS.find((p) => t.includes(p)) || '';
+}
+
+/** "Perfil: 3 produtores, 1 revenda, 2 sem perfil" — vazio se não houver conversas. */
+export function textoPerfis(resumo) {
+  if (!resumo.conversas.length) return '';
+  const n = (p) => resumo.conversas.filter((c) => c.perfil === p).length;
+  const plural = { produtor: 'produtores', revenda: 'revendas', oficina: 'oficinas' };
+  const partes = PERFIS.filter((p) => n(p)).map((p) => `${n(p)} ${n(p) === 1 ? p : plural[p]}`);
+  const sem = n('');
+  if (sem) partes.push(`${sem} sem perfil`);
+  return `Perfil: ${partes.join(', ')}.`;
+}
+
 function limpar(v) {
   return String(v ?? '')
     .replace(/\s*[—–]\s*/g, ', ')
@@ -138,7 +158,8 @@ function limpar(v) {
 }
 
 function rotulo(c) {
-  const quem = c.nome ? `${c.nome} (${c.cliente})` : c.cliente;
+  let quem = c.nome ? `${c.nome} (${c.cliente})` : c.cliente;
+  if (c.perfil && c.perfil !== 'produtor') quem += ` [${c.perfil.toUpperCase()}]`;
   return c.origemAnuncio ? `${quem}, via anúncio` : quem;
 }
 
@@ -177,6 +198,7 @@ export function textoEmailDai(resumo, periodoTxt) {
     linhas.push('');
   }
   linhas.push(`Total: ${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens.`);
+  if (!resumo.textoLivre) linhas.push(textoPerfis(resumo));
   linhas.push('', 'Bom trabalho!', 'Carol, atendente virtual');
   return linhas.join('\n');
 }
@@ -187,7 +209,7 @@ export function textoCompacto(resumo, agora = new Date()) {
   if (!resumo.conversas.length) return `*Atendimentos das ultimas 24h (${data})*\n\nNenhum atendimento no periodo.`;
   return [
     `*Atendimentos das ultimas 24h (${data})*`,
-    `${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens.`,
+    `${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens. ${textoPerfis(resumo)}`,
     '',
     textoLinhas(resumo),
     '',

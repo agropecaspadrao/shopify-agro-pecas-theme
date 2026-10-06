@@ -73,3 +73,14 @@ test('encontrarConversa por número ou final do telefone; textoDetalhe traz as m
   assert.match(t, /Cliente: quero uma bomba\nCarol: Qual máquina\?/);
   assert.match(t, /Cliente: valtra bh180/);
 });
+
+test('perfil do contato: normaliza, marca revenda/oficina no rótulo e conta no total', async () => {
+  const { interpretarRespostaIA, textoLinhas, textoPerfis, normalizarPerfil } = await import('../src/relatorios/atendimentos.js');
+  assert.equal(normalizarPerfil('Revenda (loja agropecuária)'), 'revenda');
+  assert.equal(normalizarPerfil('não deu pra saber'), '');
+  const conversas = [1, 2, 3].map((n) => ({ numero: n, sessao: `wa:55419999900${n}`, canal: 'whatsapp', cliente: `WhatsApp 55419999900${n}`, origemAnuncio: '', mensagens: [{}], inicio: '2026-10-06T12:00:00Z', fim: '2026-10-06T12:05:00Z' }));
+  const r = interpretarRespostaIA('{"pendencias":[],"conversas":[{"numero":1,"assunto":"copo venturi kit 60","perfil":"revenda"},{"numero":2,"assunto":"bomba NH","perfil":"produtor"},{"numero":3,"assunto":"dedo"}]}', conversas);
+  assert.match(textoLinhas(r), /1\. WhatsApp 554199999001 \[REVENDA\]: copo venturi/);
+  assert.doesNotMatch(textoLinhas(r), /\[PRODUTOR\]/);
+  assert.equal(textoPerfis(r), 'Perfil: 1 produtor, 1 revenda, 1 sem perfil.');
+});

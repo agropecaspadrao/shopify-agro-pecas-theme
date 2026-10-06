@@ -79,7 +79,9 @@ function blocoCustos(c1, c7) {
   const linhas = [
     `Últimas 24h: ${usd(c1.totais.custo)} (${c1.totais.mensagens} msgs). Últimos 7 dias: ${usd(c7.totais.custo)}, ${usd(porMsg)} por mensagem. Projeção mensal: ${usd(projecaoMes)} (${brl(projecaoMes * config.usdBrl)}).`,
   ];
-  if (saldo) {
+  if (saldo?.desatualizado) {
+    linhas.push(`Saldo na Anthropic: a Carol segue respondendo normalmente, então houve recarga depois da base cadastrada (${usd(saldo.credito)} em ${dataBRT(saldo.desde, false)}). Para voltar a estimar a duração, mande /carol saldo <valor do console>.`);
+  } else if (saldo) {
     const dias = projecaoMes > 0 ? Math.round(saldo.restante / (projecaoMes / 30)) : null;
     linhas.push(`Saldo estimado na Anthropic: ${usd(saldo.restante)} de ${usd(saldo.credito)} carregados em ${dataBRT(saldo.desde, false)}${dias !== null ? `, dá para cerca de ${dias} dias neste ritmo` : ''}.`);
   } else {

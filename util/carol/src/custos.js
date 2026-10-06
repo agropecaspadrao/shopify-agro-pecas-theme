@@ -398,19 +398,30 @@ export function saldoEstimado() {
   const credito = manual ? manual.usd : config.creditoUsd;
   const desdeStr = manual ? manual.desde : config.creditoDesde;
   if (!(credito > 0)) return null;
-  const fim = new Date();
+  const fim = new Date(Date.now() + 1); // inclui o lançamento deste mesmo milissegundo
   const desde = desdeStr
     ? new Date(desdeStr)
     : new Date(fim.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const gasto = listarPeriodo(desde, fim).reduce(
-    (s, e) => s + (typeof e.custo === 'number' ? e.custo : 0),
-    0
-  );
+  // Se o gasto registrado passou do crédito e a Carol AINDA fez chamadas pagas
+  // com sucesso depois disso, a API aceitou — houve recarga que não foi
+  // informada. O saldo real é desconhecido; marca como desatualizado em vez
+  // de afirmar US$ 0,00.
+  let gasto = 0;
+  let esgotouEm = null;
+  let pagasDepois = 0;
+  for (const e of listarPeriodo(desde, fim)) {
+    if (typeof e.custo !== 'number' || e.custo <= 0) continue;
+    if (esgotouEm) pagasDepois++;
+    gasto += e.custo;
+    if (!esgotouEm && gasto >= credito) esgotouEm = e.ts;
+  }
   return {
     credito,
     desde: desde.toISOString(),
     gasto,
     restante: Math.max(0, credito - gasto),
+    desatualizado: pagasDepois > 0,
+    esgotouEm,
   };
 }
 

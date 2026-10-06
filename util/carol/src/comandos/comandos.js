@@ -147,6 +147,7 @@ async function executar(sub, arg, deps, de = null) {
       const s = saldoEstimado();
       if (!s) return ['Saldo nao sincronizado. Mande /carol saldo <valor em US$> com o saldo do console.anthropic.com.'];
       const f = (v) => 'US$ ' + v.toFixed(2).replace('.', ',');
+      if (s.desatualizado) return ['A Carol segue respondendo normalmente, entao o credito foi recarregado depois da base cadastrada. Mande /carol saldo <valor em US$ do console.anthropic.com> para voltar a estimar.'];
       return [`${arg ? 'Saldo atualizado. ' : ''}Saldo estimado da Anthropic: ${f(s.restante)} (base ${f(s.credito)} em ${new Date(s.desde).toLocaleDateString('pt-BR', { timeZone: config.timezone })}, gasto desde entao ${f(s.gasto)}).`];
     }
     case 'voltar': {

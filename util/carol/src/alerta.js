@@ -12,7 +12,7 @@ function usd(v) {
 
 export async function verificarSaldoBaixo() {
   const saldo = saldoEstimado();
-  if (!saldo || saldo.restante > config.alertaSaldoUsd) return;
+  if (!saldo || saldo.desatualizado || saldo.restante > config.alertaSaldoUsd) return;
   await reportarAnomalia({
     tipo: 'anthropic_saldo_baixo',
     titulo: `Saldo de créditos da Anthropic baixo (${usd(saldo.restante)} restantes)`,

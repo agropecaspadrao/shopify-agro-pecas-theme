@@ -4,3 +4,5 @@ products_import.csv
 *.yml
 .env
 .git/
+_retoque-marca/
+assets/_retoque-marca/

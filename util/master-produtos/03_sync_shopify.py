@@ -66,8 +66,15 @@ def clean_name(title, montadora):
     words = [w for w in str(title).split() if w.upper().strip(".,") not in BRAND_TOKENS]
     return " ".join(words) if words else title
 
+# "Roda compactadora - Kit 10 unidades" / "… - 1 Unidade": o sufixo de lote vem da
+# coluna Qtde KIT, não do texto — some do nome para não duplicar no título/descrição
+KIT_SUFFIX = re.compile(r"\s*[-–—]\s*(?:kit\s*)?\d+\s*unidades?\s*$", re.I)
+
+def strip_kit_suffix(s):
+    return KIT_SUFFIX.sub("", str(s)).strip()
+
 def build_title(d):
-    base = title_case_pt(clean_name(d["title"], d["montadora"]))
+    base = title_case_pt(clean_name(strip_kit_suffix(d["title"]), d["montadora"]))
     mont = str(d["montadora"] or "").split(",")[0].strip().title() or None
     mont = {"Agco": "AGCO", "John Deere": "John Deere", "Stara": "Stara", "Gts": "GTS"}.get(mont, mont)
     if mont and mont.upper() in ("TODAS AS MARCAS", "TODAS", "UNIVERSAL"):
@@ -125,7 +132,7 @@ def build_compat(d, research):
 
 def build_body(d, research, unit_final=None):
     r = research.get(norm_sku(d["sku"])) or {}
-    nome = title_case_pt(clean_name(d["title"], d["montadora"]))
+    nome = title_case_pt(clean_name(strip_kit_suffix(d["title"]), d["montadora"]))
     desc_pesq = r.get("descricao_tecnica")
     if desc_pesq and d["is_kit"]:
         # remove frases que citam outro tamanho de kit (pesquisa foi feita p/ um lote específico)
@@ -185,7 +192,15 @@ def build_metafields(d, research):
         mf.append(("part_number", "single_line_text_field", str(d["part"])))
     if d["comp"] and d["larg"] and d["alt"]:
         mf.append(("dimensoes_cm", "single_line_text_field", f"{d['comp']} × {d['larg']} × {d['alt']} cm"))
-    return [{"namespace": "agro", "key": k, "type": t, "value": str(v)} for k, t, v in mf if v]
+    out = [{"namespace": "agro", "key": k, "type": t, "value": str(v)} for k, t, v in mf if v]
+    # Feed do canal Google & YouTube (Merchant Center): categoria Google 112 =
+    # "Comercial e industrial > Agricultura" (a taxonomia Google não tem folha para
+    # peças agrícolas) e custom_product=true (sem GTIN — EAN interno não vai como GTIN).
+    out += [
+        {"namespace": "mm-google-shopping", "key": "google_product_category", "type": "string", "value": "112"},
+        {"namespace": "mm-google-shopping", "key": "custom_product", "type": "boolean", "value": "true"},
+    ]
+    return out
 
 def build_tags(d):
     tags = set()
@@ -293,7 +308,8 @@ def main():
     cnt = Counter(d["acao"] for d in plan)
     print(f"Ações: {dict(cnt)} → {out}")
     if not PUSH:
-        ups = [d for d in plan if d["acao"] == "update" and d["site_v"] and d["preco_novo"]]
+        ups = [d for d in plan if d["acao"] == "update" and d["site_v"] and d["preco_novo"]
+               and float(d["site_v"]["price"] or 0) > 0]
         big = sorted(ups, key=lambda d: abs(d["preco_novo"] / float(d["site_v"]["price"]) - 1), reverse=True)[:8]
         print("\nMaiores variações de preço (update):")
         for d in big:
@@ -302,10 +318,12 @@ def main():
         return
 
     # ── PUSH ────────────────────────────────────────────────────────────────
-    # publicação Online Store
+    # publicações: Online Store + canais Google & YouTube e Facebook & Instagram.
+    # Sem os canais o produto nunca chega ao Merchant Center / catálogo Meta
+    # (auditoria 15/09/2026: 168 produtos ficaram fora do Merchant por isso).
     pubs = shopify_graphql(env, token, "{ publications(first:10){ edges{ node{ id name } } } }")
     online = [e["node"]["id"] for e in pubs["publications"]["edges"]
-              if "online" in e["node"]["name"].lower()]
+              if any(k in e["node"]["name"].lower() for k in ("online", "google", "facebook"))]
 
     MUT_VARS = """mutation($productId:ID!,$variants:[ProductVariantsBulkInput!]!){
       productVariantsBulkUpdate(productId:$productId, variants:$variants){
@@ -377,6 +395,8 @@ def main():
                 "descriptionHtml": body,
                 "vendor": "APP Agro Peças Padrão",
                 "productType": str(d["type"] or "Peças Agrícolas"),
+                # categoria padrão Shopify — alimenta a categoria do feed Google/Meta
+                "category": "gid://shopify/TaxonomyCategory/bi-2",  # Business & Industrial > Agriculture
                 "tags": build_tags(d),
                 "status": "ACTIVE",
                 "metafields": build_metafields(d, research),

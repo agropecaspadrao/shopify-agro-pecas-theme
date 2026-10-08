@@ -1,0 +1,330 @@
+<title>Perfil do Comprador APP</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F5F6F1; --surface:#FFFFFF; --surface-2:#EDF0E8; --line:#D6DBD0;
+  --text:#1C1F1B; --muted:#5C655B; --primary:#1B4332; --primary-ink:#FFFFFF;
+  --accent:#B8942B; --accent-soft:#F3E9C9; --ok:#2F6B4F; --warn:#A4611E; --bad:#9B2C2C;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121614; --surface:#1A201C; --surface-2:#222A25; --line:#2E3832;
+    --text:#ECEAE2; --muted:#A3AB9F; --primary:#2F6B4F; --primary-ink:#F6F7F3;
+    --accent:#D4AF37; --accent-soft:#3A3320; --ok:#6FB08F; --warn:#D99A55; --bad:#E07070;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121614; --surface:#1A201C; --surface-2:#222A25; --line:#2E3832;
+  --text:#ECEAE2; --muted:#A3AB9F; --primary:#2F6B4F; --primary-ink:#F6F7F3;
+  --accent:#D4AF37; --accent-soft:#3A3320; --ok:#6FB08F; --warn:#D99A55; --bad:#E07070;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Barlow,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.55;padding-inline:clamp(16px,4vw,40px);padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+.prose{max-width:72ch}
+h1,h2,h3,.eyebrow,.tile b,.persona h3{font-family:"Barlow Condensed",Barlow,Arial Narrow,sans-serif;text-wrap:balance}
+h1{font-size:clamp(40px,6vw,64px);font-weight:800;line-height:.95;letter-spacing:-.01em;margin:0 0 12px;text-transform:uppercase}
+h2{font-size:30px;font-weight:700;text-transform:uppercase;letter-spacing:.01em;margin:0 0 6px;color:var(--primary)}
+h3{font-size:22px;font-weight:700;margin:0 0 6px}
+.eyebrow{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+code,.mono{font-family:"JetBrains Mono",Menlo,Consolas,monospace;font-size:.92em}
+code{background:var(--surface-2);padding:1px 6px;border-radius:3px}
+p{margin:0 0 12px}
+a{color:var(--primary)}
+header{border-bottom:3px solid var(--primary);padding-block:44px 28px;margin-bottom:36px}
+header .meta{display:flex;flex-wrap:wrap;gap:8px 24px;color:var(--muted);font-size:14px;margin-top:14px}
+header .meta span b{color:var(--text);font-weight:600}
+section{margin-bottom:52px}
+.lede{font-size:19px;color:var(--text);max-width:64ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:26px 0 8px}
+.tile{background:var(--primary);color:var(--primary-ink);padding:18px 18px 16px;border-radius:4px}
+.tile b{display:block;font-size:44px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.tile small{display:block;font-size:14px;opacity:.85;margin-top:8px;line-height:1.35}
+.tile em{font-style:normal;color:var(--accent)}
+.finding{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.finding:last-child{border-bottom:0}
+.finding .n{font-family:"Barlow Condensed";font-weight:800;font-size:30px;color:var(--accent);line-height:1}
+.finding h3{font-size:20px}
+.finding p{color:var(--muted);margin:0}
+table{width:100%;border-collapse:collapse;font-size:15px;background:var(--surface)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-family:"Barlow Condensed";font-size:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.num{font-family:"JetBrains Mono";font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-family:"Barlow Condensed";font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:2px;white-space:nowrap}
+.pill.hi{background:var(--primary);color:var(--primary-ink)}
+.pill.md{background:var(--accent-soft);color:var(--text)}
+.pill.lo{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.funnel{display:grid;gap:8px;margin:18px 0 6px;max-width:720px}
+.frow{display:grid;grid-template-columns:150px 1fr 64px;gap:12px;align-items:center;font-size:15px}
+.frow .lbl{color:var(--muted)}
+.frow .bar{height:22px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.frow .bar i{display:block;height:100%;background:var(--primary);min-width:2px}
+.frow.lead .bar i{background:var(--accent)}
+.frow.buy .bar i{background:var(--bad)}
+.frow .v{font-family:"JetBrains Mono";font-variant-numeric:tabular-nums;text-align:right;font-size:14px}
+.note{font-size:14px;color:var(--muted)}
+.personas{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:18px}
+.persona{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--primary);padding:20px;border-radius:4px}
+.persona .eyebrow{color:var(--primary)}
+.persona h3{font-size:24px;margin-top:4px}
+.persona dl{margin:12px 0 0;display:grid;gap:9px}
+.persona dt{font-family:"Barlow Condensed";font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.persona dd{margin:1px 0 0;font-size:15px}
+.persona .quote{font-style:italic;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:15px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);padding:18px 20px;border-radius:4px}
+.card h3{font-size:20px}
+.card ul{margin:8px 0 0;padding-left:18px}
+.card li{margin-bottom:6px;font-size:15px}
+ol.q{padding-left:0;list-style:none;counter-reset:q;margin:0}
+ol.q>li{counter-increment:q;display:grid;grid-template-columns:38px 1fr;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+ol.q>li::before{content:counter(q,decimal-leading-zero);font-family:"JetBrains Mono";font-weight:600;color:var(--accent);font-size:15px;padding-top:2px}
+ol.q>li:last-child{border-bottom:0}
+ol.q .opts{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.block{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:6px 20px 8px;margin-top:14px}
+.block h3{padding-top:12px}
+.callout{background:var(--accent-soft);border-left:4px solid var(--accent);padding:14px 18px;border-radius:0 4px 4px 0;margin:16px 0}
+.callout b{font-family:"Barlow Condensed";text-transform:uppercase;letter-spacing:.06em}
+.srcs{font-size:14px;color:var(--muted)}
+.srcs li{margin-bottom:4px;overflow-wrap:anywhere}
+footer{border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:13px}
+@media (max-width:560px){
+  .frow{grid-template-columns:110px 1fr 56px;font-size:13px}
+  .finding{grid-template-columns:34px 1fr}
+  h2{font-size:26px}
+}
+@media (prefers-reduced-motion: no-preference){ .frow .bar i{transition:width .4s ease} }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">APP Agro Peças Padrão · Pesquisa de mercado</div>
+  <h1>Quem compra peça agrícola<br>e onde ele compra hoje</h1>
+  <p class="lede">Retrato do comprador de bombas hidráulicas, sensores e peças de plantadeira no padrão OEM, cruzando os dados da própria loja com pesquisas públicas do agro brasileiro. Termina com o roteiro de perguntas para descobrir o que faria esse cliente comprar direto no e-commerce.</p>
+  <div class="meta">
+    <span>Data <b>15 set 2026</b></span>
+    <span>Dados próprios <b>GA4 · Shopify · Meta Ads, jan–set/2026</b></span>
+    <span>Fontes externas <b>McKinsey · ABMRA · Agrofy · setor de peças</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="eyebrow">Em números</div>
+  <div class="tiles">
+    <div class="tile"><b>116 <em>: 6</em></b><small>leads no WhatsApp para cada compra no checkout da loja em 2026. O cliente quer conversar antes de pagar.</small></div>
+    <div class="tile"><b>84%</b><small>das sessões da loja vêm do celular. O produtor pesquisa e fecha pelo telefone.</small></div>
+    <div class="tile"><b>28 <em>de 40</em></b><small>buscas mais frequentes no site são códigos de peça, não nomes. Quem procura já sabe o que quer.</small></div>
+    <div class="tile"><b>R$3,55</b><small>por conversa no anúncio campeão (Bomba Valtra 885/985). Kits plásticos custaram até R$32 por conversa.</small></div>
+  </div>
+  <p class="note">Confiança dos achados: <span class="pill hi">Alta</span> = dado próprio ou 3+ fontes · <span class="pill md">Média</span> = 2 fontes ou só induzido · <span class="pill lo">Baixa</span> = 1 fonte, validar.</p>
+</section>
+
+<section>
+  <h2>Seis achados que mudam o marketing</h2>
+  <div class="finding"><div class="n">1</div><div><h3>O comprador quer conversar antes de pagar <span class="pill hi">Alta</span></h3><p>Na loja, 116 leads de WhatsApp contra 6 compras. No mercado, 28% dos produtores preferem fechar compra pelo WhatsApp e 85% já o usam em transações (McKinsey). O site é catálogo e gatilho de conversa, não caixa.</p></div></div>
+  <div class="finding"><div class="n">2</div><div><h3>Ele procura pelo código, não pelo nome <span class="pill hi">Alta</span></h3><p>Buscas como <code>565122</code>, <code>acx2865730</code>, <code>A-016</code> e <code>3816909M91</code> dominam. Isso é mecânico ou comprador profissional com a peça velha na mão. A busca precisa aceitar código com ou sem ponto, zero à esquerda e hífen.</p></div></div>
+  <div class="finding"><div class="n">3</div><div><h3>Converte no interior produtor, não na capital <span class="pill hi">Alta</span></h3><p>Curitiba, Goiânia, Cuiabá, interior do RS e de MG concentram as conversões. São Paulo e Rio trazem volume de anúncio e quase nenhum lead.</p></div></div>
+  <div class="finding"><div class="n">4</div><div><h3>Alto ticket paga anúncio; kit barato não <span class="pill hi">Alta</span></h3><p>Bombas Valtra e New Holland fecharam conversa a R$3,55–5,45. Kits de plantadeira (tampa SRM, condutor, conexão) custaram R$23–32 por conversa com o mesmo gasto. Kits vão para orgânico e cross-sell no atendimento.</p></div></div>
+  <div class="finding"><div class="n">5</div><div><h3>Homem de 35 a 55, escolaridade média, paga do próprio bolso <span class="pill md">Média</span></h3><p>Idade média do produtor 46,4 anos, 10% com superior completo, 80% na atividade por tradição familiar, 79% compram equipamento com capital próprio (ABMRA 2025). Aprende por vídeo e áudio, confia em quem fala a língua da oficina.</p></div></div>
+  <div class="finding"><div class="n">6</div><div><h3>As barreiras são medo de golpe, dúvida de encaixe e prazo <span class="pill md">Média</span></h3><p>Cerca de 40% apontam segurança digital como barreira principal para comprar online. Em peças, a dúvida é "é original mesmo, vai encaixar?" e "chega antes da máquina parar mais um dia?".</p></div></div>
+</section>
+
+<section>
+  <h2>O funil da loja em 2026</h2>
+  <p class="prose">Eventos do GA4 de 1º de janeiro a 14 de setembro. Cada barra é proporcional à primeira.</p>
+  <div class="funnel" role="img" aria-label="Funil: 5266 visualizações de produto, 295 adições ao carrinho, 174 inícios de checkout, 116 leads WhatsApp, 6 compras">
+    <div class="frow"><span class="lbl">Viu produto</span><span class="bar"><i style="width:100%"></i></span><span class="v">5.266</span></div>
+    <div class="frow"><span class="lbl">Pôs no carrinho</span><span class="bar"><i style="width:5.6%"></i></span><span class="v">295</span></div>
+    <div class="frow"><span class="lbl">Iniciou checkout</span><span class="bar"><i style="width:3.3%"></i></span><span class="v">174</span></div>
+    <div class="frow lead"><span class="lbl">Lead WhatsApp</span><span class="bar"><i style="width:2.2%"></i></span><span class="v">116</span></div>
+    <div class="frow buy"><span class="lbl">Comprou no site</span><span class="bar"><i style="width:0.12%"></i></span><span class="v">6</span></div>
+  </div>
+  <p class="note">Shopify registra 5 pedidos em 365 dias. Origem das sessões: social 52%, direto 28%, busca orgânica 5%, pago Google 3%.</p>
+</section>
+
+<section>
+  <h2>Três personas de compra</h2>
+  <p class="prose">Construídas a partir do que o público faz no site e nos anúncios, e do que as pesquisas do agro descrevem. Ainda não validadas em entrevista, por isso o roteiro na última seção.</p>
+  <div class="personas">
+    <article class="persona">
+      <div class="eyebrow">Persona A</div>
+      <h3>O mecânico da oficina rural</h3>
+      <dl>
+        <dt>Quem é</dt><dd>Oficina própria ou mecânico de fazenda. Mexe em Valtra, MF, New Holland e John Deere com 10 a 30 anos de uso.</dd>
+        <dt>Como chega</dt><dd>Com o código na mão: da peça velha, do catálogo ou de foto no WhatsApp. Busca <code>BH160</code>, <code>A-016</code>, <code>565122</code>.</dd>
+        <dt>Decide por</dt><dd>Encaixe garantido (foto, medidas, compatibilidade), preço, prazo, PIX na hora.</dd>
+        <dt>Onde compra hoje</dt><dd>Balcão da autopeça agrícola da cidade, WhatsApp de 2 ou 3 fornecedores, Mercado Livre quando o balcão não tem.</dd>
+      </dl>
+      <p class="quote">"Tem a bomba da 885? Manda foto e o preço no PIX."</p>
+    </article>
+    <article class="persona">
+      <div class="eyebrow">Persona B</div>
+      <h3>O dono ou gestor da fazenda média</h3>
+      <dl>
+        <dt>Quem é</dt><dd>35 a 55 anos, 200 a 2.000 ha no Sul e Centro-Oeste. Opera ou supervisiona a frota e decide sozinho compras de R$1.000 a R$7.000.</dd>
+        <dt>Como chega</dt><dd>Vê o Reels da bomba à noite no celular, clica no WhatsApp e pergunta se serve no modelo dele.</dd>
+        <dt>Decide por</dt><dd>Garantia escrita, nota fiscal, atendimento que sabe do que fala, frete para o interior.</dd>
+        <dt>Onde compra hoje</dt><dd>Concessionária da marca quando "não quer arriscar", revenda multimarca regional, WhatsApp. Usa marketplace para comparar preço.</dd>
+      </dl>
+      <p class="quote">"Original da concessionária é o dobro. Essa aí aguenta a safra?"</p>
+    </article>
+    <article class="persona">
+      <div class="eyebrow">Persona C</div>
+      <h3>O comprador de almoxarifado ou revenda</h3>
+      <dl>
+        <dt>Quem é</dt><dd>Fazenda grande, grupo agrícola ou loja de peças que revende ao produtor.</dd>
+        <dt>Como chega</dt><dd>Pede cotação de kits (dedos, condutores, tampas SRM, acabamentos) em quantidade e repete a cada safra.</dd>
+        <dt>Decide por</dt><dd>Cotação formal, boleto ou prazo, códigos de cruzamento, estoque garantido na reposição.</dd>
+        <dt>Onde compra hoje</dt><dd>Fornecedor fixo por e-mail e WhatsApp, cooperativa, distribuidor atacadista.</dd>
+      </dl>
+      <p class="quote">"Preciso de 60 tampas com NF e prazo de 28 dias. Consegue segurar o preço?"</p>
+    </article>
+  </div>
+</section>
+
+<section>
+  <h2>Onde ele compra hoje</h2>
+  <p class="prose">Canais de compra de <strong>peça de reposição</strong>, do mais para o menos usado. A coluna da direita é a brecha que a APP pode ocupar.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Canal</th><th>Quando usa</th><th>Força</th><th>Brecha para a APP</th><th>Conf.</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td><strong>WhatsApp com fornecedor conhecido</strong></td><td>Fechamento de quase toda compra. 28% preferem, 85% usam em transações.</td><td>Relação, resposta rápida, foto da peça</td><td>Depende de uma pessoa responder; sem catálogo por código</td><td><span class="pill hi">Alta</span></td></tr>
+      <tr><td class="num">2</td><td><strong>Balcão da loja de peças agrícolas local</strong></td><td>Urgência, peça de desgaste; é onde o mecânico compra</td><td>Pega na hora, crédito de loja</td><td>Estoque curto, não tem bomba de modelo antigo, preço alto em item raro</td><td><span class="pill hi">Alta</span></td></tr>
+      <tr><td class="num">3</td><td><strong>Concessionária da marca (genuína)</strong></td><td>Máquina em garantia, item crítico, quem "não arrisca"</td><td>Garantia de 6 a 12 meses, instalação</td><td>Preço muito acima, prazo de pedido, distância</td><td><span class="pill hi">Alta</span></td></tr>
+      <tr><td class="num">4</td><td><strong>Marketplaces</strong> (Mercado Livre, Agrofy, MF Rural)</td><td>Comparar preço, achar o que o balcão não tem. 59% das compras no celular.</td><td>Preço, frete calculado, reputação visível</td><td>Medo de paralela ruim, vendedor sem NF, sem suporte técnico. 23% compram, 47% "dispostos"</td><td><span class="pill md">Média</span></td></tr>
+      <tr><td class="num">5</td><td><strong>Cooperativa / distribuidor de insumos</strong></td><td>Insumos; peças só quando a coop tem loja</td><td>Confiança, prazo safra</td><td>Sortimento de peças pequeno</td><td><span class="pill md">Média</span></td></tr>
+      <tr><td class="num">6</td><td><strong>E-commerce de fabricante ou distribuidor</strong> (Jacto, Case, TVH, Cambuci)</td><td>Comprador profissional, revenda</td><td>Busca por código e modelo, entrega em 24 a 48 h</td><td>Pouco conhecido do produtor pequeno</td><td><span class="pill md">Média</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Tendência 2026:</b> o produtor está esticando a vida útil das máquinas e trocando mais peça de desgaste. O setor cresce devagar (perto de 3,4%) e o prazo de entrega virou o principal diferencial: "parar máquina custa caro". O Brasil já compra insumo online mais que EUA e Europa, e 70% dos produtores usam algum canal digital na compra.</div>
+
+  <h3 style="margin-top:22px">Como ele paga <span class="note">(McKinsey 2024, n=757)</span></h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Forma</th><th>2024</th><th>2022</th><th>Leitura</th></tr></thead>
+    <tbody>
+      <tr><td>Pagamento imediato (qualquer forma)</td><td class="num">58%</td><td class="num">73%</td><td>Ainda maioria, mas caindo</td></tr>
+      <tr><td>À vista / dinheiro</td><td class="num">44%</td><td class="num">—</td><td>PIX com desconto conversa com esse grupo</td></tr>
+      <tr><td>Financiamento ou crédito da loja</td><td class="num">38%</td><td class="num">34%</td><td>Prazo com nota para a Persona C</td></tr>
+      <tr><td>Parcelado</td><td class="num">22%</td><td class="num">6%</td><td>Quase quadruplicou; parcelar bomba de R$2,5 mil sem juros</td></tr>
+      <tr><td>Aberto a pagamento digital</td><td class="num">54%</td><td class="num">27%</td><td>Dobrou em dois anos</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Por que ainda não compra no e-commerce</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Barreira</th><th>Evidência</th><th>Resposta da APP</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Medo de golpe</strong></td><td>~40% citam segurança digital como barreira principal</td><td>CNPJ, endereço e telefone visíveis; avaliações com nome e cidade; "NF em todo pedido"; vídeo do galpão</td></tr>
+      <tr><td><strong>"É original mesmo? Vai encaixar?"</strong></td><td>Barreira número um em peças; a loja recebe buscas por código exato</td><td>Foto real e desenho técnico com medidas; código OEM e cruzamentos; "padrão OEM, garantia de 6 meses"</td></tr>
+      <tr><td><strong>Prazo de entrega</strong></td><td>Concorrentes prometem 24 a 48 h</td><td>Prazo por CEP na página do produto; despacho no mesmo dia até 14 h</td></tr>
+      <tr><td><strong>Quer perguntar antes</strong></td><td>116 leads contra 6 compras</td><td>WhatsApp em toda página (já existe) e resposta em menos de 5 minutos no horário comercial</td></tr>
+      <tr><td><strong>Não confia em quem não conhece</strong></td><td>80% por tradição familiar; compra por relação</td><td>Rosto da equipe, depoimento em vídeo de cliente do RS e PR, presença em feira</td></tr>
+      <tr><td><strong>Não sabe se tem estoque</strong></td><td>Parte do catálogo está "Sob consulta"</td><td>Estoque real nos 20 SKUs campeões; "pronta entrega" no card</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O que isso muda no marketing</h2>
+  <div class="cols">
+    <div class="card"><h3>Mídia paga</h3><ul>
+      <li>Objetivo de campanha continua sendo conversa no WhatsApp: R$3 a 8 por conversa é o melhor resultado da conta.</li>
+      <li>Fórmula do criativo campeão: modelo do trator no título + código + foto real da peça. Repetir para MF, NH e JD.</li>
+      <li>Geografia: RS, PR, SC, GO, MT, interior de MG e SP. Excluir capitais SP e RJ na prospecção.</li>
+      <li>Alto ticket em mídia paga. Kits baratos em orgânico e como cross-sell no atendimento.</li>
+    </ul></div>
+    <div class="card"><h3>Site e conteúdo</h3><ul>
+      <li>Busca por código tem que achar a peça sem ponto, sem zero à esquerda e sem hífen.</li>
+      <li>Prova de confiança na página do produto: garantia, NF, CNPJ, prazo por CEP, foto real.</li>
+      <li>Reels de 30 s que ensinam o mecânico: "como identificar sua bomba pelo código", "A-002 ou A-004?".</li>
+      <li>Tudo pensado para tela de celular: sem PDF pesado, sem tabela larga.</li>
+    </ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>Pesquisa com o cliente</h2>
+  <p class="prose">Objetivo: descobrir o que faria ele <strong>comprar direto no site</strong> em vez de só perguntar no WhatsApp. Doze perguntas, três minutos, enviadas pelo WhatsApp à base de leads e clientes com um cupom de R$50 ou brinde na feira. Não chame de pesquisa. Chame de "3 perguntas rápidas para atender você melhor".</p>
+
+  <div class="block">
+    <h3>Bloco 1 · Quem é você</h3>
+    <ol class="q">
+      <li><span>O que você faz?<span class="opts">Produtor ou dono de fazenda · Gestor ou encarregado · Mecânico ou oficina · Comprador de revenda ou cooperativa · Outro</span></span></li>
+      <li><span>Quais marcas de máquina você mais mexe?<span class="opts">Valtra · Massey Ferguson · New Holland · John Deere · Case · Stara · outra</span></span></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Bloco 2 · Onde compra hoje</h3>
+    <ol class="q" start="3">
+      <li><span>Da última vez que precisou de uma peça de reposição, onde você comprou?<span class="opts">Concessionária · Loja de peças da cidade · WhatsApp de fornecedor · Mercado Livre ou marketplace · Site de loja · Cooperativa</span></span></li>
+      <li><span>Por que escolheu esse lugar? <span class="opts">Resposta aberta. Anote a palavra exata que ele usar.</span></span></li>
+      <li><span>Já comprou peça agrícola pela internet?<span class="opts">Sim, várias vezes · Sim, uma vez · Nunca, mas compraria · Nunca e não confio</span></span></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Bloco 3 · O que faria você comprar no site</h3>
+    <ol class="q" start="6">
+      <li><span>O que mais te trava para comprar uma peça direto num site, sem falar com alguém? <span class="opts">Marque até 2: medo de vir errada · medo de golpe · não sei o prazo de entrega · não sei se é original · prefiro negociar preço · quero nota fiscal e não sei se vem · nada me trava</span></span></li>
+      <li><span>O que te faria comprar hoje sem precisar perguntar no WhatsApp? <span class="opts">Marque até 3: foto real e medidas · garantia escrita de 6 meses ou mais · prazo de entrega na tela antes de pagar · PIX com desconto · parcelamento sem juros · troca grátis se não encaixar · avaliações de outros produtores · atendimento rápido se precisar</span></span></li>
+      <li><span>Quanto tempo de entrega é aceitável para uma peça que parou a máquina?<span class="opts">Até 2 dias · 3 a 5 dias · Até 1 semana · Tanto faz se o preço for bom</span></span></li>
+      <li><span>Para uma bomba hidráulica de R$2.500, como você prefere pagar?<span class="opts">PIX à vista · Boleto · Cartão parcelado · Prazo de 28 dias com nota · Outro</span></span></li>
+      <li><span>Se a peça padrão original custa 40% menos que a genuína da concessionária, o que te faz confiar nela? <span class="opts">Resposta aberta.</span></span></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Bloco 4 · Fechamento</h3>
+    <ol class="q" start="11">
+      <li><span>De 0 a 10, quanto você indicaria a APP para um colega? E por quê? <span class="opts">NPS mais a frase literal.</span></span></li>
+      <li><span>Pode deixar seu WhatsApp e cidade para a gente avisar quando chegar peça para a sua máquina? <span class="opts">Recruta para a lista e para 5 entrevistas de 15 minutos.</span></span></li>
+    </ol>
+  </div>
+
+  <div class="callout"><b>Enquete de stories, uma pergunta só:</b> "Você compraria uma bomba hidráulica pela internet se tivesse garantia de 1 ano e troca grátis se não encaixar?" Sim · Só falando com alguém antes · Não</div>
+
+  <div class="card">
+    <h3>Roteiro de entrevista de 15 min (5 clientes que já compraram)</h3>
+    <ul>
+      <li>Me conta da última vez que uma máquina parou por peça. O que você fez primeiro?</li>
+      <li>Onde procurou, em que ordem? O que te fez desistir de cada lugar?</li>
+      <li>Quando achou a APP, o que te fez confiar, ou não?</li>
+      <li>Se tivesse comprado direto no site, o que teria que estar lá para você clicar em pagar?</li>
+      <li>Quem mais na fazenda participa dessa decisão?</li>
+      <li>Quem mais eu deveria conversar? Sempre fechar com essa.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Lacunas e próximos passos</h2>
+  <ul class="prose">
+    <li><strong>Idade e gênero da audiência</strong> não aparecem no GA4. Ativar Google Signals ou puxar o demográfico do Meta Ads para confirmar o "homem de 35 a 55".</li>
+    <li><strong>ABMRA 9ª pesquisa (2025)</strong>: o relatório completo é pago para não cotistas. Vale conseguir os dados de WhatsApp, YouTube e influência da revenda na decisão de peças.</li>
+    <li><strong>Rodar a pesquisa</strong> com a base de leads e clientes: meta de 30 respostas e 5 entrevistas antes de investir no checkout.</li>
+    <li><strong>Testar no site</strong> prazo por CEP e selo de garantia com NF, medindo início de checkout contra compra.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Fontes</h2>
+  <ul class="srcs">
+    <li>Dados próprios: GA4 propriedade 534365705 (01/01 a 14/09/2026), Shopify Analytics (365 dias), Meta Ads (09 a 14/09/2026).</li>
+    <li>McKinsey, "A mente do agricultor brasileiro" 2024 (n=757), via AgFeed: <a href="https://agfeed.com.br/economia/biologicos-whatsapp-e-pagamento-a-vista-a-mente-do-agricultor-segundo-a-mckinsey/">agfeed.com.br</a></li>
+    <li>McKinsey 2020 e Agrofy, via Dinheiro Rural: <a href="https://dinheirorural.com.br/o-e-commerce-cresce-no-campo">dinheirorural.com.br</a> · Exame: <a href="https://exame.com/agro/amazon-do-agro-brasil-da-salto-de-digitalizacao-na-compra-de-insumos-aponta-mckinsey/">exame.com</a></li>
+    <li>ABMRA, Pesquisa Hábitos do Produtor Rural, 8ª (2021) e 9ª (2025): <a href="https://abmra.org.br/pesquisa-abmra-habitos-do-produtor-rural-abmra/">abmra.org.br</a> · <a href="https://folhaagricola.com.br/2026/05/01/produtor-rural-paulista-amplia-uso-de-capital-proprio-e-redesenha-comportamento-no-campo-aponta-abmra/">folhaagricola.com.br</a></li>
+    <li>Agrofy marketplace "figital": <a href="https://agfeed.com.br/agtech/agrofy-investe-no-marketplace-figital-para-aumentar-conversao-de-produtores-rurais/">agfeed.com.br</a></li>
+    <li>Perfil do produtor 2025: <a href="https://agroadvance.com.br/blog-perfil-do-produtor-rural-brasileiro-2025/">agroadvance.com.br</a> · <a href="https://www.aliare.co/produtor-rural-brasileiro/">aliare.co</a></li>
+    <li>Tendências do mercado de peças 2026: <a href="https://terraparts.com.br/tendencias-do-mercado-de-pecas-agricolas-no-brasil-em-2026/">terraparts.com.br</a></li>
+    <li>Genuína x paralela, pós-venda AGCO: <a href="https://revistarpanews.com.br/tecnologia-agricola-pecas-de-reposicao-genuinas-originais-ou-paralelas/">revistarpanews.com.br</a></li>
+    <li>Barreiras do e-commerce de peças: <a href="https://blog.jacto.com.br/e-commerce-de-pecas-agricolas/">blog.jacto.com.br</a> · <a href="https://www.sopesados.com.br/blog/posts/onde-comprar-pecas-para-maquinas-agricola-4fca0a16c0d8/">sopesados.com.br</a></li>
+  </ul>
+</section>
+
+<footer>APP Agro Peças Padrão · documento interno de marketing · também salvo em util/pesquisa-mercado/PERFIL_COMPRADOR_AGRO_2026-09.md</footer>
+</div>

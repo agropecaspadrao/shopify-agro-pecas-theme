@@ -25,6 +25,7 @@ TAXA_MP     = 0.2082              # 5% cartão + parcelado 12x 16,82% — decis�
 # AGCO/JD/STARA/GTS/FERTI cotam da ADG Plásticos. SOHIPREN não cota (frete já preenchido).
 CEP_ORIGEM = {
     "04_GRECO":      "99025000",  # Agro e Greco Agro Tech — Av. Brasil Oeste 560, Passo Fundo/RS
+    "04_ APPTECH":   "99025000",  # aba renomeada 08/2026 (rebrand Greco→APPTECH), mesma origem
     "03_AGCO":       "99051380",  # ADG Plásticos — Rua Gaspar Martins 2035, Passo Fundo/RS
     "05_JOHN_DEERE": "99051380",
     "06_STARA":      "99051380",
@@ -34,7 +35,7 @@ CEP_ORIGEM = {
 FRETE_DEFAULT = 25.0              # CONFIG C6 — usado quando não há peso/dimensões
 
 # Abas de produto (ordem de processamento) — 08_FERTISYSTEM vazia, mantida por completude
-PRODUCT_SHEETS = ["02_SOHIPREN", "04_GRECO", "03_AGCO", "05_JOHN_DEERE",
+PRODUCT_SHEETS = ["02_SOHIPREN", "04_ APPTECH", "03_AGCO", "05_JOHN_DEERE",
                   "06_STARA", "07_GTS", "08_FERTISYSTEM"]
 NO_QUOTE_SHEETS = {"02_SOHIPREN"}        # frete inbound já preenchido — não recotar
 
@@ -115,6 +116,8 @@ def colmap(ws):
 def iter_data_rows(ws, cm):
     for r in range(DATA_START, ws.max_row + 1):
         sku = ws.cell(row=r, column=cm["sku"]).value
+        if isinstance(sku, float) and sku.is_integer():
+            sku = int(sku)   # célula numérica: evita SKU "200201008.0" (artefato do Excel)
         if sku not in (None, ""):
             yield r, str(sku).strip()
 
@@ -200,6 +203,12 @@ def load_master(wb):
     from openpyxl.utils import get_column_letter as L
     out = []
     for name in PRODUCT_SHEETS:
+        if name not in wb.sheetnames:
+            # tolera renomeação de aba (ex.: 04_GRECO → "04_ APPTECH"): casa pelo prefixo numérico
+            pref = name.split("_")[0] + "_"
+            name = next((s for s in wb.sheetnames if s.startswith(pref)), None)
+            if not name:
+                continue
         ws = wb[name]
         cm = colmap(ws)
         if "sku" not in cm:
@@ -226,6 +235,10 @@ def load_master(wb):
             }
             d["sku_shopify"] = f"{sku}-KIT{kit}" if d["is_kit"] else sku
             base_title = str(d["title"] or "").strip()
+            if d["is_kit"]:
+                # título da planilha pode já trazer "- Kit N unidades" — remove antes de re-anexar
+                base_title = re.sub(r"\s*[-–—]\s*(?:kit\s*)?\d+\s*unidades?\s*$", "", base_title,
+                                    flags=re.I).strip()
             d["titulo_shopify"] = (f"{base_title} — Kit {kit} unidades" if d["is_kit"] else base_title)
             d["skip"] = d["status"] != "active" or not base_title or d["custo"] is None \
                         or "PENDÊNCIA: linha incompleta" in d["obs"] \

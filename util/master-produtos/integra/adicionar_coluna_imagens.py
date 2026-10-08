@@ -15,7 +15,7 @@ SHEET_ID = P.SHEET_ID
 SUP = P.SUP + ['08_FERTISYSTEM']
 COL_HDR = 'Imagens site (assets)'
 
-audit = json.load(open(os.path.join(HERE, "..", "relatorios", "audit_imagens_site_20260804.json")))
+audit = json.load(open(os.path.join(HERE, "..", "relatorios", "audit_imagens_site_20260808.json")))
 site = {}
 for r in audit:
     for k in {r['sku'], r['sku'][:-2] if r['sku'].endswith('.0') else r['sku'], r['sku'] + '.0'}:

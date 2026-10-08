@@ -1,0 +1,38 @@
+alvo,apply,base,categoria,comissao,frete_vendedor,id,liquido,ml_hoje,obs,pct,preco,sku,titulo
+132.9,200,final,MLB456879,20.72,19.05,MLB7006148386,132.9,132.9,,0.12,172.67,A56254,Aro Tampa Reservatorio Central De Sementes
+419.51,200,final,MLB456878,44.01,25.45,MLB7006136330,419.51,419.51,,0.09,488.97,8031-4009,Bico Central 45/50
+13.08,200,final,MLB456879,2.55,5.65,MLB7006136332,13.09,13.08,,0.12,21.29,6424-4028,Bocal Pipoqueira
+2924.82,200,final,MLB457278,404.41,40.85,MLB7006196934,2924.82,2924.82,,0.12,3370.08,5.1305.0565077,Bomba Hidráulica John Deere A-005
+,,,,,,MLB7006136172,,1819.36,sem linha na planilha,,,5.0209.0547219,
+2486.03,200,final,MLB457278,345.93,50.75,MLB7006136166,2486.03,2486.03,,0.12,2882.71,5.0220.0547216,Bomba Hidráulica Massey Ferguson 296-4/297-4/299-4
+1797.64,200,final,MLB457278,382.4,69.35,MLB7006110900,1797.64,1797.64,,0.17,2249.39,5.0220.0547202,Bomba Hidráulica Valtra-valmet 62/65/68/85/86/88/78el
+3.34,200,final,MLB456879,1.5,4.4,MLB7006148428,6.61,3.34,,0.12,12.51,6117-4142,Bucha Do Mancal Pantografico
+80.99,200,final,MLB456879,13.34,16.85,MLB7006148392,81.0,80.99,,0.12,111.19,CQ59313,Caixa De Sementes Mini Hooper
+21.95,200,final,MLB456879,4.0,7.35,MLB7006136350,21.95,21.95,,0.12,33.3,6424-4013,Condutor Adubo Disco Duplo
+17.93,"400 {""cause"":[{""department"":""items"",""cause_id"":339,""type"":""error"",""code"":""item.price.not_modifiable"",""references"":[""price""],""message"":""price is not modifiable.""}],""",final,MLB456879,3.38,6.85,MLB7006148324,17.93,17.93,,0.12,28.16,ACW0551840,Condutor De Sementes Para Sensor
+10.93,200,final,MLB456879,2.26,5.65,MLB7006197032,10.93,10.93,,0.12,18.84,CQ65827,Condutor Jd
+10.27,200,final,MLB456879,2.23,6.05,MLB7006111040,10.27,10.27,,0.12,18.55,CQ54137,Condutor John Deere
+41.48,200,final,MLB456879,6.6,6.95,MLB7006111042,41.49,41.48,,0.12,55.04,AA67780,Condutor John Deere Acrilico
+11.95,200,final,MLB456879,2.46,6.05,MLB7006111044,11.95,11.8,unitário derivado do KIT30,0.12,20.46,CQ73378,Condutor Plantadeira John Deere
+14.38,"400 {""cause"":[{""department"":""items"",""cause_id"":339,""type"":""error"",""code"":""item.price.not_modifiable"",""references"":[""price""],""message"":""price is not modifiable.""}],""",final,MLB456879,2.79,6.05,MLB7006110956,14.38,14.38,,0.12,23.22,33070004,Condutor Reto De Sementes
+9.08,200,final,MLB456879,2.01,5.65,MLB7006136312,9.08,9.08,,0.12,16.74,A75169,Conexão Pipoqueira Jd
+119.66,200,final,MLB456879,19.91,26.35,MLB7006196966,119.66,119.66,,0.12,165.92,ACX3454710,Conjunto Montado Reservatório De Sementes Mecânico
+7.84,"400 {""cause"":[{""department"":""items"",""cause_id"":339,""type"":""error"",""code"":""item.price.not_modifiable"",""references"":[""price""],""message"":""price is not modifiable.""}],""",final,MLB456878,1.13,2.94,MLB7006111104,8.44,5.87,unitário derivado do KIT20; status under_review (preço pode ser bloqueado),0.09,12.51,IPCX03007010,Dedo Molinete Gts
+302.33,200,final,MLB456878,32.79,29.25,MLB7006111008,302.34,302.33,,0.09,364.38,KK31823,Dedo Recolhedor Algodão Grande
+231.03,200,final,MLB456878,25.52,27.05,MLB7006136280,231.04,231.03,,0.09,283.61,KK31824,Dedo Recolhedor Algodão Médio
+192.58,200,final,MLB456878,21.19,21.65,MLB7006136286,192.58,192.58,,0.09,235.42,KK31825,Dedo Recolhedor Algodão Pequeno
+9.98,200,final,MLB456878,1.58,5.95,MLB7006136266,9.98,9.98,,0.09,17.51,H-102724,Dedo Retratil Jd Quadrado
+34.87,200,final,MLB457094,5.76,7.35,MLB7006148366,34.87,34.87,,0.12,47.98,4383934M4,Dobradiça Direita Inferior
+34.87,200,final,MLB457094,5.69,6.85,MLB7006197008,34.87,34.87,,0.12,47.41,4383927M4,Dobradiça Esquerda Inferior
+9.27,200,final,MLB456879,2.08,5.95,MLB7006111054,9.27,9.27,,0.12,17.3,A71321,Engate Condutor Jd
+30.74,200,final,MLB456879,5.17,7.15,MLB7006111068,30.74,30.74,,0.12,43.06,A74430,Engate Hidr. Rapido
+5861.47,200,final,MLB456814,653.68,21.65,MLB7006148300,5861.47,5861.47,,0.1,6536.8,APP141207,Gps Agrícola Gr200
+1334.08,200,final,MLB456879,185.91,29.25,MLB7006148304,1334.08,1334.08,,0.12,1549.24,APP141165,Kit De Iluminação Noturna Pulverização
+7.92,200,final,MLB456879,1.91,6.05,MLB7006148336,7.92,7.92,,0.12,15.88,ACX310603A,Manípulo Pneumático
+10860.08,200,final,MLB442421,1414.22,23.25,MLB7006148312,10860.08,10860.08,,0.115,12297.55,APP142398,Monitor De Fluxo De Sementes App500
+10.88,200,final,MLB456879,2.3,5.95,MLB7006111058,10.88,10.88,,0.12,19.13,A72758,Peneira Mini Hooper
+44.43,200,final,MLB456878,5.07,6.85,MLB7006111084,44.44,44.43,,0.09,56.36,8031-4008,Ponteira Bico
+251.9,200,final,MLB446798,37.83,25.55,MLB7006111134,251.91,251.9,,0.12,315.29,APP142229,Sensor De Semente
+185.83,200,final,MLB456879,28.68,24.45,MLB7006148318,185.83,185.83,,0.12,238.96,ACX3266690,Suporte Do Dosador
+19.77,"400 {""cause"":[{""department"":""items"",""cause_id"":339,""type"":""error"",""code"":""item.price.not_modifiable"",""references"":[""price""],""message"":""price is not modifiable.""}],""",final,MLB456878,2.63,6.85,MLB7006148380,19.78,19.77,,0.09,29.26,N276747,Tampa Algodão
+35.08,200,final,MLB456879,5.73,6.95,MLB7006148332,35.09,35.08,status under_review (preço pode ser bloqueado),0.12,47.77,ACX283890A,Vedação Tubo De Ar

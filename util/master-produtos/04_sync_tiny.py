@@ -160,6 +160,8 @@ def main():
         prod = {
             "sequencia": 1,
             "id": p["id"],
+            # alterar APAGA campo omitido — codigo precisa ir sempre (incidente 01/08/2026)
+            "codigo": det.get("codigo") or p.get("codigo") or d["sku_shopify"],
             "nome": det.get("nome") or p.get("nome"),
             "unidade": det.get("unidade") or "UN",
             "tipo": det.get("tipo") or "P",         # P=produto (obrigatório no alterar)

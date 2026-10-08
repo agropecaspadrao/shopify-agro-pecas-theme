@@ -13,7 +13,9 @@ Regras (decisão 21/07/2026):
   • Linha unit sem kit → cota pacote unitário.
   • Sem peso e sem dims → default R$ 25,00 (pendência já sinalizada em Observações).
 
-Uso:  python3 02_cotar_frete_frenet.py [--dry]
+Uso:  python3 02_cotar_frete_frenet.py [--dry] [--sheets ABA1,ABA2]
+      --sheets limita a cotação às abas listadas (ex.: 08_FERTISYSTEM) —
+      as demais não são recotadas nem têm o frete sobrescrito.
 """
 import csv, json, sys, time, datetime
 import openpyxl
@@ -22,6 +24,7 @@ from common import (XLSX, REL_DIR, CEP_ORIGEM, CEP_DESTINO, FRENET_URL, FRENET_T
                     FRETE_DEFAULT, colmap, load_master)
 
 DRY = "--dry" in sys.argv
+SHEETS = set(sys.argv[sys.argv.index("--sheets") + 1].split(",")) if "--sheets" in sys.argv else None
 TS  = datetime.datetime.now().strftime("%Y%m%d_%H%M")
 CACHE = {}
 API_CALLS = 0
@@ -76,6 +79,8 @@ def main():
     dups = [d for d in master if d["sheet"] in CEP_ORIGEM and d["status"] == "active"
             and d["skip"] and "DUP(sku_shopify)" in d["obs"]]
     rows += dups
+    if SHEETS:
+        rows = [d for d in rows if d["sheet"] in SHEETS]
 
     kit_quotes = {}   # (sheet, sku) -> list[(N, frete)]
     results = []

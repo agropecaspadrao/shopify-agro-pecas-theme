@@ -4,6 +4,8 @@ Chatbot generativo da APP Agro Peças Padrão, construído sobre a API do Claude
 
 **Divisão de atendimento:** de segunda a sexta, das 8h às 18h (Brasília), quem atende o WhatsApp é a **Dai** (humana, pelo aplicativo WhatsApp Business). Fora desse horário, noites, fins de semana e feriados, quem responde é a **Carol** (IA). No chat do site, a Carol atende 24h.
 
+**Modo 24h (`CAROL_24H=1`):** a partir do lançamento do SDR comercial (repositório `app-agente-sdr`), a Carol responde o WhatsApp em qualquer horário e a Dai passa a acompanhar, pelo painel do SDR, somente os atendimentos quentes. Nesse modo o webhook da Meta aponta para o messenger do SDR, que encaminha à Carol tudo o que não for conversa iniciada pelo SDR.
+
 ## O que a Carol sabe
 
 - Catálogo completo da loja, carregado ao vivo de `https://agropecaspadrao.com.br/products.json` (título, SKU, preço, estoque, descrição, tags) e atualizado a cada 30 minutos.

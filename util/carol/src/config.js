@@ -48,6 +48,10 @@ export const config = {
 
   // Horário comercial (fuso de Brasília): seg-sex, 8h às 18h
   timezone: 'America/Sao_Paulo',
+  // Carol 24h: com CAROL_24H=1 ela responde o WhatsApp em qualquer horário
+  // (modo de operação a partir do lançamento do SDR comercial: a Dai passa a
+  // acompanhar só os atendimentos quentes, pelo painel do SDR).
+  atende24h: ['1', 'true', 'sim'].includes(String(process.env.CAROL_24H || '').toLowerCase()),
   businessHourStart: Number(process.env.CAROL_HORA_INICIO || 8),
   businessHourEnd: Number(process.env.CAROL_HORA_FIM || 18),
 

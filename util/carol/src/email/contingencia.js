@@ -6,6 +6,7 @@
 import { config } from '../config.js';
 import { enviar as enviarEmailPadrao } from './transporte.js';
 import { fatiar } from '../util/texto.js';
+import { mascararTelefone } from '../util/telefone.js';
 import { reportarAnomalia as reportarPadrao } from '../alertas/anomalias.js';
 
 /**
@@ -39,7 +40,7 @@ export async function enviarOuContingencia(msg, deps = {}) {
       for (const p of partes) await enviarWhatsApp(numero, p);
       entregues++;
     } catch (e) {
-      console.warn(`[contingencia] WhatsApp para ${numero} falhou: ${e.message}`);
+      console.warn(`[contingencia] WhatsApp para ${mascararTelefone(numero)} falhou: ${e.message}`);
     }
   }
   return { canal: entregues ? 'whatsapp' : 'nenhum', erroEmail, entreguesWhatsApp: entregues };

@@ -45,6 +45,15 @@ test('verificarAnthropic: 401 chave; 400 crédito; 200 ok', async () => {
   assert.equal(ok.estado, 'ok');
 });
 
+test('verificarAnthropic: count_tokens ok NÃO prova crédito; último erro real de crédito = falha', async () => {
+  const r = await V.verificarAnthropic({
+    fetchFn: fetchFalso({ count_tokens: { corpo: { input_tokens: 3 } } }),
+    statusCredito: () => ({ esgotado: true, desde: '2026-10-20T10:00:00Z' }),
+  });
+  assert.equal(r.estado, 'falha');
+  assert.equal(r.tipoAnomalia, 'anthropic_credito');
+});
+
 test('verificarMeta: inválido → falha; válido permanente → ok', async () => {
   const inv = await V.verificarMeta({ fetchFn: fetchFalso({ debug_token: { corpo: { data: { is_valid: false, error: { message: 'logged out' } } } } }) });
   assert.equal(inv.tipoAnomalia, 'meta_token_invalido');

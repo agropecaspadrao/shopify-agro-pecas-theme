@@ -40,8 +40,9 @@ function consolidar(insight) {
   };
 }
 
-async function getJson(fetchFn, url) {
-  const res = await fetchFn(url, { signal: AbortSignal.timeout(20000) });
+// Token no header Authorization (não na query: URL vai para logs de proxy)
+async function getJson(fetchFn, url, token) {
+  const res = await fetchFn(url, { headers: { authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(20000) });
   const corpo = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(`Graph ${res.status}: ${corpo?.error?.message || ''}`);
   return corpo;
@@ -53,12 +54,12 @@ export async function resumoCampanhasMeta({ fetchFn = fetch } = {}) {
   if (!token || !conta) return { configurado: false, motivo: 'META_ACCESS_TOKEN e META_AD_ACCOUNT_ID não configurados' };
 
   const campos = 'spend,impressions,clicks,ctr,cpc,actions';
-  const q = (preset) => `${GRAPH()}/${conta}/insights?fields=${campos}&date_preset=${preset}&access_token=${encodeURIComponent(token)}`;
+  const q = (preset) => `${GRAPH()}/${conta}/insights?fields=${campos}&date_preset=${preset}`;
   try {
     const [ontem, semana, campanhas] = await Promise.all([
-      getJson(fetchFn, q('yesterday')),
-      getJson(fetchFn, q('last_7d')),
-      getJson(fetchFn, `${GRAPH()}/${conta}/campaigns?fields=name,effective_status,daily_budget,insights.date_preset(last_7d){spend,actions,clicks}&effective_status=["ACTIVE"]&limit=25&access_token=${encodeURIComponent(token)}`),
+      getJson(fetchFn, q('yesterday'), token),
+      getJson(fetchFn, q('last_7d'), token),
+      getJson(fetchFn, `${GRAPH()}/${conta}/campaigns?fields=name,effective_status,daily_budget,insights.date_preset(last_7d){spend,actions,clicks}&effective_status=["ACTIVE"]&limit=25`, token),
     ]);
     return {
       configurado: true,

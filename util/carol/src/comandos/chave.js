@@ -1,10 +1,14 @@
 // Palavra-chave semanal dos comandos "/carol".
 //
 // Segurança: a palavra em texto claro só existe (1) no e-mail enviado aos
-// sócios e (2) na memória durante a geração. Em disco fica só o hash scrypt
-// com sal aleatório. Validação com comparação em tempo constante. A palavra
-// anterior continua valendo por 24h após a rotação (janela de transição), e
-// nunca é enviada pelo WhatsApp.
+// sócios, (2) na memória durante a geração e (3) na resposta do painel
+// autenticado quando o e-mail falha. Em disco fica só o hash scrypt com sal
+// aleatório. Validação com comparação em tempo constante. A palavra anterior
+// continua valendo por 24h após a rotação (janela de transição).
+// A palavra NUNCA sai pelo WhatsApp (nem como contingência): o WhatsApp é o
+// canal que ela protege. Se o e-mail falhar, a rotação é desfeita (a palavra
+// atual continua valendo) e os administradores recebem no WhatsApp só o
+// aviso, sem o conteúdo, de que podem gerar pelo painel.
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -12,6 +16,7 @@ import path from 'node:path';
 import { config } from '../config.js';
 import { DATA_DIR } from '../registro.js';
 import { enviarOuContingencia } from '../email/contingencia.js';
+import { semAcentos } from '../util/texto.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'chave-semanal.json');
 const VALIDADE_MS = 7 * 24 * 3600 * 1000;
@@ -41,11 +46,18 @@ function gravar(estado) {
   fs.writeFileSync(ARQUIVO, JSON.stringify(estado), { mode: 0o600 });
 }
 
+/** Volta ao estado anterior a uma rotação (null = não havia palavra). */
+function restaurar(estado) {
+  if (estado) gravar(estado);
+  else {
+    try {
+      fs.unlinkSync(ARQUIVO);
+    } catch {}
+  }
+}
+
 export function normalizar(texto) {
-  return String(texto || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+  return semAcentos(texto)
     .trim()
     .replace(/[\s_]+/g, '-')
     .replace(/-+/g, '-')
@@ -130,15 +142,30 @@ export function textoEmailChave(palavra, validaAte) {
   ].join('\n');
 }
 
+export const AVISO_SEM_EMAIL =
+  'Carol: nao consegui enviar a nova palavra-chave por e-mail (e-mail indisponivel). Por seguranca ela nao sai pelo WhatsApp. ' +
+  'A palavra atual continua valendo. Para gerar uma nova e ve-la na tela, entre no painel do administrador (/admin/painel, cartao Palavra-chave).';
+
 /**
- * Rotaciona e envia por e-mail aos sócios e administradores. Se o e-mail
- * estiver indisponível, cai para o WhatsApp dos administradores (contingência:
- * sem isso os comandos ficariam mortos até o e-mail voltar).
+ * Rotaciona e envia por e-mail aos sócios e administradores.
+ * Se o e-mail estiver indisponível:
+ *   - `exibir: true` (painel/HTTP autenticado com a chave de administrador):
+ *     mantém a rotação e devolve a palavra para ser mostrada UMA vez na tela;
+ *   - senão: desfaz a rotação, avisa os administradores pelo WhatsApp SEM o
+ *     conteúdo e lança erro.
  */
 export async function rotacionarEEnviar(deps = {}) {
+  const anterior = ler();
   const { palavra, validaAte } = rotacionar(deps);
   const para = deps.destinatarios || config.destinatarios.socios;
-  const r = await enviarOuContingencia({ para, assunto: 'Carol: palavra-chave da semana', texto: textoEmailChave(palavra, validaAte) }, deps);
-  if (r.canal === 'nenhum') throw new Error(`palavra-chave gerada mas não entregue: ${r.erroEmail || 'sem canal'}`);
-  return { validaAte, enviadaPara: para, canal: r.canal };
+  const r = await enviarOuContingencia({ para, assunto: 'Carol: palavra-chave da semana', texto: textoEmailChave(palavra, validaAte) }, { ...deps, permitirWhatsApp: false });
+  if (r.canal === 'email') return { validaAte, enviadaPara: para, canal: 'email' };
+  if (deps.exibir) return { validaAte, enviadaPara: [], canal: 'tela', palavra, erroEmail: r.erroEmail };
+  restaurar(anterior);
+  const avisar = deps.avisarAdmins || (async (texto) => {
+    const { enviarTexto } = await import('../whatsapp.js');
+    for (const n of config.admins) await enviarTexto(n, texto).catch(() => {});
+  });
+  await avisar(AVISO_SEM_EMAIL).catch(() => {});
+  throw new Error(`e-mail indisponível (${r.erroEmail || 'sem provedor'}); palavra-chave não rotacionada, a atual continua valendo`);
 }

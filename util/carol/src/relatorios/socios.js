@@ -11,6 +11,7 @@
 import { config } from '../config.js';
 import { montarRelatorio } from '../relatorio.js';
 import { agregarCustos, saldoEstimado } from '../custos.js';
+import { statusCredito } from '../gasto.js';
 import { resumoAnomalias, TIPOS } from '../alertas/anomalias.js';
 import { ultimoEstado, textoSaude, verificarTudo } from '../saude/supervisor.js';
 import { resumoCampanhasMeta, textoCampanhas } from './campanhas.js';
@@ -79,9 +80,12 @@ function blocoCustos(c1, c7) {
   const porMsg = c7.totais.mensagens ? c7.totais.custo / c7.totais.mensagens : 0;
   const projecaoMes = (c7.totais.custo / 7) * 30;
   const linhas = [
-    `Últimas 24h: ${usd(c1.totais.custo)} (${c1.totais.mensagens} msgs). Últimos 7 dias: ${usd(c7.totais.custo)}, ${usd(porMsg)} por mensagem. Projeção mensal: ${usd(projecaoMes)} (${brl(projecaoMes * config.usdBrl)}).`,
+    `Últimas 24h: ${usd(c1.totais.custo)} (${c1.totais.mensagens} msgs respondidas pela IA${c1.totais.falhas ? `, ${c1.totais.falhas} sem resposta por falha` : ''}${c1.totais.silencios ? `, ${c1.totais.silencios} em silêncio` : ''}). Últimos 7 dias: ${usd(c7.totais.custo)}, ${usd(porMsg)} por mensagem. Projeção mensal: ${usd(projecaoMes)} (${brl(projecaoMes * config.usdBrl)}).`,
   ];
-  if (saldo?.desatualizado) {
+  const credito = statusCredito();
+  if (credito.esgotado) {
+    linhas.push(`CRÉDITO DA ANTHROPIC ESGOTADO desde ${dataBRT(credito.desde)}: a Carol não consegue responder com IA (clientes recebem contingência). Recarregar em console.anthropic.com e mandar /carol saldo <valor>.`);
+  } else if (saldo?.desatualizado) {
     linhas.push(`Saldo na Anthropic: a Carol segue respondendo normalmente, então houve recarga depois da base cadastrada (${usd(saldo.credito)} em ${dataBRT(saldo.desde, false)}). Para voltar a estimar a duração, mande /carol saldo <valor do console>.`);
   } else if (saldo) {
     const dias = projecaoMes > 0 ? Math.round(saldo.restante / (projecaoMes / 30)) : null;

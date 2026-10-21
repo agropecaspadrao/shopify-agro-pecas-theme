@@ -5,8 +5,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listarPeriodo, DATA_DIR } from './registro.js';
+import crypto from 'node:crypto';
+import { listarPeriodo, DATA_DIR, ehAtendimento, ehRespostaIA, ehPendente } from './registro.js';
 import { config } from './config.js';
+import { gravarJsonAtomico } from './util/arquivo.js';
+import { limparMarcadores, nomeDoCliente, anuncioDaMensagem, semPrefixoNome } from './util/marcadores.js';
+import { mascararTelefone } from './util/telefone.js';
+import { gastoTotal, somarRegistro, statusCredito, baseVariavel } from './gasto.js';
 
 // Extrato manual do crédito (recargas e gastos anteriores à medição
 // automática) — editar src/extrato.json ao recarregar créditos.
@@ -41,31 +46,19 @@ function diaBRT(iso) {
   return new Date(iso).toLocaleDateString('sv', { timeZone: config.timezone }); // YYYY-MM-DD
 }
 
-function rotuloCliente(sessao) {
-  if (sessao.startsWith('wa:')) return `WhatsApp ${sessao.slice(3)}`;
+// Rótulo para o dashboard: telefone mascarado (a exportação usa o número completo)
+function rotuloCliente(sessao, { completo = false } = {}) {
+  if (sessao.startsWith('wa:')) return `WhatsApp ${completo ? sessao.slice(3) : mascararTelefone(sessao.slice(3))}`;
   if (sessao.startsWith('site:')) return `Site ${sessao.slice(5, 17)}`;
   if (sessao === 'sistema:resumo') return 'Sistema: resumos p/ WhatsApp';
   if (sessao === 'sistema:relatorio') return 'Sistema: relatório diário';
+  if (sessao === 'sistema:memoria') return 'Sistema: memória (episódios)';
   return sessao;
 }
 
-// Nome do cliente quando informado no prefixo "[Cliente: Fulano]" da mensagem
-function nomeDoCliente(mensagem) {
-  const m = String(mensagem || '').match(/^\[Cliente: ([^\]]+)\]/);
-  return m ? m[1] : '';
-}
-
-// Título do anúncio quando o cliente chegou por click-to-WhatsApp
-function anuncioDaMensagem(mensagem) {
-  const m = String(mensagem || '').match(/\[Cliente chegou clicando no anúncio "([^"]+)"/);
-  return m ? m[1] : '';
-}
-
-// Remove os marcadores internos de contexto para exibir só o que o cliente disse
-function limparMarcadores(mensagem) {
-  return String(mensagem || '')
-    .replace(/\[(Cliente:|Cliente chegou clicando no anúncio|Cliente consultou o produto|Mensagem de voz do cliente)[^\]]*\]\s*/gi, '')
-    .trim();
+// Identificador opaco da conversa para o HTML do dashboard (não expõe o telefone)
+function idOpaco(sessao) {
+  return crypto.createHash('sha256').update(String(sessao)).digest('hex').slice(0, 16);
 }
 
 function horaBRT(iso) {
@@ -98,12 +91,17 @@ export function agregarCustos(dias = 7) {
   const fim = new Date();
   const inicio = new Date(fim.getTime() - dias * 24 * 60 * 60 * 1000);
   const entradas = listarPeriodo(inicio, fim);
-  const atendimento = entradas.filter((e) => e.tipo !== 'sistema');
+  const atendimento = entradas.filter(ehAtendimento);
 
   const totais = {
     custo: 0,
     custoSistema: 0,
-    mensagens: atendimento.length,
+    // "respondidas pela Carol": só respostas da IA que chegaram ao cliente
+    mensagens: atendimento.filter(ehRespostaIA).length,
+    // cliente sem resposta da Carol (falha da IA, silêncio, aviso fixo, envio que não saiu)
+    falhas: atendimento.filter((e) => e.tipo === 'falha' || (!e.tipo && e.entregue === false)).length,
+    silencios: atendimento.filter((e) => e.tipo === 'silencio').length,
+    respostasEquipe: atendimento.filter((e) => e.tipo === 'humano').length,
     semCusto: 0, // registros antigos, gravados antes da medição de custo
     tokens: { entrada: 0, saida: 0, cacheLeitura: 0, cacheEscrita: 0 },
   };
@@ -112,7 +110,7 @@ export function agregarCustos(dias = 7) {
 
   for (const e of entradas) {
     const custo = typeof e.custo === 'number' ? e.custo : 0;
-    if (typeof e.custo !== 'number' && e.tipo !== 'sistema') totais.semCusto++;
+    if (typeof e.custo !== 'number' && ehRespostaIA(e)) totais.semCusto++;
     totais.custo += custo;
     if (e.tipo === 'sistema') totais.custoSistema += custo;
     for (const k of Object.keys(totais.tokens)) totais.tokens[k] += e.uso?.[k] || 0;
@@ -120,11 +118,11 @@ export function agregarCustos(dias = 7) {
     const dia = diaBRT(e.ts);
     const d = porDia.get(dia) || { dia, custo: 0, mensagens: 0 };
     d.custo += custo;
-    if (e.tipo !== 'sistema') d.mensagens++;
+    if (ehRespostaIA(e)) d.mensagens++;
     porDia.set(dia, d);
 
     const c = conversas.get(e.sessao) || {
-      sessao: e.sessao,
+      sessao: idOpaco(e.sessao),
       cliente: rotuloCliente(e.sessao),
       canal: e.canal,
       nome: '',
@@ -142,7 +140,8 @@ export function agregarCustos(dias = 7) {
     if (!c.nome) c.nome = nomeDoCliente(e.mensagem);
     if (!c.origemAnuncio) c.origemAnuncio = anuncioDaMensagem(e.mensagem);
     c.ultimaTs = e.ts;
-    c.ultimaMensagem = String(e.mensagem || '').replace(/^\[Cliente: [^\]]+\] /, '').slice(0, 120);
+    if (e.mensagem) c.ultimaMensagem = semPrefixoNome(e.mensagem).slice(0, 120);
+    c.pendente = ehPendente(e) ? e.tipo || 'nao_entregue' : e.tipo === 'humano' || ehRespostaIA(e) ? '' : c.pendente || '';
     conversas.set(e.sessao, c);
   }
 
@@ -155,6 +154,7 @@ export function agregarCustos(dias = 7) {
   const anunciosMap = new Map();
   let audios = 0;
   for (const e of atendimento) {
+    if (e.tipo === 'humano') continue; // resposta da equipe não é procura do cliente
     porHora[horaBRT(e.ts)].mensagens++;
     if (porCanal[e.canal]) porCanal[e.canal].mensagens++;
     const ad = anuncioDaMensagem(e.mensagem);
@@ -173,10 +173,10 @@ export function agregarCustos(dias = 7) {
     .map((a) => ({ ...a, leads: a.leads.size }))
     .sort((a, b) => b.leads - a.leads);
 
-  // Conversas que pararam no comecinho: candidatas a follow-up da equipe
+  // Conversas que pararam no comecinho ou ficaram sem resposta: follow-up da equipe
   const acompanhar = conversasClientes
-    .filter((c) => c.mensagens <= 2)
-    .sort((a, b) => b.ultimaTs.localeCompare(a.ultimaTs));
+    .filter((c) => c.mensagens <= 2 || c.pendente)
+    .sort((a, b) => (b.pendente ? 1 : 0) - (a.pendente ? 1 : 0) || b.ultimaTs.localeCompare(a.ultimaTs));
 
   // preenche dias sem movimento para o gráfico não "pular" datas
   const listaDias = [];
@@ -188,7 +188,7 @@ export function agregarCustos(dias = 7) {
   const rankingConversas = [...conversas.values()].sort((a, b) => b.custo - a.custo);
 
   const mensagensCaras = atendimento
-    .filter((e) => typeof e.custo === 'number')
+    .filter((e) => typeof e.custo === 'number' && e.custo > 0)
     .sort((a, b) => b.custo - a.custo)
     .slice(0, 10)
     .map((e) => ({
@@ -197,7 +197,7 @@ export function agregarCustos(dias = 7) {
       canal: e.canal,
       custo: e.custo,
       uso: e.uso || null,
-      mensagem: String(e.mensagem || '').slice(0, 120),
+      mensagem: limparMarcadores(e.mensagem).slice(0, 120),
     }));
 
   // Lista detalhada, mensagem a mensagem (mais recentes primeiro), para a
@@ -212,16 +212,18 @@ export function agregarCustos(dias = 7) {
       nome: nomeDoCliente(e.mensagem),
       canal: e.canal,
       custo: typeof e.custo === 'number' ? e.custo : null,
-      mensagem: String(e.mensagem || '').replace(/^\[Cliente: [^\]]+\] /, '').slice(0, 160),
-      resposta: String(e.resposta || '').slice(0, 220),
+      mensagem: semPrefixoNome(e.mensagem).slice(0, 160),
+      resposta: (e.tipo === 'humano' ? '[equipe] ' : e.tipo === 'silencio' ? '[sem resposta: silêncio] ' : e.tipo === 'falha' ? '[falha da IA] ' : '') + String(e.resposta || '').slice(0, 220),
     }));
 
   // ── Conversas completas para a aba "Conversas" do dashboard ──────────────
-  // Cada registro é um par cliente+Carol. Os sinais de possível perda de
-  // contexto espelham as regras do sessions.js: TTL de 12h e janela de 30
-  // mensagens (15 pares). Reapresentação no meio da conversa indica histórico
-  // vazio na hora da resposta (reinício do serviço ou sessão expirada).
-  const TTL_SESSAO_MS = 12 * 60 * 60 * 1000;
+  // Cada registro é um par cliente+Carol. Os sinais seguem a memória de
+  // conversa (src/memoria): voltar depois de 12h abre conversa nova COM
+  // memória (episódios de 7 dias + ficha), então só conta como perda de
+  // contexto o intervalo de mais de 7 dias ou a reapresentação sem memória
+  // (turno sem o campo `memoria`). Acima de 30 mensagens (15 pares) as mais
+  // antigas viram resumo parcial.
+  const GAP_PERDA_MS = 7 * 24 * 60 * 60 * 1000;
   const LIMITE_PARES = 15;
   const porSessaoCompleta = new Map();
   for (const e of atendimento) {
@@ -233,11 +235,14 @@ export function agregarCustos(dias = 7) {
       let resets = 0;
       const itens = msgs.map((e, i) => {
         const flags = [];
-        if (i > 0 && new Date(e.ts) - new Date(msgs[i - 1].ts) > TTL_SESSAO_MS) flags.push('sessao_expirada');
-        if (i > 0 && /(aqui é a carol|sou a carol)/i.test(String(e.resposta || '').slice(0, 160))) flags.push('reapresentacao');
+        if (i > 0 && new Date(e.ts) - new Date(msgs[i - 1].ts) > GAP_PERDA_MS) flags.push('sessao_expirada');
+        if (e.memoria === 'retomada') flags.push('retomada');
+        if (i > 0 && !e.tipo && !e.memoria && /(aqui é a carol|sou a carol)/i.test(String(e.resposta || '').slice(0, 160))) flags.push('reapresentacao');
         if (i === LIMITE_PARES) flags.push('janela_cheia');
         if (String(e.mensagem || '').includes('[Mensagem de voz do cliente')) flags.push('audio');
-        if (String(e.resposta || '').startsWith('Desculpe, não consegui processar')) flags.push('falha');
+        if (e.tipo === 'falha' || e.entregue === false || String(e.resposta || '').startsWith('Desculpe, não consegui processar')) flags.push('falha');
+        if (e.tipo === 'silencio') flags.push('silencio');
+        if (e.tipo === 'humano') flags.push('humano');
         if (flags.includes('sessao_expirada') || flags.includes('reapresentacao')) resets++;
         return {
           ts: e.ts,
@@ -247,9 +252,9 @@ export function agregarCustos(dias = 7) {
           flags,
         };
       });
-      const agg = conversas.get(sessao);
+      const agg = conversas.get(sessao); // chave = sessão real; o campo exposto é opaco
       return {
-        sessao,
+        sessao: idOpaco(sessao),
         cliente: rotuloCliente(sessao),
         canal: msgs[0].canal,
         nome: agg?.nome || '',
@@ -376,52 +381,55 @@ function lerSaldoManual() {
 
 /**
  * Registra o saldo atual do console.anthropic.com. O gasto passa a ser
- * contado a partir de agora. Não precisa de deploy nem de mexer no Railway.
+ * contado a partir de agora (guarda o contador de gasto deste momento).
+ * Não precisa de deploy nem de mexer no Railway.
  */
 export function definirSaldo(usd, { por = null, agora = Date.now } = {}) {
   const v = Number(String(usd).replace(',', '.'));
   if (!Number.isFinite(v) || v < 0 || v > 100000) throw new Error('valor de saldo inválido');
-  const reg = { usd: v, desde: new Date(agora()).toISOString(), por };
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(ARQ_SALDO, JSON.stringify(reg, null, 2));
+  const reg = { usd: v, desde: new Date(agora()).toISOString(), por, gastoNaBase: gastoTotal() };
+  gravarJsonAtomico(ARQ_SALDO, reg);
   return reg;
 }
 
 /**
  * Saldo ESTIMADO do crédito Anthropic: crédito sincronizado (saldo.json, ou
- * CAROL_CREDITO_USD na data CAROL_CREDITO_DESDE) menos tudo que a Carol
- * registrou desde então. O saldo oficial fica no console.anthropic.com (a API
- * não expõe saldo) — atualize com `/carol saldo <valor>`.
+ * CAROL_CREDITO_USD na data CAROL_CREDITO_DESDE) menos o que o contador
+ * persistente de gasto (gasto.js) somou desde então. O saldo oficial fica no
+ * console.anthropic.com (a API não expõe saldo); atualize com `/carol saldo <valor>`.
+ * Não relê o registro: O(1) por resposta e não "sobe" quando a limpeza de 90
+ * dias apaga arquivos antigos.
  */
 export function saldoEstimado() {
-  const manual = lerSaldoManual();
-  const credito = manual ? manual.usd : config.creditoUsd;
-  const desdeStr = manual ? manual.desde : config.creditoDesde;
-  if (!(credito > 0)) return null;
-  const fim = new Date(Date.now() + 1); // inclui o lançamento deste mesmo milissegundo
-  const desde = desdeStr
-    ? new Date(desdeStr)
-    : new Date(fim.getTime() - 30 * 24 * 60 * 60 * 1000);
-  // Se o gasto registrado passou do crédito e a Carol AINDA fez chamadas pagas
-  // com sucesso depois disso, a API aceitou — houve recarga que não foi
-  // informada. O saldo real é desconhecido; marca como desatualizado em vez
-  // de afirmar US$ 0,00.
-  let gasto = 0;
-  let esgotouEm = null;
-  let pagasDepois = 0;
-  for (const e of listarPeriodo(desde, fim)) {
-    if (typeof e.custo !== 'number' || e.custo <= 0) continue;
-    if (esgotouEm) pagasDepois++;
-    gasto += e.custo;
-    if (!esgotouEm && gasto >= credito) esgotouEm = e.ts;
+  let base = lerSaldoManual();
+  let origem = 'painel';
+  if (base && typeof base.gastoNaBase !== 'number') {
+    // saldo.json anterior ao contador: calcula a base uma única vez e grava
+    base = { ...base, gastoNaBase: gastoTotal() - somarRegistro(Date.parse(base.desde)) };
+    try {
+      gravarJsonAtomico(ARQ_SALDO, base);
+    } catch {}
   }
+  if (!base) {
+    if (!(config.creditoUsd > 0)) return null;
+    const b = baseVariavel(config.creditoUsd, config.creditoDesde);
+    base = { usd: b.credito, desde: b.desde, gastoNaBase: b.gastoNaBase };
+    origem = 'variavel';
+  }
+  const credito = base.usd;
+  if (!(credito > 0)) return null;
+  const gasto = Math.max(0, gastoTotal() - base.gastoNaBase);
+  const cred = statusCredito();
   return {
     credito,
-    desde: desde.toISOString(),
+    desde: new Date(base.desde).toISOString(),
     gasto,
     restante: Math.max(0, credito - gasto),
-    desatualizado: pagasDepois > 0,
-    esgotouEm,
+    // Gastou mais que o crédito e a API seguiu aceitando: houve recarga não informada
+    desatualizado: gasto > credito && !cred.esgotado,
+    origem,
+    creditoEsgotado: cred.esgotado,
+    esgotadoDesde: cred.desde,
   };
 }
 
@@ -454,7 +462,7 @@ function campoCSV(v) {
 export function exportarAtendimentos(dias = 7, formato = 'csv') {
   const fim = new Date();
   const inicio = new Date(fim.getTime() - dias * 24 * 60 * 60 * 1000);
-  const entradas = listarPeriodo(inicio, fim).filter((e) => e.tipo !== 'sistema');
+  const entradas = listarPeriodo(inicio, fim).filter(ehAtendimento);
   const base = `carol-conversas-${dias}d-${fim.toISOString().slice(0, 10)}`;
 
   if (formato === 'json') {
@@ -463,14 +471,14 @@ export function exportarAtendimentos(dias = 7, formato = 'csv') {
 
   if (formato === 'csv') {
     const cab = [
-      'data_hora_brasilia', 'canal', 'sessao', 'cliente', 'origem_anuncio',
+      'data_hora_brasilia', 'canal', 'sessao', 'cliente', 'origem_anuncio', 'tipo', 'entregue',
       'mensagem_cliente', 'resposta_carol', 'custo_usd',
       'tokens_entrada', 'tokens_saida', 'tokens_cache_leitura', 'tokens_cache_escrita', 'chamadas_api', 'modelo',
     ];
     const linhas = entradas.map((e) =>
       [
-        dataHoraBRT(e.ts), e.canal, e.sessao, nomeDoCliente(e.mensagem), anuncioDaMensagem(e.mensagem),
-        String(e.mensagem || '').replace(/^\[Cliente: [^\]]+\] /, ''), e.resposta || '',
+        dataHoraBRT(e.ts), e.canal, e.sessao, nomeDoCliente(e.mensagem), anuncioDaMensagem(e.mensagem), e.tipo || 'ia', e.entregue === false ? 'nao' : 'sim',
+        semPrefixoNome(e.mensagem), e.resposta || '',
         typeof e.custo === 'number' ? e.custo.toFixed(6).replace('.', ',') : '',
         e.uso?.entrada ?? '', e.uso?.saida ?? '', e.uso?.cacheLeitura ?? '', e.uso?.cacheEscrita ?? '', e.uso?.chamadas ?? '', e.modelo || '',
       ].map(campoCSV).join(';')
@@ -491,12 +499,20 @@ export function exportarAtendimentos(dias = 7, formato = 'csv') {
     const custo = msgs.reduce((s, m) => s + (typeof m.custo === 'number' ? m.custo : 0), 0);
     const linhas = msgs.flatMap((m) => {
       const quando = dataHoraBRT(m.ts);
-      const texto = String(m.mensagem || '').replace(/^\[Cliente: [^\]]+\] /, '');
-      return [`[${quando}] CLIENTE: ${texto}`, `[${quando}] CAROL: ${m.resposta || ''}`, ''];
+      const texto = semPrefixoNome(m.mensagem);
+      const linhas = [];
+      if (m.tipo === 'humano') linhas.push(`[${quando}] EQUIPE (app): ${m.resposta || ''}`);
+      else {
+        linhas.push(`[${quando}] CLIENTE: ${texto}`);
+        if (m.tipo === 'silencio') linhas.push(`[${quando}] (sem resposta: ${m.motivo || 'silêncio'})`);
+        else linhas.push(`[${quando}] ${m.tipo === 'falha' ? 'CAROL (contingência, IA falhou)' : 'CAROL'}: ${m.resposta || ''}${m.entregue === false ? ' [NÃO ENTREGUE]' : ''}`);
+      }
+      linhas.push('');
+      return linhas;
     });
     return [
       '='.repeat(70),
-      `CONVERSA ${i + 1}: ${rotuloCliente(sessao)}${nome ? ` (${nome})` : ''}`,
+      `CONVERSA ${i + 1}: ${rotuloCliente(sessao, { completo: true })}${nome ? ` (${nome})` : ''}`,
       `Canal: ${msgs[0].canal} · ${msgs.length} mensage${msgs.length === 1 ? 'm' : 'ns'} · custo US$ ${custo.toFixed(4)}`,
       ...(anuncio ? [`Origem: anúncio "${anuncio}"`] : []),
       '='.repeat(70),

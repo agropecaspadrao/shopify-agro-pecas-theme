@@ -2,26 +2,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config } from './config.js';
+import { normalizar } from './util/texto.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SPECS_PATH = path.join(here, '..', 'knowledge', 'specs.json');
 
-// Recarga só pela agenda (3x/dia: 6h, 12h e 18h BRT); sob demanda apenas se a memória estiver vazia
-const REFRESH_MS = Infinity;
+// Recarga só pela agenda (3x/dia: 6h, 12h e 18h BRT); sob demanda apenas se a
+// memória estiver vazia, com uma única carga em andamento por vez, timeout
+// por página e no máximo uma tentativa por minuto (catálogo fora do ar não
+// pode fazer cada mensagem esperar um download que não vem).
+export const TIMEOUT_PAGINA_MS = 15000;
+export const INTERVALO_TENTATIVA_MS = 60 * 1000;
 
 let produtos = [];        // itens normalizados
 let porCodigo = new Map(); // código normalizado -> produto
 let indiceTexto = '';      // listagem compacta injetada no system prompt
 let specsPorSku = new Map();
 let ultimaCarga = 0;
+let ultimaTentativa = 0;
+let cargaEmAndamento = null;
 
-const normalizar = (s) =>
-  String(s || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
 
 const normalizarCodigo = (s) => normalizar(s).replace(/\s+/g, '');
 
@@ -59,11 +59,11 @@ function buscarSpecs(skus) {
   return null;
 }
 
-async function baixarProdutos() {
+async function baixarProdutos(fetchFn) {
   const todos = [];
   for (let page = 1; page <= 6; page++) {
     const url = `${config.shopUrl}/products.json?limit=250&page=${page}`;
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
+    const res = await fetchFn(url, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(TIMEOUT_PAGINA_MS) });
     if (!res.ok) throw new Error(`Falha ao baixar catálogo (${res.status}) em ${url}`);
     const { products = [] } = await res.json();
     todos.push(...products);
@@ -72,11 +72,53 @@ async function baixarProdutos() {
   return todos;
 }
 
-export async function carregarCatalogo({ forcar = false } = {}) {
-  if (!forcar && produtos.length && Date.now() - ultimaCarga < REFRESH_MS) return;
+/**
+ * Carrega o catálogo. Lança em caso de falha (a agenda registra). Duas
+ * chamadas ao mesmo tempo compartilham a mesma carga.
+ */
+export function carregarCatalogo({ forcar = false, fetchFn = (...a) => fetch(...a), agora = Date.now } = {}) {
+  if (!forcar && produtos.length) return Promise.resolve();
+  if (cargaEmAndamento) return cargaEmAndamento;
+  ultimaTentativa = agora();
+  cargaEmAndamento = baixarECarregar(fetchFn, agora).finally(() => {
+    cargaEmAndamento = null;
+  });
+  return cargaEmAndamento;
+}
+
+/**
+ * Para o atendimento: garante o catálogo se possível, sem nunca lançar.
+ * Catálogo vazio e carga recente que falhou: segue sem catálogo (a Carol
+ * responde e pede o código), tentando de novo no máximo 1x por minuto.
+ */
+export async function garantirCatalogo({ fetchFn, agora = Date.now, reportar } = {}) {
+  if (produtos.length) return true;
+  if (!cargaEmAndamento && agora() - ultimaTentativa < INTERVALO_TENTATIVA_MS) return false;
+  try {
+    await carregarCatalogo({ fetchFn, agora });
+    return true;
+  } catch (e) {
+    console.warn(`[catalogo] sem catálogo, respondendo sem ele: ${e.message}`);
+    const r = reportar || (async (ev) => (await import('./alertas/anomalias.js')).reportarAnomalia(ev));
+    r({ tipo: 'catalogo_falha', detalhe: `Catálogo vazio e a carga falhou: ${e.message}. A Carol responde sem catálogo.` }).catch(() => {});
+    return false;
+  }
+}
+
+/** Só para testes: esquece o catálogo em memória. */
+export function _zerarCatalogo() {
+  produtos = [];
+  porCodigo = new Map();
+  indiceTexto = '';
+  ultimaCarga = 0;
+  ultimaTentativa = 0;
+  cargaEmAndamento = null;
+}
+
+async function baixarECarregar(fetchFn, agora) {
   carregarSpecs();
 
-  const brutos = await baixarProdutos();
+  const brutos = await baixarProdutos(fetchFn);
   const itens = [];
   const mapa = new Map();
 
@@ -126,12 +168,12 @@ export async function carregarCatalogo({ forcar = false } = {}) {
       return `- ${cod} | ${i.titulo} | ${preco}`;
     })
     .join('\n');
-  ultimaCarga = Date.now();
+  ultimaCarga = agora();
   console.log(`[catalogo] catálogo carregado: ${itens.length} produtos`);
 }
 
 export function catalogoResumo() {
-  return indiceTexto;
+  return indiceTexto || '(catálogo indisponível no momento: use as ferramentas de busca; se não encontrar, peça o código da peça ou uma foto e diga que a equipe confirma)';
 }
 
 /** Estado do catálogo em memória (para o supervisor de saúde). */

@@ -5,6 +5,9 @@
 # Uso: ./scripts/horario_railway.sh 20   (pausa até as 20h)
 #      ./scripts/horario_railway.sh 18   (volta ao padrão)
 # Lê RAILWAY_TOKEN do .env da raiz do repositório, como o deploy_railway.sh.
+# ATENÇÃO: se o horário já foi salvo no painel (/admin/painel), a variável NÃO
+# tem efeito (vale DATA_DIR/horario.json). Prefira o painel; para voltar a
+# valer a variável, use "Voltar ao padrão do servidor" no painel.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 HORA="${1:?informe a hora de fim (ex.: 20)}"

@@ -27,6 +27,7 @@ export async function transcreverAudio(buffer, mime = 'audio/ogg') {
     method: 'POST',
     headers: { authorization: `Bearer ${config.groqApiKey}` },
     body: form,
+    signal: AbortSignal.timeout(30000),
   });
   if (!res.ok) {
     const erro = await res.text().catch(() => '');

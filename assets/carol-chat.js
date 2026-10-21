@@ -82,6 +82,7 @@
         var texto = resumo
           ? 'Ola! Estava conversando com a Carol no site. Contexto: ' + resumo
           : 'Ola! Estava conversando com a Carol no site da Agro Pecas Padrao e quero continuar por aqui.';
+        if (window.appWaRef) texto = window.appWaRef(texto);
         window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(texto), '_blank', 'noopener');
         btnWhats.disabled = false;
       };

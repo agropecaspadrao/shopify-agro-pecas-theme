@@ -1,4 +1,5 @@
 import { config } from './config.js';
+import { carolAtende, emExpediente, proximaMudanca, descreverExpediente, textoQuando, obterHorario } from './horarioConfig.js';
 
 const fmt = new Intl.DateTimeFormat('pt-BR', {
   timeZone: config.timezone,
@@ -20,40 +21,56 @@ function partes(data = new Date()) {
   };
 }
 
-const DIAS_UTEIS = new Set(['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira']);
-
-// "Horário comercial" aqui significa "a Dai está atendendo e a Carol deve
-// ficar em silêncio". Com CAROL_24H=1 esse intervalo deixa de existir: a Carol
-// responde sempre, e a Dai acompanha pelo SDR os atendimentos que esquentam.
-export function horarioComercial(data = new Date()) {
-  if (config.atende24h) return false;
-  const { diaSemana, hora } = partes(data);
-  return DIAS_UTEIS.has(diaSemana) && hora >= config.businessHourStart && hora < config.businessHourEnd;
+// "Horário comercial" aqui significa "a Carol deve ficar em silêncio no
+// WhatsApp" (a equipe humana atende). A regra vem do painel (horarioConfig.js):
+// 24h, só fora do expediente (padrão antigo), só no expediente ou janelas
+// personalizadas. O chat do site não consulta esta função: é 24h sempre.
+export function horarioComercial(data = new Date(), cfg = obterHorario()) {
+  return !carolAtende(data, cfg);
 }
 
 /** Janela de expediente da equipe humana, independente de quem responde. */
-export function expedienteDai(data = new Date()) {
-  const { diaSemana, hora } = partes(data);
-  return DIAS_UTEIS.has(diaSemana) && hora >= config.businessHourStart && hora < config.businessHourEnd;
+export function expedienteDai(data = new Date(), cfg = obterHorario()) {
+  return emExpediente(data, cfg);
 }
 
-export function contextoHorario(data = new Date()) {
+export function contextoHorario(data = new Date(), cfg = obterHorario()) {
   const { texto, hora } = partes(data);
-  const dentro = horarioComercial(data);
+  const dentro = horarioComercial(data, cfg);
   const saudacao = hora >= 5 && hora < 12 ? 'Bom dia' : hora >= 12 && hora < 18 ? 'Boa tarde' : 'Boa noite';
+  const exp = descreverExpediente(cfg);
+  const t = new Date(data).getTime();
+  const noExpediente = expedienteDai(data, cfg);
+  const retorno = noExpediente ? null : proximaMudanca(data, { cfg, tipo: 'expediente' });
+  const quandoVolta = retorno ? textoQuando(retorno.em, t) : 'no próximo dia útil';
+
   let situacao;
-  if (config.atende24h) {
-    situacao = expedienteDai(data)
-      ? `Agora é ${texto}. A Carol atende o WhatsApp em qualquer horário; a equipe comercial (Dai) está em expediente (segunda a sexta, 8h às 18h) e assume os atendimentos que precisarem de negociação ou orçamento.`
-      : `Agora é ${texto}. A Carol atende o WhatsApp em qualquer horário; a equipe comercial (Dai) retorna no próximo dia útil a partir das 8h para negociação e orçamentos.`;
+  if (dentro) {
+    // Carol em silêncio no WhatsApp: quem responde por lá é a equipe.
+    situacao = noExpediente
+      ? `Agora é ${texto}. Estamos DENTRO do horário comercial (${exp}): a atendente humana Dai está disponível no WhatsApp.`
+      : `Agora é ${texto}. Neste horário o WhatsApp é atendido pela equipe humana (Dai), não pela Carol. Expediente da equipe: ${exp}; a equipe retorna ${quandoVolta}.`;
+  } else if (noExpediente) {
+    situacao = `Agora é ${texto}. A Carol atende o WhatsApp neste horário; a equipe comercial (Dai) está em expediente (${exp}) e assume os atendimentos que precisarem de negociação ou orçamento.`;
   } else {
-    situacao = dentro
-      ? `Agora é ${texto}. Estamos DENTRO do horário comercial (segunda a sexta, 8h às 18h): a atendente humana Dai está disponível no WhatsApp.`
-      : `Agora é ${texto}. Estamos FORA do horário comercial (segunda a sexta, 8h às 18h): a Carol é quem atende. A Dai retorna no próximo dia útil a partir das 8h.`;
+    situacao = `Agora é ${texto}. Estamos FORA do horário comercial (${exp}): a Carol é quem atende. A equipe comercial (Dai) retorna ${quandoVolta} para negociação e orçamentos.`;
   }
   return {
     dentro,
     saudacao,
     texto: `${situacao} Saudação correta para este horário: "${saudacao}".`,
   };
+}
+
+/**
+ * Quando a equipe responde, para as mensagens fixas ao cliente (áudio,
+ * mídia, contingência), seguindo a regra em vigor em vez de "seg a sex, 8h
+ * às 18h" fixo. Ex.: "em seguida" (no expediente) ou "a partir de amanhã às
+ * 08:00 (expediente: segunda a sexta, 8h às 18h)".
+ */
+export function quandoEquipeResponde(data = new Date(), cfg = obterHorario()) {
+  if (expedienteDai(data, cfg)) return 'em seguida';
+  const volta = proximaMudanca(data, { cfg, tipo: 'expediente' });
+  const exp = descreverExpediente(cfg);
+  return volta ? `a partir de ${textoQuando(volta.em, new Date(data).getTime())} (expediente: ${exp})` : `no próximo expediente (${exp})`;
 }

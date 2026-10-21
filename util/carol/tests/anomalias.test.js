@@ -71,7 +71,7 @@ test('canaisPara: crítica = e-mail + WhatsApp, alta = e-mail, média = nada', (
 
 test('deduplica pelo tipo dentro da janela e volta a avisar depois', async () => {
   const c = canais();
-  const agora = relogio(Date.now()); // listarAnomalias corta pelas últimas 48h reais
+  const agora = relogio(Date.parse('2026-09-15T12:00:00Z')); // relógio injetado também na listagem
   const deps = { ...c.deps, agora };
   assert.equal((await reportarAnomalia({ tipo: 'webhook_erro', detalhe: '1' }, deps)).enviada, true);
   assert.equal((await reportarAnomalia({ tipo: 'webhook_erro', detalhe: '2' }, deps)).suprimida, true);
@@ -79,7 +79,7 @@ test('deduplica pelo tipo dentro da janela e volta a avisar depois', async () =>
   agora.avancar(JANELA_MS.alta + 1000);
   assert.equal((await reportarAnomalia({ tipo: 'webhook_erro', detalhe: '4' }, deps)).enviada, true);
   assert.equal(c.emails.length, 3);
-  const lista = listarAnomalias(48);
+  const lista = listarAnomalias(48, { agora });
   assert.equal(lista.length, 4, 'as suprimidas também ficam no histórico');
   assert.equal(lista.filter((a) => a.suprimida).length, 1);
 });
@@ -110,12 +110,12 @@ test('token do WhatsApp inválido não tenta avisar pelo próprio WhatsApp', asy
 
 test('resumo agrupa por tipo e conta severidades', async () => {
   const c = canais();
-  const agora = relogio(Date.now()); // resumoAnomalias corta pelas últimas 24h reais
+  const agora = relogio(Date.parse('2026-09-16T12:00:00Z'));
   const deps = { ...c.deps, agora };
   await reportarAnomalia({ tipo: 'anthropic_credito', detalhe: '1' }, deps);
   await reportarAnomalia({ tipo: 'anthropic_credito', detalhe: '2' }, deps);
   await reportarAnomalia({ tipo: 'email_falha', detalhe: '3' }, deps);
-  const r = resumoAnomalias(24);
+  const r = resumoAnomalias(24, { agora });
   assert.equal(r.total, 3);
   assert.equal(r.criticas, 1);
   assert.equal(r.medias, 1);
@@ -136,4 +136,32 @@ test('classificarErro reconhece Graph 401, crédito da Anthropic, chave inválid
   assert.equal(classificarErro(new Error('ENOSPC: no space left on device')).tipo, 'disco_falha');
   assert.equal(classificarErro(new Error('boom'), 'site').tipo, 'site_erro');
   assert.equal(classificarErro(new Error('boom')).tipo, 'webhook_erro');
+});
+
+test('resumo: tipo só fica resolvido se o evento mais recente for o "Resolvido"', async () => {
+  const c = canais();
+  const agora = relogio(Date.parse('2026-09-17T12:00:00Z'));
+  const deps = { ...c.deps, agora };
+  await reportarAnomalia({ tipo: 'memoria_degradada', detalhe: 'caiu' }, deps);
+  agora.avancar(60000);
+  await reportarAnomalia({ tipo: 'memoria_degradada', titulo: 'Resolvido: voltou', severidade: 'media', recuperado: true, forcar: true }, deps);
+  let r = resumoAnomalias(24, { agora });
+  assert.equal(r.tipos.find((t) => t.tipo === 'memoria_degradada').recuperado, true);
+  agora.avancar(60000);
+  await reportarAnomalia({ tipo: 'memoria_degradada', detalhe: 'caiu de novo', forcar: true }, deps);
+  r = resumoAnomalias(24, { agora });
+  const t = r.tipos.find((x) => x.tipo === 'memoria_degradada');
+  assert.equal(t.recuperado, false, 'voltou depois do Resolvido: aberto');
+  assert.equal(t.ocorrencias, 3);
+  assert.equal(r.altas, 1);
+});
+
+test('anthropic_credito marca o crédito como esgotado até a próxima chamada paga', async () => {
+  const { statusCredito, somarGasto } = await import('../src/gasto.js');
+  const c = canais();
+  await reportarAnomalia({ tipo: 'anthropic_credito', detalhe: 'credit balance is too low', forcar: true }, c.deps);
+  assert.equal(statusCredito().esgotado, true);
+  await new Promise((r) => setTimeout(r, 5));
+  somarGasto(0.01);
+  assert.equal(statusCredito().esgotado, false);
 });

@@ -1,14 +1,13 @@
 // Transporte de e-mail com cadeia de provedores.
 //
-// Ordem: Resend (HTTPS) → Brevo (HTTPS) → SMTP (nodemailer). O Railway bloqueia
-// portas SMTP de saída em todos os planos, então em produção só os provedores
-// HTTP funcionam; o SMTP fica como reserva para desenvolvimento local.
+// Ordem: Gmail API → Resend → Brevo, todos por HTTPS. O SMTP (nodemailer) foi
+// removido: o Railway bloqueia portas SMTP de saída em todos os planos (nunca
+// funcionou em produção) e a dependência acumulava vulnerabilidades.
 //
 // Contrato: enviar({ para, assunto, texto }) resolve com { provedor, id } ou
 // lança um Error agregando a falha de cada provedor tentado. Quem chama decide
 // o que fazer (o módulo de anomalias cai para WhatsApp, por exemplo).
 
-import dns from 'node:dns/promises';
 import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
@@ -23,7 +22,6 @@ export function provedoresDisponiveis(cfg = config.email) {
   if (cfg.googleServiceAccountJson && cfg.gmailSender) lista.push('gmail');
   if (cfg.resendApiKey) lista.push('resend');
   if (cfg.brevoApiKey) lista.push('brevo');
-  if (cfg.smtpUser && cfg.smtpPass && !cfg.smtpBloqueado) lista.push('smtp');
   return lista;
 }
 
@@ -88,33 +86,7 @@ async function viaBrevo({ para, assunto, texto }, cfg, fetchFn) {
   return { provedor: 'brevo', id: corpo.messageId || null };
 }
 
-async function viaSmtp({ para, assunto, texto }, cfg) {
-  const { default: nodemailer } = await import('nodemailer');
-  // Sem rota IPv6 de saída no Railway: conecta pelo IPv4 e valida o TLS pelo hostname.
-  let host = cfg.smtpHost;
-  try {
-    [host] = await dns.resolve4(cfg.smtpHost);
-  } catch {}
-  const transporte = nodemailer.createTransport({
-    host,
-    port: cfg.smtpPort,
-    secure: cfg.smtpPort === 465,
-    auth: { user: cfg.smtpUser, pass: cfg.smtpPass },
-    tls: { servername: cfg.smtpHost },
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 30000,
-  });
-  const info = await transporte.sendMail({
-    from: `"${cfg.nomeDe}" <${cfg.smtpUser}>`,
-    to: para.join(', '),
-    subject: assunto,
-    text: texto,
-  });
-  return { provedor: 'smtp', id: info.messageId || null };
-}
-
-const PROVEDORES = { gmail: viaGmail, resend: viaResend, brevo: viaBrevo, smtp: viaSmtp };
+const PROVEDORES = { gmail: viaGmail, resend: viaResend, brevo: viaBrevo };
 
 function normalizarDestinatarios(para) {
   const lista = (Array.isArray(para) ? para : String(para || '').split(','))
@@ -136,14 +108,14 @@ export async function enviar(msg, deps = {}) {
   if (!msg.assunto || !msg.texto) throw new Error('e-mail sem assunto ou corpo');
 
   const ordem = deps.provedores || provedoresDisponiveis(cfg);
-  if (!ordem.length) throw new Error('nenhum provedor de e-mail configurado (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY, BREVO_API_KEY ou SMTP_USER/SMTP_PASS)');
+  if (!ordem.length) throw new Error('nenhum provedor de e-mail configurado (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY, ou BREVO_API_KEY)');
 
   const falhas = [];
   for (const nome of ordem) {
     try {
       const r = await PROVEDORES[nome]({ ...msg, para }, cfg, fetchFn);
       registrarSucesso(nome, msg.assunto);
-      console.log(`[email] enviado via ${nome} para ${para.join(', ')}: ${msg.assunto}`);
+      console.log(`[email] enviado via ${nome} para ${para.length} destinatário(s): ${msg.assunto}`);
       return r;
     } catch (e) {
       falhas.push(`${nome}: ${e.message}`);

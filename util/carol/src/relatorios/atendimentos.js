@@ -12,8 +12,11 @@
 // Sem dependência da SDK da Anthropic: tudo aqui é testável sem rede.
 
 import { config } from '../config.js';
+import { limparMarcadores, anuncioDaMensagem } from '../util/marcadores.js';
 
-const MARCADORES = /\[(Cliente:|Cliente chegou clicando no anúncio|Cliente consultou o produto|Mensagem de voz do cliente)[^\]]*\]\s*/gi;
+export { limparMarcadores };
+
+const MOTIVOS_SILENCIO = { horario: 'horário da equipe', pausa: 'Carol pausada', teto: 'teto diário atingido' };
 
 export function formatarBRT(iso, comData = true) {
   return new Date(iso).toLocaleString('pt-BR', {
@@ -29,13 +32,24 @@ export function identificarCliente(sessao) {
   return 'Chat do site';
 }
 
-function anuncioDaMensagem(mensagem) {
-  const m = String(mensagem || '').match(/\[Cliente chegou clicando no anúncio "([^"]+)"/);
-  return m ? m[1] : '';
+/**
+ * Pendências automáticas (sem IA): conversa cuja última linha deixou o cliente
+ * sem resposta da Carol (falha, silêncio, aviso fixo ou envio que não saiu) e
+ * que a equipe não respondeu depois.
+ */
+export function pendenciasSemResposta(conversas) {
+  return conversas
+    .filter((c) => c.ultimaSituacao)
+    .map((c) => `${c.cliente} ficou sem resposta da Carol (${c.ultimaSituacao}). Responder.`);
 }
 
-function limparMarcadores(texto) {
-  return String(texto || '').replace(MARCADORES, '').trim();
+/** Como a linha do registro aparece para quem lê (relatório, detalhe). */
+export function situacaoDaEntrada(e) {
+  if (e.tipo === 'silencio') return `sem resposta: ${MOTIVOS_SILENCIO[e.motivo] || 'silêncio'}`;
+  if (e.tipo === 'falha') return e.entregue === false || !e.resposta ? 'sem resposta: falha da IA' : 'falha da IA, cliente recebeu aviso de contingência';
+  if (e.tipo === 'aviso') return 'resposta automática fixa (sem IA)';
+  if (e.entregue === false) return 'resposta da Carol NÃO entregue (falha no envio)';
+  return '';
 }
 
 /**
@@ -52,7 +66,15 @@ export function agruparConversas(entradas) {
       mapa.set(e.sessao, c);
     }
     if (!c.origemAnuncio) c.origemAnuncio = anuncioDaMensagem(e.mensagem);
-    c.mensagens.push({ ts: e.ts, cliente: limparMarcadores(e.mensagem), carol: String(e.resposta || '') });
+    c.mensagens.push({
+      ts: e.ts,
+      cliente: limparMarcadores(e.mensagem),
+      carol: e.tipo === 'humano' ? '' : String(e.resposta || ''),
+      ...(e.tipo === 'humano' ? { equipe: String(e.resposta || '') } : {}),
+      ...(e.tipo ? { tipo: e.tipo } : {}),
+      situacao: situacaoDaEntrada(e),
+    });
+    c.ultimaSituacao = c.mensagens[c.mensagens.length - 1].situacao;
     if (e.ts < c.inicio) c.inicio = e.ts;
     if (e.ts > c.fim) c.fim = e.ts;
   }
@@ -64,7 +86,12 @@ export function montarTranscricao(conversas, limite = 150000) {
   let txt = '';
   for (const c of conversas) {
     txt += `\n===== CONVERSA ${c.numero}: ${c.cliente} | ${c.mensagens.length} interações | ${formatarBRT(c.inicio)} até ${formatarBRT(c.fim)}${c.origemAnuncio ? ` | veio do anúncio "${c.origemAnuncio}"` : ''} =====\n`;
-    for (const m of c.mensagens) txt += `Cliente: ${m.cliente}\nCarol: ${m.carol}\n`;
+    for (const m of c.mensagens) {
+      if (m.cliente) txt += `Cliente: ${m.cliente}\n`;
+      if (m.equipe) txt += `Equipe (Dai, pelo aplicativo): ${m.equipe}\n`;
+      if (m.carol) txt += `Carol: ${m.carol}\n`;
+      if (m.situacao) txt += `[${m.situacao}]\n`;
+    }
   }
   return txt.slice(0, limite);
 }
@@ -132,6 +159,71 @@ export function interpretarRespostaIA(texto, conversas) {
   };
 }
 
+// ── Episódios da memória (resumo pronto, sem pagar a IA de novo) ──────────
+
+/** Clientes que voltaram e a Carol tinha memória (turnos marcados 'retomada' no registro). */
+export function contarRetomadas(entradas) {
+  return new Set(entradas.filter((e) => e.tipo !== 'sistema' && e.memoria === 'retomada').map((e) => e.sessao)).size;
+}
+
+/**
+ * Usa os episódios fechados no período para resumir as conversas que eles
+ * cobrem (mesma sessão, episódio terminando na última mensagem da conversa
+ * ou depois). As que sobram vão para a IA como antes.
+ * @returns {{cobertas:object[], pendencias:string[], faltando:object[]}}
+ */
+export function resumoDeEpisodios(conversas, episodios) {
+  const porSessao = new Map();
+  for (const ep of episodios || []) {
+    if (ep?.dados?.bruto) continue;
+    const atual = porSessao.get(ep.sessao);
+    if (!atual || String(ep.fim) > String(atual.fim)) porSessao.set(ep.sessao, ep);
+  }
+  const cobertas = [];
+  const pendencias = [];
+  const faltando = [];
+  for (const c of conversas) {
+    const ep = porSessao.get(c.sessao);
+    if (!ep || new Date(ep.fim).getTime() < new Date(c.fim).getTime() - 60000) {
+      faltando.push(c);
+      continue;
+    }
+    const d = ep.dados || {};
+    const aberto = !d.status || d.status === 'em_aberto';
+    const entrada = {
+      numero: c.numero,
+      sessao: c.sessao,
+      canal: c.canal,
+      cliente: c.cliente,
+      nome: limpar(d.nome),
+      origemAnuncio: c.origemAnuncio,
+      assunto: limpar(d.assunto),
+      ondeParou: limpar(d.resumo),
+      acao: aberto ? limpar(d.proximo_passo) || 'nenhuma' : 'nenhuma',
+      perfil: normalizarPerfil(d.tipo),
+      mensagens: c.mensagens.length,
+      inicio: c.inicio,
+      fim: c.fim,
+      fonte: 'episodio',
+    };
+    cobertas.push(entrada);
+    if (aberto && d.proximo_passo) pendencias.push(`${entrada.nome || c.cliente}: ${limpar(d.proximo_passo)}`);
+  }
+  return { cobertas, pendencias, faltando };
+}
+
+/** Junta o que veio dos episódios com o que a IA resumiu (resumoIA pode ser null). */
+export function combinarResumos({ cobertas = [], pendencias = [], resumoIA = null, retomadas = 0, semResposta = [] }) {
+  const lista = [...cobertas, ...(resumoIA?.conversas || [])].sort((a, b) => a.numero - b.numero);
+  return {
+    // sem resposta primeiro: é o que a Dai precisa atender antes de tudo
+    pendencias: [...semResposta, ...(resumoIA?.pendencias || []), ...pendencias],
+    conversas: lista,
+    textoLivre: cobertas.length ? '' : resumoIA?.textoLivre || '',
+    totais: { conversas: lista.length, mensagens: lista.reduce((s, c) => s + c.mensagens, 0), retomadas, deEpisodios: cobertas.length },
+  };
+}
+
 const PERFIS = ['produtor', 'revenda', 'oficina'];
 
 export function normalizarPerfil(v) {
@@ -148,6 +240,12 @@ export function textoPerfis(resumo) {
   const sem = n('');
   if (sem) partes.push(`${sem} sem perfil`);
   return `Perfil: ${partes.join(', ')}.`;
+}
+
+/** "Retomadas: 2 clientes voltaram e a Carol lembrou da conversa anterior." */
+export function textoRetomadas(resumo) {
+  const n = resumo.totais?.retomadas || 0;
+  return `Retomadas: ${n} cliente${n === 1 ? ' voltou' : 's voltaram'} e a Carol lembrou da conversa anterior.`;
 }
 
 function limpar(v) {
@@ -199,6 +297,7 @@ export function textoEmailDai(resumo, periodoTxt) {
   }
   linhas.push(`Total: ${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens.`);
   if (!resumo.textoLivre) linhas.push(textoPerfis(resumo));
+  if (resumo.totais.retomadas) linhas.push(textoRetomadas(resumo));
   linhas.push('', 'Bom trabalho!', 'Carol, atendente virtual');
   return linhas.join('\n');
 }
@@ -209,7 +308,7 @@ export function textoCompacto(resumo, agora = new Date()) {
   if (!resumo.conversas.length) return `*Atendimentos das ultimas 24h (${data})*\n\nNenhum atendimento no periodo.`;
   return [
     `*Atendimentos das ultimas 24h (${data})*`,
-    `${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens. ${textoPerfis(resumo)}`,
+    `${resumo.totais.conversas} conversa${resumo.totais.conversas === 1 ? '' : 's'}, ${resumo.totais.mensagens} mensagens. ${textoPerfis(resumo)}${resumo.totais.retomadas ? ` ${textoRetomadas(resumo)}` : ''}`,
     '',
     textoLinhas(resumo),
     '',
@@ -229,8 +328,11 @@ export function encontrarConversa(conversas, ref) {
 export function textoDetalhe(conversa) {
   const linhas = [`*Conversa ${conversa.numero}: ${conversa.cliente}*`, `${formatarBRT(conversa.inicio)} ate ${formatarBRT(conversa.fim)}, ${conversa.mensagens.length} mensagens${conversa.origemAnuncio ? `, via anuncio "${conversa.origemAnuncio}"` : ''}`, ''];
   for (const m of conversa.mensagens) {
-    linhas.push(`[${formatarBRT(m.ts, false)}] Cliente: ${m.cliente || '(sem texto)'}`);
-    linhas.push(`Carol: ${m.carol}`, '');
+    if (m.tipo === 'humano') linhas.push(`[${formatarBRT(m.ts, false)}] Equipe (app): ${m.equipe}`);
+    else linhas.push(`[${formatarBRT(m.ts, false)}] Cliente: ${m.cliente || '(sem texto)'}`);
+    if (m.carol) linhas.push(`Carol: ${m.carol}`);
+    if (m.situacao) linhas.push(`(${m.situacao})`);
+    linhas.push('');
   }
   return linhas.join('\n').trim();
 }

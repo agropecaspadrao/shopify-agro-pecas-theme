@@ -1,5 +1,5 @@
 // Dashboard analytics da Carol: página HTML autocontida servida em
-// /admin/dashboard?key=CAROL_ADMIN_KEY. Resumo executivo, operação (conversas,
+// /admin/dashboard (exige a sessão do painel /admin/painel; ver rotas/admin.js). Resumo executivo, operação (conversas,
 // leads de anúncio, horários de pico), custos com projeção e runway do saldo,
 // e exportação das conversas para análise (CSV, TXT, JSON).
 
@@ -95,12 +95,15 @@ export function paginaDashboard(dados) {
     {
       rotulo: 'Conversas a retomar',
       valor: String(acompanhar.length),
-      sub: 'pararam nas primeiras mensagens',
+      sub: `pararam nas primeiras mensagens ou ficaram sem resposta${totais.falhas || totais.silencios ? ` (${totais.falhas} falha${totais.falhas === 1 ? '' : 's'} da IA, ${totais.silencios} em silêncio)` : ''}`,
     },
   ];
 
   const tilesCustos = [
-    ...(saldo
+    ...(saldo?.creditoEsgotado
+      ? [{ rotulo: 'Crédito da Anthropic', valor: 'ESGOTADO', sub: `a API recusou por falta de crédito em ${dataBR(saldo.esgotadoDesde)}` }]
+      : []),
+    ...(saldo && !saldo.creditoEsgotado
       ? [{
           rotulo: 'Saldo estimado do crédito',
           valor: usd(saldo.restante),
@@ -342,6 +345,7 @@ td.resposta{color:var(--ink3);font-size:12px;max-width:300px}
 </head>
 <body>
 <h1>Carol · Analytics</h1>
+<p class="sub"><a class="ver-conv" href="/admin/painel/">Abrir o painel do administrador</a> (ligar/desligar, horário de atendimento, estado ao vivo e saúde da máquina)</p>
 <p class="sub">Modelo ${esc(modelo)} · período: ${dataBR(periodo.inicio)} até ${dataBR(periodo.fim)} (Brasília) · cotação exibida: US$ 1 = R$ ${cotacaoBRL.toFixed(2).replace('.', ',')}</p>
 <div class="barra-acoes">${filtros}<span class="sep"></span>${exportar}</div>
 
@@ -403,10 +407,10 @@ ${extratoHtml}
 <h3>Conversas do período</h3>
 <div class="tiles">
   <div class="tile"><div class="rotulo">Conversas agrupadas</div><div class="valor">${totalConversas}</div><div class="subtile">${conversasCompletas.length < totalConversas ? `mostrando as ${conversasCompletas.length} mais recentes` : 'todas as conversas do período'}</div></div>
-  <div class="tile"><div class="rotulo">Possíveis perdas de contexto</div><div class="valor">${totalResets}</div><div class="subtile">${totalResets ? `em ${convsComReset} conversa${convsComReset === 1 ? '' : 's'} · sessão expirada ou reapresentação` : 'nenhum sinal no período'}</div></div>
+  <div class="tile"><div class="rotulo">Possíveis perdas de contexto</div><div class="valor">${totalResets}</div><div class="subtile">${totalResets ? `em ${convsComReset} conversa${convsComReset === 1 ? '' : 's'} · mais de 7 dias parada ou reapresentação sem memória` : 'nenhum sinal no período'}</div></div>
   <div class="tile"><div class="rotulo">Conversas além da janela</div><div class="valor">${convsJanela}</div><div class="subtile">passaram de 30 mensagens; as antigas saem do contexto</div></div>
 </div>
-<p class="sub" style="margin-top:14px">Clique numa conversa para abrir a interação completa. Os avisos coloridos marcam os pontos onde a Carol pode ter perdido o contexto: sessão expirada (mais de 12h parada), reapresentação no meio da conversa (histórico vazio por reinício do serviço) e janela de 30 mensagens cheia.</p>
+<p class="sub" style="margin-top:14px">Clique numa conversa para abrir a interação completa. Os avisos coloridos marcam os pontos onde a Carol pode ter perdido o contexto: mais de 7 dias parada (só a ficha leve do cliente fica) e reapresentação no meio da conversa sem memória. Também marcam as retomadas (cliente voltou depois de 12h e a Carol lembrou da conversa anterior) e o ponto em que a conversa passou de 30 mensagens (as antigas viram resumo).</p>
 <div class="filtros-msgs">
   <input id="busca-conv" type="search" placeholder="Filtrar por número, nome, peça ou palavra">
   <select id="fcanal-conv"><option value="">Todos os canais</option><option value="whatsapp">WhatsApp</option><option value="site">Site</option></select>
@@ -455,10 +459,13 @@ desenharMsgs();
 // ── Aba Conversas: lista agrupada + transcrição completa ao clicar ─────────
 const CONVS = JSON.parse(document.getElementById('dados-conversas').textContent);
 const AVISOS = {
-  sessao_expirada: ['alerta', 'Mais de 12h desde a mensagem anterior: a sessão expirou e a Carol respondeu SEM memória do que veio antes.'],
-  reapresentacao: ['erro', 'A Carol se reapresentou no meio da conversa: o histórico estava vazio nesta resposta (reinício do serviço ou sessão expirada).'],
-  janela_cheia: ['info', 'A partir daqui a janela de 30 mensagens está cheia: as mensagens mais antigas vão saindo do contexto da Carol.'],
-  falha: ['erro', 'Resposta de contingência: a chamada à API falhou ou veio vazia.'],
+  sessao_expirada: ['alerta', 'Mais de 7 dias desde a mensagem anterior: os episódios já tinham expirado e a Carol respondeu só com a ficha leve do cliente (ou sem memória).'],
+  retomada: ['info', 'Cliente voltou depois de 12h: a Carol respondeu com a memória das conversas anteriores (ficha + últimos episódios).'],
+  reapresentacao: ['erro', 'A Carol se reapresentou no meio da conversa sem memória: o histórico estava vazio nesta resposta (memória indisponível ou cliente sem registro).'],
+  janela_cheia: ['info', 'A conversa passou de 30 mensagens: daqui em diante as mais antigas viram um resumo parcial e as 20 mais recentes seguem inteiras.'],
+  falha: ['erro', 'Falha: a IA não respondeu (o cliente recebeu a contingência) ou a resposta não chegou ao WhatsApp.'],
+  silencio: ['alerta', 'Mensagem recebida em silêncio (horário da equipe, pausa ou teto diário): a Carol não respondeu.'],
+  humano: ['info', 'Resposta digitada pela equipe no aplicativo (não foi a Carol).'],
 };
 const temSinais = (c) => c.sinais.resets > 0 || c.sinais.janelaCheia || c.msgs.some((m) => m.flags.includes('falha'));
 const buscaConv = document.getElementById('busca-conv');
@@ -470,9 +477,10 @@ function corpoConversa(c) {
   return c.msgs.map((m) => {
     const avisos = m.flags.filter((f) => AVISOS[f]).map((f) => '<div class="aviso-contexto ' + AVISOS[f][0] + '">' + AVISOS[f][1] + '</div>').join('');
     const voz = m.flags.includes('audio') ? ' · mensagem de voz transcrita' : '';
+    const humano = m.flags.includes('humano');
     return avisos
-      + '<div class="balao cliente">' + escHtml(m.mensagem) + '<span class="meta">' + fmtData(m.ts) + voz + '</span></div>'
-      + '<div class="balao carol">' + escHtml(m.resposta) + '<span class="meta">Carol · ' + fmtUsd(m.custo) + '</span></div>';
+      + (m.mensagem ? '<div class="balao cliente">' + escHtml(m.mensagem) + '<span class="meta">' + fmtData(m.ts) + voz + '</span></div>' : '')
+      + (m.resposta ? '<div class="balao carol">' + escHtml(m.resposta) + '<span class="meta">' + (humano ? 'Equipe (app) · ' + fmtData(m.ts) : 'Carol · ' + fmtUsd(m.custo)) + '</span></div>' : '');
   }).join('');
 }
 

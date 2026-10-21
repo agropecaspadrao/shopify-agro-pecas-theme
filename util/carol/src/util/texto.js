@@ -15,3 +15,18 @@ export function fatiar(texto, limite = LIMITE_WHATSAPP) {
   if (resto) partes.push(resto);
   return partes.map((p, i) => (partes.length > 1 ? `(${i + 1}/${partes.length})\n${p}` : p));
 }
+
+/** Minúsculas sem acento ("Ação" → "acao"). */
+export function semAcentos(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+}
+
+/** Para comparação/busca: sem acento, só [a-z0-9] separados por um espaço. */
+export function normalizar(s) {
+  return semAcentos(s)
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}

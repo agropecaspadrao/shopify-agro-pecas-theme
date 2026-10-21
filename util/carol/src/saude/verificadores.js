@@ -15,6 +15,7 @@ import { DATA_DIR } from '../registro.js';
 import { estadoCatalogo } from '../catalogo.js';
 import { ultimoEnvio } from '../email/transporte.js';
 import { saldoEstimado } from '../custos.js';
+import { statusCredito as statusCreditoPadrao } from '../gasto.js';
 
 const GRAPH = () => `https://graph.facebook.com/${config.graphVersion}`;
 const DIA = 24 * 3600 * 1000;
@@ -79,9 +80,15 @@ export async function verificarWhatsApp({ fetchFn = fetch, agora = Date.now, tok
 }
 
 // ── Anthropic: chave aceita? (count_tokens é gratuito) e saldo estimado ───
-export async function verificarAnthropic({ fetchFn = fetch } = {}) {
+// count_tokens NÃO gasta crédito, então não prova que há crédito: se a última
+// chamada paga de verdade falhou por crédito (e nenhuma passou depois), é falha.
+export async function verificarAnthropic({ fetchFn = fetch, statusCredito = statusCreditoPadrao } = {}) {
   const nome = 'anthropic';
   if (!config.anthropicApiKey) return { nome, estado: 'nao_configurado', resumo: 'ANTHROPIC_API_KEY ausente' };
+  const cred = statusCredito();
+  if (cred.esgotado) {
+    return { nome, estado: 'falha', tipoAnomalia: 'anthropic_credito', resumo: `crédito da Anthropic esgotado (última recusa em ${fmtData(cred.desde)})`, detalhe: 'A última chamada paga foi recusada por falta de crédito e nenhuma passou depois. Recarregar em console.anthropic.com.' };
+  }
   const r = await getJson(fetchFn, 'https://api.anthropic.com/v1/messages/count_tokens', {
     method: 'POST',
     headers: { 'x-api-key': config.anthropicApiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
@@ -213,8 +220,7 @@ export async function verificarDisco() {
 export async function verificarEmail({ fetchFn = fetch } = {}) {
   const nome = 'email';
   const rec = recursosConfigurados();
-  if (!rec.emailHttp && !rec.emailSmtp) return { nome, estado: 'falha', tipoAnomalia: 'email_falha', resumo: 'nenhum provedor de e-mail configurado (Gmail API, RESEND_API_KEY ou BREVO_API_KEY)' };
-  if (!rec.emailHttp) return { nome, estado: 'aviso', resumo: 'só SMTP configurado; no Railway o SMTP é bloqueado. Configure a Gmail API, RESEND_API_KEY ou BREVO_API_KEY' };
+  if (!rec.emailHttp) return { nome, estado: 'falha', tipoAnomalia: 'email_falha', resumo: 'nenhum provedor de e-mail configurado (Gmail API, RESEND_API_KEY ou BREVO_API_KEY)' };
   // Gmail API: obtém de verdade o token de envio (impersonando o remetente).
   // É o mesmo passo que falha quando falta a delegação no Workspace; só
   // conferir configuração deixava "ok" enquanto nenhum e-mail saía.

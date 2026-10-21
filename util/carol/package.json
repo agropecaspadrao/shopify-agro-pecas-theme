@@ -15,9 +15,9 @@
     "test:watch": "node --test --watch \"tests/**/*.test.js\""
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.115.0",
+    "@anthropic-ai/sdk": "^0.137.0",
     "dotenv": "^16.6.1",
-    "express": "^4.22.2",
-    "nodemailer": "^9.0.3"
+    "express": "^4.22.3",
+    "pg": "^8.23.1"
   }
 }

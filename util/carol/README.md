@@ -8,7 +8,7 @@ Chatbot generativo da APP Agro Peças Padrão, construído sobre a API do Claude
 
 ## O que a Carol sabe
 
-- Catálogo completo da loja, carregado ao vivo de `https://agropecaspadrao.com.br/products.json` (título, SKU, preço, estoque, descrição, tags) e atualizado a cada 30 minutos.
+- Catálogo completo da loja, carregado ao vivo de `https://agropecaspadrao.com.br/products.json` (título, SKU, preço, estoque, descrição, tags) e recarregado 3 vezes ao dia (6h, 12h e 18h de Brasília); se a carga falhar, a Carol responde sem catálogo e tenta de novo no máximo 1 vez por minuto.
 - Specs técnicas enriquecidas (função, medidas, compatibilidade de máquinas, códigos equivalentes) vindas de `util/master-produtos/pesquisa/specs_*.json`, consolidadas em `knowledge/specs.json` pelo script `npm run conhecimento`.
 - Regras de conformidade de marca do CLAUDE.md (padrão original/OEM, marcas só como compatibilidade, "Sob Consulta", ISO dos fornecedores).
 - Tom: formal leve, linguagem do agro brasileiro, sem travessão, sem emoji (garantido também por pós-processamento).
@@ -18,19 +18,30 @@ Chatbot generativo da APP Agro Peças Padrão, construído sobre a API do Claude
 ```
 util/carol/
 ├── src/
-│   ├── server.js      Express: webhook WhatsApp + API do widget + /health
-│   ├── claude.js      Claude API (tool runner, prompt caching, sanitização)
+│   ├── server.js      Ponto de entrada (npm start): chama boot.js
+│   ├── boot.js        listen PRIMEIRO; catálogo, memória e agenda em segundo plano
+│   ├── app.js         Express sem listen (testável): /health, /webhook, /api, /admin
+│   ├── rotas/         webhook.js (fila por telefone, contingência), chat.js, admin.js
+│   ├── claude.js      Claude API (tool runner, prompt caching, sanitização); gera e só registra depois de entregar
+│   ├── ia/anthropic.js Cliente único da Anthropic (timeout 60 s, 1 retry)
 │   ├── persona.js     System prompt da Carol
-│   ├── catalogo.js    Índice do catálogo + busca + ficha de produto
-│   ├── whatsapp.js    Cloud API: assinatura, parse do webhook, envio
-│   ├── horario.js     Horário comercial (America/Sao_Paulo)
-│   ├── sessions.js    Histórico de conversas em memória (TTL 12h)
-│   └── config.js      Variáveis de ambiente
+│   ├── catalogo.js    Índice do catálogo + busca + ficha de produto + link de carrinho
+│   ├── whatsapp.js    Cloud API: assinatura, parse do webhook (inclui ecos da equipe), envio
+│   ├── horario.js / horarioConfig.js  Regra de horário (painel ou variáveis)
+│   ├── memoria/       Memória de conversa (Postgres com fallback local)
+│   ├── registro.js    Registro JSONL dos atendimentos + espelho no SDR
+│   ├── gasto.js       Contador persistente do gasto com a API (saldo estimado)
+│   ├── lgpd.js        Exclusão de todos os dados de um cliente
+│   └── config.js      Variáveis de ambiente (não lê .env em teste)
 ├── scripts/
 │   ├── conversar.js           Chat de teste no terminal
+│   ├── deploy_railway.sh      Deploy (nunca sobrescreve segredos)
 │   └── gerar_conhecimento.js  Consolida specs em knowledge/specs.json
+├── railway.json               healthcheck /health (ver Deploy)
 └── knowledge/specs.json       Base técnica (gerada, versionada)
 ```
+
+Detalhes técnicos em `ARQUITETURA.md`; uso no dia a dia em `MANUAL_SOCIOS.md`.
 
 No tema: `snippets/carol-widget.liquid` + `assets/carol-chat.js`, ativados em **Theme Settings → Carol (Atendente Virtual)**.
 
@@ -49,8 +60,9 @@ A `ANTHROPIC_API_KEY` pode estar no `.env` da raiz do repositório ou em `util/c
 ## Deploy no Railway (ou Render)
 
 1. Crie um serviço novo apontando para este repositório com **root directory `util/carol`** (start command: `npm start`).
-2. Configure as variáveis do `.env.example` no painel (no mínimo `ANTHROPIC_API_KEY`; as `WA_*` quando o WhatsApp estiver conectado).
-3. Anote a URL pública (ex.: `https://carol-agropecas.up.railway.app`). Teste `GET /health`.
+2. Em Settings → Config-as-code, informe o caminho **`/util/carol/railway.json`** (o Railway não procura o arquivo dentro do root directory). Ele liga o healthcheck em `/health` (timeout 60 s).
+3. Configure as variáveis do `.env.example` no painel (no mínimo `ANTHROPIC_API_KEY`; as `WA_*` quando o WhatsApp estiver conectado). O `scripts/deploy_railway.sh` só cria variáveis ausentes; segredos existentes (inclusive `WA_ACCESS_TOKEN`) se trocam pelo painel do Railway.
+4. Anote a URL pública (ex.: `https://carol-agropecas.up.railway.app`). Teste `GET /health` (público, só `{ ok, status }`; detalhes com `Authorization: Bearer <CAROL_ADMIN_KEY>`).
 
 ## Conectar o WhatsApp (modo coexistência)
 
@@ -60,10 +72,10 @@ O número (41) 98415-1085 continua no aplicativo da Dai **e** ganha acesso à Cl
 2. Faça o onboarding do número pelo fluxo de **coexistência** (WhatsApp Business App + Cloud API): em WhatsApp Manager → adicionar número → conectar número existente do aplicativo. O celular da Dai escaneia um QR code e o app permanece funcionando. Requisitos: app WhatsApp Business atualizado e número não registrado previamente na API. Se o fluxo de coexistência não aparecer disponível para a conta, me avise que ajustamos a rota (número dedicado ou migração).
 3. Anote o **Phone Number ID** → variável `WA_PHONE_NUMBER_ID`.
 4. Gere um token de sistema (System User) com `whatsapp_business_messaging` e `whatsapp_business_management` → `WA_ACCESS_TOKEN`.
-5. Em **WhatsApp → Configuration → Webhook**: URL `https://SUA-URL/webhook`, verify token = o valor que você definir em `WA_VERIFY_TOKEN`, e assine o campo **messages**.
+5. Em **WhatsApp → Configuration → Webhook**: URL `https://SUA-URL/webhook`, verify token = o valor que você definir em `WA_VERIFY_TOKEN`, e assine os campos **messages** e **smb_message_echoes** (este último entrega as respostas que a Dai digita no app; a Carol registra e usa como contexto, nunca responde a elas).
 6. Reinicie o serviço e teste mandando mensagem fora do horário comercial.
 
-Comportamento: dentro do horário comercial a Carol ignora as mensagens (a Dai atende pelo app). Fora do horário, a Carol marca como lida e responde. Mensagens de áudio/foto fora do horário recebem um pedido educado de texto.
+Comportamento: no horário da equipe a Carol não responde (a Dai atende pelo app), mas registra cada mensagem como pendente (aparece no relatório da Dai, no painel e no SDR). No horário dela, a Carol agrupa mensagens seguidas (4 s), marca como lida e responde uma vez. Se a IA estiver fora (ex.: crédito zerado), o cliente recebe "Recebi sua mensagem. Nossa equipe vai te responder..." (no máximo 1 vez a cada 30 min) e o turno fica registrado como falha. Áudio é transcrito; foto/documento recebem um pedido educado de texto.
 
 ## Ativar o widget no site
 
@@ -90,6 +102,7 @@ Mensagens de voz são baixadas da Cloud API e transcritas pelo Whisper large-v3-
 
 Cada resposta grava no registro os tokens reais de todas as chamadas (entrada, saída, cache) e o custo em US$:
 
-- `GET /admin/dashboard?key=CAROL_ADMIN_KEY&dias=7` → página com custo total, custo por dia, custo médio por mensagem, ranking de conversas que mais gastaram e mensagens mais caras (`dias` = 1, 7 ou 30).
-- `GET /admin/custos?key=CAROL_ADMIN_KEY&dias=7` → os mesmos dados em JSON.
+- `GET /admin/dashboard?dias=7` → página com custo total, custo por dia, custo médio por mensagem, ranking de conversas que mais gastaram e mensagens mais caras (`dias` = 1, 7, 30 ou 90). Exige a sessão do painel: sem ela, vai para `/admin/painel/entrar` e volta. Telefones aparecem mascarados.
+- `GET /admin/custos?dias=7` com `Authorization: Bearer <CAROL_ADMIN_KEY>` → os mesmos dados em JSON.
+- O antigo `?key=` na URL foi removido (vazava em log e histórico do navegador).
 - `CAROL_USD_BRL` (padrão 5.60) ajusta a cotação usada só para exibir o valor estimado em reais.

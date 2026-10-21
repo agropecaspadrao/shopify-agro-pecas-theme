@@ -5,15 +5,15 @@ import { dataDirTemporario, fetchFalso } from './_setup.js';
 dataDirTemporario();
 const { enviar, provedoresDisponiveis, ultimoEnvio } = await import('../src/email/transporte.js');
 
-const cfgBase = { de: 'carol@x.com', nomeDe: 'Carol', smtpHost: 'smtp.x', smtpPort: 465 };
+const cfgBase = { de: 'carol@x.com', nomeDe: 'Carol' };
 const msg = { para: ['a@x.com', 'a@x.com', 'invalido'], assunto: 'Teste', texto: 'corpo' };
 
-test('provedoresDisponiveis segue a ordem Gmail, Resend, Brevo, SMTP conforme as chaves', () => {
+test('provedoresDisponiveis segue a ordem Gmail, Resend, Brevo conforme as chaves (SMTP removido)', () => {
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase }), []);
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, brevoApiKey: 'b' }), ['brevo']);
   assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}' }), [], 'Gmail exige também o remetente');
-  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}', gmailSender: 'carol@x.com', resendApiKey: 'r', brevoApiKey: 'b', smtpUser: 'u', smtpPass: 'p' }), ['gmail', 'resend', 'brevo', 'smtp']);
-  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, smtpUser: 'u', smtpPass: 'p', smtpBloqueado: true }), [], 'no Railway o SMTP é pulado');
+  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, googleServiceAccountJson: '{}', gmailSender: 'carol@x.com', resendApiKey: 'r', brevoApiKey: 'b', smtpUser: 'u', smtpPass: 'p' }), ['gmail', 'resend', 'brevo']);
+  assert.deepEqual(provedoresDisponiveis({ ...cfgBase, smtpUser: 'u', smtpPass: 'p' }), [], 'SMTP não é mais provedor');
 });
 
 test('Gmail: assina JWT com sub (impersonação), envia MIME base64url e devolve o id', async () => {

@@ -60,3 +60,25 @@ test('e-mail da chave contém a palavra e as instruções, e rotacionarEEnviar u
   assert.match(enviados[0].texto, /agro-[a-z]+-\d{2}/);
   assert.deepEqual(r.enviadaPara, ['a@x.com', 'b@x.com']);
 });
+
+test('e-mail fora: a palavra NUNCA sai pelo WhatsApp; rotação desfeita e aviso sem o conteúdo', async () => {
+  const antes = estadoChave();
+  const zaps = [];
+  const avisos = [];
+  await assert.rejects(
+    () => rotacionarEEnviar({ enviarEmail: async () => { throw new Error('todos os provedores falharam'); }, enviarWhatsApp: async (n, t) => zaps.push(t), admins: ['5541999990000'], avisarAdmins: async (t) => avisos.push(t) }),
+    /não rotacionada/
+  );
+  assert.equal(zaps.length, 0, 'nada da palavra pelo WhatsApp');
+  assert.deepEqual(estadoChave(), antes, 'a palavra atual continua valendo');
+  assert.equal(avisos.length, 1);
+  assert.doesNotMatch(avisos[0], /agro-[a-z]+-\d{2}/, 'aviso sem o conteúdo');
+  assert.match(avisos[0], /painel/);
+});
+
+test('e-mail fora com exibir:true (painel autenticado): mantém a rotação e devolve a palavra uma vez', async () => {
+  const r = await rotacionarEEnviar({ enviarEmail: async () => { throw new Error('fora'); }, exibir: true, avisarAdmins: async () => {} });
+  assert.equal(r.canal, 'tela');
+  assert.match(r.palavra, /^agro-/);
+  assert.equal(validar(r.palavra), true);
+});

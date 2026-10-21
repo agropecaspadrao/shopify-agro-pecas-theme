@@ -3,15 +3,15 @@
 // alimenta o bloco de atendimentos do relatório executivo dos sócios e os
 // comandos /carol e /carol detalhe pelo WhatsApp.
 
-import Anthropic from '@anthropic-ai/sdk';
 import { config } from './config.js';
 import { listarPeriodo, registrarAtendimento } from './registro.js';
 import { custoUSD } from './custos.js';
-import { enviar as enviarViaTransporte } from './email/transporte.js';
+import { clienteAnthropic } from './ia/anthropic.js';
+import { usoDe } from './util/uso.js';
 import { enviarOuContingencia } from './email/contingencia.js';
-import { agruparConversas, montarTranscricao, PROMPT_RESUMO, interpretarRespostaIA, textoEmailDai, textoCompacto, textoDetalhe, encontrarConversa, formatarBRT } from './relatorios/atendimentos.js';
+import { agruparConversas, montarTranscricao, PROMPT_RESUMO, interpretarRespostaIA, textoEmailDai, textoCompacto, textoDetalhe, encontrarConversa, formatarBRT, contarRetomadas, resumoDeEpisodios, combinarResumos, pendenciasSemResposta } from './relatorios/atendimentos.js';
+import { memoria } from './memoria/index.js';
 
-const client = new Anthropic({ apiKey: config.anthropicApiKey });
 
 // O relatório da Dai e o dos sócios usam o mesmo resumo de atendimentos; a
 // memo evita pagar a IA duas vezes na mesma manhã.
@@ -38,29 +38,43 @@ function periodoDe(fim) {
 
 async function montarRelatorioSemMemo(fim) {
   const { inicio, texto: periodoTxt } = periodoDe(fim);
-  const conversas = agruparConversas(listarPeriodo(inicio, fim));
+  const entradas = listarPeriodo(inicio, fim);
+  const conversas = agruparConversas(entradas);
+  const retomadas = contarRetomadas(entradas);
   const dataTxt = new Date().toLocaleDateString('pt-BR', { timeZone: config.timezone });
 
   if (!conversas.length) {
-    const resumo = { pendencias: [], conversas: [], textoLivre: '', totais: { conversas: 0, mensagens: 0 } };
+    const resumo = { pendencias: [], conversas: [], textoLivre: '', totais: { conversas: 0, mensagens: 0, retomadas: 0 } };
     return { assunto: `Carol: sem atendimentos no período (${dataTxt})`, corpo: textoEmailDai(resumo, periodoTxt), resumo };
   }
 
-  const resposta = await client.messages.create({
+  // Conversas que já viraram episódio (memória) não passam pela IA de novo;
+  // só as que ainda não fecharam (ou sem banco) vão para o resumo da IA.
+  // Fecha antes os episódios das conversas já paradas (Haiku, mais barato que o resumo cru)
+  await memoria.fecharEpisodiosOciosos().catch((e) => console.warn('[relatorio] fechamento de episódios falhou:', e.message));
+  const episodios = await memoria.episodiosNoPeriodo(inicio, fim);
+  const { cobertas, pendencias, faltando } = resumoDeEpisodios(conversas, episodios);
+  const resumoIA = faltando.length ? await resumirComIA(faltando, periodoTxt) : null;
+  if (cobertas.length) console.log(`[relatorio] ${cobertas.length} conversa(s) resumida(s) pelos episódios da memória, ${faltando.length} pela IA`);
+  const resumo = combinarResumos({ cobertas, pendencias, resumoIA, retomadas, semResposta: pendenciasSemResposta(conversas) });
+
+  return {
+    assunto: `Carol: resumo dos atendimentos, ${dataTxt} (${conversas.length} conversa${conversas.length > 1 ? 's' : ''})`,
+    corpo: textoEmailDai(resumo, periodoTxt),
+    resumo,
+  };
+}
+
+/** Caminho original: a IA resume as transcrições cruas (só das conversas sem episódio). */
+async function resumirComIA(conversas, periodoTxt) {
+  const resposta = await clienteAnthropic().messages.create({
     model: config.claudeModel,
     max_tokens: 4000,
     system: [{ type: 'text', text: PROMPT_RESUMO }],
     messages: [{ role: 'user', content: `Período: ${periodoTxt}\n${montarTranscricao(conversas)}` }],
   });
 
-  const u = resposta.usage || {};
-  const usoRelatorio = {
-    entrada: u.input_tokens || 0,
-    saida: u.output_tokens || 0,
-    cacheLeitura: u.cache_read_input_tokens || 0,
-    cacheEscrita: u.cache_creation_input_tokens || 0,
-    chamadas: 1,
-  };
+  const usoRelatorio = usoDe(resposta.usage);
   registrarAtendimento({
     canal: 'sistema',
     sessao: 'sistema:relatorio',
@@ -75,12 +89,7 @@ async function montarRelatorioSemMemo(fim) {
   const textoIA = resposta.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n');
   const resumo = interpretarRespostaIA(textoIA, conversas);
   if (resumo.textoLivre) console.warn('[relatorio] a IA não devolveu JSON; usando o texto como veio');
-
-  return {
-    assunto: `Carol: resumo dos atendimentos, ${dataTxt} (${conversas.length} conversa${conversas.length > 1 ? 's' : ''})`,
-    corpo: textoEmailDai(resumo, periodoTxt),
-    resumo,
-  };
+  return resumo;
 }
 
 /** Lista compacta (uma linha por conversa) para o "/carol" no WhatsApp. */
@@ -100,14 +109,6 @@ export function detalheConversa(ref, fim = new Date()) {
   const c = encontrarConversa(conversas, ref);
   if (!c) return `Nao achei a conversa "${String(ref || '').trim() || '?'}". Mande /carol para ver a lista numerada (1 a ${conversas.length}) ou informe o telefone.`;
   return textoDetalhe(c);
-}
-
-/**
- * Envia um e-mail pela cadeia de provedores (Resend → Brevo → SMTP).
- * Mantém a assinatura antiga (assunto, corpo, para) por compatibilidade.
- */
-export async function enviarEmail(assunto, corpo, para = config.destinatarios.dai) {
-  return enviarViaTransporte({ para, assunto, texto: corpo });
 }
 
 /**

@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from './config.js';
 import { DATA_DIR } from './registro.js';
+import { gravarJsonAtomico } from './util/arquivo.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'agenda.json');
 const OFFSET_BRT_MS = -3 * 3600 * 1000;
@@ -20,6 +21,7 @@ const DIA_MS = 24 * 3600 * 1000;
 const MAX_TIMEOUT = 2 ** 31 - 1;
 
 const tarefas = new Map();
+const emExecucao = new Map(); // nome -> promessa (trava por tarefa: nunca roda duas vezes ao mesmo tempo)
 let reportar = null; // injetado em iniciar() para evitar import circular em testes
 
 function carregar() {
@@ -32,8 +34,7 @@ function carregar() {
 
 function salvar(estado) {
   try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.writeFileSync(ARQUIVO, JSON.stringify(estado));
+    gravarJsonAtomico(ARQUIVO, estado);
   } catch (e) {
     console.error('[agenda] não consegui persistir:', e.message);
   }
@@ -71,10 +72,18 @@ export function registrarTarefa(t) {
   tarefas.set(t.nome, { ...t, timer: null });
 }
 
-async function rodar(nome, { motivo = 'agendado', agora = Date.now } = {}) {
+function rodar(nome, opts = {}) {
   const t = tarefas.get(nome);
-  if (!t) throw new Error(`tarefa desconhecida: ${nome}`);
-  const estado = carregar();
+  if (!t) return Promise.reject(new Error(`tarefa desconhecida: ${nome}`));
+  // Já rodando (timer + botão manual, ou recuperação no boot): devolve a mesma execução
+  if (emExecucao.has(nome)) return emExecucao.get(nome);
+  const p = rodarAgora(t, opts).finally(() => emExecucao.delete(nome));
+  emExecucao.set(nome, p);
+  return p;
+}
+
+async function rodarAgora(t, { motivo = 'agendado', agora = Date.now } = {}) {
+  const nome = t.nome;
   const inicio = agora();
   let resultado = { ok: true, resumo: '' };
   try {
@@ -84,6 +93,9 @@ async function rodar(nome, { motivo = 'agendado', agora = Date.now } = {}) {
     resultado = { ok: false, resumo: String(e.message || e).slice(0, 300) };
     console.error(`[agenda] ${nome} falhou:`, e.message);
   }
+  // Relê o estado DEPOIS do await: outra tarefa pode ter gravado no meio
+  // (antes, a que terminava por último apagava o registro da outra).
+  const estado = carregar();
   estado[nome] = { ultimaExecucao: new Date(inicio).toISOString(), motivo, ...resultado, duracaoMs: agora() - inicio };
   salvar(estado);
   console.log(`[agenda] ${nome} (${motivo}): ${resultado.ok ? 'ok' : 'FALHOU'} ${resultado.resumo}`.trim());

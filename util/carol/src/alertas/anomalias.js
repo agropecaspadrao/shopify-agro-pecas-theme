@@ -18,6 +18,8 @@ import path from 'node:path';
 import { config } from '../config.js';
 import { DATA_DIR } from '../registro.js';
 import { enviar as enviarEmailPadrao } from '../email/transporte.js';
+import { marcarErroCredito } from '../gasto.js';
+import { mascararTelefone } from '../util/telefone.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'anomalias.json');
 const MAX_HISTORICO = 300;
@@ -104,6 +106,24 @@ export const TIPOS = {
     severidade: 'critica',
     titulo: 'Não consigo gravar no disco de dados',
     acao: 'Conferir o volume do Railway montado em /app/data.',
+  },
+  // Alta (e-mail, não WhatsApp): a Carol continua respondendo pelo adaptador
+  // local; perde-se só a memória longa (episódios/fichas) até o banco voltar.
+  memoria_degradada: {
+    severidade: 'alta',
+    titulo: 'Memória da Carol fora do Postgres (rodando com memória local)',
+    acao: 'Conferir o serviço Postgres e a DATABASE_URL no Railway. A Carol segue atendendo; clientes que voltarem podem não ser lembrados até o banco voltar.',
+  },
+  memoria_fechamento: {
+    severidade: 'alta',
+    titulo: 'Memória da Carol não consegue fechar episódios (resumos do Haiku falhando)',
+    acao: 'Ver o detalhe (normalmente crédito ou instabilidade da Anthropic). As conversas não se perdem: ficam na memória de trabalho e entram cruas no contexto.',
+  },
+  anthropic_saldo_desatualizado: {
+    severidade: 'alta',
+    janelaMs: 24 * 60 * 60 * 1000,
+    titulo: 'Saldo estimado da Anthropic desatualizado (alerta de saldo baixo desligado)',
+    acao: 'O gasto registrado passou do crédito informado e a API segue aceitando: houve recarga não informada. Mande /carol saldo <valor do console.anthropic.com> para o alerta de saldo baixo voltar a funcionar.',
   },
   inventario_desatualizado: {
     severidade: 'media',
@@ -238,9 +258,17 @@ export async function reportarAnomalia(ev, deps = {}) {
   const titulo = ev.titulo || info.titulo || ev.tipo;
   const detalhe = String(ev.detalhe || '').slice(0, 2000);
 
+  // Crédito zerado visto pela API: o painel e o verificador de saúde passam a mostrar
+  if (ev.tipo === 'anthropic_credito' && !ev.recuperado) {
+    try {
+      marcarErroCredito({ agora: () => agora });
+    } catch {}
+  }
+
   const estado = carregar();
   const ultimo = estado.ultimos[ev.tipo] || 0;
-  const suprimida = !ev.forcar && agora - ultimo < (JANELA_MS[severidade] || JANELA_MS.alta);
+  const janela = info.janelaMs || JANELA_MS[severidade] || JANELA_MS.alta;
+  const suprimida = !ev.forcar && agora - ultimo < janela;
 
   const registro = { ts: new Date(agora).toISOString(), tipo: ev.tipo, severidade, titulo, detalhe, suprimida, recuperado: Boolean(ev.recuperado), canais: {} };
   estado.historico.push(registro);
@@ -248,7 +276,7 @@ export async function reportarAnomalia(ev, deps = {}) {
 
   if (suprimida) {
     salvar(estado);
-    console.warn(`[anomalias] ${ev.tipo} (suprimida, já avisada há menos de ${Math.round((JANELA_MS[severidade] || 0) / 3600000)}h): ${titulo}`);
+    console.warn(`[anomalias] ${ev.tipo} (suprimida, já avisada há menos de ${Math.round(janela / 3600000)}h): ${titulo}`);
     return { enviada: false, suprimida: true, registro };
   }
 
@@ -297,7 +325,7 @@ export async function reportarAnomalia(ev, deps = {}) {
         await enviarWhatsApp(numero, textoWhatsApp(payload));
         ok++;
       } catch (e) {
-        console.warn(`[anomalias] WhatsApp para ${numero} falhou:`, e.message);
+        console.warn(`[anomalias] WhatsApp para ${mascararTelefone(numero)} falhou:`, e.message);
       }
     }
     registro.canais.whatsapp = ok > 0;
@@ -313,22 +341,29 @@ export async function reportarAnomalia(ev, deps = {}) {
 }
 
 /** Anomalias das últimas N horas (mais recentes primeiro). */
-export function listarAnomalias(horas = 24) {
-  const corte = Date.now() - horas * 3600000;
+export function listarAnomalias(horas = 24, { agora = Date.now } = {}) {
+  const corte = agora() - horas * 3600000;
   return carregar()
     .historico.filter((h) => new Date(h.ts).getTime() >= corte)
     .sort((a, b) => b.ts.localeCompare(a.ts));
 }
 
-/** Resumo para relatórios: contagem por severidade e lista dos tipos abertos. */
-export function resumoAnomalias(horas = 24) {
-  const lista = listarAnomalias(horas);
+/**
+ * Resumo para relatórios: contagem por severidade e lista dos tipos abertos.
+ * Um tipo só conta como resolvido se o evento MAIS RECENTE dele for o
+ * "Resolvido" (se o problema voltou depois, está aberto de novo).
+ */
+export function resumoAnomalias(horas = 24, { agora = Date.now } = {}) {
+  const lista = listarAnomalias(horas, { agora }); // mais recentes primeiro
   const porTipo = new Map();
   for (const a of lista) {
-    const t = porTipo.get(a.tipo) || { tipo: a.tipo, titulo: a.titulo, severidade: a.severidade, ocorrencias: 0, ultima: a.ts, recuperado: false };
+    let t = porTipo.get(a.tipo);
+    if (!t) {
+      // primeiro visto = o mais recente: define título, severidade e se está resolvido
+      t = { tipo: a.tipo, titulo: a.titulo, severidade: a.severidade, ocorrencias: 0, ultima: a.ts, recuperado: Boolean(a.recuperado) };
+      porTipo.set(a.tipo, t);
+    }
     t.ocorrencias++;
-    if (a.recuperado) t.recuperado = true;
-    porTipo.set(a.tipo, t);
   }
   const tipos = [...porTipo.values()];
   return {

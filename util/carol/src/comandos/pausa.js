@@ -10,11 +10,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { config } from '../config.js';
 import { DATA_DIR } from '../registro.js';
+import { gravarJsonAtomico } from '../util/arquivo.js';
+import { mascararTelefone, mascarar } from '../util/telefone.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'pausa.json');
 export const HORAS_PADRAO = 2;
 export const HORAS_MIN = 0.5;
 export const HORAS_MAX = 12;
+// Pelo painel o dono pode desligar por mais tempo (ou "até eu religar").
+export const HORAS_MAX_PAINEL = 72;
 
 function ler() {
   try {
@@ -25,8 +29,7 @@ function ler() {
 }
 
 function gravar(estado) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(ARQUIVO, JSON.stringify(estado));
+  gravarJsonAtomico(ARQUIVO, estado);
 }
 
 /** Converte o argumento do comando em horas válidas (vazio → padrão). */
@@ -44,6 +47,8 @@ export function horaBRT(iso) {
 /** Estado atual: { ativa, ate, desde, por, restanteMin }. */
 export function estadoPausa({ agora = Date.now } = {}) {
   const e = ler();
+  // Desligada "até eu religar": sem prazo, só volta com retomar()
+  if (e?.indefinida) return { ativa: true, indefinida: true, ate: null, desde: e.desde || null, por: e.por || null, horas: null, restanteMin: null };
   if (!e?.ate) return { ativa: false };
   const ate = new Date(e.ate).getTime();
   if (!(ate > agora())) return { ativa: false, expirouEm: e.ate };
@@ -63,14 +68,21 @@ export function pausada(opts) {
 
 /**
  * Pausa a Carol por N horas a partir de agora (renova se já estava pausada).
+ * `indefinida: true` desliga sem prazo ("até eu religar"); `maxHoras` permite
+ * ao painel ir além do teto dos comandos do WhatsApp.
  * @returns estado após a pausa
  */
-export function pausar({ horas = HORAS_PADRAO, por = null, agora = Date.now } = {}) {
-  const h = Math.min(Math.max(Number(horas) || HORAS_PADRAO, HORAS_MIN), HORAS_MAX);
+export function pausar({ horas = HORAS_PADRAO, por = null, agora = Date.now, indefinida = false, maxHoras = HORAS_MAX } = {}) {
   const t = agora();
+  if (indefinida) {
+    gravar({ desde: new Date(t).toISOString(), ate: null, indefinida: true, por: por ? String(por) : null });
+    console.log(`[pausa] Carol desligada no WhatsApp ate alguem religar${por ? ` (por ${mascarar(por)})` : ''}`);
+    return estadoPausa({ agora });
+  }
+  const h = Math.min(Math.max(Number(horas) || HORAS_PADRAO, HORAS_MIN), Math.max(HORAS_MAX, Math.min(Number(maxHoras) || HORAS_MAX, HORAS_MAX_PAINEL)));
   const estado = { desde: new Date(t).toISOString(), ate: new Date(t + h * 3600000).toISOString(), horas: h, por: por ? String(por) : null };
   gravar(estado);
-  console.log(`[pausa] Carol pausada no WhatsApp ate ${estado.ate} (${h}h)${por ? ` por ${por}` : ''}`);
+  console.log(`[pausa] Carol pausada no WhatsApp ate ${estado.ate} (${h}h)${por ? ` por ${mascarar(por)}` : ''}`);
   return estadoPausa({ agora });
 }
 
@@ -84,13 +96,10 @@ export function retomar({ agora = Date.now } = {}) {
   return antes;
 }
 
-function mascarar(numero) {
-  return String(numero || '').replace(/^(\d{4})\d+(\d{4})$/, '$1****$2');
-}
-
 /** Linha de status para "/carol status" e "/carol saude". */
 export function textoPausa(estado = estadoPausa()) {
-  if (!estado.ativa) return 'Pausa manual: nenhuma (a Carol atende normalmente fora do horario comercial).';
-  const quem = estado.por ? ` por ${mascarar(estado.por)}` : '';
+  if (!estado.ativa) return 'Pausa manual: nenhuma (a Carol segue o horario de atendimento configurado).';
+  const quem = estado.por ? ` por ${/^\d+$/.test(estado.por) ? mascararTelefone(estado.por) : estado.por}` : '';
+  if (estado.indefinida) return `Pausa manual: ATIVA sem prazo (desligada ate alguem religar)${quem}. Para voltar: /carol voltar ou o painel.`;
   return `Pausa manual: ATIVA ate ${horaBRT(estado.ate)} (faltam ${estado.restanteMin} min)${quem}. Para voltar antes: /carol voltar.`;
 }

@@ -69,6 +69,6 @@ test('textoPausa mostra hora de Brasília, minutos restantes e número mascarado
   const t = textoPausa(estadoPausa({ agora }));
   assert.match(t, /ATIVA ate 20:30/);
   assert.match(t, /faltam 120 min/);
-  assert.match(t, /5541\*\*\*\*0000/);
+  assert.match(t, /55419\*\*\*\*0000/);
   assert.match(t, /\/carol voltar/);
 });

@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 # Deploy da Carol no Railway usando um PROJECT TOKEN.
 # Uso: RAILWAY_TOKEN=xxxx ./scripts/deploy_railway.sh
-# Rodar de dentro de util/carol/. Lê segredos do .env local e do .env da raiz
-# do repositório sem exibi-los.
+# Rodar de dentro de util/carol/.
+#
+# SEGREDOS NUNCA SÃO SOBRESCRITOS. O script só cria variáveis que AINDA NÃO
+# existem no serviço (primeiro deploy). Antes ele copiava META_SYSTEM_USER_TOKEN
+# do .env local para WA_ACCESS_TOKEN em todo deploy; o token local expirou em
+# 04/09 e a Carol ficou muda. Agora:
+#   - WA_ACCESS_TOKEN não é mais tocado pelo script: configure à mão no painel
+#     do Railway com o token PERMANENTE do Usuário do Sistema (Meta Business).
+#   - Para trocar um segredo que já existe, use o painel do Railway ou
+#     `npx @railway/cli variables --service shopify-agro-pecas-theme --set CHAVE=valor`.
+# Os valores nunca são exibidos.
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -19,32 +28,45 @@ pegar() { # pegar ARQUIVO CHAVE
 RAIZ_ENV="../../.env"
 LOCAL_ENV=".env"
 
-ANTHROPIC_API_KEY=$(pegar "$RAIZ_ENV" ANTHROPIC_API_KEY)
-META_SYSTEM_USER_TOKEN=$(pegar "$RAIZ_ENV" META_SYSTEM_USER_TOKEN)
-META_APP_SECRET=$(pegar "$RAIZ_ENV" META_APP_SECRET)
-WA_PHONE_NUMBER_ID=$(pegar "$LOCAL_ENV" WA_PHONE_NUMBER_ID)
-WA_VERIFY_TOKEN=$(pegar "$LOCAL_ENV" WA_VERIFY_TOKEN)
-WA_BUSINESS_NUMBER=$(pegar "$LOCAL_ENV" WA_BUSINESS_NUMBER)
-
-for v in ANTHROPIC_API_KEY META_SYSTEM_USER_TOKEN META_APP_SECRET WA_PHONE_NUMBER_ID WA_VERIFY_TOKEN; do
-  if [ -z "${!v}" ]; then echo "Variável $v não encontrada nos .env" >&2; exit 1; fi
-done
-
 # O serviço no Railway chama "shopify-agro-pecas-theme" e tem root directory
 # util/carol: o `railway up` DEVE subir a partir da raiz do repositório, senão
 # o builder não encontra util/carol dentro do pacote e o build falha na hora.
 SERVICO="shopify-agro-pecas-theme"
 
-echo "== Configurando variáveis no Railway (valores não exibidos)"
-npx -y @railway/cli variables --service "$SERVICO" \
-  --set "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY" \
-  --set "WA_PHONE_NUMBER_ID=$WA_PHONE_NUMBER_ID" \
-  --set "WA_ACCESS_TOKEN=$META_SYSTEM_USER_TOKEN" \
-  --set "WA_VERIFY_TOKEN=$WA_VERIFY_TOKEN" \
-  --set "META_APP_SECRET=$META_APP_SECRET" \
-  --set "WA_BUSINESS_NUMBER=${WA_BUSINESS_NUMBER:-5541984151085}" \
-  --set "GRAPH_VERSION=v21.0" \
-  --skip-deploys
+echo "== Conferindo variáveis já existentes no Railway (só os nomes)"
+if ! EXISTENTES=$(npx -y @railway/cli variables --service "$SERVICO" --json | node -e 'let s="";process.stdin.on("data",(d)=>(s+=d)).on("end",()=>{try{console.log(Object.keys(JSON.parse(s)).join("\n"))}catch{process.exit(1)}})'); then
+  echo "Não consegui listar as variáveis do serviço; por segurança nenhuma variável será alterada." >&2
+  EXISTENTES="__falhou__"
+fi
+
+ARGS=()
+definir_se_ausente() { # definir_se_ausente NOME VALOR
+  local nome="$1" valor="$2"
+  if [ "$EXISTENTES" = "__falhou__" ]; then return; fi
+  if printf '%s\n' "$EXISTENTES" | grep -qx "$nome"; then
+    echo "   $nome: já existe, mantido"
+  elif [ -n "$valor" ]; then
+    echo "   $nome: ausente, será criado"
+    ARGS+=(--set "$nome=$valor")
+  else
+    echo "   $nome: ausente e sem valor no .env local (configure no painel do Railway)" >&2
+  fi
+}
+
+definir_se_ausente ANTHROPIC_API_KEY "$(pegar "$RAIZ_ENV" ANTHROPIC_API_KEY)"
+definir_se_ausente META_APP_SECRET "$(pegar "$RAIZ_ENV" META_APP_SECRET)"
+definir_se_ausente WA_PHONE_NUMBER_ID "$(pegar "$LOCAL_ENV" WA_PHONE_NUMBER_ID)"
+definir_se_ausente WA_VERIFY_TOKEN "$(pegar "$LOCAL_ENV" WA_VERIFY_TOKEN)"
+definir_se_ausente WA_BUSINESS_NUMBER "$(pegar "$LOCAL_ENV" WA_BUSINESS_NUMBER)"
+definir_se_ausente GRAPH_VERSION "v21.0"
+if [ "$EXISTENTES" != "__falhou__" ] && ! printf '%s\n' "$EXISTENTES" | grep -qx WA_ACCESS_TOKEN; then
+  echo "   ATENÇÃO: WA_ACCESS_TOKEN não existe no serviço. Configure à mão com o token permanente do Usuário do Sistema." >&2
+fi
+
+if [ ${#ARGS[@]} -gt 0 ]; then
+  echo "== Criando variáveis ausentes (valores não exibidos)"
+  npx -y @railway/cli variables --service "$SERVICO" "${ARGS[@]}" --skip-deploys
+fi
 
 echo "== Subindo o código (railway up, a partir da raiz do repositório)"
 (cd ../.. && npx -y @railway/cli up --detach --service "$SERVICO")

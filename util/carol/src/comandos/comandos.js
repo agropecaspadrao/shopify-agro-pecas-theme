@@ -9,16 +9,17 @@
 // Números fora da lista de administradores são ignorados em silêncio, para o
 // recurso não ser descoberto por tentativa.
 
-import fs from 'node:fs';
-import path from 'node:path';
 import { config } from '../config.js';
-import { DATA_DIR } from '../registro.js';
-import { validar as validarChavePadrao, rotacionarEEnviar as rotacionarPadrao, estadoChave } from './chave.js';
+import { validar as validarChavePadrao, estadoChave } from './chave.js';
 import { pausar, retomar, estadoPausa, horasDe, horaBRT, textoPausa } from './pausa.js';
 import { reportarAnomalia as reportarPadrao } from '../alertas/anomalias.js';
+import { descreverRegra, descreverOrigem } from '../horarioConfig.js';
+import { statusCredito } from '../gasto.js';
 
 import { definirSaldo, saldoEstimado } from '../custos.js';
 import { fatiar } from '../util/texto.js';
+import { auditar } from '../util/auditoria.js';
+import { mascararTelefone } from '../util/telefone.js';
 export { fatiar };
 
 const PENDENTE_MS = 5 * 60 * 1000;
@@ -27,7 +28,7 @@ const JANELA_FALHAS_MS = 60 * 60 * 1000;
 const MAX_FALHAS = 3;
 const BLOQUEIO_MS = 60 * 60 * 1000;
 
-const SUBCOMANDOS = ['relatorio', 'detalhe', 'saude', 'socios', 'chave', 'ajuda', 'status', 'pausar', 'voltar', 'saldo'];
+const SUBCOMANDOS = ['relatorio', 'detalhe', 'saude', 'socios', 'chave', 'ajuda', 'status', 'pausar', 'voltar', 'saldo', 'apagar'];
 // Formas alternativas que os sócios tendem a escrever
 const APELIDOS = { pausa: 'pausar', parar: 'pausar', pause: 'pausar', retomar: 'voltar', ativar: 'voltar', religar: 'voltar', despausar: 'voltar' };
 const estados = new Map(); // numero -> { pendente, pendenteAte, autenticadoAte, falhas: [], bloqueadoAte }
@@ -84,7 +85,7 @@ export function avisoSilencioAdmin(de, motivo, { agora = Date.now, admins = conf
   const porque =
     motivo === 'pausa'
       ? 'Estou pausada no WhatsApp agora (um socio assumiu o atendimento), por isso nao respondo mensagens comuns.'
-      : 'No horario comercial (seg-sex, 8h as 18h) eu fico em silencio no WhatsApp para a Dai atender, por isso nao respondo mensagens comuns.';
+      : `Neste horario comercial eu fico em silencio no WhatsApp para a equipe atender (regra atual: ${descreverRegra()}), por isso nao respondo mensagens comuns.`;
   return `Oi, aqui e a Carol. ${porque}\nPara falar comigo a qualquer hora, mande /carol (ou /carol ajuda para ver os comandos).`;
 }
 
@@ -94,12 +95,6 @@ export function argumento(texto) {
   return (m?.[1] || '').trim();
 }
 
-function auditar(evento) {
-  try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.appendFileSync(path.join(DATA_DIR, 'auditoria.jsonl'), JSON.stringify({ ts: new Date().toISOString(), ...evento }) + '\n');
-  } catch {}
-}
 
 function estadoDe(numero) {
   let e = estados.get(numero);
@@ -121,6 +116,7 @@ const AJUDA = [
   '/carol saldo - mostra o saldo estimado da Anthropic; /carol saldo 25 = depois de recarregar, informa o saldo do console (US$)',
   '/carol pausar - a Carol para de responder clientes no WhatsApp por 2 horas (ex.: /carol pausar 4 = 4 horas)',
   '/carol voltar - encerra a pausa antes da hora',
+  '/carol apagar 5541999999999 - LGPD: apaga todos os dados do cliente (memoria, ficha e registro das conversas)',
 ].join('\n');
 
 async function executar(sub, arg, deps, de = null) {
@@ -144,16 +140,25 @@ async function executar(sub, arg, deps, de = null) {
         try { r = definirSaldo(arg, { por: de, agora }); } catch { return ['Valor invalido. Mande /carol saldo 25 (saldo em US$ que aparece em console.anthropic.com > Plans & Billing).']; }
         auditar({ evento: 'saldo', de, usd: r.usd });
       }
+      const cred = statusCredito();
+      if (cred.esgotado) return [`CREDITO DA ANTHROPIC ESGOTADO: a API recusou por falta de credito em ${new Date(cred.desde).toLocaleString('pt-BR', { timeZone: config.timezone })}. Recarregue em console.anthropic.com e depois mande /carol saldo <valor em US$>.`];
       const s = saldoEstimado();
       if (!s) return ['Saldo nao sincronizado. Mande /carol saldo <valor em US$> com o saldo do console.anthropic.com.'];
       const f = (v) => 'US$ ' + v.toFixed(2).replace('.', ',');
       if (s.desatualizado) return ['A Carol segue respondendo normalmente, entao o credito foi recarregado depois da base cadastrada. Mande /carol saldo <valor em US$ do console.anthropic.com> para voltar a estimar.'];
       return [`${arg ? 'Saldo atualizado. ' : ''}Saldo estimado da Anthropic: ${f(s.restante)} (base ${f(s.credito)} em ${new Date(s.desde).toLocaleDateString('pt-BR', { timeZone: config.timezone })}, gasto desde entao ${f(s.gasto)}).`];
     }
+    case 'apagar': {
+      if (!arg) return ['Qual cliente? Mande /carol apagar <telefone com DDD>, ex.: /carol apagar 5541999999999. Isso apaga memoria, ficha e o registro das conversas dele (LGPD) e nao tem volta.'];
+      const apagar = deps.apagarCliente || (async (alvo, opts) => (await import('../lgpd.js')).apagarCliente(alvo, { ...opts, memoria: (await import('../memoria/index.js')).memoria }));
+      const { textoExclusao } = await import('../lgpd.js');
+      const r = await apagar({ telefone: arg }, { por: de });
+      return [textoExclusao(r)];
+    }
     case 'voltar': {
       const antes = retomar({ agora });
       auditar({ evento: 'voltar', de, estavaPausada: antes.ativa });
-      if (!antes.ativa) return ['A Carol nao estava pausada. Ela atende normalmente fora do horario comercial (seg-sex, 8h as 18h).'];
+      if (!antes.ativa) return [`A Carol nao estava pausada. Regra de horario em vigor: ${descreverRegra()}.`];
       return ['Carol de volta ao atendimento no WhatsApp.'];
     }
     case 'relatorio': {
@@ -173,17 +178,16 @@ async function executar(sub, arg, deps, de = null) {
       return [`Relatorio executivo enviado por ${via}.`];
     }
     case 'chave': {
+      // A palavra nova sai SÓ por e-mail. Se o e-mail falhar, rotacionarChave
+      // desfaz a rotação e lança: a palavra atual continua valendo.
       const r = await deps.rotacionarChave();
-      // Por desenho a palavra nova sai por e-mail; só cai para o WhatsApp dos
-      // administradores se o e-mail estiver indisponível (contingência).
-      const via = r.canal === 'whatsapp' ? 'WhatsApp dos administradores (contingencia: e-mail indisponivel)' : `e-mail para ${r.enviadaPara.join(', ')}`;
-      return [`Nova palavra-chave gerada e enviada por ${via}. A anterior vale por mais 24 horas.`];
+      return [`Nova palavra-chave gerada e enviada por e-mail para ${r.enviadaPara.join(', ')}. A anterior vale por mais 24 horas.`];
     }
     case 'status': {
       const c = estadoChave({ agora });
       const ate = c.existe ? new Date(c.validaAte).toLocaleString('pt-BR', { timeZone: config.timezone, day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'nenhuma';
-      const autenticados = [...estados.entries()].filter(([, e]) => e.autenticadoAte > agora()).map(([n]) => n.replace(/^(\d{4})\d+(\d{4})$/, '$1****$2'));
-      return [`Palavra-chave atual vale ate ${ate}.\nAutenticados agora: ${autenticados.length ? autenticados.join(', ') : 'ninguem'}.\nAdministradores cadastrados: ${config.admins.length}.\n${textoPausa(estadoPausa({ agora }))}`];
+      const autenticados = [...estados.entries()].filter(([, e]) => e.autenticadoAte > agora()).map(([n]) => mascararTelefone(n));
+      return [`Palavra-chave atual vale ate ${ate}.\nAutenticados agora: ${autenticados.length ? autenticados.join(', ') : 'ninguem'}.\nAdministradores cadastrados: ${config.admins.length}.\n${textoPausa(estadoPausa({ agora }))}\nHorario: ${descreverRegra()}; regra ${descreverOrigem()}.`];
     }
     default:
       return [AJUDA];
@@ -204,7 +208,7 @@ export async function tratarMensagemAdmin({ de, texto }, deps = {}) {
   if (!ehAdmin) {
     if (ehComando(texto)) {
       auditar({ evento: 'comando_nao_autorizado', de });
-      console.warn(`[comandos] ${de} tentou /carol sem ser administrador (ignorado)`);
+      console.warn(`[comandos] ${mascararTelefone(de)} tentou /carol sem ser administrador (ignorado)`);
       return { tratado: true, respostas: [] };
     }
     return { tratado: false, respostas: [] };
@@ -267,7 +271,7 @@ export async function tratarMensagemAdmin({ de, texto }, deps = {}) {
     if (restantes <= 0) {
       e.pendente = null;
       e.bloqueadoAte = t + BLOQUEIO_MS;
-      await reportarAnomalia({ tipo: 'seguranca_tentativas', detalhe: `Numero ${de} errou a palavra-chave ${MAX_FALHAS} vezes em uma hora e foi bloqueado por 1h.` });
+      await reportarAnomalia({ tipo: 'seguranca_tentativas', detalhe: `Numero ${mascararTelefone(de)} errou a palavra-chave ${MAX_FALHAS} vezes em uma hora e foi bloqueado por 1h.` });
       return { tratado: true, respostas: ['Palavra-chave incorreta. Comandos bloqueados por uma hora.'] };
     }
     return { tratado: true, respostas: [`Palavra-chave incorreta. Tentativas restantes: ${restantes}.`] };

@@ -70,3 +70,21 @@ test('executarAgora registra falha sem derrubar e listar mostra próxima', async
   assert.ok(l.proxima);
   await assert.rejects(() => agenda.executarAgora('nao-existe'), /desconhecida/);
 });
+
+test('rodar: trava por tarefa (duas chamadas = uma execução) e relê o estado antes de gravar', async () => {
+  let execucoes = 0;
+  let liberar;
+  const trava = new Promise((r) => (liberar = r));
+  agenda.registrarTarefa({ nome: 'lenta', quando: { hora: 3 }, executar: async () => { execucoes++; await trava; return 'lenta ok'; } });
+  agenda.registrarTarefa({ nome: 'rapida', quando: { hora: 4 }, executar: async () => 'rapida ok' });
+  const a = agenda.executarAgora('lenta');
+  const b = agenda.executarAgora('lenta');
+  await agenda.executarAgora('rapida'); // grava enquanto a lenta ainda roda
+  liberar();
+  const [ra, rb] = await Promise.all([a, b]);
+  assert.equal(execucoes, 1);
+  assert.equal(ra, rb);
+  const estado = JSON.parse(fs.readFileSync(path.join(dir, 'agenda.json'), 'utf8'));
+  assert.equal(estado.rapida.resumo, 'rapida ok', 'a lenta não apagou o registro da rápida');
+  assert.equal(estado.lenta.resumo, 'lenta ok');
+});

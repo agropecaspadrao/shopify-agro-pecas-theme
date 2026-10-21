@@ -250,9 +250,47 @@
     return p.replace(/^\//, '') || 'other';
   }
 
+  /* ---------- Marcador de origem na mensagem do WhatsApp ----------
+     O SDR classifica o canal do lead pela primeira mensagem. Quem chegou por
+     anúncio do Google (gclid/gbraid/wbraid ou utm google+cpc) leva "Ref: GADS"
+     por 30 dias; o resto do tráfego do site leva "Ref: SITE".               */
+  var ADS_KEY = 'app_wa_ref';
+  var ADS_TTL = 30 * 24 * 60 * 60 * 1000;
+  try {
+    var qs = new URLSearchParams(window.location.search);
+    var utmGoogle = (qs.get('utm_source') || '').toLowerCase() === 'google' &&
+      /^(cpc|ppc|paid|paidsearch)$/i.test(qs.get('utm_medium') || '');
+    if (qs.get('gclid') || qs.get('gbraid') || qs.get('wbraid') || utmGoogle) {
+      localStorage.setItem(ADS_KEY, JSON.stringify({ ref: 'GADS', ts: Date.now() }));
+    }
+  } catch (err) {}
+
+  function waRef() {
+    try {
+      var salvo = JSON.parse(localStorage.getItem(ADS_KEY) || 'null');
+      if (salvo && salvo.ref === 'GADS' && Date.now() - salvo.ts < ADS_TTL) return 'GADS';
+    } catch (err) {}
+    return 'SITE';
+  }
+
+  window.appWaRef = function(texto) {
+    texto = texto || 'Olá!';
+    if (/\nRef: [A-Z]+$/.test(texto)) return texto;
+    return texto + '\n\nRef: ' + waRef();
+  };
+
+  function marcarOrigem(link) {
+    try {
+      var url = new URL(link.href);
+      url.searchParams.set('text', window.appWaRef(url.searchParams.get('text')));
+      link.href = url.toString();
+    } catch (err) {}
+  }
+
   document.addEventListener('click', function(e) {
     var link = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
     if (!link) return;
+    marcarOrigem(link);
     var source = waSource(link);
 
     // GTM — dataLayer (fonte para as tags GA4 / Google Ads / Meta do container)

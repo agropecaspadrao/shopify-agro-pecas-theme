@@ -6,8 +6,13 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 // Ordem de carga: .env local do serviço (Railway usa variáveis de ambiente
 // direto), depois o .env global da raiz do repositório (padrão dos utilitários).
-dotenv.config({ path: path.join(here, '..', '.env') });
-dotenv.config({ path: path.join(here, '..', '..', '..', '.env') });
+// Em teste (node --test define NODE_TEST_CONTEXT; ou NODE_ENV=test) NUNCA lê
+// os .env: com as chaves reais um teste chegou a mandar e-mail aos sócios.
+export const emTeste = Boolean(process.env.NODE_TEST_CONTEXT) || process.env.NODE_ENV === 'test';
+if (!emTeste) {
+  dotenv.config({ path: path.join(here, '..', '.env') });
+  dotenv.config({ path: path.join(here, '..', '..', '..', '.env') });
+}
 
 export const config = {
   port: Number(process.env.PORT || 3333),
@@ -55,8 +60,7 @@ export const config = {
   businessHourStart: Number(process.env.CAROL_HORA_INICIO || 8),
   businessHourEnd: Number(process.env.CAROL_HORA_FIM || 18),
 
-  // ── E-mail (transporte HTTP; SMTP fica só de reserva porque o Railway
-  //    bloqueia portas SMTP de saída em qualquer plano) ─────────────────────
+  // ── E-mail (só transporte HTTP: o Railway bloqueia SMTP em qualquer plano) ─
   email: {
     // Gmail API via conta de serviço com delegação no Workspace (preferido:
     // sai pelo Google da própria empresa, sem terceiro e sem DNS novo)
@@ -64,15 +68,8 @@ export const config = {
     gmailSender: process.env.GMAIL_SENDER || '',
     resendApiKey: process.env.RESEND_API_KEY || '',
     brevoApiKey: process.env.BREVO_API_KEY || '',
-    de: process.env.EMAIL_FROM || process.env.SMTP_USER || 'carol@agropecaspadrao.com.br',
+    de: process.env.EMAIL_FROM || 'carol@agropecaspadrao.com.br',
     nomeDe: process.env.EMAIL_FROM_NAME || 'Carol - Agro Peças Padrão',
-    smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
-    smtpPort: Number(process.env.SMTP_PORT || 465),
-    smtpUser: process.env.SMTP_USER || '',
-    smtpPass: process.env.SMTP_PASS || '',
-    // No Railway o SMTP de saída é bloqueado em qualquer plano: pular evita
-    // 20 s de timeout a cada tentativa de e-mail.
-    smtpBloqueado: Boolean(process.env.RAILWAY_ENVIRONMENT) && process.env.SMTP_FORCAR !== '1',
   },
 
   // Destinatários. Relatório operacional (Dai), relatório executivo (sócios)
@@ -138,7 +135,6 @@ export function definirTokenWhatsApp(token) {
 export function recursosConfigurados() {
   return {
     emailHttp: Boolean((config.email.googleServiceAccountJson && config.email.gmailSender) || config.email.resendApiKey || config.email.brevoApiKey),
-    emailSmtp: Boolean(config.email.smtpUser && config.email.smtpPass),
     admins: config.admins.length,
     tokenReservaWhatsApp: Boolean(config.waAccessTokenFallback),
     metaAds: Boolean(config.saude.metaAccessToken && config.saude.metaAdAccountId),

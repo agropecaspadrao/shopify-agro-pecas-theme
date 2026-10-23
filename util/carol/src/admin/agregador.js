@@ -1,8 +1,8 @@
-// Camada de dados do painel do administrador: junta pausa + horário (quem
-// atende agora), atendimento do dia, máquina, saúde e Railway nos formatos
-// que a página consome.
+// Agregação dos dados de operação da Carol para a API de administração
+// (/admin/api/*, consumida pela seção Carol do SDR): junta pausa + horário
+// (quem atende agora), atendimento do dia, máquina, saúde e Railway.
 //
-// Dois ritmos, para a tela não pesar:
+// Dois ritmos, para o portal não pesar:
 //   estado()   → polling de 5 s; JSON pequeno (< 5 KB), cache de 4 s no
 //                servidor para N abas abertas não multiplicarem o trabalho
 //   detalhes() → a cada 60 s; picos por hora, heatmap, saúde, Railway 24h
@@ -66,7 +66,7 @@ export function estadoCarol({ agora = Date.now(), pausa = estadoPausa({ agora: (
   };
 }
 
-export function criarPainel({
+export function criarAgregador({
   dir = DATA_DIR,
   agora = Date.now,
   limites = () => ({}),
@@ -136,7 +136,7 @@ export function criarPainel({
     try {
       p = picos({ porHoraHoje: at.porHora, agora: t });
     } catch (e) {
-      console.warn('[painel] picos indisponíveis:', e.message);
+      console.warn('[admin] picos indisponíveis:', e.message);
     }
     let saude = null;
     try {

@@ -73,7 +73,7 @@ test('e-mail fora: a palavra NUNCA sai pelo WhatsApp; rotação desfeita e aviso
   assert.deepEqual(estadoChave(), antes, 'a palavra atual continua valendo');
   assert.equal(avisos.length, 1);
   assert.doesNotMatch(avisos[0], /agro-[a-z]+-\d{2}/, 'aviso sem o conteúdo');
-  assert.match(avisos[0], /painel/);
+  assert.match(avisos[0], /SDR/);
 });
 
 test('e-mail fora com exibir:true (painel autenticado): mantém a rotação e devolve a palavra uma vez', async () => {

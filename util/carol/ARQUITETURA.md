@@ -20,7 +20,7 @@ src/
   app.js                    Express sem listen (testável): /health, wiring de todas as rotas, erro sem stack
   rotas/webhook.js          WhatsApp: ecos da equipe, comandos, silêncio, fila por telefone, contingência
   rotas/chat.js             widget do site: limites, tetos diários, reserva de 20% para sessões ativas
-  rotas/admin.js            /admin/* antigo: Bearer ou sessão do painel; chave do SDR só na exportação
+  rotas/admin.js            /admin/* antigo (alias para scripts): só Bearer; chave do SDR só na exportação
   ia/anthropic.js           cliente único da Anthropic (timeout 60 s, 1 retry)
   gasto.js                  contador persistente de gasto + estado do crédito visto pela API
   lgpd.js                   exclusão de todos os dados de um cliente
@@ -48,13 +48,12 @@ src/
   agenda.js                 scheduler persistente com catch-up
   horarioConfig.js          regra de horário da Carol no WhatsApp (presets/janelas, DATA_DIR/horario.json)
   horario.js                horarioComercial()/contextoHorario() a partir da regra acima
-  admin/rotas.js            painel do administrador (/admin/painel): login, API, ações
-  admin/sessao.js           cookie de sessão assinado (HMAC), CSRF, headers de segurança
-  admin/painel.js           agregados do painel (estado 5 s, detalhes 60 s) com cache
+  admin/api.js              API JSON /admin/api/* (só Bearer) consumida pela seção Carol do SDR
+  admin/seguranca.js        chave em tempo constante, headers de segurança, CAROL_PORTAL_URL
+  admin/agregador.js        agregados de operação (estado 5 s, detalhes 60 s) com cache
   admin/atendimento.js      leitura incremental do registro JSONL, contadores, picos, mascaramento
   admin/maquina.js          CPU/memória/event loop do processo + tempo de resposta da Carol
   admin/railway.js          métricas 24h do Railway (GraphQL), cache 60 s, falha silenciosa
-  admin/pagina.js, admin/publico/  HTML, CSS e JS do painel (sem build, sem libs)
   util/arquivo.js           gravação atômica de JSON (tmp + rename)
   util/limite.js            limites por chave (rate limit) com consulta de uso
 ```
@@ -73,7 +72,7 @@ do registro: (sem tipo) IA, `falha` (IA fora: contingência curta, no máximo 1
 por telefone a cada 30 min), `silencio` (horário/pausa/teto, motivo gravado),
 `humano` (eco do que a Dai digita no app, campo `smb_message_echoes`; nunca
 dispara resposta), `aviso` (resposta fixa sem IA, ex.: foto), `sistema`
-(chamadas internas). Relatório da Dai, painel, dashboard e exportação contam
+(chamadas internas). Relatório da Dai, API de administração e exportação contam
 `falha/silencio/aviso/entregue:false` como **pendentes** e não como respostas
 da IA.
 
@@ -174,14 +173,15 @@ pausa a Carol ignora clientes no WhatsApp mas continua aceitando `/carol`. O
 site (`/api/chat`) não é afetado. Padrão 2 h, mínimo 30 min, máximo 12 h;
 repetir o comando renova a partir de agora; `/carol voltar` apaga o arquivo.
 Exposto em `/health` (`pausada`, `pausaAte`) e em `/admin/pausa` (GET/POST/DELETE).
-Pelo painel ("Desligar") vale até 72 h (`maxHoras`) ou **sem prazo**
+Pela API do SDR (`POST /admin/api/desligar`) vale até 72 h (`maxHoras`) ou **sem prazo**
 (`indefinida: true`, "até eu religar"), que só termina com Ligar ou `/carol voltar`.
 A gravação é atômica (`util/arquivo.js`).
 
 ### 2.4.3 Horário de atendimento (`horarioConfig.js`)
 
 A regra "quando a Carol responde o WhatsApp" fica em `DATA_DIR/horario.json`,
-editada pelo painel; sem arquivo, vale o padrão do ambiente (`CAROL_24H=1` →
+editada pelo SDR (`PUT /admin/api/horario`; o campo `origem` continua
+`'painel'` por compatibilidade); sem arquivo, vale o padrão do ambiente (`CAROL_24H=1` →
 24 horas; senão "só fora do expediente" com `CAROL_HORA_INICIO/FIM`, seg–sex).
 
 ```json
@@ -201,17 +201,50 @@ quando a Carol atende fora dele, quando a equipe retorna (`proximaMudanca`,
 varredura minuto a minuto em aritmética local — Brasília não tem horário de
 verão). O **chat do site não consulta a regra**: segue 24 h, como antes.
 
-### 2.4.4 Painel do administrador (`admin/`)
+### 2.4.4 Administração pelo SDR (`admin/`)
+
+A Carol **não tem portal próprio**: o SDR comercial é o portal único da
+operação e a seção "Carol" dele chama a API JSON abaixo, servidor→servidor,
+com `Authorization: Bearer <CAROL_ADMIN_KEY>` (sem sessão nem CSRF; a
+`SDR_SYNC_KEY` não vale aqui). `/admin/painel/*` e `/admin/dashboard`
+respondem `302` para `CAROL_PORTAL_URL` (padrão
+`https://sdr-backend-production.up.railway.app/sdr/admin/carol`) com uma página
+mínima de aviso; métodos de escrita nesses caminhos dão `410`.
 
 ```
-GET  /admin/painel/entrar  → formulário (chave) → POST → cookie carol_painel (12 h)
-GET  /admin/painel/        → HTML; painel.js busca:
-       /api/estado    a cada 5 s   (< 5 KB; cache 4 s no servidor)
-       /api/detalhes  a cada 60 s  (picos, heatmap, saúde, alertas, Railway)
-       /api/maquina   1x           (120 pontos de CPU/memória para semear o gráfico)
-       /api/horario   1x / ao salvar
-POST /api/ligar · POST /api/desligar {horas | ateReligar} · PUT /api/horario
+GET    /admin/api/resumo            polling de 5 s: estado + dia + saúde + anomalias + saldo (< 5 KB, cache 4 s)
+GET    /admin/api/estado            ATENDENDO/EM SILÊNCIO/DESLIGADA, próxima mudança, pausa, dia, processo (cache 4 s)
+GET    /admin/api/detalhes          picos por hora hoje × média 7d, heatmap 30d, saúde, alertas, Railway 24h (cache 55 s)
+GET    /admin/api/maquina           120 pontos [t, cpu, rss, heap, lag] para semear o gráfico
+GET    /admin/api/horario           regra + presets       PUT {modo, expediente, janelas} · DELETE = padrão das variáveis
+POST   /admin/api/ligar             POST /admin/api/desligar {horas 0,5–72 | ateReligar:true}
+GET    /admin/api/saude             último quadro + recursos + agenda · POST /admin/api/saude/verificar
+GET    /admin/api/anomalias?horas=  resumo, abertas, lista · POST /admin/api/anomalias/teste {canal}
+GET    /admin/api/agenda            tarefas · POST /admin/api/agenda/executar/:tarefa (404 se não existe)
+GET    /admin/api/custos?dias=      1|7|30|90; compacto (&completo=1 traz conversas) + crédito + statusSaldo
+GET    /admin/api/saldo             saldo estimado + status · POST {usd} (= /carol saldo <valor>)
+GET    /admin/api/chave             validade · POST /admin/api/chave/rotacionar (palavra só se o e-mail falhar, 1x)
+POST   /admin/api/cliente/apagar    {telefone} ou {sessao} (LGPD)
+GET    /admin/api/relatorio         prévia {assunto, corpo} · POST envia agora (idem /relatorio-socios)
+GET    /admin/api/auditoria?linhas= últimas ações, mais recentes primeiro
 ```
+
+- **Erros** sempre `{ erro, detalhes? }`: 400 validação, 401 sem Bearer ou
+  Bearer errado (`WWW-Authenticate: Bearer`), 404 rota/tarefa inexistente,
+  429 limite, 500 sem stack.
+- **Rate limit** por IP: 3.000 req/10 min (`CAROL_API_LIMITE_10MIN`; ~10 abas
+  do SDR com polling de 5 s saem todas do IP do backend do SDR) e 20 chaves
+  erradas/10 min bloqueiam o IP por 10 min (auditoria `api_chave_invalida`).
+- **Auditoria**: toda escrita grava em `auditoria.jsonl`
+  `{ origem: 'sdr', ator, ip, evento, ... }`, com `ator` vindo do header
+  `X-Ator` (login de quem fez no SDR; limpo, até 60 caracteres). Pausa,
+  horário, saldo e LGPD gravam `por: 'sdr:<ator>'`.
+- **Cache**: `resumo` e `estado` têm cache de 4 s no servidor (N abas não
+  multiplicam o trabalho); ações (ligar, desligar, horário, saldo, verificar
+  saúde) invalidam o cache para o próximo polling vir fresco.
+- **Rotas antigas** `/admin/*` (status, pausa, saldo, saude, anomalias, chave,
+  agenda, custos, auditoria, relatorio, cliente/apagar, exportar) continuam
+  com Bearer para scripts; `/admin/exportar` aceita também a `SDR_SYNC_KEY`.
 
 - **Leitura incremental**: `criarLeitor()` guarda o offset de cada
   `registro-AAAA-MM-DD.jsonl` e só lê os bytes novos; linha incompleta espera a
@@ -228,9 +261,6 @@ POST /api/ligar · POST /api/desligar {horas | ateReligar} · PUT /api/horario
   projeto (`Project-Access-Token`) ou de conta (`Authorization: Bearer`) via
   `RAILWAY_TOKEN_TIPO`. Cache 60 s (inclusive de falha); em falha devolve o
   último dado bom marcado como desatualizado, ou "indisponíveis". Nunca lança.
-- **Cliente**: sem bibliotecas; atualiza o DOM existente; para o polling com a
-  aba oculta (`visibilitychange`); recuo exponencial em erro (até 60 s);
-  gráficos em SVG próprio; respeita `prefers-reduced-motion`.
 
 ### 2.4.2 Rajadas no WhatsApp (`whatsapp.js`)
 
@@ -250,7 +280,7 @@ sal aleatório de 16 bytes, arquivo `0600`. Rotação automática segunda 7h55
 (Brasília) ou no boot se não existir/expirou. Transição de 24h. Comparação com
 `crypto.timingSafeEqual`. Sai só por e-mail, NUNCA pelo WhatsApp: se o e-mail
 falhar, a rotação é desfeita e os admins recebem só um aviso sem conteúdo; o
-painel (`POST /admin/painel/api/chave`) ou `POST /admin/chave/rotacionar?exibir=1`
+SDR (`POST /admin/api/chave/rotacionar`) ou `POST /admin/chave/rotacionar?exibir=1`
 (autenticados) mostram a palavra uma vez quando o e-mail está fora.
 
 ### 2.6 Agenda
@@ -322,7 +352,7 @@ sessão; `expira_em`; parcial `(atualizado_em) WHERE pendente_episodio`;
 apaga memória de trabalho expirada (a pendente só depois de fechada, ou se
 passou de 7 dias), episódios > 7 dias, fichas > 180 dias sem contato, tudo de
 `deploy-check*` e os arquivos `registro-*.jsonl` com mais de 90 dias
-(`CAROL_REGISTRO_DIAS`; o painel usa no máximo 90). Loga as contagens.
+(`CAROL_REGISTRO_DIAS`; a API de custos usa no máximo 90). Loga as contagens.
 
 **Relatório de 24h.** Antes de montar, fecha os episódios ociosos; as conversas
 cobertas por um episódio (mesma sessão, episódio até a última mensagem) usam o
@@ -346,15 +376,18 @@ facebook; anúncio sem URL → facebook). O SDR ignora campos desconhecidos.
 
 - **Segredos** só em variáveis de ambiente; nunca em log (a palavra-chave nunca
   é logada; tokens não aparecem em mensagens de erro além do status HTTP).
-- **`/admin`**: `Authorization: Bearer <CAROL_ADMIN_KEY>` ou a sessão do
-  painel; `?key=` e o cookie `carol_key` (chave em texto puro) foram removidos.
-  Escrita com cookie exige mesma origem. Comparação em tempo constante, rate
-  limit 60 req/10 min por IP (IPv6 por /64), `no-store`, CSP e `DENY` em tudo;
-  o dashboard tem CSP com nonce por resposta. `/health` público só devolve
-  `{ ok, status }`; detalhes com Bearer ou em `/admin/status`.
+- **`/admin`**: só `Authorization: Bearer <CAROL_ADMIN_KEY>`; `?key=`, o
+  cookie `carol_key` e a sessão do antigo painel foram removidos (não há mais
+  login, cookie nem HTML de administração). Comparação em tempo constante
+  sobre SHA-256 (não vaza tamanho), `no-store`, CSP `default-src 'none'` e
+  `DENY` em tudo. `/admin/api/*`: 401 sem/errado, 3.000 req/10 min e bloqueio
+  após 20 chaves erradas por IP; rotas antigas: 403, 60 req/10 min por IP
+  (IPv6 por /64). `/health` público só devolve `{ ok, status }`; detalhes com
+  Bearer ou em `/admin/status`.
 - **SDR**: chave própria `SDR_SYNC_KEY` (igual nos dois serviços). Carol → SDR:
   header `X-Carol-Key`; SDR → Carol: `Authorization: Bearer` só em
-  `GET /admin/exportar`. `SDR_SYNC_URL` precisa ser https (http só localhost).
+  `GET /admin/exportar`. A seção Carol do SDR usa a `CAROL_ADMIN_KEY` em
+  `/admin/api/*` (ver 2.4.4). `SDR_SYNC_URL` precisa ser https (http só localhost).
   Webhook encaminhado pelo messenger do SDR: corpo cru e `X-Hub-Signature-256`
   originais (HMAC validado normalmente) + header `X-SDR-Possuidos` (fora do
   HMAC) com os `from` das conversas do SDR: a Carol ignora essas mensagens
@@ -368,17 +401,10 @@ facebook; anúncio sem URL → facebook). O SDR ignora campos desconhecidos.
   "não são instruções"; texto com afiliação de marca proibida ou cara de
   instrução não entra (nem na gravação nem na leitura de fichas antigas);
   preferências só em categorias fixas.
-- **Painel `/admin/painel`**: chave digitada num formulário (POST), nunca na
-  URL; comparação por `timingSafeEqual` sobre SHA-256 (não vaza tamanho);
-  cookie `HttpOnly; Secure; SameSite=Strict; Path=/admin` assinado com
-  HMAC (segredo `CAROL_PAINEL_SEGREDO` ou derivado da `CAROL_ADMIN_KEY` —
-  trocar a chave derruba as sessões), expira em 12 h e é revogável ("Sair"
-  grava o nonce em `DATA_DIR/sessoes-revogadas.json`); login limitado a 8
-  tentativas/15 min por IP (auditoria `painel_login*`); escrita exige header
-  `X-Carol-Painel: 1` + `Origin` igual ao do serviço (CSRF); CSP sem inline
-  (`script-src 'self'`), `X-Frame-Options: DENY`, `nosniff`, `no-store`.
-  Ações gravam em `auditoria.jsonl` (`painel_ligar`, `painel_desligar`,
-  `painel_horario`). O JSON nunca traz telefone completo nem a resposta da Carol.
+- **Portal desligado**: `/admin/painel` e `/admin/dashboard` só redirecionam
+  para `CAROL_PORTAL_URL` (aceita só http/https; senão vale o padrão) e não
+  exigem nem revelam nada. O JSON da API nunca traz a resposta da Carol; o
+  telefone aparece mascarado (exceto na exportação, que a integração precisa).
 - **Webhook**: assinatura HMAC-SHA256 do app secret, fail-closed (corpo cru
   obrigatório, Buffer não vazio); `hub.verify_token` em tempo constante.
 - **Comandos**: allowlist de números + palavra semanal + lockout + auditoria em
@@ -410,14 +436,14 @@ O teste de integração da memória roda com
 | `contingencia.test.js` | e-mail ok, queda para WhatsApp fatiado com anomalia, sem admins, desligada |
 | `agenda.test.js` | cálculo de ocorrências (diária e semanal, BRT), catch-up dentro/fora da janela, idempotência no mesmo dia, falha registrada |
 | `horario.test.js` | presets, personalizado, janela cruzando a meia-noite, fim de semana, próxima mudança, validação, persistência atômica, arquivo corrompido, texto de contexto |
-| `painel.test.js` | sessão (válida/adulterada/expirada, tempo constante), CSRF, rate limit, mascaramento, agregação e leitura incremental do JSONL, picos/heatmap, cache do estado, desligar sem prazo, cache e falha silenciosa do Railway |
-| `painel-rotas.test.js` | rotas de ponta a ponta em servidor local efêmero: 401/redirect, headers, login, CSRF, ações, rate limit do login |
+| `agregador.test.js` | chave em tempo constante, `CAROL_PORTAL_URL`, rate limit, mascaramento, agregação e leitura incremental do JSONL, picos/heatmap, cache do estado, desligar sem prazo, cache e falha silenciosa do Railway |
+| `admin-api.test.js` | `/admin/api/*` de ponta a ponta: 401 (sem Bearer, errado, chave do SDR, `?key=`, cookie), bloqueio após chaves erradas, `resumo` < 5 KB e cache invalidado por ação, estado/detalhes/máquina, ligar/desligar (validação 400), `X-Ator` limpo na auditoria, horário PUT/DELETE, agenda 404, saldo, custos compacto/completo, LGPD, palavra-chave, relatórios, 404 JSON |
 | `saude.test.js` | cada verificador com respostas reais simuladas, recuperações, supervisor (consolidação, recuperação, "resolvido") |
 | `memoria.test.js` | continuação < 12h, retomada 12h–7d (bloco fora do cache), > 7d só ficha, genérica × específica, compactação > 30, fila por sessão, anti-lixo, merge da ficha sem preço, teto do bloco, limpeza (cada regra + JSONL 90d), fallback Postgres → local e volta, reidratação do JSONL, relatório pelos episódios |
 | `origem.test.js` | formato da origem (anúncio/catálogo/site/orgânico, plataforma), extração do referral, origem no JSONL e no espelho do SDR |
 | `webhook.test.js` | fluxo do WhatsApp com deps injetadas: comandos, silêncio (pausa/horário/teto), eco da equipe sem resposta, envio antes do registro, `entregue:false`, contingência 1x/30 min + `falha`, agrupamento, uma resposta por vez, áudio/mídia |
 | `claude.test.js` | `gerarResposta` com cliente Anthropic falso: saudação, origem, registro só no `confirmar`, memória, histórico normalizado; catálogo com carga única/timeout/throttle; `montarLinkCarrinho` |
-| `app.test.js` | app sem listen: `/health` mínimo, Bearer, `?key=` recusado, sessão do painel (dashboard, revogação), CSRF, chave do SDR só na exportação, LGPD, erro sem stack, webhook GET, chat com falha registrada |
+| `app.test.js` | app sem listen: `/health` mínimo, Bearer, `?key=` e cookies recusados, portal desligado (302 para o SDR, 410 na escrita), chave do SDR só na exportação, LGPD, erro sem stack, webhook GET, chat com falha registrada |
 | `chat.test.js` | tetos por sessão e por IP (/64) e reserva de 20% do teto global |
 | `lgpd.test.js` | sessões do cliente (nono dígito), exclusão na memória e reescrita do JSONL, banco fora, `/carol apagar` |
 | `memoria-extra.test.js` | filtro de injeção/afiliação, bloco não confiável, preferências fixas, pendente vencida vira episódio (ou cru), anomalia de fechamento, devolução de episódios/fichas ao banco |
@@ -434,8 +460,10 @@ O teste de integração da memória roda com
 - **Variáveis novas**: ver `.env.example`, bloco "Monitoramento".
 - **Primeiro boot** gera e envia a palavra-chave por e-mail (em segundo plano,
   depois do listen); sem e-mail ela não é gerada e os admins recebem aviso para
-  gerar pelo painel.
-- **Testar os alertas**: `POST /admin/anomalias/teste`.
+  gerar pelo SDR (seção Carol).
+- **Administração**: SDR → seção Carol (API `/admin/api/*`). Os comandos
+  `/carol` pelo WhatsApp ficam como acesso de emergência (SDR fora do ar).
+- **Testar os alertas**: SDR → Carol, ou `POST /admin/api/anomalias/teste`.
 - **Logs**: prefixos `[anomalias]`, `[saude]`, `[recuperacao]`, `[comandos]`,
   `[agenda]`, `[email]`, `[chave]`, `[memoria]`.
 - **Memória**: `GET /admin/status` (ou `/health` com Bearer) mostra `memoria: postgres | local | postgres (degradada: local)`, a origem da regra de horário e o estado do crédito.

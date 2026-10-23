@@ -28,7 +28,7 @@ function avisosDeConfiguracao() {
   }
   if (!process.env.SDR_SYNC_KEY && process.env.SDR_SYNC_URL) console.warn('[config] SDR_SYNC_KEY ausente: o espelho usa CAROL_ADMIN_KEY (transição). Configure SDR_SYNC_KEY igual na Carol e no SDR.');
   const r = recursosConfigurados();
-  if (!r.emailHttp) console.warn('[config] nenhum provedor de e-mail HTTP (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY ou BREVO_API_KEY). No Railway o SMTP é bloqueado: e-mails NÃO vão sair; relatórios caem para o WhatsApp dos admins e a palavra-chave só pelo painel.');
+  if (!r.emailHttp) console.warn('[config] nenhum provedor de e-mail HTTP (GOOGLE_SERVICE_ACCOUNT_JSON+GMAIL_SENDER, RESEND_API_KEY ou BREVO_API_KEY). No Railway o SMTP é bloqueado: e-mails NÃO vão sair; relatórios caem para o WhatsApp dos admins e a palavra-chave só pelo SDR (seção Carol).');
   if (!r.admins) console.warn('[config] CAROL_ADMINS vazio: comandos /carol desativados e alertas por WhatsApp sem destinatário.');
   if (!r.tokenReservaWhatsApp) console.warn('[config] WA_ACCESS_TOKEN_FALLBACK vazio: sem auto-recovery de token do WhatsApp.');
   console.log(`[config] recursos: e-mail HTTP=${r.emailHttp} admins=${r.admins} tokenReserva=${r.tokenReservaWhatsApp} metaAds=${r.metaAds} googleAds=${r.googleAds} masterDrive=${r.masterDrive}`);

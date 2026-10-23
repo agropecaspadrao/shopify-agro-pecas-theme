@@ -1,7 +1,15 @@
 # Carol — Manual para os sócios
 
 > Como a Carol cuida da operação sozinha, o que ela manda por e-mail, o que
-> fazer quando chegar um "Urgente Carol" e como usar os comandos pelo WhatsApp.
+> fazer quando chegar um "Urgente Carol", onde administrar (SDR → seção Carol)
+> e como usar os comandos de emergência pelo WhatsApp.
+>
+> **Onde administrar a Carol:** no **SDR comercial, seção Carol**
+> (`https://sdr-backend-production.up.railway.app/sdr/admin/carol`). O antigo
+> painel próprio da Carol (`/admin/painel`) e o dashboard (`/admin/dashboard`)
+> foram desligados: quem abrir esses endereços é levado para o SDR. Os
+> comandos `/carol` pelo WhatsApp continuam, como **acesso de emergência**
+> (quando o SDR estiver fora do ar ou você longe do computador).
 
 ---
 
@@ -85,14 +93,15 @@ aceita por 24 horas na virada, para ninguém ficar travado na segunda de manhã.
 WhatsApp é justamente o canal que ela protege). Se o e-mail estiver fora do ar,
 a troca é cancelada (a palavra atual continua valendo) e os administradores
 recebem no WhatsApp só um aviso, sem a palavra. Para gerar uma nova nesse caso,
-entre no painel (`/admin/painel`, cartão **Palavra-chave**): ela aparece na tela
-uma única vez.
+use o SDR (seção **Carol**, **Palavra-chave**): ela aparece na tela uma única vez.
 
 ---
 
-## 3. Comandos pelo WhatsApp
+## 3. Comandos pelo WhatsApp (acesso de emergência)
 
-Funcionam **só para os números cadastrados como administradores**. Qualquer
+O lugar principal para administrar a Carol é o **SDR, seção Carol** (seção 5).
+Os comandos abaixo continuam funcionando para quando o SDR estiver fora do ar
+ou você estiver só com o celular. Funcionam **só para os números cadastrados como administradores**. Qualquer
 outro número que mande `/carol` é ignorado em silêncio — a Carol nem confirma
 que o comando existe.
 
@@ -107,10 +116,10 @@ horário comercial:
 | `/carol socios` | Dispara o relatório executivo por e-mail agora, sem esperar as 8h05 |
 | `/carol chave` | Gera uma palavra-chave nova e envia por e-mail (use se suspeitar que vazou) |
 | `/carol status` | Até quando vale a palavra atual, quem está autenticado e se há pausa ativa |
-| `/carol pausar` | A Carol **para de responder clientes no WhatsApp por 2 horas** e volta sozinha. `/carol pausar 4` = 4 horas (mínimo 30 min, máximo 12 h). Mandar de novo renova o prazo. Para desligar por mais tempo ou "até eu religar", use o painel (seção 5.1) |
+| `/carol pausar` | A Carol **para de responder clientes no WhatsApp por 2 horas** e volta sozinha. `/carol pausar 4` = 4 horas (mínimo 30 min, máximo 12 h). Mandar de novo renova o prazo. Para desligar por mais tempo ou "até eu religar", use o SDR → Carol (seção 5) |
 | `/carol voltar` | Encerra a pausa antes da hora |
 | `/carol apagar 5541999990001` | **LGPD:** apaga todos os dados daquele cliente (memória, ficha, histórico das conversas no registro) e responde com as contagens. Não tem volta. Use quando o cliente pedir a exclusão |
-| `/carol ajuda` | Esta lista |
+| `/carol ajuda` | Esta lista (e o link da seção Carol no SDR) |
 
 ### Pausar a Carol para atender pessoalmente
 
@@ -162,7 +171,7 @@ próximos comandos não pedem a palavra de novo.
 
 - **Três erros em uma hora bloqueiam o número por uma hora** e disparam um
   alerta "Urgente Carol: tentativas repetidas" por e-mail. Se você errou por
-  distração, é só esperar. Se não foi você, rotacione a palavra pelo painel.
+  distração, é só esperar. Se não foi você, rotacione a palavra pelo SDR (seção Carol).
 - A palavra digitada aceita maiúsculas, espaços e acento por engano
   (`Agro Trator 42` funciona), mas não aceita errado.
 - Todas as tentativas, certas e erradas, ficam registradas com número e horário.
@@ -175,7 +184,7 @@ próximos comandos não pedem a palavra de novo.
 |---|---|---|
 | **WhatsApp parou de responder (token inválido)** | A senha de acesso ao WhatsApp expirou. Clientes escrevem e ninguém responde | Se houver token reserva, a Carol já trocou sozinha e o e-mail diz "Recuperação automática". Se não, gerar token permanente no Meta Business e atualizar `WA_ACCESS_TOKEN` no Railway |
 | **Token do WhatsApp expira em breve** | Vai expirar em menos de 7 dias | Trocar antes. Prefira token permanente (Usuário do Sistema) |
-| **Crédito da Anthropic acabou** | A IA parou. Carol não responde ninguém | Recarregar em console.anthropic.com > Plans & Billing. Depois atualizar `CAROL_CREDITO_USD` e `CAROL_CREDITO_DESDE` |
+| **Crédito da Anthropic acabou** | A IA parou. Carol não responde ninguém | Recarregar em console.anthropic.com > Plans & Billing. Depois informar o saldo do console no SDR → Carol → **Custos e saldo** (ou `/carol saldo <valor>`) |
 | **Saldo de créditos baixo** (só no relatório) | Falta menos de US$ 0,50 | Recarregar antes que zere. O saldo é estimado pelo uso registrado desde `CAROL_CREDITO_DESDE`; depois de recarregar, atualizar `CAROL_CREDITO_USD` com o saldo do console e `CAROL_CREDITO_DESDE` com a data, senão o aviso fica errado |
 | **Chave da API da Anthropic recusada** | A senha da IA está errada ou foi revogada | Conferir `ANTHROPIC_API_KEY` no Railway |
 | **Catálogo da loja não carregou** | O site não respondeu. A Carol segue com a última cópia | Conferir se agropecaspadrao.com.br está no ar |
@@ -188,67 +197,69 @@ próximos comandos não pedem a palavra de novo.
 
 ---
 
-## 5. Painel do administrador (novo) e endereços técnicos
+## 5. Administração no SDR (seção Carol) e endereços técnicos
 
-### 5.1 Painel do administrador — `/admin/painel`
+### 5.1 SDR → seção Carol
 
-Abra no navegador (funciona no celular) o endereço do serviço da Carol seguido
-de **`/admin/painel`** (ex.: `https://<serviço da Carol no Railway>/admin/painel`).
-Digite a **chave de administrador** (`CAROL_ADMIN_KEY`) e toque em Entrar. A
-sessão vale 12 horas naquele aparelho; o botão **Sair** encerra antes. A chave
-nunca vai na barra de endereço. Depois de 8 tentativas erradas em 15 minutos o
-login fica bloqueado por 15 minutos naquele endereço de internet.
+Toda a administração da Carol fica no **SDR comercial**, o portal único da
+operação: entre no SDR com o seu login e abra a seção **Carol**
+(`https://sdr-backend-production.up.railway.app/sdr/admin/carol`). Não existe
+mais login nem chave para digitar: o SDR conversa com a Carol por trás, com a
+chave de administrador guardada no servidor. Cada ação feita lá (ligar,
+desligar, mudar horário, informar saldo, apagar cliente...) fica registrada na
+auditoria da Carol **com o seu login do SDR**.
 
 O que você vê e faz:
 
 | Bloco | Para que serve |
 |---|---|
-| **Agora a Carol está** | ATENDENDO (verde), EM SILÊNCIO (Dai) (âmbar, horário da equipe), FORA DO HORÁRIO (ninguém atende: fora da regra da Carol e fora do expediente, por exemplo no modo "só no expediente" à noite) ou DESLIGADA (vermelho), e a próxima mudança ("volta a atender hoje às 18:00"). Logo abaixo, a **origem da regra**: "padrão do servidor" (variáveis `CAROL_24H` / `CAROL_HORA_*`) ou "definida no painel" (aí as variáveis não têm efeito). Se o crédito da Anthropic acabar, aparece um aviso vermelho aqui |
-| **Ligar / Desligar** | Desligar por 1 h, 2 h, 4 h, 8 h, 12 h, 24 h, 2 ou 3 dias, ou **até eu religar**. "Ligar agora" religa na hora. É a mesma pausa do `/carol pausar` / `/carol voltar` e fica registrada na auditoria |
-| **Atendimento hoje** | Conversas ativas (última mensagem há menos de 30 min), mensagens e clientes do dia, tempo médio de resposta da Carol, quantas respostas ela está escrevendo agora, erros do dia, **sem resposta da Carol hoje** (mensagens em silêncio, falha da IA ou envio que não saiu: a equipe precisa responder) e o uso dos tetos diários (WhatsApp e site) |
-| **Últimas interações** | As 10 mais recentes, com telefone mascarado (55419\*\*\*\*1085) e um trecho curto |
-| **Picos de atendimento** | Mensagens por hora hoje x média dos últimos 7 dias, o pico do dia e um mapa dia da semana × hora dos últimos 30 dias |
-| **Máquina agora** | Processador, memória, atraso interno, há quanto tempo está ligada, conexões e versão, com gráfico dos últimos 10 minutos |
-| **Verificações automáticas** | O resultado da última checagem de saúde (a cada 30 min) e os alertas abertos nas últimas 24 h |
-| **Servidor no Railway (24h)** | CPU e memória do servidor nas últimas 24 h e os picos. Só aparece se `RAILWAY_API_TOKEN` estiver configurado; senão mostra "não configuradas" |
-| **Horário de atendimento no WhatsApp** | Escolha quando a Carol responde: **24 horas**, **só fora do expediente** (o padrão de sempre: noite e fins de semana), **só no expediente** ou **personalizado** (dias e horários à sua escolha, inclusive janelas que passam da meia-noite, como seg–sex 18:00 até 08:00). Também se edita o **expediente da equipe (Dai)**, que a Carol usa para dizer ao cliente quando a equipe volta. Vale na hora, sem redeploy. Depois de salvo aqui, as variáveis do Railway deixam de valer; o botão **Voltar ao padrão do servidor** apaga a regra do painel |
+| **Agora a Carol está** | ATENDENDO, EM SILÊNCIO (Dai) (horário da equipe), FORA DO HORÁRIO (ninguém atende: fora da regra da Carol e fora do expediente) ou DESLIGADA, e a próxima mudança ("volta a atender hoje às 18:00"). Mostra também a **origem da regra**: "padrão do servidor" (variáveis `CAROL_24H` / `CAROL_HORA_*`) ou "definida no SDR" (aí as variáveis não têm efeito) |
+| **Ligar / Desligar** | Desligar por algumas horas (até 3 dias) ou **até eu religar**; "Ligar" religa na hora. É a mesma pausa do `/carol pausar` / `/carol voltar` |
+| **Atendimento hoje** | Conversas ativas, mensagens e clientes do dia, tempo médio de resposta, erros, **sem resposta da Carol hoje** (a equipe precisa responder) e o uso dos tetos diários |
+| **Picos, máquina e Railway** | Mensagens por hora hoje × média de 7 dias, mapa dia × hora de 30 dias, processador/memória do serviço e, com `RAILWAY_API_TOKEN`, as últimas 24 h do Railway |
+| **Saúde e alertas** | Último quadro das verificações automáticas (com botão para verificar agora), alertas abertos e o histórico; teste do canal de alertas |
+| **Horário de atendimento no WhatsApp** | **24 horas**, **só fora do expediente**, **só no expediente** ou **personalizado**, e o expediente da equipe (Dai). Vale na hora; **Voltar ao padrão do servidor** apaga a regra salva |
+| **Custos e saldo** | Gasto do período (1, 7, 30 ou 90 dias), projeção do mês, saldo estimado do crédito da Anthropic e se o crédito zerou. Depois de recarregar, informe ali o saldo do console (equivale ao `/carol saldo 25`) |
+| **Rotinas** | Cada tarefa automática, última e próxima execução, com botão para rodar agora |
+| **Relatórios** | Prévia e envio imediato do relatório da Dai e do executivo dos sócios |
 | **Palavra-chave dos comandos** | Gera uma palavra nova e manda por e-mail; se o e-mail estiver fora, mostra na tela uma única vez |
+| **LGPD** | Apagar todos os dados de um cliente pelo telefone (ver 5.3) |
 
-Os números se atualizam sozinhos a cada 5 segundos (gráficos e saúde a cada
-minuto). Com a aba em segundo plano o painel para de consultar, para não gastar
-bateria nem servidor. O chat do site continua 24 horas, qualquer que seja o
-horário escolhido — a regra vale só para o WhatsApp.
+O chat do site continua 24 horas, qualquer que seja o horário escolhido — a
+regra vale só para o WhatsApp.
 
-### 5.2 Endereços técnicos
+### 5.2 Endereços técnicos (para quem usa curl ou scripts)
 
-Pelo navegador, depois de entrar no painel (a mesma sessão abre estes
-endereços); por curl, com o header `Authorization: Bearer <CAROL_ADMIN_KEY>`.
-A chave **nunca** vai na URL (`?key=` não funciona mais):
+A seção Carol do SDR usa a API `/admin/api/*` da Carol, sempre com o header
+`Authorization: Bearer <CAROL_ADMIN_KEY>` (a chave **nunca** vai na URL e não
+há mais login por navegador). Os principais:
 
-| Endereço | Mostra |
+| Endereço | Mostra / faz |
 |---|---|
-| `/admin/painel` | **Painel do administrador** (seção 5.1) — login próprio, sem chave na URL |
-| `/admin/dashboard` | Painel visual de custos e conversas (exige a sessão do painel; telefones mascarados) |
-| `/admin/status` | Detalhes de saúde (o `/health` público só diz se está no ar) |
-| `/admin/saude` | Último quadro de saúde, recursos configurados e agenda |
-| `/admin/anomalias?horas=24` | Histórico de anomalias, incluindo as suprimidas por deduplicação |
-| `/admin/agenda` | Cada rotina, última execução e próxima prevista |
-| `/admin/chave` | Até quando vale a palavra-chave atual |
-| `/admin/pausa` | Se a Carol está pausada, até quando e por quem |
-| `/admin/auditoria?linhas=100` | Quem mandou quais comandos `/carol` (inclusive tentativas de números não cadastrados) |
-| `/admin/relatorio-socios` | Prévia do relatório executivo sem enviar |
+| `GET /admin/api/resumo` | Resumo rápido: estado, atendimento do dia, saúde, alertas abertos, saldo |
+| `GET /admin/api/estado` · `/detalhes` | Estado completo · picos, mapa, saúde e Railway |
+| `GET/PUT/DELETE /admin/api/horario` | Regra de horário (ler, salvar, voltar ao padrão) |
+| `POST /admin/api/ligar` · `/desligar` | Religar · desligar (`{"horas":4}` ou `{"ateReligar":true}`) |
+| `GET /admin/api/saude` · `POST /admin/api/saude/verificar` | Último quadro de saúde · verificar agora |
+| `GET /admin/api/anomalias` · `POST /admin/api/anomalias/teste` | Alertas · testar se os alertas chegam |
+| `GET /admin/api/agenda` · `POST /admin/api/agenda/executar/<nome>` | Rotinas · rodar uma agora |
+| `GET /admin/api/custos?dias=7` · `POST /admin/api/saldo` | Custos · informar o saldo do console (`{"usd":25}`) |
+| `POST /admin/api/chave/rotacionar` | Nova palavra-chave |
+| `POST /admin/api/cliente/apagar` | LGPD (ver 5.3) |
+| `GET/POST /admin/api/relatorio` · `/relatorio-socios` | Prévia / enviar agora |
+| `GET /admin/api/auditoria?linhas=100` | Quem fez o quê (comandos `/carol` e ações pelo SDR, com o login) |
 
-E ações (POST): `/admin/saude` (verificar agora), `/admin/anomalias/teste`
-(testa se os alertas chegam), `/admin/chave/rotacionar`, `/admin/relatorio-socios`
-(enviar agora), `/admin/agenda/executar/<nome>`, `/admin/pausa?horas=2` (pausar;
-`DELETE /admin/pausa` encerra), `/admin/cliente/apagar` (LGPD, ver 5.3).
+As rotas antigas (`/admin/status`, `/admin/saude`, `/admin/pausa`,
+`/admin/auditoria` etc.) continuam respondendo com o mesmo header, para scripts.
+`/admin/painel` e `/admin/dashboard` só levam para o SDR.
 
 ### 5.3 Pedido de exclusão de dados (LGPD)
 
 Quando um cliente pedir que apaguem os dados dele:
 
-- pelo WhatsApp: `/carol apagar <telefone com DDD>` (ex.: `/carol apagar 5541999990001`);
-- ou por curl: `POST /admin/cliente/apagar` com `Authorization: Bearer <CAROL_ADMIN_KEY>` e corpo `{"telefone":"5541999990001"}` (para o chat do site: `{"sessao":"site:..."}`).
+- pelo WhatsApp (emergência): `/carol apagar <telefone com DDD>` (ex.: `/carol apagar 5541999990001`);
+- pelo SDR: seção Carol → **LGPD**;
+- ou por curl: `POST /admin/api/cliente/apagar` com `Authorization: Bearer <CAROL_ADMIN_KEY>` e corpo `{"telefone":"5541999990001"}` (para o chat do site: `{"sessao":"site:..."}`).
 
 A Carol apaga a memória da conversa, os resumos (episódios) e a ficha do
 cliente (no banco e na memória local) e reescreve o registro das conversas sem
@@ -256,15 +267,15 @@ as linhas dele (as duas formas do número, com e sem o nono dígito). A resposta
 traz quantas linhas e itens foram apagados; tudo fica na auditoria (com o
 telefone mascarado). Se o banco estiver fora do ar, a resposta avisa para
 repetir depois. Atenção: o histórico espelhado no SDR comercial é apagado lá,
-pelo painel do SDR.
+pela tela de conversas do SDR.
 
 ### 5.4 Quando a IA fica fora (crédito zerado, chave recusada)
 
 O cliente do WhatsApp não fica mais sem resposta e sem registro: ele recebe
 "Recebi sua mensagem. Nossa equipe vai te responder em seguida." (ou "a partir
 de amanhã às 08:00", conforme o expediente; no máximo uma vez a cada 30 minutos
-por cliente), a conversa fica marcada como **pendente** no relatório da Dai, no
-painel e no SDR, e chega o alerta "Urgente Carol: Crédito da Anthropic acabou".
+por cliente), a conversa fica marcada como **pendente** no relatório da Dai e
+no SDR, e chega o alerta "Urgente Carol: Crédito da Anthropic acabou".
 Mensagens recebidas no horário da equipe, na pausa ou acima do teto diário
 também ficam registradas como pendentes, e as respostas que a Dai digita no app
 entram no histórico para a Carol saber o que foi combinado.
@@ -279,7 +290,7 @@ normalmente.
 
 | Variável | Para quê | Sem ela |
 |---|---|---|
-| `GOOGLE_SERVICE_ACCOUNT_JSON` + `GMAIL_SENDER` | Todo e-mail pela Gmail API da empresa **e** "quem editou a planilha master" | **Nenhum e-mail sai** (o Railway bloqueia SMTP). Relatórios caem para o WhatsApp dos administradores (contingência); a palavra-chave nova só pelo painel |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` + `GMAIL_SENDER` | Todo e-mail pela Gmail API da empresa **e** "quem editou a planilha master" | **Nenhum e-mail sai** (o Railway bloqueia SMTP). Relatórios caem para o WhatsApp dos administradores (contingência); a palavra-chave nova só pelo SDR (seção Carol) |
 | `RESEND_API_KEY` ou `BREVO_API_KEY` | Alternativa de e-mail por terceiro | Opcional se o Gmail estiver ligado |
 | `CAROL_ADMINS` | Números que podem usar `/carol` e recebem alertas e contingências por WhatsApp | Comandos desligados; sem contingência |
 | `WA_ACCESS_TOKEN_FALLBACK` | Token reserva do WhatsApp | Sem auto-recovery de token; só alerta |
@@ -298,7 +309,7 @@ mesma chave também lê a planilha master. Estado em 15/09/2026:
 | **Autorizar a delegação no Workspace**: admin.google.com → Segurança → Controle de acesso e dados → Controles de API → **Delegação em todo o domínio** → Adicionar novo → ID do cliente `102179036680809640401` → escopo `https://www.googleapis.com/auth/gmail.send` → Autorizar | **você** (1 minuto) |
 | Colar o JSON da chave em `GOOGLE_SERVICE_ACCOUNT_JSON` no Railway (ou me passar o caminho do arquivo que eu subo) | você ou eu |
 | `GMAIL_SENDER=admin@agropecaspadrao.com.br` (o remetente precisa ser um usuário real do Workspace; o nome exibido é "Carol - Agro Peças Padrão") | feito |
-| Testar: `POST /admin/anomalias/teste` → e-mail em admin@ e socios@ | depois dos passos acima |
+| Testar: SDR → Carol → testar alertas (ou `POST /admin/api/anomalias/teste`) → e-mail em admin@ e socios@ | depois dos passos acima |
 
 ### Alternativa: Resend (terceiro, 5 minutos)
 
@@ -331,7 +342,7 @@ caiu" vira uma anomalia registrada, que aparece no relatório seguinte.
 Aí ela não consegue avisar. Por isso o relatório diário existe: se um dia
 **não chegar** o e-mail das 8h05, é sinal de que o serviço está fora. O
 endereço `/health` responde em qualquer navegador e diz se ela está no ar
-(só "ok"; os detalhes ficam no painel e em `/admin/status`).
+(só "ok"; os detalhes ficam no SDR, seção Carol).
 
 **Posso pedir o relatório pelo WhatsApp em vez de esperar o e-mail?**
 Sim: `/carol` + palavra-chave. Ele vem em partes numeradas se for longo.
@@ -346,10 +357,10 @@ Até 16/09/2026, números de celular antigos (cadastrados no WhatsApp antes do
 nono dígito) chegavam para a Carol com 12 dígitos, e o cadastro de
 administradores tem 13. Ela não reconhecia o sócio e o atendia como cliente.
 Corrigido: agora os dois formatos valem. Se ainda acontecer, o número não está
-em `CAROL_ADMINS` (ou está com um dígito errado): confira em `/admin/auditoria`,
+em `CAROL_ADMINS` (ou está com um dígito errado): confira a auditoria no SDR (seção Carol) ou em `/admin/api/auditoria`,
 que mostra o número exato que tentou o comando.
 
 **Quem vê as conversas dos clientes?**
-Só quem tem a chave de administrador (painel) ou é administrador cadastrado no
+Só quem tem acesso à seção Carol do SDR ou é administrador cadastrado no
 WhatsApp e sabe a palavra da semana. O resumo por e-mail vai só para os
 destinatários configurados.

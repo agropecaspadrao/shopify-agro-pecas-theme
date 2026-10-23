@@ -181,6 +181,8 @@ test('subcomandos socios, chave e ajuda; a palavra nova nunca vai pelo WhatsApp'
   assert.doesNotMatch(c.respostas[0], /agro-[a-z]+-\d{2}/);
   const a = await tratarMensagemAdmin({ de: ADMIN, texto: '/carol ajuda' }, d.deps);
   assert.match(a.respostas[0], /\/carol saude/);
+  assert.match(a.respostas[0], /emergencia/);
+  assert.match(a.respostas[0], /SDR, secao Carol: https:\/\//, 'aponta para o portal no SDR');
 });
 
 test('falha na execução vira mensagem amigável, não exceção', async () => {

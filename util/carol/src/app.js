@@ -4,8 +4,10 @@
 //   /health        público, mínimo (ok + status); com Bearer de admin, detalhes
 //   /webhook       WhatsApp (rotas/webhook.js)
 //   /api/*         widget do site (rotas/chat.js)
-//   /admin/painel  painel com login próprio (admin/rotas.js)
-//   /admin/*       área antiga, Bearer ou sessão do painel (rotas/admin.js)
+//   /admin/api/*   API JSON de administração, só Bearer (admin/api.js),
+//                  consumida pela seção Carol do SDR (portal único da operação)
+//   /admin/painel, /admin/dashboard  desligados: redirecionam para o SDR
+//   /admin/*       rotas antigas com Bearer (rotas/admin.js), inclusive /admin/exportar
 
 import express from 'express';
 import { config, recursosConfigurados } from './config.js';
@@ -20,7 +22,6 @@ import { verificarAssinatura, extrairMensagens, enviarTexto, marcarComoLida, bai
 import { transcreverAudio, transcricaoDisponivel } from './transcricao.js';
 import { agregarCustos, exportarAtendimentos, definirSaldo, saldoEstimado } from './custos.js';
 import { statusCredito } from './gasto.js';
-import { paginaDashboard } from './dashboard.js';
 import { reportarAnomalia, classificarErro, listarAnomalias, resumoAnomalias } from './alertas/anomalias.js';
 import { verificarTudo, ultimoEstado, textoSaude } from './saude/supervisor.js';
 import { tratarMensagemAdmin, avisoSilencioAdmin, normalizarNumero } from './comandos/comandos.js';
@@ -33,9 +34,9 @@ import { apagarCliente } from './lgpd.js';
 import { criarLimite } from './util/limite.js';
 import { criarTetos } from './util/tetoDiario.js';
 import { mascararTelefone } from './util/telefone.js';
-import { criarRotasPainel } from './admin/rotas.js';
+import { criarRotasApi } from './admin/api.js';
 import { medirResposta } from './admin/maquina.js';
-import { segredoDe, chaveConfere, revogadosDoServico } from './admin/sessao.js';
+import { chaveConfere, urlPortal } from './admin/seguranca.js';
 import { criarProcessadorWhatsApp, criarRotasWebhook } from './rotas/webhook.js';
 import { criarRotasChat } from './rotas/chat.js';
 import { criarRotasAdmin, autenticarAdmin } from './rotas/admin.js';
@@ -57,8 +58,7 @@ export const MAXIMOS = {
 export function criarApp(over = {}) {
   const chaveAdmin = over.chaveAdmin ?? process.env.CAROL_ADMIN_KEY ?? '';
   const chaveSdr = over.chaveSdr ?? process.env.SDR_SYNC_KEY ?? '';
-  const segredo = over.segredo ?? segredoDe({ chaveAdmin, segredo: process.env.CAROL_PAINEL_SEGREDO || '' });
-  const revogados = over.revogados || revogadosDoServico();
+  const portal = urlPortal(over.portalUrl ?? process.env.CAROL_PORTAL_URL);
   const tetos = over.tetos || criarTetos();
   const estado = over.estado || { pronto: false, iniciadoEm: Date.now() };
 
@@ -112,7 +112,7 @@ export function criarApp(over = {}) {
   // Público e mínimo (healthcheck do Railway). Detalhes só com Bearer de admin.
   app.get('/health', (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
-    const a = autenticarAdmin(req, { chaveAdmin, chaveSdr: '', segredo, revogados });
+    const a = autenticarAdmin(req, { chaveAdmin, chaveSdr: '' });
     if (a.ok && a.escopo === 'admin') return res.json(over.statusDetalhado ? over.statusDetalhado() : statusDetalhado());
     res.json({ ok: true, status: estado.pronto ? 'pronto' : 'iniciando' });
   });
@@ -183,58 +183,59 @@ export function criarApp(over = {}) {
     })
   );
 
-  // ── Painel (login próprio) ANTES do middleware geral de /admin ────────────
-  app.use(
-    '/admin/painel',
-    criarRotasPainel({
-      chaveAdmin,
-      segredo: over.segredoPainel ?? process.env.CAROL_PAINEL_SEGREDO ?? '',
-      revogados,
-      painel: over.painel,
-      limites: () => ({
-        whatsapp: { usado: tetos.uso('wa'), max: MAXIMOS.waDia },
-        site: { usado: tetos.uso('site'), max: MAXIMOS.siteDia },
-      }),
-    })
-  );
+  // ── Administração ────────────────────────────────────────────────────────
+  const limites = () => ({
+    whatsapp: { usado: tetos.uso('wa'), max: MAXIMOS.waDia },
+    site: { usado: tetos.uso('site'), max: MAXIMOS.siteDia },
+  });
+  const depsAdmin = {
+    chaveAdmin,
+    chaveSdr,
+    dataDir: DATA_DIR,
+    statusDetalhado,
+    montarRelatorio,
+    enviarRelatorio,
+    montarRelatorioSocios,
+    enviarRelatorioSocios,
+    ultimoEstado,
+    textoSaude,
+    verificarTudo,
+    recursosConfigurados,
+    agenda,
+    resumoAnomalias,
+    listarAnomalias,
+    reportarAnomalia,
+    estadoChave,
+    rotacionarChave: rotacionarEEnviar,
+    estadoPausa,
+    pausar,
+    retomar,
+    horasDe,
+    saldoEstimado,
+    definirSaldo,
+    statusCredito,
+    agregarCustos,
+    exportarAtendimentos: over.exportarAtendimentos || exportarAtendimentos,
+    apagarCliente: over.apagarCliente || ((alvo, o) => apagarCliente(alvo, { ...o, memoria })),
+    ...(over.admin || {}),
+  };
 
-  app.use(
-    '/admin',
-    criarRotasAdmin({
-      chaveAdmin,
-      chaveSdr,
-      segredo,
-      revogados,
-      limiteIp: criarLimite(60, MIN10),
-      dataDir: DATA_DIR,
-      statusDetalhado,
-      montarRelatorio,
-      enviarRelatorio,
-      montarRelatorioSocios,
-      enviarRelatorioSocios,
-      ultimoEstado,
-      textoSaude,
-      verificarTudo,
-      recursosConfigurados,
-      agenda,
-      resumoAnomalias,
-      listarAnomalias,
-      reportarAnomalia,
-      estadoChave,
-      rotacionarChave: rotacionarEEnviar,
-      estadoPausa,
-      pausar,
-      retomar,
-      horasDe,
-      saldoEstimado,
-      definirSaldo,
-      statusCredito,
-      paginaDashboard,
-      agregarCustos,
-      exportarAtendimentos: over.exportarAtendimentos || exportarAtendimentos,
-      apagarCliente: over.apagarCliente || ((alvo, o) => apagarCliente(alvo, { ...o, memoria })),
-    })
-  );
+  // Portal próprio desligado: a administração fica no SDR (seção Carol).
+  // Antes do middleware de /admin, sem autenticação (não expõe nada).
+  const portalEsc = portal.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const paginaPortal = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Carol · administração no SDR</title></head><body><p>A administração da Carol agora fica no SDR, na seção Carol.</p><p><a href="${portalEsc}">Abrir o SDR → Carol</a></p></body></html>`;
+  const portalDesligado = (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+    if (req.method === 'GET' || req.method === 'HEAD') return res.status(302).location(portal).type('html').send(paginaPortal);
+    res.status(410).json({ erro: 'a administração da Carol agora fica no SDR (seção Carol)', detalhes: { portal } });
+  };
+  app.use('/admin/painel', portalDesligado);
+  app.use('/admin/dashboard', portalDesligado);
+
+  app.use('/admin/api', criarRotasApi({ ...depsAdmin, limites, agregador: over.agregador, limiteIp: over.limiteApi, semAmostragem: over.semAmostragem }));
+
+  app.use('/admin', criarRotasAdmin({ ...depsAdmin, limiteIp: criarLimite(60, MIN10) }));
 
   // 404 sem detalhes
   app.use((_req, res) => res.status(404).json({ erro: 'não encontrado' }));

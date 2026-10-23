@@ -1,14 +1,14 @@
 // Palavra-chave semanal dos comandos "/carol".
 //
 // Segurança: a palavra em texto claro só existe (1) no e-mail enviado aos
-// sócios, (2) na memória durante a geração e (3) na resposta do painel
-// autenticado quando o e-mail falha. Em disco fica só o hash scrypt com sal
+// sócios, (2) na memória durante a geração e (3) na resposta autenticada de
+// POST /admin/api/chave/rotacionar (SDR) quando o e-mail falha. Em disco fica só o hash scrypt com sal
 // aleatório. Validação com comparação em tempo constante. A palavra anterior
 // continua valendo por 24h após a rotação (janela de transição).
 // A palavra NUNCA sai pelo WhatsApp (nem como contingência): o WhatsApp é o
 // canal que ela protege. Se o e-mail falhar, a rotação é desfeita (a palavra
 // atual continua valendo) e os administradores recebem no WhatsApp só o
-// aviso, sem o conteúdo, de que podem gerar pelo painel.
+// aviso, sem o conteúdo, de que podem gerar pelo SDR (seção Carol).
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -144,12 +144,12 @@ export function textoEmailChave(palavra, validaAte) {
 
 export const AVISO_SEM_EMAIL =
   'Carol: nao consegui enviar a nova palavra-chave por e-mail (e-mail indisponivel). Por seguranca ela nao sai pelo WhatsApp. ' +
-  'A palavra atual continua valendo. Para gerar uma nova e ve-la na tela, entre no painel do administrador (/admin/painel, cartao Palavra-chave).';
+  'A palavra atual continua valendo. Para gerar uma nova e ve-la na tela, use o SDR (secao Carol, Palavra-chave).';
 
 /**
  * Rotaciona e envia por e-mail aos sócios e administradores.
  * Se o e-mail estiver indisponível:
- *   - `exibir: true` (painel/HTTP autenticado com a chave de administrador):
+ *   - `exibir: true` (API do SDR / HTTP autenticado com a chave de administrador):
  *     mantém a rotação e devolve a palavra para ser mostrada UMA vez na tela;
  *   - senão: desfaz a rotação, avisa os administradores pelo WhatsApp SEM o
  *     conteúdo e lança erro.

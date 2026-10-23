@@ -1,25 +1,23 @@
-// Área administrativa antiga (/admin/*, fora do painel).
+// Rotas administrativas antigas (/admin/*), mantidas como alias para scripts
+// e curl. A administração do dia a dia é a API /admin/api/* (admin/api.js),
+// usada pela seção Carol do SDR.
 //
-// Autenticação (nunca pela URL):
-//   - Authorization: Bearer <CAROL_ADMIN_KEY>  → tudo (curl, scripts)
-//   - cookie de sessão do painel (/admin/painel/entrar) → tudo (navegador)
+// Autenticação (só header, nunca pela URL nem por cookie):
+//   - Authorization: Bearer <CAROL_ADMIN_KEY>  → tudo
 //   - Authorization: Bearer <SDR_SYNC_KEY>     → SÓ GET /admin/exportar (o SDR puxa o histórico)
-// O antigo ?key= foi removido (vazava em log de proxy e histórico) e o cookie
-// carol_key, que guardava a chave em texto puro, não existe mais.
+// O antigo ?key= foi removido (vazava em log de proxy e histórico). Não há
+// mais painel próprio nem sessão por cookie.
 // Todas as respostas: Cache-Control no-store, CSP e X-Frame-Options DENY.
 
-import crypto from 'node:crypto';
-import fs from 'node:fs';
-import path from 'node:path';
 import express from 'express';
-import { chaveConfere, verificarToken, lerCookie, origemConfere, headersSeguranca } from '../admin/sessao.js';
-import { auditar } from '../util/auditoria.js';
+import { chaveConfere, headersSeguranca } from '../admin/seguranca.js';
+import { auditar, lerAuditoria } from '../util/auditoria.js';
 import { chaveIp } from '../util/ip.js';
 
 /**
- * Quem está chamando. @returns {{ok:boolean, escopo?:'admin'|'sdr', via?:'bearer'|'sessao', motivo?:string}}
+ * Quem está chamando. @returns {{ok:boolean, escopo?:'admin'|'sdr', via?:'bearer', motivo?:string}}
  */
-export function autenticarAdmin(req, { chaveAdmin, chaveSdr, segredo, revogados }) {
+export function autenticarAdmin(req, { chaveAdmin, chaveSdr }) {
   const auth = String(req.headers.authorization || '');
   if (auth.startsWith('Bearer ')) {
     const recebida = auth.slice(7).trim();
@@ -27,7 +25,6 @@ export function autenticarAdmin(req, { chaveAdmin, chaveSdr, segredo, revogados 
     if (chaveSdr && chaveConfere(recebida, chaveSdr)) return { ok: true, escopo: 'sdr', via: 'bearer' };
     return { ok: false, motivo: 'chave inválida' };
   }
-  if (segredo && verificarToken(lerCookie(req), segredo, { revogados }).ok) return { ok: true, escopo: 'admin', via: 'sessao' };
   if (typeof req.query?.key === 'string') return { ok: false, motivo: '?key= não é mais aceito: use Authorization: Bearer' };
   return { ok: false, motivo: 'sem credencial' };
 }
@@ -47,21 +44,15 @@ function erroJson(res, contexto, e) {
  */
 export function criarRotasAdmin(d) {
   const router = express.Router();
-  const credenciais = { chaveAdmin: d.chaveAdmin, chaveSdr: d.chaveSdr, segredo: d.segredo, revogados: d.revogados };
+  const credenciais = { chaveAdmin: d.chaveAdmin, chaveSdr: d.chaveSdr };
 
   router.use(headersSeguranca);
   router.use((req, res, next) => {
     if (!d.limiteIp(chaveIp(req.ip))) return res.status(429).json({ erro: 'muitas requisições' });
     const a = autenticarAdmin(req, credenciais);
-    // Dashboard no navegador sem sessão: manda para o login do painel e volta
-    if (!a.ok && req.method === 'GET' && req.path === '/dashboard') {
-      return res.redirect(303, `/admin/painel/entrar?voltar=${encodeURIComponent(`/admin/dashboard?dias=${diasDoQuery(req)}`)}`);
-    }
     if (!a.ok) return res.status(403).json({ erro: 'não autorizado', ...(a.motivo?.startsWith('?key=') ? { detalhe: a.motivo } : {}) });
     // Chave do SDR: escopo limitado à leitura do histórico
     if (a.escopo === 'sdr' && !(req.method === 'GET' && req.path === '/exportar')) return res.status(403).json({ erro: 'escopo da chave não permite esta rota' });
-    // Escrita com cookie de sessão: exige mesma origem (CSRF)
-    if (a.via === 'sessao' && req.method !== 'GET' && !origemConfere(req, { exigirHeader: false })) return res.status(403).json({ erro: 'origem não autorizada' });
     req.auth = a;
     next();
   });
@@ -144,14 +135,14 @@ export function criarRotasAdmin(d) {
 
   // Pausa manual:  GET estado · POST pausa (?horas=2) · DELETE encerra
   router.get('/pausa', (_req, res) => res.json(d.estadoPausa()));
-  router.post('/pausa', (req, res) => res.json(d.pausar({ horas: d.horasDe(req.query.horas), por: 'painel' })));
+  router.post('/pausa', (req, res) => res.json(d.pausar({ horas: d.horasDe(req.query.horas), por: 'api' })));
   router.delete('/pausa', (_req, res) => res.json({ antes: d.retomar(), agora: d.estadoPausa() }));
 
   // Saldo Anthropic: GET estimado · POST ?usd=25 informa o saldo do console
   router.get('/saldo', (_req, res) => res.json({ ...(d.saldoEstimado() || { configurado: false }), credito: d.statusCredito() }));
   router.post('/saldo', (req, res) => {
     try {
-      d.definirSaldo(req.query.usd, { por: 'painel' });
+      d.definirSaldo(req.query.usd, { por: 'api' });
       res.json(d.saldoEstimado());
     } catch (e) {
       res.status(400).json({ erro: String(e.message).slice(0, 100) });
@@ -162,21 +153,7 @@ export function criarRotasAdmin(d) {
   router.get('/auditoria', (req, res) => {
     try {
       const n = Math.min(Math.max(Number(req.query.linhas || 100), 1), 1000);
-      let linhas = [];
-      try {
-        linhas = fs.readFileSync(path.join(d.dataDir, 'auditoria.jsonl'), 'utf8').trim().split('\n').filter(Boolean);
-      } catch {}
-      const eventos = linhas
-        .slice(-n)
-        .reverse()
-        .map((l) => {
-          try {
-            return JSON.parse(l);
-          } catch {
-            return { bruto: l };
-          }
-        });
-      res.json({ total: linhas.length, eventos });
+      res.json(lerAuditoria(n, { dir: d.dataDir }));
     } catch (e) {
       erroJson(res, 'admin/auditoria', e);
     }
@@ -196,7 +173,7 @@ export function criarRotasAdmin(d) {
   router.post('/cliente/apagar', async (req, res) => {
     try {
       const { telefone, sessao } = req.body || {};
-      const r = await d.apagarCliente({ telefone, sessao }, { por: req.auth.via === 'sessao' ? 'painel' : 'api' });
+      const r = await d.apagarCliente({ telefone, sessao }, { por: 'api' });
       auditar({ evento: 'lgpd_apagar_http', ip: chaveIp(req.ip), via: req.auth.via, ok: r.ok, sessoes: r.sessoes });
       res.status(r.sessoes.length ? (r.ok ? 200 : 207) : 400).json(r);
     } catch (e) {
@@ -204,21 +181,6 @@ export function criarRotasAdmin(d) {
     }
   });
 
-  // Dashboard de custos (HTML com scripts inline: CSP com nonce próprio)
-  router.get('/dashboard', (req, res) => {
-    try {
-      const nonce = crypto.randomBytes(16).toString('base64');
-      const html = d.paginaDashboard(d.agregarCustos(diasDoQuery(req))).replace(/<script(?=[\s>])/g, `<script nonce="${nonce}"`);
-      res.setHeader(
-        'Content-Security-Policy',
-        `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'`
-      );
-      res.type('html').send(html);
-    } catch (e) {
-      console.error('[admin/dashboard] erro:', e.message);
-      res.status(500).type('text/plain').send('Erro interno');
-    }
-  });
   router.get('/custos', (req, res) => {
     try {
       res.json(d.agregarCustos(diasDoQuery(req)));

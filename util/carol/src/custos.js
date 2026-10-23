@@ -46,7 +46,7 @@ function diaBRT(iso) {
   return new Date(iso).toLocaleDateString('sv', { timeZone: config.timezone }); // YYYY-MM-DD
 }
 
-// Rótulo para o dashboard: telefone mascarado (a exportação usa o número completo)
+// Rótulo para a API de custos: telefone mascarado (a exportação usa o número completo)
 function rotuloCliente(sessao, { completo = false } = {}) {
   if (sessao.startsWith('wa:')) return `WhatsApp ${completo ? sessao.slice(3) : mascararTelefone(sessao.slice(3))}`;
   if (sessao.startsWith('site:')) return `Site ${sessao.slice(5, 17)}`;
@@ -56,7 +56,7 @@ function rotuloCliente(sessao, { completo = false } = {}) {
   return sessao;
 }
 
-// Identificador opaco da conversa para o HTML do dashboard (não expõe o telefone)
+// Identificador opaco da conversa na API de custos (não expõe o telefone)
 function idOpaco(sessao) {
   return crypto.createHash('sha256').update(String(sessao)).digest('hex').slice(0, 16);
 }
@@ -84,7 +84,7 @@ function fmtDiaCurto(diaISO) {
 }
 
 /**
- * Agrega os registros dos últimos `dias` em números para o dashboard:
+ * Agrega os registros dos últimos `dias` em números para a API de custos (/admin/api/custos):
  * totais, custo por dia, ranking de conversas e mensagens mais caras.
  */
 export function agregarCustos(dias = 7) {
@@ -201,7 +201,7 @@ export function agregarCustos(dias = 7) {
     }));
 
   // Lista detalhada, mensagem a mensagem (mais recentes primeiro), para a
-  // tabela com filtros do dashboard.
+  // lista da API de custos (completo=1).
   const detalhe = atendimento
     .slice()
     .reverse()
@@ -216,7 +216,7 @@ export function agregarCustos(dias = 7) {
       resposta: (e.tipo === 'humano' ? '[equipe] ' : e.tipo === 'silencio' ? '[sem resposta: silêncio] ' : e.tipo === 'falha' ? '[falha da IA] ' : '') + String(e.resposta || '').slice(0, 220),
     }));
 
-  // ── Conversas completas para a aba "Conversas" do dashboard ──────────────
+  // ── Conversas completas (API de custos com completo=1) ──────────────
   // Cada registro é um par cliente+Carol. Os sinais seguem a memória de
   // conversa (src/memoria): voltar depois de 12h abre conversa nova COM
   // memória (episódios de 7 dias + ficha), então só conta como perda de

@@ -21,13 +21,14 @@ util/carol/
 │   ├── server.js      Ponto de entrada (npm start): chama boot.js
 │   ├── boot.js        listen PRIMEIRO; catálogo, memória e agenda em segundo plano
 │   ├── app.js         Express sem listen (testável): /health, /webhook, /api, /admin
-│   ├── rotas/         webhook.js (fila por telefone, contingência), chat.js, admin.js
+│   ├── admin/         api.js (API /admin/api/* do SDR), agregador.js, atendimento.js, maquina.js, railway.js, seguranca.js
+│   ├── rotas/         webhook.js (fila por telefone, contingência), chat.js, admin.js (rotas antigas + exportação)
 │   ├── claude.js      Claude API (tool runner, prompt caching, sanitização); gera e só registra depois de entregar
 │   ├── ia/anthropic.js Cliente único da Anthropic (timeout 60 s, 1 retry)
 │   ├── persona.js     System prompt da Carol
 │   ├── catalogo.js    Índice do catálogo + busca + ficha de produto + link de carrinho
 │   ├── whatsapp.js    Cloud API: assinatura, parse do webhook (inclui ecos da equipe), envio
-│   ├── horario.js / horarioConfig.js  Regra de horário (painel ou variáveis)
+│   ├── horario.js / horarioConfig.js  Regra de horário (salva pelo SDR ou variáveis)
 │   ├── memoria/       Memória de conversa (Postgres com fallback local)
 │   ├── registro.js    Registro JSONL dos atendimentos + espelho no SDR
 │   ├── gasto.js       Contador persistente do gasto com a API (saldo estimado)
@@ -75,7 +76,7 @@ O número (41) 98415-1085 continua no aplicativo da Dai **e** ganha acesso à Cl
 5. Em **WhatsApp → Configuration → Webhook**: URL `https://SUA-URL/webhook`, verify token = o valor que você definir em `WA_VERIFY_TOKEN`, e assine os campos **messages** e **smb_message_echoes** (este último entrega as respostas que a Dai digita no app; a Carol registra e usa como contexto, nunca responde a elas).
 6. Reinicie o serviço e teste mandando mensagem fora do horário comercial.
 
-Comportamento: no horário da equipe a Carol não responde (a Dai atende pelo app), mas registra cada mensagem como pendente (aparece no relatório da Dai, no painel e no SDR). No horário dela, a Carol agrupa mensagens seguidas (4 s), marca como lida e responde uma vez. Se a IA estiver fora (ex.: crédito zerado), o cliente recebe "Recebi sua mensagem. Nossa equipe vai te responder..." (no máximo 1 vez a cada 30 min) e o turno fica registrado como falha. Áudio é transcrito; foto/documento recebem um pedido educado de texto.
+Comportamento: no horário da equipe a Carol não responde (a Dai atende pelo app), mas registra cada mensagem como pendente (aparece no relatório da Dai e no SDR). No horário dela, a Carol agrupa mensagens seguidas (4 s), marca como lida e responde uma vez. Se a IA estiver fora (ex.: crédito zerado), o cliente recebe "Recebi sua mensagem. Nossa equipe vai te responder..." (no máximo 1 vez a cada 30 min) e o turno fica registrado como falha. Áudio é transcrito; foto/documento recebem um pedido educado de texto.
 
 ## Ativar o widget no site
 
@@ -98,11 +99,15 @@ Mensagens de voz são baixadas da Cloud API e transcritas pelo Whisper large-v3-
 2. Gere uma API key e defina `GROQ_API_KEY` no Railway (e no `.env` local).
 3. Sem a chave, a Carol responde ao áudio pedindo educadamente uma mensagem de texto.
 
-## Dashboard de custos
+## Administração (SDR → seção Carol)
+
+A Carol não tem mais painel próprio. Toda a administração (estado, ligar/desligar, horário, saúde, anomalias, agenda, custos e saldo, palavra-chave, LGPD, relatórios) fica no **SDR comercial, seção Carol**, que consome a API JSON `/admin/api/*` com `Authorization: Bearer <CAROL_ADMIN_KEY>` (lista completa em `ARQUITETURA.md`). `/admin/painel` e `/admin/dashboard` redirecionam para `CAROL_PORTAL_URL`. Os comandos `/carol` pelo WhatsApp continuam como acesso de emergência.
+
+## Custos
 
 Cada resposta grava no registro os tokens reais de todas as chamadas (entrada, saída, cache) e o custo em US$:
 
-- `GET /admin/dashboard?dias=7` → página com custo total, custo por dia, custo médio por mensagem, ranking de conversas que mais gastaram e mensagens mais caras (`dias` = 1, 7, 30 ou 90). Exige a sessão do painel: sem ela, vai para `/admin/painel/entrar` e volta. Telefones aparecem mascarados.
-- `GET /admin/custos?dias=7` com `Authorization: Bearer <CAROL_ADMIN_KEY>` → os mesmos dados em JSON.
+- `GET /admin/api/custos?dias=7` (Bearer) → custo total, por dia, por canal, projeção mensal, saldo estimado e situação do crédito (`dias` = 1, 7, 30 ou 90; `&completo=1` inclui ranking de conversas e mensagens mais caras). É o que o SDR mostra.
+- `GET /admin/custos?dias=7` (Bearer, rota antiga) → o agregado completo em JSON.
 - O antigo `?key=` na URL foi removido (vazava em log e histórico do navegador).
 - `CAROL_USD_BRL` (padrão 5.60) ajusta a cotação usada só para exibir o valor estimado em reais.

@@ -33,10 +33,10 @@ export const config = {
   // Transcrição de áudio do WhatsApp (Groq Whisper, tem camada gratuita)
   groqApiKey: process.env.GROQ_API_KEY || '',
 
-  // Cotação US$ → R$ usada só para EXIBIÇÃO estimada no dashboard de custos
+  // Cotação US$ → R$ usada só para EXIBIÇÃO estimada nos custos (SDR → Carol)
   usdBrl: Number(process.env.CAROL_USD_BRL || 5.6),
 
-  // Crédito carregado na conta Anthropic (para o saldo ESTIMADO do dashboard):
+  // Crédito carregado na conta Anthropic (para o saldo ESTIMADO mostrado no SDR):
   // valor em US$ e data em que foi carregado (ISO, ex: 2026-07-25)
   creditoUsd: Number(process.env.CAROL_CREDITO_USD || 0),
   creditoDesde: process.env.CAROL_CREDITO_DESDE || '',

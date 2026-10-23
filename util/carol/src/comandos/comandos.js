@@ -1,4 +1,6 @@
 // Comandos "/carol" pelo WhatsApp, para os administradores cadastrados.
+// São o acesso de EMERGÊNCIA: a administração principal fica no SDR comercial
+// (seção Carol, API /admin/api/*). Ficam aqui para quando o SDR estiver fora.
 //
 // Fluxo: "/carol [subcomando]" → a Carol pede a palavra-chave da semana →
 // confere → executa. Depois de confirmar, o número fica autenticado por 15
@@ -20,6 +22,7 @@ import { definirSaldo, saldoEstimado } from '../custos.js';
 import { fatiar } from '../util/texto.js';
 import { auditar } from '../util/auditoria.js';
 import { mascararTelefone } from '../util/telefone.js';
+import { urlPortal } from '../admin/seguranca.js';
 export { fatiar };
 
 const PENDENTE_MS = 5 * 60 * 1000;
@@ -106,7 +109,10 @@ function estadoDe(numero) {
 }
 
 const AJUDA = [
-  'Comandos da Carol:',
+  'Comandos da Carol (acesso de emergencia):',
+  `A administracao principal agora fica no SDR, secao Carol: ${urlPortal()}`,
+  'Use os comandos abaixo quando o SDR estiver fora do ar ou longe do computador.',
+  '',
   '/carol - lista dos atendimentos das ultimas 24h (uma linha por conversa)',
   '/carol detalhe 3 - mensagens da conversa numero 3 da lista (ou o telefone)',
   '/carol saude - situacao dos sistemas (WhatsApp, IA, e-mail, loja, planilha)',

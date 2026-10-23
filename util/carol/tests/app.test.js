@@ -1,6 +1,8 @@
 // App HTTP montado sem listen (app.js) num servidor efêmero em 127.0.0.1:
-// /health mínimo, autenticação de /admin (Bearer, ?key= recusado, sessão do
-// painel, chave do SDR só na exportação), LGPD, erros sem stack, chat do site.
+// /health mínimo, autenticação de /admin (só Bearer, ?key= e cookie recusados,
+// chave do SDR só na exportação), portal próprio desligado (redireciona para
+// o SDR), LGPD, erros sem stack, chat do site. A API /admin/api/* tem os
+// testes em admin-api.test.js.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { dataDirTemporario } from './_setup.js';
@@ -10,7 +12,6 @@ delete process.env.DATABASE_URL;
 dataDirTemporario();
 const { criarApp } = await import('../src/app.js');
 const { criarTetos } = await import('../src/util/tetoDiario.js');
-const { criarRevogados } = await import('../src/admin/sessao.js');
 const { pararAmostragem } = await import('../src/admin/maquina.js');
 
 const ADMIN = 'chave-admin-de-teste-123';
@@ -24,8 +25,7 @@ before(async () => {
   const { app } = criarApp({
     chaveAdmin: ADMIN,
     chaveSdr: SDR,
-    segredoPainel: '',
-    revogados: criarRevogados({ persistir: false }),
+    portalUrl: 'https://sdr.exemplo.com/sdr/admin/carol',
     tetos: criarTetos({ persistir: false }),
     verifyToken: 'token-verificacao',
     statusDetalhado: () => ({ ok: true, horario: { origem: 'variavel' }, detalhado: true }),
@@ -54,14 +54,6 @@ after(() => {
 
 const bearer = (k) => ({ authorization: `Bearer ${k}` });
 
-async function loginPainel() {
-  const r = await fetch(`${base}/admin/painel/entrar`, { method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: base }, body: `chave=${encodeURIComponent(ADMIN)}&voltar=${encodeURIComponent('/admin/dashboard?dias=7')}` });
-  assert.equal(r.status, 303);
-  assert.equal(r.headers.get('location'), '/admin/dashboard?dias=7', 'volta para onde estava');
-  assert.match(r.headers.get('set-cookie'), /Path=\/admin;/);
-  return r.headers.get('set-cookie').split(';')[0];
-}
-
 test('/health público é mínimo; com Bearer de admin traz os detalhes', async () => {
   const pub = await (await fetch(`${base}/health`)).json();
   assert.deepEqual(Object.keys(pub).sort(), ['ok', 'status']);
@@ -71,7 +63,7 @@ test('/health público é mínimo; com Bearer de admin traz os detalhes', async 
   assert.equal(sdr.detalhado, undefined, 'chave do SDR não abre detalhes');
 });
 
-test('/admin: Bearer ok; ?key= recusado; sem credencial 403; headers de segurança e no-store', async () => {
+test('/admin (rotas antigas): Bearer ok; ?key= recusado; sem credencial 403; headers de segurança e no-store', async () => {
   const ok = await fetch(`${base}/admin/pausa`, { headers: bearer(ADMIN) });
   assert.equal(ok.status, 200);
   assert.equal(ok.headers.get('x-frame-options'), 'DENY');
@@ -82,33 +74,25 @@ test('/admin: Bearer ok; ?key= recusado; sem credencial 403; headers de seguran�
   assert.match((await viaUrl.json()).detalhe, /Bearer/);
   assert.equal((await fetch(`${base}/admin/pausa`)).status, 403);
   assert.equal((await fetch(`${base}/admin/pausa`, { headers: bearer('errada') })).status, 403);
-  // cookie antigo com a chave em texto puro não vale mais
+  // cookies (o antigo carol_key e a sessão do painel) não valem mais
   assert.equal((await fetch(`${base}/admin/pausa`, { headers: { cookie: `carol_key=${ADMIN}` } })).status, 403);
-});
-
-test('dashboard sem sessão redireciona para o login do painel; com sessão abre (CSP com nonce)', async () => {
-  const r = await fetch(`${base}/admin/dashboard?dias=30`, { redirect: 'manual' });
-  assert.equal(r.status, 303);
-  assert.equal(r.headers.get('location'), `/admin/painel/entrar?voltar=${encodeURIComponent('/admin/dashboard?dias=30')}`);
-  const cookie = await loginPainel();
-  const d = await fetch(`${base}/admin/dashboard`, { headers: { cookie } });
-  assert.equal(d.status, 200);
-  const csp = d.headers.get('content-security-policy');
-  const nonce = csp.match(/'nonce-([^']+)'/)[1];
-  assert.ok((await d.text()).includes(`<script nonce="${nonce}"`));
-  // sessão do painel também serve para a área antiga (mesmo cookie, Path=/admin)
-  assert.equal((await fetch(`${base}/admin/pausa`, { headers: { cookie } })).status, 200);
-  // sair revoga a sessão no servidor
-  const sair = await fetch(`${base}/admin/painel/sair`, { method: 'POST', redirect: 'manual', headers: { cookie, origin: base } });
-  assert.equal(sair.status, 303);
-  assert.equal((await fetch(`${base}/admin/pausa`, { headers: { cookie } })).status, 403, 'token revogado');
-});
-
-test('escrita com cookie de sessão exige mesma origem (CSRF); com Bearer não', async () => {
-  const cookie = await loginPainel();
-  assert.equal((await fetch(`${base}/admin/pausa`, { method: 'DELETE', headers: { cookie } })).status, 403);
-  assert.equal((await fetch(`${base}/admin/pausa`, { method: 'DELETE', headers: { cookie, origin: base } })).status, 200);
+  assert.equal((await fetch(`${base}/admin/pausa`, { headers: { cookie: 'carol_painel=v1.9999999999999.abc.def' } })).status, 403);
   assert.equal((await fetch(`${base}/admin/pausa`, { method: 'DELETE', headers: bearer(ADMIN) })).status, 200);
+});
+
+test('portal próprio desligado: /admin/painel e /admin/dashboard redirecionam para o SDR', async () => {
+  for (const caminho of ['/admin/painel', '/admin/painel/', '/admin/painel/entrar', '/admin/painel/painel.js', '/admin/dashboard?dias=30']) {
+    const r = await fetch(`${base}${caminho}`, { redirect: 'manual' });
+    assert.equal(r.status, 302, caminho);
+    assert.equal(r.headers.get('location'), 'https://sdr.exemplo.com/sdr/admin/carol', caminho);
+    assert.match(await r.text(), /agora fica no SDR/);
+  }
+  // escrita (ex.: login antigo, API antiga do painel): 410 em JSON, com o endereço novo
+  const login = await fetch(`${base}/admin/painel/entrar`, { method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: `chave=${ADMIN}` });
+  assert.equal(login.status, 410);
+  assert.equal((await login.json()).detalhes.portal, 'https://sdr.exemplo.com/sdr/admin/carol');
+  assert.equal(login.headers.get('set-cookie'), null, 'não cria sessão');
+  assert.equal((await fetch(`${base}/admin/painel/api/desligar`, { method: 'POST', headers: bearer(ADMIN) })).status, 410);
 });
 
 test('SDR_SYNC_KEY: só lê /admin/exportar; qualquer outra rota 403', async () => {

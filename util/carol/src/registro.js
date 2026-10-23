@@ -1,5 +1,5 @@
 // Registro persistente dos atendimentos da Carol (arquivos JSONL por dia).
-// Usado pelo relatório diário, painel, dashboard, memória local e espelho SDR.
+// Usado pelo relatório diário, API de administração, memória local e espelho SDR.
 //
 // Tipos de linha (campo `tipo`):
 //   (ausente)  turno normal: mensagem do cliente + resposta da IA

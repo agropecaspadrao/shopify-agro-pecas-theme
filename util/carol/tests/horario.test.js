@@ -147,7 +147,7 @@ test('origem da regra: variável até salvar no painel; painel ignora CAROL_24H;
   assert.match(H.descreverOrigem(), /padrão do servidor/);
   H.salvarHorario(cfg('24h'), { por: 'painel' });
   assert.equal(H.obterHorario().origem, 'painel');
-  assert.match(H.descreverOrigem(), /definida no painel.*não têm efeito/);
+  assert.match(H.descreverOrigem(), /definida no SDR \(seção Carol\).*não têm efeito/);
   H.recarregarHorario();
   assert.equal(H.obterHorario().origem, 'painel', 'vale também depois de reiniciar');
   assert.equal(H.restaurarPadraoHorario().origem, 'variavel');
@@ -155,7 +155,7 @@ test('origem da regra: variável até salvar no painel; painel ignora CAROL_24H;
 });
 
 test('painel: "só no expediente" à noite = FORA DO HORÁRIO (ninguém atende), não "silêncio (Dai)"', async () => {
-  const { estadoCarol } = await import('../src/admin/painel.js');
+  const { estadoCarol } = await import('../src/admin/agregador.js');
   const ce = cfg('expediente');
   const noite = estadoCarol({ agora: brt('2026-10-21T22:00').getTime(), pausa: { ativa: false }, cfg: { ...ce, origem: 'painel' } });
   assert.equal(noite.rotulo, 'FORA DO HORÁRIO (ninguém atende)');

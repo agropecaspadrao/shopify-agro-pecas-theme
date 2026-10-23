@@ -1,4 +1,4 @@
-// Mascaramento de telefone: única função usada em logs, painel, dashboard e
+// Mascaramento de telefone: única função usada em logs, API de administração e
 // textos de status. O número completo só sai na exportação para o SDR/CSV
 // (necessário para a integração) e nunca em log.
 

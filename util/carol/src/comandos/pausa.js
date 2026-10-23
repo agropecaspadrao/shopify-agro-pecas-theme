@@ -17,7 +17,7 @@ const ARQUIVO = path.join(DATA_DIR, 'pausa.json');
 export const HORAS_PADRAO = 2;
 export const HORAS_MIN = 0.5;
 export const HORAS_MAX = 12;
-// Pelo painel o dono pode desligar por mais tempo (ou "até eu religar").
+// Pelo SDR (seção Carol) o dono pode desligar por mais tempo (ou "até eu religar").
 export const HORAS_MAX_PAINEL = 72;
 
 function ler() {
@@ -69,7 +69,7 @@ export function pausada(opts) {
 /**
  * Pausa a Carol por N horas a partir de agora (renova se já estava pausada).
  * `indefinida: true` desliga sem prazo ("até eu religar"); `maxHoras` permite
- * ao painel ir além do teto dos comandos do WhatsApp.
+ * à API do SDR ir além do teto dos comandos do WhatsApp.
  * @returns estado após a pausa
  */
 export function pausar({ horas = HORAS_PADRAO, por = null, agora = Date.now, indefinida = false, maxHoras = HORAS_MAX } = {}) {
@@ -100,6 +100,6 @@ export function retomar({ agora = Date.now } = {}) {
 export function textoPausa(estado = estadoPausa()) {
   if (!estado.ativa) return 'Pausa manual: nenhuma (a Carol segue o horario de atendimento configurado).';
   const quem = estado.por ? ` por ${/^\d+$/.test(estado.por) ? mascararTelefone(estado.por) : estado.por}` : '';
-  if (estado.indefinida) return `Pausa manual: ATIVA sem prazo (desligada ate alguem religar)${quem}. Para voltar: /carol voltar ou o painel.`;
+  if (estado.indefinida) return `Pausa manual: ATIVA sem prazo (desligada ate alguem religar)${quem}. Para voltar: /carol voltar ou o SDR (secao Carol).`;
   return `Pausa manual: ATIVA ate ${horaBRT(estado.ate)} (faltam ${estado.restanteMin} min)${quem}. Para voltar antes: /carol voltar.`;
 }

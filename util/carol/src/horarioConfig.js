@@ -1,4 +1,5 @@
-// Horário de atendimento da Carol no WhatsApp, editável pelo painel.
+// Horário de atendimento da Carol no WhatsApp, editável pelo SDR (seção Carol,
+// via PUT /admin/api/horario). A origem 'painel' identifica a regra salva por lá.
 //
 // Antes a regra vinha só do ambiente (CAROL_24H, CAROL_HORA_INICIO/FIM). Agora
 // fica em DATA_DIR/horario.json (volume do Railway) e o ambiente vira apenas o
@@ -117,14 +118,14 @@ export function obterHorario() {
   if (salvo && !v.ok) console.warn(`[horario] ${ARQUIVO} inválido (${v.erros.join('; ')}); usando o padrão do ambiente`);
   cache = v?.ok ? { ...v.config, atualizadoEm: salvo.atualizadoEm || null, atualizadoPor: salvo.atualizadoPor || null, origem: 'painel' } : { ...configPadrao(), origem: 'variavel' };
   if (cache.origem === 'painel' && process.env.CAROL_24H && (cache.modo === '24h') !== config.atende24h) {
-    console.warn(`[horario] CAROL_24H=${process.env.CAROL_24H} está sendo IGNORADA: vale a regra salva no painel (${descreverRegra(cache)}). Para voltar à variável, use "Voltar ao padrão do servidor" no painel.`);
+    console.warn(`[horario] CAROL_24H=${process.env.CAROL_24H} está sendo IGNORADA: vale a regra salva pelo SDR (${descreverRegra(cache)}). Para voltar à variável, use "Voltar ao padrão do servidor" no SDR → Carol (DELETE /admin/api/horario).`);
   }
   return cache;
 }
 
 /** Texto curto da origem da regra, para painel, /health e /carol status. */
 export function descreverOrigem(cfg = obterHorario()) {
-  if (cfg.origem === 'painel') return `definida no painel${cfg.atualizadoEm ? ` em ${new Date(cfg.atualizadoEm).toLocaleString('pt-BR', { timeZone: config.timezone, day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}` : ''} (as variáveis CAROL_24H/CAROL_HORA_* do servidor não têm efeito)`;
+  if (cfg.origem === 'painel') return `definida no SDR (seção Carol)${cfg.atualizadoEm ? ` em ${new Date(cfg.atualizadoEm).toLocaleString('pt-BR', { timeZone: config.timezone, day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}` : ''} (as variáveis CAROL_24H/CAROL_HORA_* do servidor não têm efeito)`;
   return 'padrão do servidor (variáveis CAROL_24H/CAROL_HORA_INICIO/CAROL_HORA_FIM)';
 }
 

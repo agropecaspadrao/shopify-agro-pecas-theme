@@ -20,6 +20,7 @@ import { DATA_DIR } from '../registro.js';
 import { enviar as enviarEmailPadrao } from '../email/transporte.js';
 import { marcarErroCredito } from '../gasto.js';
 import { mascararTelefone } from '../util/telefone.js';
+import { urlPortal } from '../admin/seguranca.js';
 
 const ARQUIVO = path.join(DATA_DIR, 'anomalias.json');
 const MAX_HISTORICO = 300;
@@ -65,7 +66,7 @@ export const TIPOS = {
   anthropic_saldo_baixo: {
     severidade: 'alta',
     titulo: 'Saldo de créditos da Anthropic baixo',
-    acao: 'Recarregar em console.anthropic.com > Plans & Billing antes que zere. Depois mandar /carol saldo <valor do console> no WhatsApp (ou POST /admin/saldo?usd=<valor>).',
+    acao: 'Recarregar em console.anthropic.com > Plans & Billing antes que zere. Depois mandar /carol saldo <valor do console> no WhatsApp (ou no SDR, seção Carol → Saldo).',
   },
   meta_token_invalido: {
     severidade: 'alta',
@@ -100,7 +101,7 @@ export const TIPOS = {
   seguranca_tentativas: {
     severidade: 'alta',
     titulo: 'Tentativas repetidas de usar comandos da Carol com palavra-chave errada',
-    acao: 'Se não foi um dos sócios, considerar rotacionar a palavra-chave (/admin/chave/rotacionar).',
+    acao: 'Se não foi um dos sócios, considerar rotacionar a palavra-chave (SDR, seção Carol → Palavra-chave).',
   },
   disco_falha: {
     severidade: 'critica',
@@ -218,7 +219,7 @@ function corpoEmail({ tipo, titulo, detalhe, severidade, quando, recuperado }) {
     '',
     info.acao ? `O que fazer: ${info.acao}` : '',
     '',
-    'Painel: /admin/saude e /admin/anomalias no serviço da Carol (com a chave de administrador).',
+    `Acompanhe no SDR, seção Carol: ${urlPortal()}`,
     '',
     'Esta mensagem é automática. Anomalias do mesmo tipo são agrupadas para não repetir o aviso a cada minuto.',
     'Carol, agente de monitoramento',

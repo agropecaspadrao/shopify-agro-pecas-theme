@@ -6,34 +6,16 @@ import { dataDirTemporario, fetchFalso, relogio } from './_setup.js';
 
 delete process.env.CAROL_24H;
 const dir = dataDirTemporario();
-const S = await import('../src/admin/sessao.js');
+const S = await import('../src/admin/seguranca.js');
 const A = await import('../src/admin/atendimento.js');
 const { criarMetricasRailway, resumirMetricas } = await import('../src/admin/railway.js');
 const { criarLimite } = await import('../src/util/limite.js');
 const { criarBuffer, medirResposta, estatisticaRespostas } = await import('../src/admin/maquina.js');
-const { criarPainel, estadoCarol } = await import('../src/admin/painel.js');
+const { criarAgregador, estadoCarol } = await import('../src/admin/agregador.js');
 const { pausar, retomar, estadoPausa, HORAS_MAX_PAINEL } = await import('../src/comandos/pausa.js');
 
-// ── Sessão ────────────────────────────────────────────────────────────────
-test('sessão: cookie válido, adulterado, de outro segredo e expirado', () => {
-  const seg = S.segredoDe({ chaveAdmin: 'chave-forte-123', segredo: '' });
-  const agora = relogio();
-  const tok = S.criarToken(seg, { agora });
-  assert.equal(S.verificarToken(tok, seg, { agora }).ok, true);
-  const partes = tok.split('.');
-  assert.equal(S.verificarToken([partes[0], String(Number(partes[1]) + 999999), partes[2], partes[3]].join('.'), seg, { agora }).motivo, 'assinatura', 'prazo alterado');
-  assert.equal(S.verificarToken(tok.slice(0, -2) + 'xx', seg, { agora }).ok, false);
-  assert.equal(S.verificarToken(tok, S.segredoDe({ chaveAdmin: 'outra-chave', segredo: '' }), { agora }).ok, false, 'trocar a chave derruba a sessão');
-  assert.equal(S.verificarToken('', seg, { agora }).motivo, 'formato');
-  assert.equal(S.verificarToken('v1.a.b', seg, { agora }).motivo, 'formato');
-  agora.avancar(S.VALIDADE_MS + 1);
-  assert.equal(S.verificarToken(tok, seg, { agora }).motivo, 'expirada');
-  assert.equal(S.verificarToken(tok, null).ok, false, 'sem chave configurada o painel fica desligado');
-  assert.equal(S.segredoDe({ chaveAdmin: '', segredo: '' }), null);
-  assert.deepEqual(S.segredoDe({ chaveAdmin: 'x', segredo: 'proprio' }), Buffer.from('proprio'));
-});
-
-test('sessão: chave comparada em tempo constante, sem quebrar com tamanhos diferentes', () => {
+// ── Segurança ─────────────────────────────────────────────────────────────
+test('chave comparada em tempo constante, sem quebrar com tamanhos diferentes', () => {
   assert.equal(S.chaveConfere('abc', 'abc'), true);
   assert.equal(S.chaveConfere('abcd', 'abc'), false);
   assert.equal(S.chaveConfere('', 'abc'), false);
@@ -41,41 +23,15 @@ test('sessão: chave comparada em tempo constante, sem quebrar com tamanhos dife
   assert.equal(S.chaveConfere(undefined, 'abc'), false);
 });
 
-test('sessão: cookie com flags de segurança e leitura do header', () => {
-  const c = S.cookieSessao('v1.1.2.3');
-  // Path=/admin: a sessão do painel também abre o dashboard antigo e a exportação
-  for (const f of ['HttpOnly', 'Secure', 'SameSite=Strict', 'Path=/admin;', 'Max-Age=43200']) assert.ok(c.includes(f), f);
-  const saida = S.cookieSaida();
-  assert.ok(saida.every((x) => /Max-Age=0/.test(x)));
-  assert.ok(saida.some((x) => x.includes('Path=/admin;')) && saida.some((x) => x.includes('Path=/admin/painel;')), 'apaga também o cookie do caminho antigo');
-  assert.equal(S.lerCookie({ headers: { cookie: 'a=1; carol_painel=v1.x.y.z; b=2' } }), 'v1.x.y.z');
-  assert.equal(S.lerCookie({ headers: {} }), '');
+test('portal: CAROL_PORTAL_URL só http(s); qualquer outra coisa cai no padrão', () => {
+  assert.equal(S.urlPortal('https://sdr.exemplo.com/sdr/admin/carol'), 'https://sdr.exemplo.com/sdr/admin/carol');
+  assert.equal(S.urlPortal(''), S.PORTAL_PADRAO);
+  assert.equal(S.urlPortal('javascript:alert(1)'), S.PORTAL_PADRAO);
+  assert.equal(S.urlPortal('/relativo'), S.PORTAL_PADRAO);
+  assert.equal(S.PORTAL_PADRAO, 'https://sdr-backend-production.up.railway.app/sdr/admin/carol');
 });
 
-test('sessão revogável: "sair" invalida o token mesmo antes de expirar', () => {
-  const seg = Buffer.from('segredo-teste');
-  const revogados = S.criarRevogados({ persistir: false });
-  const t = S.criarToken(seg);
-  assert.equal(S.verificarToken(t, seg, { revogados }).ok, true);
-  assert.equal(S.revogarToken(t, seg, revogados), true);
-  const v = S.verificarToken(t, seg, { revogados });
-  assert.equal(v.ok, false);
-  assert.equal(v.motivo, 'revogada');
-  assert.equal(S.verificarToken(S.criarToken(seg), seg, { revogados }).ok, true, 'outras sessões seguem valendo');
-});
-
-test('CSRF: exige header customizado e origem igual à do serviço', () => {
-  const req = (h) => ({ protocol: 'https', get: (n) => ({ host: 'carol.app', ...h })[n.toLowerCase()] });
-  assert.equal(S.origemConfere(req({ 'x-carol-painel': '1', origin: 'https://carol.app' })), true);
-  assert.equal(S.origemConfere(req({ origin: 'https://carol.app' })), false, 'sem header');
-  assert.equal(S.origemConfere(req({ 'x-carol-painel': '1', origin: 'https://mal.com' })), false);
-  assert.equal(S.origemConfere(req({ 'x-carol-painel': '1', origin: 'null' })), false);
-  assert.equal(S.origemConfere(req({ 'x-carol-painel': '1', 'sec-fetch-site': 'same-origin' })), true, 'sem Origin, mas same-origin');
-  assert.equal(S.origemConfere(req({ 'x-carol-painel': '1', 'sec-fetch-site': 'cross-site' })), false);
-  assert.equal(S.origemConfere(req({ origin: 'https://carol.app' }), { exigirHeader: false }), true, 'login (formulário)');
-});
-
-test('rate limit de login: bloqueia após o teto e libera depois da janela', () => {
+test('rate limit por IP: bloqueia após o teto e libera depois da janela', () => {
   const agora = relogio();
   const lim = criarLimite(3, 60000, { agora });
   assert.deepEqual([lim('ip'), lim('ip'), lim('ip'), lim('ip')], [true, true, true, false]);
@@ -171,11 +127,11 @@ test('picos: hoje x média de 7 dias, pico do dia e heatmap por dia da semana', 
   assert.ok(p.heatmap.every((l) => l.length === 24) && p.heatmap.length === 7);
 });
 
-test('painel: estado pequeno, com cache curto e invalidação após ação', () => {
+test('agregador: estado pequeno, com cache curto e invalidação após ação', () => {
   const d = fs.mkdtempSync(path.join(dir, 'pnl-'));
   const agora = relogio(Date.parse('2026-10-21T16:00:00.000Z'));
   fs.writeFileSync(path.join(d, 'registro-2026-10-21.jsonl'), linha('2026-10-21T15:59:00.000Z', 'wa:5541984151085', 'oi'));
-  const painel = criarPainel({ dir: d, agora, limites: () => ({ whatsapp: { usado: 3, max: 300 } }), resumoAnomalias: () => ({ tipos: [] }), ultimoEstadoSaude: () => null, metricasRailway: async () => ({ disponivel: false }) });
+  const painel = criarAgregador({ dir: d, agora, limites: () => ({ whatsapp: { usado: 3, max: 300 } }), resumoAnomalias: () => ({ tipos: [] }), ultimoEstadoSaude: () => null, metricasRailway: async () => ({ disponivel: false }) });
   retomar();
   const e1 = painel.estado();
   assert.ok(Buffer.byteLength(JSON.stringify(e1)) < 5 * 1024, 'menos de 5 KB');
@@ -207,9 +163,9 @@ test('estado da Carol: atendendo, em silêncio e desligada (com prazo e sem praz
   assert.equal(ind.proxima, null);
 });
 
-test('desligar pelo painel: até religar e por mais de 12h', () => {
+test('desligar pela API (SDR): até religar e por mais de 12h', () => {
   const agora = relogio();
-  const e = pausar({ indefinida: true, por: 'painel', agora });
+  const e = pausar({ indefinida: true, por: 'sdr:guilherme', agora });
   assert.equal(e.ativa, true);
   assert.equal(e.indefinida, true);
   agora.avancar(30 * 86400000);
